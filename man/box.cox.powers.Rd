@@ -11,7 +11,7 @@
   obtained when only one variable is specified.
 }
 \usage{
-box.cox.powers(X, start=NULL, ...)
+box.cox.powers(X, start=NULL, hypotheses=NULL, ...)
 
 \method{print}{box.cox.powers}(x, ...)
 
@@ -24,6 +24,10 @@ box.cox.powers(X, start=NULL, ...)
   \item{start}{start values for the power transformation parameters;
     if \code{NULL} (the default), univariate Box-Cox transformations will
     be computed and used as the start values.}
+  \item{hypotheses}{if non-\code{NULL}, a list of hypotheses to be tested;
+    each hypothesis should be a vector of values giving the power for each 
+    column of \code{X}. Note that the hypotheses that all powers are 1 and
+    that all powers are 0 (log) are always tested.}
   \item{...}{optional arguments to be passed to the \code{optim} function.}
   \item{digits}{number of places to round result.}
   \item{x, object}{\code{box.cox.powers} object.}

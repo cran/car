@@ -61,30 +61,6 @@ qq.plot.lm<-function(x, main="", xlab=paste(distribution, "Quantiles"),
     simulate=FALSE, envelope=.95, labels=names(rstudent), reps=100, 
     col=palette()[2], lwd=2, pch=1, ...){
     # last modified 23 Feb 2003
-    lm.influence <- function (model, do.coef = TRUE, ...) { # replaces lm.influence in base
-        if (is.empty.model(model$terms)) {
-            warning("Can't compute influence on an empty model")
-            return(NULL)
-            }
-        n <- as.integer(nrow(model$qr$qr))
-        k <- as.integer(model$qr$rank)
-        e <- na.omit(weighted.residuals(model))        
-        res <- c(list(names = names(e), wt.res = e), .Fortran("lminfl", 
-                model$qr$qr, n, n, k, as.integer(do.coef), model$qr$qraux, 
-                e, hat = double(n), coefficients = if (do.coef) matrix(0, 
-                    n, k) else double(1), sigma = double(n), DUP = FALSE, 
-                PACKAGE = "base")[c("hat", "coefficients", "sigma")])
-        if (is.null(model$na.action)) 
-            return(res)
-        else res <- naresid(model$na.action, cbind(res$wt.res, res$hat, 
-            res$sigma, if (do.coef) res$coefficients))
-        list(names = rownames(res), wt.res = res[, 1], hat = res[, 2], 
-            sigma = res[, 3], coefficients = if (do.coef) res[, -(1:3)])
-        }
-    rstudent.lm <- function (model, infl = lm.influence(model, do.coef = FALSE), 
-        res = infl$wt.res, ...) {
-        res/(infl$sigma * sqrt(1 - infl$hat))
-        }
     result <- NULL
     distribution <- match.arg(distribution)
     line<-match.arg(line)

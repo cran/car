@@ -48,3 +48,11 @@ Changes to Version 1.0-3
     
     o plot.effect modified was modified so that it can plot on the scale of the "link" function but label axes on the scale of the response. See ?plot.effect for details.
     
+Changes to Version 1.0-4
+
+    o Modified box.cox.powers to accept hypotheses to be tested.
+    
+    o Removed effect-display functions (to effects package).
+    
+    o Added warnings to Anova methods for F-tests in binomial and Poisson GLMs that the dispersion is estimated rather than taken as 1.
+    

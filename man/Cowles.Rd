@@ -13,12 +13,8 @@ of volunteering for psychological research.
   \describe{
     \item{neuroticism}{scale from Eysenck personality inventory}
     \item{extraversion}{scale from Eysenck personality inventory}
-    \item{sex}{a factor with levels}
-    \item{sex}{\code{female} }
-    \item{sex}{\code{male} }
-    \item{volunteer}{volunteeing, a factor with levels}
-    \item{volunteer}{\code{no} }
-    \item{volunteer}{\code{yes} }
+    \item{sex}{a factor with levels: \code{female}; \code{male}}
+    \item{volunteer}{volunteeing, a factor with levels: \code{no}; \code{yes}}
   }
 }
 
