@@ -1,6 +1,6 @@
 # Type II and III tests for linear and generalized linear models (J. Fox)
 
-# last modified 16 Nov 04
+# last modified 4 April 05
 
 relatives<-function(term, names, factors){
     is.relative<-function(term1, term2) {
@@ -34,7 +34,7 @@ Anova.aov <- function(mod, ...){
         # type II
         
 Anova.II.lm<-function(mod, error, ...){
-    # last modified by J.Fox 11 Dec 2000
+    # last modified by J.Fox 04 April 2005
     if (!missing(error)){
         sumry<-summary(error, corr=FALSE)
         s2<-sumry$sigma^2
@@ -50,9 +50,9 @@ Anova.II.lm<-function(mod, error, ...){
         hyp.matrix.1<-I.p[subs.relatives,]
         hyp.matrix.2<-I.p[c(subs.relatives,subs.term),]
         SS1<-if (length(subs.relatives)==0) 0 
-            else linear.hypothesis(mod, hyp.matrix.1, summary.model=sumry, ...)$SSH
-        SS2<-linear.hypothesis(mod, hyp.matrix.2, summary.model=sumry, ...)$SSH
-        SS2-SS1
+            else linear.hypothesis(mod, hyp.matrix.1, summary.model=sumry, ...)$"Sum of Sq"[2]
+        SS2<-linear.hypothesis(mod, hyp.matrix.2, summary.model=sumry, ...)$"Sum of Sq"[2]
+        SS1 - SS2
         }
     fac<-attr(mod$terms, "factors")
     intercept<-has.intercept(mod)
@@ -88,7 +88,7 @@ Anova.II.lm<-function(mod, error, ...){
         # type III
         
 Anova.III.lm<-function(mod, error, ...){
-    # last modified by J.Fox 11 Dec 2000
+    # last modified by J.Fox 4 April 2005
     if (!missing(error)){
         sumry<-summary(error, corr=FALSE)
         s2<-sumry$sigma^2
@@ -112,10 +112,10 @@ Anova.III.lm<-function(mod, error, ...){
         test<-if (missing(error)) linear.hypothesis(mod, hyp.matrix, summary.model=sumry, ...)
             else linear.hypothesis(mod, hyp.matrix, error.SS=error.SS, error.df=error.df, 
                 summary.model=sumry, ...)
-        SS[term]<-test$SSH
-        df[term]<-test$Df[1]
-        f[term]<-test$f
-        p[term]<-test$p
+        SS[term]<- -test$"Sum of Sq"[2]
+        df[term]<- -test$"Df"[2]
+        f[term]<-test$"F"[2]
+        p[term]<-test$"Pr(>F)"[2]
         }
      Source[n.terms+1]<-"Residuals"
      df.res<-if (missing(error)) mod$df.residual
@@ -174,9 +174,9 @@ Anova.III.Wald.glm<-function(mod, ...){
         subs<-which(assign==term-intercept)
         hyp.matrix<-I.p[subs,]
         test<-linear.hypothesis(mod, hyp.matrix, summary.model=sumry)
-        Wald[term]<-test$ChiSquare
-        df[term]<-test$Df
-        p[term]<-test$p
+        Wald[term]<-test$Chisq[2]
+        df[term]<- -test$Df[2]
+        p[term]<- test$"Pr(>Chisq)"[2]
         }
      result<-data.frame(Wald, df, p)
      row.names(result)<-Source
@@ -255,7 +255,7 @@ Anova.III.F.glm<-function(mod, error, error.estimate, ...){
             # Wald test
         
 Anova.II.Wald.glm<-function(mod, ...){
-    # last modified by J.Fox 11 Dec 2000
+    # last modified by J.Fox 4 April 2005
     chisq.term<-function(term){
         which.term<-which(term==names)
         subs.term<-which(assign==which.term)
@@ -266,8 +266,8 @@ Anova.II.Wald.glm<-function(mod, ...){
         hyp.matrix.2<-I.p[c(subs.relatives,subs.term),]
         sumry<-summary(mod, corr=FALSE)
         chisq.1<-if (length(subs.relatives)==0) 0 
-            else linear.hypothesis(mod, hyp.matrix.1, summary.model=sumry)$ChiSquare
-        chisq.2<-linear.hypothesis(mod, hyp.matrix.2, summary.model=sumry)$ChiSquare
+            else linear.hypothesis(mod, hyp.matrix.1, summary.model=sumry)$Chisq[2]
+        chisq.2<-linear.hypothesis(mod, hyp.matrix.2, summary.model=sumry)$Chisq[2]
         chisq.2-chisq.1
         }
     fac<-attr(mod$terms, "factors")

@@ -15,7 +15,8 @@ data that the pictures were either high or low in their
 appearance of success, and were instructed to get good data, 
 scientific data, or were given no such instruction. Each 
 experimenter collected ratings from 18 randomly assigned
-respondents.                                             
+respondents; a few subjects were deleted at random to produce
+an unbalanced design.
 }
 
 \format{
