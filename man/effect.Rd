@@ -32,9 +32,9 @@ all.effects(mod, ...)
 \method{plot}{effect}(x, x.var=which.max(levels), 
     z.var=which.min(levels), multiline=is.null(x$se), rug=TRUE, xlab,
     ylab=x$response, colors=palette(), symbols=1:10, lines=1:10, cex=1.5, ylim=NULL,
-    factor.names=TRUE, ...)
+    factor.names=TRUE, transform=list(link=I, inverse=I, at=NULL, n=5), ...)
 \method{plot}{effect.list}(x, selection, ...)
-as.data.frame.effect(x, row.names=NULL, optional=TRUE)
+\method{as.data.frame}{effect}(x, row.names=NULL, optional=TRUE)
 }
 
 \arguments{
@@ -91,6 +91,7 @@ as.data.frame.effect(x, row.names=NULL, optional=TRUE)
     response variable for the model from which the effect was computed.}
   \item{selection}{the optional index (number) or quoted name of the effect in an effect
     list to be plotted; if not supplied, a menu of high-order terms is presented.}
+  \item{transform}{see details.}
   \item{...}{arguments to be passed down.}
   \item{row.names, optional}{not used.}
 }
@@ -109,6 +110,41 @@ as.data.frame.effect(x, row.names=NULL, optional=TRUE)
   compute the effect corresponding to the absent term \code{A:B:C}, which absorbs the constant, the
   \code{A}, \code{B}, and \code{C} main effects, and the three two-way interactions. In either of these
   cases, a warning is printed.
+  
+  In a generalized linear model, by default, \code{effect} transforms the computed effect to the scale of the
+  response variable using the inverse of the 
+  link function. In a logit model, for example, this means that the effects are expressed on the probability
+  scale. This approach may also be used with linear models, for example to plot effects on the scale of the
+  response even if the data are analyzed on a transformed scale, such as log or square-root. An alternative
+  approach is to compute the effects on the scale of the link function --- e.g., the logit scale --- by 
+  specifying the argument \code{transformation=I} to \code{effect}, and
+  instead transforming the response axis (in the manner of plotting a log axis) using the \code{transform} argument
+  to the \code{plot} method for \code{effect} objects. This argument takes
+  a list indicating how the response axis is to be transformed, with the
+  following elements: 
+  \describe{
+    \item{\code{link}}{a function giving the transformation from the response
+        scale to the scale on which the effects were computed. 
+        For example, if the effects are on the logit scale, this is the logit
+        link, which could be given as \code{function(p) log(p/(1 - p))}.
+        The default is \code{I}, the identity function, unless the inverse
+        link is specified, in which case an attempt is made to compute
+        the link from the inverse link. It is best to specify both the link
+        and inverse-link.}
+    \item{\code{inverse}}{a function giving the transformation from the scale
+        of the link, on which the effects were computed, to the response scale. 
+        For example, if the effects are on the logit scale, this is the
+        inverse-logit link, which could be given as 
+        \code{function(logit) 1/(1 + exp(-logit))}. The default is \code{I},
+        the identity function.}
+    \item{\code{at}}{the locations, on the scale of the inverse-link, at which
+        tick marks are to be drawn. For a logit model, for example, the tick
+        marks are specified on the probability scale. The default, \code{NULL},
+        specifies that the function will try to compute nice locations for the
+        ticks.}
+    \item{\code{n}}{the number of tick marks desired; not used if \code{at} is
+        specified. The default is \code{5}.}
+    }
    
   In calculating effects, the strategy for "safe" prediction described
   in Hastie (1992: Sec. 7.3.3) is employed.
@@ -195,8 +231,15 @@ plot(eff.cowles, 'neuroticism:extraversion', multiline=TRUE,
 plot(effect('sex:neuroticism:extraversion',
     glm(volunteer ~ sex*neuroticism*extraversion, data=Cowles, family=binomial),
     xlevels=list(neuroticism=0:24, extraversion=seq(0, 24, 6))), multiline=TRUE)
-    
+
 \dontrun{
+logit <- function(p) log(p/(1-p))
+prob <- function(logit) 1/(1 + exp(-logit))
+eff.cowles.2 <- all.effects(mod.cowles, xlevels=list(neuroticism=0:24, 
+    extraversion=seq(0, 24, 6)), transformation=I)    
+plot(eff.cowles.2, transform=list(inverse=prob))
+plot(eff.cowles.2, transform=list(link=logit, inverse=prob, at=c(.1,.25,.5,.75,.9)))
+    
 data(Prestige)
 mod.pres <- lm(prestige ~ log(income, 10) + poly(education, 3) + poly(women, 2), 
     data=Prestige)
