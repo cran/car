@@ -60,3 +60,11 @@ Changes to Version 1.0-5
 
     o Small changes to scatterplot and scatterplot.matrix to avoid "condition has length > 1" warnings.
     
+Changes to Version 1.0-6
+
+    o Print method for outlier.test no longer prints NA for Bonferroni p-values > 1; prints "> 1".
+    
+Changes to Version 1.0-7
+
+    o More small changes to scatterplot to avoid "condition has length > 1" warnings.
+    
