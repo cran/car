@@ -20,7 +20,7 @@ cr.plot(model, ...)
 
 cr.plot.lm(model, variable, order=1, line=T, smooth=T, iter, 
   span=0.5, las=1, col=palette()[2], pch=1, lwd=2,
-  main="Component+Residual Plot", ...)
+  main="Component+Residual Plot")
 
 cr.plot.glm(model, ...)
 }
@@ -50,7 +50,7 @@ cr.plot.glm(model, ...)
     (a circle, see \code{\link[base]{par}}).}
   \item{lwd}{line width; default is \code{2} (see \code{\link[base]{par}}).}
   \item{main}{title for plot.}
-  \item{\dots}{not for the user.}
+  \item{\dots}{pass arguments down.}
 }
 \details{
   The function intended for direct use is \code{cr.plots} (for which \code{crp}

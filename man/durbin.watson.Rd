@@ -2,6 +2,7 @@
 \alias{durbin.watson}
 \alias{durbin.watson.lm}
 \alias{durbin.watson.default}
+\alias{print.durbin.watson}
 
 \title{Durbin-Watson Test for Autocorrelated Errors}
 \description{
@@ -43,9 +44,9 @@ durbin.watson.default(residuals, max.lag=1)
 
 \examples{
 data(Hartnagel)
-durbin.watson(lm(ftheft ~ tfr + partic + degrees + mtheft, data=Hartnagel))
-## lag Autocorrelation D-W Statistic p-value
-##   1         0.24419        1.4236   0.018
+durbin.watson(lm(fconvict ~ tfr + partic + degrees + fconvict, data=Hartnagel))
+##  lag Autocorrelation D-W Statistic p-value
+##    1          0.6894        0.6148       0
 }
 
 \keyword{regression}

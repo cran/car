@@ -1,6 +1,6 @@
 # generalized Durbin-Watson statistic (J. Fox)
 
-# last modified 8 Mar 2001 by J. Fox
+# last modified 29 July 2001 by J. Fox
 
 durbin.watson <- function(model, ...){
   UseMethod("durbin.watson")
@@ -10,6 +10,7 @@ durbin.watson.lm <- function(model, max.lag=1, simulate=T, reps=1000,
     method=c("resample","normal")){
     method<-match.arg(method)
     residuals<-residuals(model)
+    if (any(is.na(residuals))) stop ('residuals include missing values')
     n<-length(residuals)
     r<-dw<-rep(0, max.lag)
     den<-sum(residuals^2)
@@ -45,6 +46,7 @@ durbin.watson.lm <- function(model, max.lag=1, simulate=T, reps=1000,
 
 durbin.watson.default<-function(residuals, max.lag=1){
     if ( (!is.vector(residuals)) || (!is.numeric(residuals)) ) stop("requires vector of residuals")
+    if (any(is.na(residuals))) stop ('residuals include missing values')
     n<-length(residuals)
     dw<-rep(0, max.lag)
     den<-sum(residuals^2)

@@ -6,7 +6,7 @@
  according to simple recode specifications.
 }
 \usage{
-recode(var, recodes)
+recode(var, recodes, as.factor.result)
 }
 
 \arguments{

@@ -53,7 +53,7 @@ vif.default(mod)
 
 \examples{
 data(Duncan)
-## vif(lm(prestige~income+education, data=Duncan))
+vif(lm(prestige~income+education, data=Duncan))
 ##    income education 
 ##  2.104900  2.104900 
 vif(lm(prestige~income+education+type, data=Duncan))

@@ -3,7 +3,9 @@
 crp<-function(...) cr.plots(...)
 
 cr.plots<-function(model, variable, ask=missing(variable), one.page=!ask, span=.5, ...){
-    # last modified 23 Apr 2001 by J. Fox
+    # last modified 2 Aug 2001 by J. Fox
+    if(!is.null(class(model$na.action)) && 
+        class(model$na.action) == 'exclude') class(model$na.action) <- 'omit'
     if (!missing(variable)){
         var<-if (is.character(variable) & 1==length(variable)) variable
             else deparse(substitute(variable))
@@ -47,9 +49,11 @@ cr.plot<-function (model, ...) {
 
 cr.plot.lm<-function(model, variable, order=1, line=T, smooth=T,
     iter, span=.5, las=1, col=palette()[2], pch=1, lwd=2,
-    main="Component+Residual Plot", ...) {
-    # last modified 1 Feb 2001 by J. Fox
+    main="Component+Residual Plot") {
+    # last modified 2 Aug 2001 by J. Fox
     # method also works for glm objects
+    if(!is.null(class(model$na.action)) && 
+        class(model$na.action) == 'exclude') class(model$na.action) <- 'omit'
     var<-if (is.character(variable) & 1==length(variable)) variable
         else deparse(substitute(variable))
     vars<-predictor.names(model)
@@ -77,7 +81,7 @@ cr.plot.lm<-function(model, variable, order=1, line=T, smooth=T,
         partial.res<-residuals.glm(model,"partial")
         plot(.x, partial.res[,var], xlab=var, 
             ylab=paste("Component+Residual(", response.name(model),")", sep=""),
-            las=las, col=col, pch=pch, main=main, ...)
+            las=las, col=col, pch=pch, main=main)
         if (line) abline(lm(partial.res[,var]~.x), lty=2, lwd=lwd, col=col)
         if (smooth) {
             lines(lowess(.x, partial.res[,var], iter=iter, f=span), lwd=lwd, col=col)
@@ -92,7 +96,7 @@ cr.plot.lm<-function(model, variable, order=1, line=T, smooth=T,
             last<-ncol(partial.res)
             plot(.x, partial.res[,last], xlab=var, 
                 ylab=paste("Component+Residual(", response.name(model),")", sep=""),
-                las=las, col=col, pch=pch, main=main, ...)
+                las=las, col=col, pch=pch, main=main)
             if (line) abline(lm(partial.res[,last]~.x), lty=2, lwd=lwd, col=col)
             if (smooth) {
                 lines(lowess(.x, partial.res[,last], iter=iter, f=span), lwd=lwd, col=col)

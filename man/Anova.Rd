@@ -1,7 +1,15 @@
 \name{Anova}
 \alias{Anova}
 \alias{Anova.lm}
+\alias{Anova.II.lm}
+\alias{Anova.III.lm}
 \alias{Anova.glm}
+\alias{Anova.II.F.glm}
+\alias{Anova.II.LR.glm}
+\alias{Anova.II.Wald.glm}
+\alias{Anova.III.F.glm}
+\alias{Anova.III.LR.glm}
+\alias{Anova.III.Wald.glm}
 \title{Anova Tables for Linear and Generalized Linear Models}
 \description{
   Calculates type-II or type-III analysis-of-variance tables for

@@ -1,5 +1,7 @@
 \name{box.cox.powers}
 \alias{box.cox.powers}
+\alias{print.box.cox.powers}
+\alias{summary.box.cox.powers}
 
 \title{Multivariate Unconditional Box-Cox Transformations}
 \description{
@@ -58,14 +60,14 @@ box.cox.powers(X, start=NULL, ...)
 data(Prestige)
 attach(Prestige)
 summary(box.cox.powers(cbind(income, education)))
-##  Box-Cox Transformations to Multinormality 
+## Box-Cox Transformations to Multinormality  
 ## 
-##            Est.Power Std.Err. Wald(Power=0) Wald(Power=1)
-##  income       0.2617   0.1018        2.5697       -7.2512
-##  education    0.4242   0.4049        1.0475       -1.4222
+##           Est.Power Std.Err. Wald(Power=0) Wald(Power=1) 
+## income       0.2617   0.1014         2.580        -7.280 
+## education    0.4242   0.4033         1.052        -1.428 
 ## 
-##  L.R. test, all powers = 0:  7.6186   df = 2   p = 0.0222
-##  L.R. test, all powers = 1:  48.3936   df = 2   p = 0 
+## L.R. test, all powers = 0:  7.694   df = 2   p = 0.0213 
+## L.R. test, all powers = 1:  48.8727   df = 2   p = 0  
 plot(income, education)
 plot(box.cox(income, .26), box.cox(education, .42))
 
@@ -73,10 +75,10 @@ summary(box.cox.powers(income))
 ## Box-Cox Transformation to Normality 
 ## 
 ##  Est.Power Std.Err. Wald(Power=0) Wald(Power=1)
-##     0.1793   0.1114          1.61       -7.3698
+##     0.1793   0.1108         1.618        -7.406
 ## 
-## L.R. test, power = 0:  2.6837   df = 1   p = 0.1014
-## L.R. test, power = 1:  46.7977   df = 1   p = 0 
+## L.R. test, power = 0:  2.7103   df = 1   p = 0.0997
+## L.R. test, power = 1:  47.261   df = 1   p = 0 
 qq.plot(income)
 qq.plot(income^.18)
 }

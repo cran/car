@@ -33,27 +33,27 @@
 
 rstudent(model, ...)
 
-rstudent.lm(model, infl=influence(model))
+rstudent.lm(model, infl=influence(model), names=infl$names)
 
-rstudent.glm(model, infl=influence(model))
+rstudent.glm(model, infl=influence(model), names=infl$names)
 
 hatvalues(model, ...)
 
-hatvalues.lm(model, infl=influence(model))
+hatvalues.lm(model, infl=influence(model), names=infl$names)
 
 cookd(model, ...)
 
-cookd.lm(model, infl=influence(model), sumry=summary(model))
+cookd.lm(model, infl=influence(model), sumry=summary(model), names=infl$names)
 
-cookd.glm(model, infl=influence(model), sumry=summary(model))
+cookd.glm(model, infl=influence(model), sumry=summary(model), names=infl$names)
 
 dfbeta(model, ...)
 
-dfbeta.lm(model, infl=influence(model))
+dfbeta.lm(model, infl=influence(model), names=infl$names)
 
 dfbetas(model, ...)
 
-dfbetas.lm(model, infl=influence(model), sumry=summary(model))
+dfbetas.lm(model, infl=influence(model), sumry=summary(model), names=infl$names)
 
 influence(model, ...)
 
@@ -67,6 +67,7 @@ influence.glm(model)
   \item{model}{\code{lm} or \code{glm} model object.}
   \item{infl}{optionally, an influence-object precomputed for the \code{model} by \code{influence}.}
   \item{sumry}{optionally, a summary-object precomputed for the \code{model} by \code{summary}.}
+  \item{names}{optionally, a vector of observation names.}
   \item{...}{arguments to be passed down from generic functions to method functions.}
 }
 
@@ -98,6 +99,7 @@ influence.glm(model)
   
   \code{influence} returns a list with entries:
   
+  \item{names}{observation names.}
   \item{hat}{hat-values.}
   \item{sigma}{leave-one-out estimates of linear-model standard error or 
     generalized-linear-model scale.}

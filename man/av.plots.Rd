@@ -18,7 +18,8 @@ avp(...)
 
 av.plot(model, ...)
 
-av.plot.lm(model, variable, labels=names(residuals(model)), 
+av.plot.lm(model, variable, 
+  labels=names(residuals(model)[!is.na(residuals(model))]), 
   identify.points=T, las=1, col=palette()[2], pch=1, lwd=2,
   main="Added-Variable Plot")
 

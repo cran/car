@@ -2,6 +2,7 @@
 \alias{box.tidwell}
 \alias{box.tidwell.formula}
 \alias{box.tidwell.default}
+\alias{print.box.tidwell}
 
 \title{Box-Tidwell Transformations}
 \description{

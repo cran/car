@@ -28,13 +28,14 @@ leverage.plot<-function (model, ...) {
     UseMethod("leverage.plot")
     }
 
-leverage.plot.lm<-function(model, term.name, labels=names(residuals(model)), 
+leverage.plot.lm<-function(model, term.name, 
+    labels=names(residuals(model)[!is.na(residuals(model))]), 
     identify.points=T, las=1, col=palette()[2], pch=1, lwd=2, main="Leverage Plot"){
-    # last modified 1 Feb 2001
+    # last modified 29 July 2001
     term.name<-if (is.character(term.name) & 1==length(term.name)) term.name
         else deparse(substitute(term.name))
     b<-coefficients(model)
-    e<-residuals(model)
+    e<-na.omit(residuals(model))
     p<-length(b)
     I.p<-diag(p)
     term.names<-term.names(model)

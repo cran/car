@@ -1,7 +1,8 @@
 \name{outlier.test}
 \alias{outlier.test}
 \alias{outlier.test.lm}
-\alisas{outlier.test.glm}
+\alias{outlier.test.glm}
+\alias{print.outlier.test}
 
 \title{Bonferroni Outlier Test}
 \description{

@@ -3,6 +3,7 @@
 \alias{qqp}
 \alias{qq.plot.default}
 \alias{qq.plot.lm}
+\alias{qq.plot.glm}
 
 \title{Quantile-Comparison Plots}
 \description{
@@ -21,9 +22,8 @@ qq.plot.default(x, distribution="norm",
   line=c("quartiles", "robust"), ...)
 
 qq.plot.lm(x, main="", xlab="t Quantiles", 
-  line=c("quartiles", "robust"), 
   ylab=paste("Studentized Residuals(", deparse(substitute(x)), ")",
-    sep = ""), las=1,
+    sep = ""), line=c("quartiles", "robust"), las=1,
   simulate=F, envelope=0.95, labels=F, reps=100, 
   col=palette()[2], lwd=2, pch=1, ...)
 }

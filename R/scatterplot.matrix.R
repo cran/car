@@ -39,12 +39,13 @@ scatterplot.matrix.default<-function(data, labels=colnames(data),
     groups=FALSE, by.groups=FALSE,
     col=palette(), pch=1:n.groups, lwd=1,
     legend.plot=length(levels(groups)) > 1){
-    # last modified 23 April 2001 by J. Fox
+    # last modified 2 May 2001 by J. Fox
     if (groups != FALSE){
         data<-na.omit(cbind(as.data.frame(groups),data))
         groups<-as.factor(as.character(data[,1]))
         data<-data[,-1]
         }
+        else data<-na.omit(data)
     if (missing(nclass)) nclass<-n.bins(data[,1])
     reg<-function(x, y, col){
         mod<-reg.line(y~x)

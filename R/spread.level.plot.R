@@ -62,9 +62,9 @@ spread.level.plot.lm<-function(x, start=0,
         main=paste("Spread-Level Plot for", deparse(substitute(x))),
         pch=1, col=palette()[2], lwd=2, ...)
     {
-    #last modified 1 Feb 2001 by J. Fox
-    resid<-abs(rstudent(x))
-    fitval<-fitted.values(x)
+    #last modified 2 Aug 2001 by J. Fox
+    resid<-na.omit(abs(rstudent(x)))
+    fitval<-na.omit(fitted.values(x))
     min<-min(fitval)
     if (min <= -start) {
         start<- nice(-min +.05*diff(quantile(fitval,c(.25,.75))), direction='up')
@@ -79,9 +79,8 @@ spread.level.plot.lm<-function(x, start=0,
         mod<-rlm(log(resid)~log(fitval+start))
         }
         else mod<-lm(log(resid)~log(fitval+start), ...)
-    ord<-order(fitval)
-    first<-ord[1]
-    last<-ord[length(ord)]
+    first<-which.min(fitval) 
+    last<-which.max(fitval) 
     lines((fitval+start)[c(first,last)], exp(fitted.values(mod)[c(first,last)]), 
         lwd=lwd, col=col, ...)
     p<-1-(coefficients(mod))[2]

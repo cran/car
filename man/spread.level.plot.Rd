@@ -103,11 +103,10 @@ spread.level.plot(interlocks+1~nation)
 mod<-lm(interlocks ~ assets + sector + nation)
 slp(mod)
 ## $PowerTransformation
-## [1] 0.3724010
+## [1] 0.3222165
 ## 
 ## Warning message: 
-## Start =  3 added to fitted values to avoid 0 or negative values. 
-## in: spread.level.plot.lm(x, ...) 
+## Start =  3 added to fitted values to avoid 0 or negative values. in: spread.level.plot.lm(x, ...) 
 }
 
 \keyword{hplot}
