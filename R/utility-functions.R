@@ -1,7 +1,7 @@
 
 # Utility functions (J. Fox)
 
-    # last modified 23 Apr 2001 by J. Fox
+    # last modified 31 July 2001 by J. Fox
 
 inv<-function(x) solve(x)
 
@@ -10,7 +10,7 @@ has.intercept<-function (model, ...) {
     UseMethod("has.intercept")
     }
 
-has.intercept.default<-function(model) names(coefficients(model))[1]=="(Intercept)"
+has.intercept.default<-function(model) any(names(coefficients(model))=="(Intercept)")
 
 
 

@@ -5,15 +5,15 @@ outlier.test<-function(model, ...){
     }
 
 outlier.test.lm<-function(model, labels=names(rstud)){
-    #last modified 27 Jan 2001 by J. Fox
+    #last modified 29 July 2001 by J. Fox
     rstud<-abs(rstudent(model))
     labels<-if(is.null(labels)) seq(along=rstud) else labels
     if (length(rstud) != length(labels)) 
         stop("Number of labels does not correspond to number of residuals.")
-    rstud.max<-max(rstud)
+    rstud.max<-max(rstud, na.rm=T)
     which.max<-which(rstud==rstud.max)
     df<-df.residual(model)-1
-    n<-length(rstud)
+    n<-sum(!is.na(rstud))
     p<-2*(1-pt(rstud.max,df))
     result<-c(rstud.max, df, p, n*p)
     names(result)<-c("max|rstudent|", "df", "unadjusted p", "Bonferroni p")
@@ -23,14 +23,14 @@ outlier.test.lm<-function(model, labels=names(rstud)){
     }
     
 outlier.test.glm<-function(model, labels=names(rstud)){
-    #last modified 27 Jan 2001 by J. Fox
+    #last modified 29 July 2001 by J. Fox
     rstud<-abs(rstudent(model))
     labels<-if(is.null(labels)) seq(along=rstud) else labels
     if (length(rstud) != length(labels)) 
         stop("Number of labels does not correspond to number of residuals.")
-    rstud.max<-max(rstud)
+    rstud.max<-max(rstud, na.rm=T)
     which.max<-which(rstud==rstud.max)
-    n<-length(rstud)
+    n<-sum(!is.na(rstud))
     p<-2*(1-pnorm(rstud.max))
     result<-c(rstud.max, p, n*p)
     names(result)<-c("max|rstudent|", "unadjusted p", "Bonferroni p")

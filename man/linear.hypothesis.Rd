@@ -3,6 +3,8 @@
 \alias{lht}
 \alias{linear.hypothesis.lm}
 \alias{linear.hypothesis.glm}
+\alias{print.F.test}
+\alias{print.chisq.test}
 
 \title{Test Linear Hypothesis}
 \description{

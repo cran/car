@@ -27,6 +27,7 @@ Leinhardt                Data on Infant-Mortality
 Mandel                   Contrived Collinear Data
 Migration                Canadian Interprovincial Migration Data
 Moore                    Status, Authoritarianism, and Conformity
+Mroz                     U.S. Women's Labor-Force Participation
 Ornstein                 Interlocking Directorates Among Major Canadian
                          Firms
 Prestige                 Prestige of Canadian Occupations
@@ -42,13 +43,13 @@ US.pop                   Population of the United States
 Var                      Variance-Covariance Matrices
 Vocab                    Vocabulary and Education
 Womenlf                  Canadian Women's Labour-Force Participation
-all.good                 Function to Test for Non-Missing Observations
 av.plots                 Added-Variable Plots
 box.cox                  Box-Cox Family of Transformations
 box.cox.powers           Multivariate Unconditional Box-Cox
                          Transformations
 box.cox.var              Constructed Variable for Box-Cox Transformation
 box.tidwell              Box-Tidwell Transformations
+car-internal             Internal car functions
 ceres.plots              Ceres Plots
 cr.plots                 Component+Residual (Partial Residual) Plots
 durbin.watson            Durbin-Watson Test for Autocorrelated Errors

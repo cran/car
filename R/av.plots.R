@@ -34,9 +34,9 @@ av.plot<-function (model, ...) {
     UseMethod("av.plot")
     }
 
-av.plot.lm<-function(model, variable, labels=names(residuals(model)), 
+av.plot.lm<-function(model, variable, labels=names(residuals(model)[!is.na(residuals(model))]), 
     identify.points=T, las=1, col=palette()[2], pch=1, lwd=2, main="Added-Variable Plot"){
-    #last modified 14 Dec 2000 by J. Fox
+    #last modified 29 July 2001 by J. Fox
     variable<-if (is.character(variable) & 1==length(variable)) variable
         else deparse(substitute(variable))
     mod.mat<-model.matrix(model)
@@ -56,10 +56,10 @@ av.plot.lm<-function(model, variable, labels=names(residuals(model)),
     }
 
 
-av.plot.glm<-function(model, variable, labels=names(residuals(model)), 
+av.plot.glm<-function(model, variable, labels=names(residuals(model)[!is.na(residuals(model))]), 
     identify.points=T, las=1, col=palette()[2], pch=1, lwd=2, main="Added-Variable Plot",
     type=c("Wang", "Weisberg")){
-    #last modified 14 Dec 2000 by J. Fox
+    #last modified 29 July 2001 by J. Fox
     type<-match.arg(type)
     variable<-if (is.character(variable) & 1==length(variable)) variable
         else deparse(substitute(variable))
@@ -72,7 +72,7 @@ av.plot.glm<-function(model, variable, labels=names(residuals(model)),
     wt<-model$prior.weights
     mod<-glm(response~mod.mat[,-var]-1, weights=wt, family=family(model))
     res.y<-residuals(mod, type="pearson")
-    wt<-if (type=="Wang") wt*weights(model) else wt
+    wt<-if (type=="Wang") wt*na.omit(weights(model)) else wt
     res.x<-lsfit(mod.mat[,-var], mod.mat[,var], wt=wt,    
         intercept=F)$residuals
     plot(res.x, res.y, xlab=paste(var.names[var],"| others"), 

@@ -20,8 +20,8 @@ nice<-function(x, direction=c("round", "down", "up")){
 
 power.axis<-function(power, base=exp(1), side=c("right", "above", "left", "below"), 
     at, grid=F, grid.col=gray(.50), grid.lty=3,
-    axis.title = "Untransformed Data", ticks=5, cex = 1, las=0) {
-    # last modified 1 Feb 2001 by J. Fox
+    axis.title = "Untransformed Data", cex = 1, las=0) {
+    # last modified 30 July 2001 by J. Fox
     side<-if(is.numeric(side)) side 
         else which(match.arg(side)==c("below", "left", "above", "right"))
     axp<-if (side %% 2 == 1) par("xaxp") else par("yaxp")

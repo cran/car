@@ -6,14 +6,14 @@ hccm<-function(model, ...){
     }
  
 hccm.lm<-function(model, type=c("hc3", "hc0", "hc1", "hc2")) {
-    #last modified 12 Dec 2000 by J. Fox
+    #last modified 29 July 2000 by J. Fox
     if (!is.null(weights(model))) stop("requires unweighted lm")
     type<-match.arg(type)
     sumry<-summary(model, corr = FALSE)
     s2<-sumry$sigma^2
     V<-sumry$cov.unscaled
     if (type == FALSE) return(s2*V)
-    e<-residuals(model)
+    e<-na.omit(residuals(model))
     X<-model.matrix(model)
     df.res<-df.residual(model)
     factor<-switch(type,

@@ -54,7 +54,7 @@ qq.plot.default<-function(x, distribution="norm", ylab=deparse(substitute(x)),
 qq.plot.lm<-function(x, main="", xlab="t Quantiles",
     ylab=paste("Studentized Residuals(",deparse(substitute(x)),")",sep=""),
     line=c("quartiles", "robust"), las=1,
-    simulate=F, envelope=.95, labels=F, reps=100, 
+    simulate=F, envelope=.95, labels=names(rstudent), reps=100, 
     col=palette()[2], lwd=2, pch=1, ...){
     # last modified 1 Feb 2001
     line<-match.arg(line)
@@ -67,13 +67,16 @@ qq.plot.lm<-function(x, main="", xlab="t Quantiles",
             col=col, lwd=lwd, pch=pch, ...)
         }
     else {
+        good <- !is.na(rstudent)
+        n<-length(rstudent)
+        rstudent <- na.omit(rstudent)
         ord<-order(rstudent)
         ord.x<-rstudent[ord]
         n<-length(ord)
         P<-ppoints(n)
         z<-qt(P, df=res.df-1)
         plot(z, ord.x, xlab=xlab, ylab=ylab, main=main, las=las, pch=pch, col=col)
-        yhat<-fitted.values(x)
+        yhat<-na.omit(fitted.values(x))
         S<-sumry$sigma
         Y<-matrix(yhat,n,reps)+matrix(rnorm(n*reps, sd=S),n,reps)
         X<-model.matrix(x)
@@ -99,7 +102,7 @@ qq.plot.lm<-function(x, main="", xlab="t Quantiles",
         if (labels[1]==T & length(labels)==1) labels<-seq(along=z)
         if (labels != F) {
             selected<-identify(z, ord.x, labels[ord])
-            ord[selected]
+            (1:n)[good][ord][selected]
             }
         }
     }

@@ -6,11 +6,11 @@ ncv.test<-function(model, ...){
     }
 
 ncv.test.lm<-function (model, var.formula, data=NULL, subset, na.action) {
-    # last modified 15 Dec 2000 by J. Fox
+    # last modified 29 July 2001 by J. Fox
     if (!is.null(weights(model))) stop("requires unweighted linear model")
     sumry<-summary(model)
     residuals<-residuals(model)
-    S.sq<-df.residual(model)*(sumry$sigma)^2/length(residuals)
+    S.sq<-df.residual(model)*(sumry$sigma)^2/sum(!is.na(residuals))
     U<-(residuals^2)/S.sq
     if (missing(var.formula)) {
         mod<-lm(U~fitted.values(model))

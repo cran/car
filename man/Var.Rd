@@ -13,7 +13,7 @@
 \usage{
 Var(object, ...)
 
-Var.default(object, diagonal=F)
+Var.default(object, diagonal=F, ...)
 
 Var.lm(object, diagonal=F)
 

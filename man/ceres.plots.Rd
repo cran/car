@@ -15,8 +15,8 @@ ceres.plots(model, variable, ask=missing(variable), one.page=!ask,
 
 ceres.plot(model, ...)
 
-ceres.plot.lm(model, variable, line=T, smooth=T, span=0.5, 
-  las=1, col=palette()[2], pch=1, lwd=2, iter, main="ceres Plot", ...)
+ceres.plot.lm(model, variable, line=T, smooth=T, span=0.5, iter,
+  las=1, col=palette()[2], pch=1, lwd=2, main="ceres Plot")
 
 ceres.plot.glm(model, ...)
 }
@@ -32,6 +32,8 @@ ceres.plot.glm(model, ...)
   \item{one.page}{if \code{TRUE} (and \code{ask=F}), put all plots on one
     graph.}
   \item{span}{span for lowess smoother.}
+  \item{iter}{number of robustness iterations for nonparametric-regression smooth;
+    defaults to 3 for a linear model and to 0 for a non-Gaussian glm.}
   \item{line}{\code{TRUE} to plot least-squares line.}
   \item{smooth}{\code{TRUE} to plot nonparametric-regression (lowess) line.}
   \item{las}{if \code{0}, ticks labels are drawn parallel to the
@@ -42,10 +44,8 @@ ceres.plot.glm(model, ...)
   \item{pch}{plotting character for points; default is \code{1} 
     (a circle, see \code{\link[base]{par}}).}
   \item{lwd}{line width; default is \code{2} (see \code{\link[base]{par}}).}
-  \item{iter}{number of robustness iterations for nonparametric-regression smooth;
-    defaults to 3 for a linear model and to 0 for a non-Gaussian glm.}
   \item{main}{title for plot.}
-  \item{\dots}{not for the user.}
+  \item{\dots}{pass arguments down.}
 }
 \details{
   Ceres plots are a generalization of component+residual (partial

@@ -17,7 +17,8 @@ scatterplot.formula(formula, data, xlab, ylab, subset, labels=F, ...)
 
 scatterplot.default(x, y, smooth=T, span=0.5, reg.line=lm, 
   boxplots="xy", xlab=deparse(substitute(x)), ylab=deparse(substitute(y)), 
-  las=1, lwd=1, labels=F, log="", groups=FALSE, by.groups=!(groups == FALSE), 
+  las=1, lwd=1, labels=F, log="", groups=FALSE, by.groups=!(groups == FALSE),
+  ellipse=FALSE, levels=c(.5, .9), robust=FALSE, 
   col=palette(), pch=1:n.groups, legend.plot=length(levels(groups)) > 1, ...)
   
 sp{...}

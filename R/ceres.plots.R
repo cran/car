@@ -1,11 +1,13 @@
 # CERES plots (J. Fox)
 
 ceres.plots<-function(model, variable, ask=missing(variable), one.page=!ask, span=.5, ...){
-    # last modified 23 Apr 2001 by J. Fox
+    # last modified 2 Aug 2001 by J. Fox
+    if(!is.null(class(model$na.action)) && 
+        class(model$na.action) == 'exclude') class(model$na.action) <- 'omit'
     if (!missing(variable)){
         var<-if (is.character(variable) & 1==length(variable)) variable
             else deparse(substitute(variable))
-        ceres.plot(model, var, line=line, main=main, ...)
+        ceres.plot(model, var, ...)
         }
     else {
         vars<-predictor.names(model)
@@ -48,9 +50,11 @@ ceres.plot<-function (model, ...) {
     }
 
 ceres.plot.lm<-function(model, variable, line=T, smooth=T, span=.5, iter, 
-    las=1, col=palette()[2], pch=1, lwd=2, main="Ceres Plot", ...){
+    las=1, col=palette()[2], pch=1, lwd=2, main="Ceres Plot"){
     # the lm method works with glm's too
-    # last modified 1 Feb 2001 by J. Fox
+    # last modified 2 Aug 2001 by J. Fox
+    if(!is.null(class(model$na.action)) && 
+        class(model$na.action) == 'exclude') class(model$na.action) <- 'omit'
     if (missing(iter)){
         iter<-if(("glm"==class(model)[1]) &&
                  ("gaussian"!=as.character(family(model))[1]))

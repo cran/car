@@ -1,5 +1,7 @@
 \name{scatterplot.matrix}
 \alias{scatterplot.matrix}
+\alias{scatterplot.matrix.formula}
+\alias{scatterplot.matrix.default}
 \alias{spm}
 \title{Scatterplot Matrices}
 \description{
@@ -16,7 +18,8 @@ scatterplot.matrix.formula(formula, data=NULL, subset, ...)
 scatterplot.matrix.default(data, labels=colnames(data), 
 diagonal=c("density", "boxplot", "histogram", "qqplot", "none"), 
 adjust=1, nclass, plot.points=TRUE, smooth=TRUE, span=0.5, reg.line=lm, 
-transform=FALSE, groups=FALSE, by.groups=FALSE, col=palette(), 
+transform=FALSE, ellipse=FALSE, levels=c(.5, .9), robust=FALSE,
+groups=FALSE, by.groups=FALSE, col=palette(), 
 pch=1:n.groups, lwd=1, legend.plot=length(levels(groups)) > 1)
 
 spm(x, ...)
