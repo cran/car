@@ -1,6 +1,6 @@
 # Type II and III tests for linear and generalized linear models (J. Fox)
 
-# last modified 9 Nov 2002
+# last modified 25 Apr 2002
 
 relatives<-function(term, names, factors){
     is.relative<-function(term1, term2) {
@@ -215,7 +215,10 @@ Anova.III.LR.glm<-function(mod, ...){
             # F test
 
 Anova.III.F.glm<-function(mod, error, error.estimate, ...){
-    # last modified by J. Fox 30 Jan 2001
+    # last modified by J. Fox 25 Apr 2003
+    fam <- family(mod)$family
+    if (fam == "binomial" || fam == "poisson") 
+        warning("dispersion parameter estimated from the Pearson residuals, not taken as 1")
     if (missing(error)) error<-mod
     df.res <- df.residual(error)
     error.SS<-switch(error.estimate,
@@ -341,8 +344,11 @@ Anova.II.LR.glm <- function(mod, ...){
             # F test
             
 Anova.II.F.glm <- function(mod, error, error.estimate, ...){
-    # last modified 5 Nov 2002 by J. Fox
+    # last modified 25 Apr 2003 by J. Fox
     # (some code adapted from drop1.glm)
+    fam <- family(mod)$family
+    if (fam == "binomial" || fam == "poisson") 
+        warning("dispersion parameter estimated from the Pearson residuals, not taken as 1")
     which.nms <- function(name) which(asgn == which(names == name))
     if (missing(error)) error <- mod
     df.res <- df.residual(error)

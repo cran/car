@@ -1,9 +1,9 @@
 # multivariate unconditional Box-Cox transformations (J. Fox)
 
-# last modified 2 April 02 by J. Fox
+# last modified 15 April 03 by J. Fox
 # (with bug fixes by S. Weisberg)
 
-box.cox.powers<-function(X, start=NULL, ...){
+box.cox.powers<-function(X, start=NULL, hypotheses=NULL, ...){
     modified.power<-function(x, lambda, gm){
         if (lambda == 0) log(x)*gm
         else (gm^(1-lambda))*((x^lambda)-1)/lambda
@@ -19,11 +19,12 @@ box.cox.powers<-function(X, start=NULL, ...){
         (length(x)/2)*log(((length(x)-1)/length(x))*var(x))
         }
     X<-as.matrix(X)
+    nc <- ncol(X)
     if(any(X<=0)) stop("All values must be > 0")
     gm<-apply(X, 2, function(x) exp(mean(log(x))))
     if (is.null(start)) {
-        start <- rep(1, ncol(X))
-        for (j in 1:ncol(X)){
+        start <- rep(1, nc)
+        for (j in 1:nc){
             res<- optimize(
                 f = function(lambda) univ.neg.kernel.logL(x=X[,j], lambda=lambda, gm=gm[j]),
                 lower=-50, upper=+50)
@@ -37,8 +38,17 @@ box.cox.powers<-function(X, start=NULL, ...){
     result$names<-colnames(X)
     result$lambda<-res$par
     result$stderr<-diag(sqrt(inv(res$hessian)))
-    result$LR0<-2*(neg.kernel.profile.logL(X,rep(0,ncol(X)),gm)-res$value)
-    result$LR1<-2*(neg.kernel.profile.logL(X,rep(1,ncol(X)),gm)-res$value)
+    result$LR0<-2*(neg.kernel.profile.logL(X,rep(0,nc),gm)-res$value)
+    result$LR1<-2*(neg.kernel.profile.logL(X,rep(1,nc),gm)-res$value)
+    if (!is.null(hypotheses)) {
+        for (i in 1:length(hypotheses)){
+            if (length(hypotheses[[i]]) != nc) 
+                stop(paste("hypothesis", i, "that powers =", hypotheses[[i]], "does not have", nc, "values"))
+            hypotheses[[i]] <- list(test=2*(neg.kernel.profile.logL(X,hypotheses[[i]],gm)-res$value),
+                hypothesis=hypotheses[[i]])
+            }
+        result$hypotheses <- hypotheses
+        }
     result$return.code<-res$convergence
     if(result$return.code != 0) 
         warning(paste("Convergence failure: return code =",
@@ -63,6 +73,14 @@ summary.box.cox.powers<-function(object, digits=4, ...){
         "  p =",round(1-pchisq(object$LR0,df),digits)))
     cat(paste("\nL.R. test,", (if(one) "power" else "all powers"), "= 1: ",round(object$LR1,digits),"  df =",df,
         "  p =",round(1-pchisq(object$LR1,df),digits),"\n"))
+    if (!is.null(object$hypotheses)) {
+        for (i in 1:length(object$hypotheses)){
+            cat(paste("L.R. test, ", (if(one) "power " else "powers "), "= ", 
+                paste(object$hypotheses[[i]]$hypothesis,collapse=" "),
+                ":  ", round(object$hypotheses[[i]]$test,digits),"   df = ",df,
+                "   p = ",round(1-pchisq(object$hypotheses[[i]]$test,df),digits),"\n", sep=""))
+            }
+        }
     invisible(object)
     }
 

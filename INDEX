@@ -3,7 +3,6 @@ Angell                  Moral Integration of American Cities
 Anova                   Anova Tables for Linear and Generalized Linear
                         Models
 Anscombe                U. S. State Public-School Expenditures
-Arrests                 Arrests for Marijuana Possession
 Ask                     Change Argument to a Function Interactively
 av.plots                Added-Variable Plots
 Baumann                 Methods of Teaching Reading Comprehension
@@ -32,7 +31,6 @@ Davis                   Self-Reports of Height and Weight
 DavisThin               Davis's Data on Drive for Thinness
 Duncan                  Duncan's Occupational Prestige Data
 durbin.watson           Durbin-Watson Test for Autocorrelated Errors
-effect                  Functions For Constructing Effect Plots
 Ellipses                Ellipses, Data Ellipses, and Confidence
                         Ellipses
 Ericksen                The 1980 U.S. Census Undercount
