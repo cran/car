@@ -17,11 +17,11 @@
 \usage{
 Var(object, ...)
 
-Var.default(object, diagonal=FALSE, ...)
+\method{Var}{default}(object, diagonal=FALSE, ...)
 
-Var.lm(object, diagonal=FALSE, ...)
+\method{Var}{lm}(object, diagonal=FALSE, ...)
 
-Var.glm(object, diagonal=FALSE, ...)
+\method{Var}{glm}(object, diagonal=FALSE, ...)
 }
 
 \arguments{

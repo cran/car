@@ -6,8 +6,8 @@
 \alias{term.names.default}
 \alias{predictor.names}
 \alias{predictor.names.default}
-\alias{response.name}
-\alias{response.name.default}
+\alias{responseName}
+\alias{responseName.default}
 \alias{response}
 \alias{response.default}
 \alias{is.aliased}
@@ -25,22 +25,22 @@ Internal functions for package car.
 
 \usage{
 df.terms(model, term, ...)
-df.terms.default(model, term, ...)
+\method{df.terms}{default}(model, term, ...)
 has.intercept(model, ...)
-has.intercept.default(model, ...)
+\method{has.intercept}{default}(model, ...)
 inv(x)
 is.aliased(model)
 mfrow(n, max.plots=0)
 nice(x, direction=c("round", "down", "up"))
 predictor.names(model, ...)
-predictor.names.default(model, ...)
+\method{predictor.names}{default}(model, ...)
 relatives(term, names, factors)
-response.name (model, ...) 
-response.name.default(model, ...)
+responseName(model, ...) 
+\method{responseName}{default}(model, ...)
 response(model, ...)
-response.default(model, ...)
+\method{response}{default}(model, ...)
 term.names(model, ...)
-term.names.default(model, ...)
+\method{term.names}{default}(model, ...)
 }
 
 \arguments{

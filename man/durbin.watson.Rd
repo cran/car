@@ -12,11 +12,11 @@
 \usage{
 durbin.watson(model, ...)
 
-durbin.watson.lm(model, max.lag=1, simulate=TRUE, reps=1000,
+\method{durbin.watson}{lm}(model, max.lag=1, simulate=TRUE, reps=1000,
     method=c("resample","normal"),
     alternative=c("two.sided", "positive", "negative"), ...)
 
-durbin.watson.default(model, max.lag=1, ...)
+\method{durbin.watson}{default}(model, max.lag=1, ...)
 
 \method{print}{durbin.watson}(x, ...)
 }

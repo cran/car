@@ -13,9 +13,9 @@
 
 scatterplot.matrix(x, ...)
 
-scatterplot.matrix.formula(formula, data=NULL, subset, ...)
+\method{scatterplot.matrix}{formula}(formula, data=NULL, subset, ...)
 
-scatterplot.matrix.default(x, labels=colnames(x), 
+\method{scatterplot.matrix}{default}(x, labels=colnames(x), 
     diagonal=c("density", "boxplot", "histogram", "qqplot", "none"), 
     adjust=1, nclass, plot.points=TRUE, smooth=TRUE, span=0.5, reg.line=lm, 
     transform=FALSE, ellipse=FALSE, levels=c(.5, .9), robust=FALSE,

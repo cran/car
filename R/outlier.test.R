@@ -1,6 +1,6 @@
 # Bonferroni test for an outlier (J. Fox)
 
-# last modified 9 Nov 02 by J. Fox
+# last modified 29 Jan 04 by J. Fox
 
 outlier.test<-function(model, ...){
     UseMethod("outlier.test")
@@ -45,12 +45,20 @@ outlier.test.glm<-function(model, labels=names(rstud), ...){
 
     
 print.outlier.test<-function(x, digits=options("digits")[[1]], ...){
-    # last modified 30 May 2003 by J. Fox
+    # last modified 29 Jan 2004 by J. Fox
     test<-signif(x$test, digits=digits)
-    cat(paste("\nmax|rstudent| = ", test[1], ", degrees of freedom = ", test[2],
-        ",\nunadjusted p = ", test[3], 
-        ", Bonferroni p", if (is.na(test[4])) " > 1" else paste(" =", test[4]), "\n",
-        sep=""))
+    if (length(test) == 4){
+        cat(paste("\nmax|rstudent| = ", test[1], ", degrees of freedom = ", test[2],
+            ",\nunadjusted p = ", test[3], 
+            ", Bonferroni p", if (is.na(test[4])) " > 1" else paste(" =", test[4]), "\n",
+            sep=""))
+        }
+    else {
+        cat(paste("\nmax|rstudent| = ", test[1],
+            ",\nunadjusted p = ", test[2], 
+            ", Bonferroni p", if (is.na(test[3])) " > 1" else paste(" =", test[3]), "\n",
+            sep=""))
+        }        
     if(length(x$obs)>1) cat("\nObservations:",x$obs,"\n")
       else cat("\nObservation:",x$obs,"\n")
     invisible(x)

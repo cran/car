@@ -17,20 +17,20 @@ spread.level.plot(x, ...)
 
 slp(x, ...)
 
-spread.level.plot.formula(formula, data=NULL, subset, na.action, 
-  main=paste("Spread-Level Plot for", varnames[response], "by", 
-  varnames[-response]), ...)
+\method{spread.level.plot}{formula}(formula, data=NULL, subset, na.action, 
+    main=paste("Spread-Level Plot for", varnames[response], 
+    "by", varnames[-response]), ...)
 
-spread.level.plot.default(x, by, 
-  robust.line=any("MASS" == .packages(all = TRUE)), 
-  start=0, xlab="Median", ylab="Hinge-Spread", las=par('las'),
+\method{spread.level.plot}{default}(x, by, 
+  robust.line=any("MASS"==.packages(all=TRUE)), 
+  start=0, xlab="Median", ylab="Hinge-Spread", las=par("las"),
   main=paste("Spread-Level Plot for", deparse(substitute(x)), 
-  "by", col=palette()[2], pch=1, lwd=2, ...)
+  "by", deparse(substitute(by))), col=palette()[2], pch=1, lwd=2, ...)
 
-spread.level.plot.lm(x, start=0, 
-  robust.line=any("MASS" == .packages(all = TRUE)), 
-  xlab="Fitted Values", ylab="Absolute Studentized Residuals", 
-  las=par("las"),
+\method{spread.level.plot}{lm}(x, start=0, 
+  robust.line=any("MASS"==.packages(all=TRUE)), 
+  xlab="Fitted Values",
+  ylab="Absolute Studentized Residuals", las=par("las"),
   main=paste("Spread-Level Plot for", deparse(substitute(x))),
   pch=1, col=palette()[2], lwd=2, ...)
   

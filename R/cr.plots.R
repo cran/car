@@ -1,6 +1,6 @@
 # Component + Residual Plots (J. Fox)
 
-# last modified 9 Nov 02 by J. Fox
+# last modified 31 Jan 04 by J. Fox
 
 crp<-function(...) cr.plots(...)
 
@@ -67,7 +67,7 @@ cr.plot.lm<-function(model, variable, order=1, line=TRUE, smooth=TRUE,
         partial.res<-residuals.glm(model,"partial")
         .x<-model.frame(model)[,var]
         boxplot(partial.res[,var]~.x, xlab=var,
-            ylab=paste("Component+Residual(", response.name(model),")", sep=""),
+            ylab=paste("Component+Residual(", responseName(model),")", sep=""),
             main=main)
         return(invisible())
         }
@@ -82,7 +82,7 @@ cr.plot.lm<-function(model, variable, order=1, line=TRUE, smooth=TRUE,
     if (order==1){          # handle first-order separately for efficiency
         partial.res<-residuals.glm(model,"partial")
         plot(.x, partial.res[,var], xlab=var, 
-            ylab=paste("Component+Residual(", response.name(model),")", sep=""),
+            ylab=paste("Component+Residual(", responseName(model),")", sep=""),
             las=las, col=col, pch=pch, main=main)
         if (line) abline(lm(partial.res[,var]~.x), lty=2, lwd=lwd, col=col)
         if (smooth) {
@@ -97,7 +97,7 @@ cr.plot.lm<-function(model, variable, order=1, line=TRUE, smooth=TRUE,
             partial.res<-residuals.glm(aug.model, "partial")
             last<-ncol(partial.res)
             plot(.x, partial.res[,last], xlab=var, 
-                ylab=paste("Component+Residual(", response.name(model),")", sep=""),
+                ylab=paste("Component+Residual(", responseName(model),")", sep=""),
                 las=las, col=col, pch=pch, main=main)
             if (line) abline(lm(partial.res[,last]~.x), lty=2, lwd=lwd, col=col)
             if (smooth) {

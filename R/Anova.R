@@ -1,6 +1,6 @@
 # Type II and III tests for linear and generalized linear models (J. Fox)
 
-# last modified 25 Apr 2002
+# last modified 31 Jan 04
 
 relatives<-function(term, names, factors){
     is.relative<-function(term1, term2) {
@@ -81,7 +81,7 @@ Anova.II.lm<-function(mod, error, ...){
     row.names(result)<-c(names,"Residuals")
     names(result)<-c("Sum Sq", "Df", "F value", "Pr(>F)")
     class(result)<-c("anova","data.frame")
-    attr(result,"heading")<-c("Anova Table (Type II tests)\n", paste("Response:", response.name(mod)))
+    attr(result,"heading")<-c("Anova Table (Type II tests)\n", paste("Response:", responseName(mod)))
     result
     }
 
@@ -130,7 +130,7 @@ Anova.III.lm<-function(mod, error, ...){
      row.names(result)<-Source
      names(result)<-c("Sum Sq", "Df", "F value", "Pr(>F)")
      class(result)<-c("anova","data.frame")
-     attr(result,"heading")<-c("Anova Table (Type III tests)\n", paste("Response:", response.name(mod)))
+     attr(result,"heading")<-c("Anova Table (Type III tests)\n", paste("Response:", responseName(mod)))
      result
      }
 
@@ -182,7 +182,7 @@ Anova.III.Wald.glm<-function(mod, ...){
      row.names(result)<-Source
      names(result)<-c("Wald Chisq","Df","Pr(>Chisq)")
      class(result)<-c("anova","data.frame")
-     attr(result,"heading")<-c("Anova Table (Type III tests)\n", paste("Response:", response.name(mod)))
+     attr(result,"heading")<-c("Anova Table (Type III tests)\n", paste("Response:", responseName(mod)))
      result
      }
      
@@ -208,7 +208,7 @@ Anova.III.LR.glm<-function(mod, ...){
      row.names(result)<-Source
      names(result)<-c("LR Chisq","Df","Pr(>Chisq)")
      class(result)<-c("anova","data.frame")
-     attr(result,"heading")<-c("Anova Table (Type III tests)\n", paste("Response:", response.name(mod)))
+     attr(result,"heading")<-c("Anova Table (Type III tests)\n", paste("Response:", responseName(mod)))
      result
      }
 
@@ -246,7 +246,7 @@ Anova.III.F.glm<-function(mod, error, error.estimate, ...){
      row.names(result)<-c(Source, "Residuals")
      names(result)<-c("SS", "Df", "F", "Pr(>F)")
      class(result)<-c("anova","data.frame")
-     attr(result,"heading")<-c("Anova Table (Type III tests)\n", paste("Response:", response.name(mod)))
+     attr(result,"heading")<-c("Anova Table (Type III tests)\n", paste("Response:", responseName(mod)))
      result
      }
      
@@ -291,7 +291,7 @@ Anova.II.Wald.glm<-function(mod, ...){
     row.names(result)<-names
     names(result)<-c("Wald Chisq","Df","Pr(>Chisq)")
     class(result)<-c("anova","data.frame")
-    attr(result,"heading")<-c("Anova Table (Type II tests)\n", paste("Response:", response.name(mod)))
+    attr(result,"heading")<-c("Anova Table (Type II tests)\n", paste("Response:", responseName(mod)))
     result
     }
 
@@ -336,7 +336,7 @@ Anova.II.LR.glm <- function(mod, ...){
      names(result) <- c("LR Chisq", "Df", "Pr(>Chisq)")
      class(result) <- c("anova", "data.frame")
      attr(result,"heading") <- 
-        c("Anova Table (Type II tests)\n", paste("Response:", response.name(mod)))
+        c("Anova Table (Type II tests)\n", paste("Response:", responseName(mod)))
      result
      }
 
@@ -394,6 +394,6 @@ Anova.II.F.glm <- function(mod, error, error.estimate, ...){
      names(result) <- c("SS","Df","F","Pr(>F)")
      class(result) <- c("anova","data.frame")
      attr(result,"heading") <- c("Anova Table (Type II tests)\n", 
-        paste("Response:", response.name(mod)))
+        paste("Response:", responseName(mod)))
      result
      }

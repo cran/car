@@ -13,9 +13,9 @@
 \usage{
 ncv.test(model, ...)
 
-ncv.test.lm(model, var.formula, data=NULL, subset, na.action, ...)
+\method{ncv.test}{lm}(model, var.formula, data=NULL, subset, na.action, ...)
 
-ncv.test.glm(model, ...)
+\method{ncv.test}{glm}(model, ...)
 }
 
 \arguments{

@@ -1,7 +1,7 @@
 
 # Utility functions (J. Fox)
 
-    # last modified 9 Nov 02 by J. Fox
+    # last modified 31 Jan 04 by J. Fox
 
 inv<-function(x) solve(x)
 
@@ -37,11 +37,11 @@ predictor.names.default<-function(model, ...){
 
 
 
-response.name<-function (model, ...) {
-    UseMethod("response.name")
+responseName<-function (model, ...) {
+    UseMethod("responseName")
     }
 
-response.name.default<-function (model, ...) deparse(attr(terms(model), "variables")[[2]])
+responseName.default<-function (model, ...) deparse(attr(terms(model), "variables")[[2]])
 
 response<-function(model, ...) {
     UseMethod("response")

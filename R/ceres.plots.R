@@ -1,6 +1,6 @@
 # CERES plots (J. Fox)
 
-# last modified 2 Nov 02 by J. Fox
+# last modified 31 Jan 04 by J. Fox
 
 ceres.plots<-function(model, variable, ask=missing(variable), one.page=!ask, span=.5, ...){
     # last modified 2 Aug 2001 by J. Fox
@@ -129,7 +129,7 @@ ceres.plot.lm<-function(model, variable, line=TRUE, smooth=TRUE, span=.5, iter,
     partial.res<-residuals.glm(aug.model, "partial")[,var] +
         aug.mod.mat[,posn] %*% as.matrix(coef[posn])
     plot(mod.mat[,var], partial.res, xlab=var, col=col, pch=pch,
-        ylab=paste("CERES Residual(",response.name(model),")", sep=""),
+        ylab=paste("CERES Residual(",responseName(model),")", sep=""),
         main=main, las=las)
     if (line) abline(lm(partial.res~mod.mat[,var]), lty=2, lwd=lwd, col=col)
     if (smooth) {

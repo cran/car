@@ -12,9 +12,9 @@
 \usage{
 hccm(model, ...)
 
-hccm.lm(model, type=c("hc3", "hc0", "hc1", "hc2", "hc4"), ...)
+\method{hccm}{lm}(model, type=c("hc3", "hc0", "hc1", "hc2", "hc4"), ...)
 
-hccm.default(model, ...)
+\method{hccm}{default}(model, ...)
 }
 
 \arguments{

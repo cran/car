@@ -10,7 +10,7 @@
 \usage{
 subsets(object, ...)
 
-subsets.regsubsets(object, 
+\method{subsets}{regsubsets}(object, 
     names=abbreviate(object$xnames, minlength = abbrev), 
     abbrev=1, min.size=1, max.size=length(names), legend, 
     statistic=c("bic", "cp", "adjr2", "rsq", "rss"), 
