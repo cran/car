@@ -1,0 +1,114 @@
+\name{spread.level.plot}
+\alias{spread.level.plot}
+\alias{slp}
+\alias{spread.level.plot.formula}
+\alias{spread.level.plot.default}
+\alias{spread.level.plot.lm}
+
+\title{Spread-Level Plots}
+\description{
+  Creates plots for examining the possible dependence of
+  spread on level, or an extension of these plots to the studentized residuals
+  from linear models.
+}
+\usage{
+spread.level.plot(x, ...)
+
+slp(x, ...)
+
+spread.level.plot.formula(formula, data=NULL, subset, na.action, 
+  main=paste("Spread-Level Plot for", varnames[response], "by", 
+  varnames[-response]), ...)
+
+spread.level.plot.default(x, by, 
+  robust.line=any("MASS" == .packages(all = T)), 
+  start=0, xlab="Median", ylab="Hinge-Spread", las=1,
+  main=paste("Spread-Level Plot for", deparse(substitute(x)), 
+  "by", col=palette()[2], pch=1, lwd=2, ...)
+
+spread.level.plot.lm(x, start=0, 
+  robust.line=any("MASS" == .packages(all = T)), 
+  xlab="Fitted Values", ylab="Absolute Studentized Residuals", las
+  main=paste("Spread-Level Plot for", deparse(substitute(x))),
+  pch=1, col=palette()[2], lwd=2, ...)
+}
+
+\arguments{
+  \item{x}{a formula or an \code{lm} object to be plotted; alternatively a numeric vector.}
+  \item{formula}{a formula of the form \code{y~x}, where \code{y} is a numeric vector
+    and \code{x} is a factor.}
+  \item{data}{an optional data frame containing the variables to be plotted. 
+    By default the variables are taken from the environment from which 
+    \code{spread.level.plot} is called.}
+  \item{subset}{an optional vector specifying a subset of observations to be used.}
+  \item{na.action}{a function that indicates what should happen when the data contain \code{NA}s. 
+    The default is set by the \code{na.action} setting of \code{options}.}
+  \item{by}{a factor, numeric or character vector defining groups.}
+  \item{robust.line}{if \code{TRUE} a robust line is fit using the \code{rlm} function in
+    the \code{MASS} package; if \code{FALSE} a line is fit using \code{lm}.}
+  \item{start}{add the constant \code{start} to each data value.}
+  \item{main}{title for the plot.}
+  \item{xlab}{label for horizontal axis.}
+  \item{ylab}{label for vertical axis.}
+  \item{las}{if \code{0}, ticks labels are drawn parallel to the
+    axis; set to \code{1} (the default) for horizontal labels (see \code{\link[base]{par}}).}
+  \item{col}{color for points and lines; the default is the \emph{second} entry
+    in the current color palette (see \code{\link[base]{palette}}
+    and \code{\link[base]{par}}).}
+  \item{pch}{plotting character for points; default is \code{1} 
+    (a circle, see \code{\link[base]{par}}).}
+  \item{lwd}{line width; default is \code{2} (see \code{\link[base]{par}}).}
+  \item{\dots}{arguments passed to plotting functions.}
+}
+\details{
+  Except for linear models, computes the statistics for, and plots, a Tukey spread-level plot
+  of log(hinge-spread) vs. log(median) for the groups; fits a line to the plot; and calculates a
+  spread-stabilizing transformation from the slope of the line. 
+  
+  For linear models, plots log(abs(studentized residuals) vs. log(fitted values).
+  
+  The function \code{slp} is an abbreviation for \code{spread.level.plot}.
+}
+\value{
+  A list containing:
+  \item{Statistics}{a matrix with the lower-hinge, median, upper-hinge, and hinge-spread
+    for each group. (Not for an \code{lm} object.)}
+  \item{PowerTransformation}{spread-stabilizing power transformation, calculated as 1 -- slope
+    of the line fit to the plot.}
+}
+\references{ 
+  Fox, J. (1997)
+  \emph{Applied Regression, Linear Models, and Related Methods.} Sage.
+  
+  Hoaglin, D. C., Mosteller, F. and Tukey, J. W. (Eds.) (1983)
+  \emph{Understanding Robust and Exploratory Data Analysis.} Wiley.
+}
+\author{John Fox \email{jfox@mcmaster.ca}}
+
+\seealso{\code{\link{hccm}}, \code{\link{ncv.test}} }
+
+\examples{
+data(Ornstein)
+attach(Ornstein)
+spread.level.plot(interlocks+1~nation)
+## $Statistics
+##     LowerHinge Median UpperHinge Hinge-Spread
+## US           2    6.0         13           11
+## UK           4    9.0         14           10
+## CAN          6   13.0         30           24
+## OTH          4   15.5         24           20
+## 
+## $PowerTransformation
+## [1] 0.1534487
+mod<-lm(interlocks ~ assets + sector + nation)
+slp(mod)
+## $PowerTransformation
+## [1] 0.3724010
+## 
+## Warning message: 
+## Start =  3 added to fitted values to avoid 0 or negative values. 
+## in: spread.level.plot.lm(x, ...) 
+}
+
+\keyword{hplot}
+\keyword{regression}

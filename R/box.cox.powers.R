@@ -1,0 +1,74 @@
+# multivariate unconditional Box-Cox transformations (J. Fox)
+
+# last modified 24 April 2001 by J. Fox
+# with bug fixes by S. Weisberg
+
+box.cox.powers<-function(X, start=NULL, ...){
+    modified.power<-function(x, lambda, gm){
+        if (lambda == 0) log(x)*gm
+        else (gm^(1-lambda))*((x^lambda)-1)/lambda
+        }
+    neg.kernel.profile.logL<-function(X, lambda, gm){
+        for (j in 1:ncol(X)){
+            X[,j]<-modified.power(X[,j],lambda[j],gm[j])
+            }
+        (nrow(X)/2)*log(((nrow(X)-1)/nrow(X))*det(var(X)))
+        }
+    univ.neg.kernel.logL <- function(x, lambda, gm){
+        x <- modified.power(x, lambda, gm)
+        (length(x)/2)*log(((length(x)-1)/length(x))*var(x))
+        }
+    X<-as.matrix(X)
+    if(any(X<=0)) stop("All values must be > 0")
+    gm<-apply(X, 2, function(x) exp(mean(log(x))))
+    if (is.null(start)) {
+        start <- rep(1, ncol(X))
+        for (j in 1:ncol(X)){
+            res<- optimize(
+                f = function(lambda) univ.neg.kernel.logL(x=X[,j], lambda=lambda, gm=gm[j]),
+                lower=-50, upper=+50)
+            start[j] <- res$minimum
+            }
+        }
+    res<-optim(start, neg.kernel.profile.logL, hessian=T, method="L-BFGS-B", X=X, gm=gm, ...)
+    result<-list()
+    result$start<-start
+    result$criterion<-res$value
+    result$names<-colnames(X)
+    result$lambda<-res$par
+    result$stderr<-diag(sqrt(inv(res$hessian)))
+    result$LR0<-2*(neg.kernel.profile.logL(X,rep(0,ncol(X)),gm)-res$value)
+    result$LR1<-2*(neg.kernel.profile.logL(X,rep(1,ncol(X)),gm)-res$value)
+    result$return.code<-res$convergence
+    if(result$return.code != 0) 
+        warning(cat("Convergence failure: return code =",
+            result$return.code))
+    class(result)<-"box.cox.powers"
+    result
+    }
+      
+summary.box.cox.powers<-function(object, round=4){
+    one<-1==length(object$lambda)
+    cat(paste("Box-Cox", (if(one) "Transformation to Normality" else "Transformations to Multinormality"),"\n\n"))
+    lambda<-object$lambda
+    stderr<-object$stderr
+    df<-length(lambda)
+    result<-cbind(lambda,stderr,lambda/stderr,(lambda-1)/stderr)
+    rownames(result)<-object$names
+    colnames(result)<-c("Est.Power","Std.Err.",
+        "Wald(Power=0)","Wald(Power=1)")
+    if (one)rownames(result)<-""
+    print(round(result,round))
+    cat(paste("\nL.R. test,", (if(one) "power" else "all powers"), "= 0: ",round(object$LR0,round),"  df =",df,
+        "  p =",round(1-pchisq(object$LR0,df),round)))
+    cat(paste("\nL.R. test,", (if(one) "power" else "all powers"), "= 1: ",round(object$LR1,round),"  df =",df,
+        "  p =",round(1-pchisq(object$LR1,df),round),"\n"))
+    invisible(object)
+    }
+
+print.box.cox.powers <- function(x){
+    lambda <- x$lambda
+    names(lambda) <- x$names
+    print(lambda)
+    invisible(x)
+    }

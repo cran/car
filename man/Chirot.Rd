@@ -1,0 +1,50 @@
+\name{Chirot}
+\alias{Chirot}
+\non_function{}
+
+\title{The 1907 Romanian Peasant Rebellion}
+
+\description{
+The \code{Chirot} data frame has 32 rows and 5 columns.
+The observations are counties in Romania.
+
+}
+
+\format{
+ This data frame contains the following columns:
+ \describe{
+   \item{intensity}{
+     Intensity of the rebellion
+     }
+   \item{commerce}{
+     Commercialization of agriculture
+     }
+   \item{tradition}{
+     Traditionalism
+     }
+   \item{midpeasant}{
+     Strength of middle peasantry
+     }
+   \item{inequality}{
+     Inequality of land tenure
+     }
+   }
+ }
+
+\source{
+ Chirot, D. and C. Ragin (1975)
+ The market, tradition and peasant rebellion: The case of Romania.
+ \emph{American Sociological Review} \bold{40}, 428--444 [Table 1].
+}
+
+\references{
+  Fox, J. (1997)
+  \emph{Applied Regression, Linear Models, and Related Methods.} Sage.
+}
+
+
+\usage{
+data(Chirot)
+}
+
+\keyword{datasets}
