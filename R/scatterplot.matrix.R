@@ -1,6 +1,6 @@
 # fancy scatterplot matrices (J. Fox)
 
-# last modified: 2 Dec 03 by J. Fox
+# last modified: 30 Apr 04 by J. Fox
 
 scatterplot.matrix<-function(x, ...){
     UseMethod("scatterplot.matrix")
@@ -41,7 +41,7 @@ scatterplot.matrix.default<-function(x, labels=colnames(x),
     groups=FALSE, by.groups=FALSE,
     col=palette(), pch=1:n.groups, lwd=1,
     legend.plot=length(levels(groups)) > 1, ...){
-    # last modified 1 May 2003 by J. Fox
+    # last modified 30 Apr 2004 by J. Fox
     if (groups[1] != FALSE){
         x<-na.omit(cbind(as.data.frame(groups),x))
         groups<-as.factor(as.character(x[,1]))
@@ -105,7 +105,7 @@ scatterplot.matrix.default<-function(x, labels=colnames(x),
                 if (ellipse) data.ellipse(x, y, plot.points=FALSE, levels=levels, col=col[1],
                     robust=robust, lwd=1)
                 }
-            }
+            }, ...
         )
     if(legend.plot) {
         frac<-1/ncol(x)

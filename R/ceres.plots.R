@@ -1,6 +1,6 @@
 # CERES plots (J. Fox)
 
-# last modified 31 Jan 04 by J. Fox
+# last modified 27 Apr 04 by J. Fox
 
 ceres.plots<-function(model, variable, ask=missing(variable), one.page=!ask, span=.5, ...){
     # last modified 2 Aug 2001 by J. Fox
@@ -54,7 +54,7 @@ ceres.plot<-function (model, ...) {
 ceres.plot.lm<-function(model, variable, line=TRUE, smooth=TRUE, span=.5, iter, 
     las=par("las"), col=palette()[2], pch=1, lwd=2, main="Ceres Plot", ...){
     # the lm method works with glm's too
-    # last modified 2 Nov 2002 by J. Fox
+    # last modified 27 Apr 2004 by J. Fox
     expand.model.frame <- function (model, extras, envir = environment(formula(model)),
         na.expand = FALSE){  # modified version of R base function
         f <- formula(model)
@@ -93,7 +93,6 @@ ceres.plot.lm<-function(model, variable, line=TRUE, smooth=TRUE, span=.5, iter,
                 0
                 else 3
             }    # use nonrobust smooth for non-gaussian glm
-    require(modreg)
     var<-if (is.character(variable) & 1==length(variable)) variable
         else deparse(substitute(variable))
     mod.mat<-model.matrix(model)
@@ -121,7 +120,7 @@ ceres.plot.lm<-function(model, variable, line=TRUE, smooth=TRUE, span=.5, iter,
     mf<-na.omit(expand.model.frame(model, all.vars(formula(model))))
     rownames(.x)<-all.obs
     mf$.x<-.x[obs,]
-    aug.model <- update(model, . ~ . + .x, data=mf)
+    aug.model <- update(model, . ~ . + .x, data=mf, subset=NULL)
     aug.mod.mat<-model.matrix(aug.model)
     coef<-coefficients(aug.model)
     k<-length(coef)

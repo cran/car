@@ -38,7 +38,7 @@ recode(var, recodes, as.factor.result)
 }
 
 \value{
-  a recoded vector of the same length as \code{var}; if \code{va}r is a factor,
+  a recoded vector of the same length as \code{var}; if \code{var} is a factor,
   then so is the result.
 }
  

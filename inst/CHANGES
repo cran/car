@@ -94,4 +94,20 @@ Changes to Version 1.0-11
     
     o Fix to print method for outlier.test.
     
+Changes to Version 1.0-12
+
+    o Small fix to box.cox.powers to avoid inconsequential warnings.
+    
+    o Removed dependency on now nonexistent modreg package.
+    
+    o Moved levene.test and influence.plot functions to car from the Rcmdr package.
+    
+    o box.cox now reports an error when it cannot compute an automatic start.
+    
+    o Fixed bug in ceres.plot.lm that caused an error when the subset argument was used to exclude observations in fitting the model.
+    
+    o Changed ncv.test to allow weighted lm object (suggested by Sandy Weisberg).
+    
+    o scatterplot.matrix now passes ... argument to pairs (also suggested by Sandy Weisberg).
+    
     

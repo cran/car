@@ -19,7 +19,7 @@ ncv.test(model, ...)
 }
 
 \arguments{
-  \item{model}{an unweighted linear model, produced by \code{lm}.}
+  \item{model}{a weighted or unweighted linear model, produced by \code{lm}.}
   \item{var.formula}{a one-sided formula for the error variance; if omitted,
     the error variance depends on the fitted values.}
   \item{data}{an optional data frame containing the variables in the model. 

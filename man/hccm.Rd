@@ -21,7 +21,7 @@ hccm(model, ...)
   \item{model}{an unweighted linear model, produced by \code{lm}.}
   \item{type}{one of \code{"hc0"}, \code{"hc1"}, \code{"hc2"}, \code{"hc3"}, or \code{"hc4"}; the
     first of these gives the classic White correction. The \code{"hc1"}, \code{"hc2"}, and \code{"hc3"}
-    corrections are described in Long and Ervin (2000); \code{"hc4"} is described in Cribari-Neto (in press).}
+    corrections are described in Long and Ervin (2000); \code{"hc4"} is described in Cribari-Neto (2004).}
   \item{...}{arguments to pass to \code{hccm.lm}.}
 }
 
@@ -37,9 +37,9 @@ hccm(model, ...)
   The heteroscedasticity-corrected covariance matrix for the model.
 }
 \references{
-  Cribari-Neto, F. (in press)
+  Cribari-Neto, F. (2004)
   Asymptotic inference under heteroskedasticity of unknown form.
-  \emph{Computational Statistics and Data Analysis}.
+  \emph{Computational Statistics and Data Analysis} \bold{45}, 215--233.
   
   Long, J. S. and Ervin, L. H. (2000) 
   Using heteroscedasity consistent standard errors in the linear regression model. 

@@ -1,6 +1,6 @@
 # multivariate unconditional Box-Cox transformations (J. Fox)
 
-# last modified 15 April 03 by J. Fox
+# last modified 27 April 04 by J. Fox
 # (with bug fixes by S. Weisberg)
 
 box.cox.powers<-function(X, start=NULL, hypotheses=NULL, ...){
@@ -37,7 +37,7 @@ box.cox.powers<-function(X, start=NULL, hypotheses=NULL, ...){
     result$criterion<-res$value
     result$names<-colnames(X)
     result$lambda<-res$par
-    result$stderr<-diag(sqrt(inv(res$hessian)))
+    result$stderr<-sqrt(diag(inv(res$hessian)))
     result$LR0<-2*(neg.kernel.profile.logL(X,rep(0,nc),gm)-res$value)
     result$LR1<-2*(neg.kernel.profile.logL(X,rep(1,nc),gm)-res$value)
     if (!is.null(hypotheses)) {
