@@ -1,6 +1,6 @@
 # multivariate unconditional Box-Cox transformations (J. Fox)
 
-# last modified 27 April 04 by J. Fox
+# last modified 4 June 04 by J. Fox
 # (with bug fixes by S. Weisberg)
 
 box.cox.powers<-function(X, start=NULL, hypotheses=NULL, ...){
@@ -57,6 +57,35 @@ box.cox.powers<-function(X, start=NULL, hypotheses=NULL, ...){
     result
     }
       
+print.box.cox.powers<-function(x, digits=4, ...){
+    one<-1==length(x$lambda)
+    cat(paste("Box-Cox", (if(one) "Transformation to Normality" else "Transformations to Multinormality"),"\n\n"))
+    lambda<-x$lambda
+    stderr<-x$stderr
+    df<-length(lambda)
+    result<-cbind(lambda,stderr,lambda/stderr,(lambda-1)/stderr)
+    rownames(result)<-x$names
+    colnames(result)<-c("Est.Power","Std.Err.",
+        "Wald(Power=0)","Wald(Power=1)")
+    if (one)rownames(result)<-""
+    print(round(result,digits))
+    cat(paste("\nL.R. test,", (if(one) "power" else "all powers"), "= 0: ",round(x$LR0,digits),"  df =",df,
+        "  p =",round(1-pchisq(x$LR0,df),digits)))
+    cat(paste("\nL.R. test,", (if(one) "power" else "all powers"), "= 1: ",round(x$LR1,digits),"  df =",df,
+        "  p =",round(1-pchisq(x$LR1,df),digits),"\n"))
+    if (!is.null(x$hypotheses)) {
+        for (i in 1:length(x$hypotheses)){
+            cat(paste("L.R. test, ", (if(one) "power " else "powers "), "= ", 
+                paste(x$hypotheses[[i]]$hypothesis,collapse=" "),
+                ":  ", round(x$hypotheses[[i]]$test,digits),"   df = ",df,
+                "   p = ",round(1-pchisq(x$hypotheses[[i]]$test,df),digits),"\n", sep=""))
+            }
+        }
+    invisible(x)
+    }
+
+# summary method retained for backwards compatibility: now identical to print method
+
 summary.box.cox.powers<-function(object, digits=4, ...){
     one<-1==length(object$lambda)
     cat(paste("Box-Cox", (if(one) "Transformation to Normality" else "Transformations to Multinormality"),"\n\n"))
@@ -82,11 +111,4 @@ summary.box.cox.powers<-function(object, digits=4, ...){
             }
         }
     invisible(object)
-    }
-
-print.box.cox.powers <- function(x, ...){
-    lambda <- x$lambda
-    names(lambda) <- x$names
-    print(lambda)
-    invisible(x)
     }
