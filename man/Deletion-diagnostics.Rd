@@ -33,33 +33,33 @@
 
 rstudent(model, ...)
 
-rstudent.lm(model, infl=influence(model), names=infl$names)
+rstudent.lm(model, infl=influence(model), names=infl$names, ...)
 
-rstudent.glm(model, infl=influence(model), names=infl$names)
+rstudent.glm(model, infl=influence(model), names=infl$names, ...)
 
 hatvalues(model, ...)
 
-hatvalues.lm(model, infl=influence(model), names=infl$names)
+hatvalues.lm(model, infl=influence(model), names=infl$names, ...)
 
 cookd(model, ...)
 
-cookd.lm(model, infl=influence(model), sumry=summary(model), names=infl$names)
+cookd.lm(model, infl=influence(model), sumry=summary(model), names=infl$names, ...)
 
-cookd.glm(model, infl=influence(model), sumry=summary(model), names=infl$names)
+cookd.glm(model, infl=influence(model), sumry=summary(model), names=infl$names, ...)
 
 dfbeta(model, ...)
 
-dfbeta.lm(model, infl=influence(model), names=infl$names)
+dfbeta.lm(model, infl=influence(model), names=infl$names, ...)
 
 dfbetas(model, ...)
 
-dfbetas.lm(model, infl=influence(model), sumry=summary(model), names=infl$names)
+dfbetas.lm(model, infl=influence(model), sumry=summary(model), names=infl$names, ...)
 
 influence(model, ...)
 
-influence.lm(model)
+influence.lm(model, do.coef=TRUE, ...)
 
-influence.glm(model)
+influence.glm(model, do.coef=TRUE, ...)
 
 }
 
@@ -68,6 +68,7 @@ influence.glm(model)
   \item{infl}{optionally, an influence-object precomputed for the \code{model} by \code{influence}.}
   \item{sumry}{optionally, a summary-object precomputed for the \code{model} by \code{summary}.}
   \item{names}{optionally, a vector of observation names.}
+  \item{do.coef}{compute and return dfbeta values.} 
   \item{...}{arguments to be passed down from generic functions to method functions.}
 }
 

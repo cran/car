@@ -1,6 +1,6 @@
 # Linear hypothesis tests for lm and glm (J. Fox)
 
-# last modified 2 April 02
+# last modified 9 Nov 02
 
 lht<-function(...) linear.hypothesis(...)
 
@@ -10,7 +10,7 @@ linear.hypothesis<-function (model, ...) {
     
 linear.hypothesis.lm<-function(model, hypothesis.matrix, rhs=0, 
         summary.model=summary(model, corr = FALSE),
-        white.adjust=FALSE, error.SS, error.df) {
+        white.adjust=FALSE, error.SS, error.df, ...) {
     # last modified by J.Fox 13 Dec 2000
     if (is.aliased(model)) stop ("One or more terms aliased in model.")
     s2<-if (missing(error.SS)) summary.model$sigma^2
@@ -32,7 +32,7 @@ linear.hypothesis.lm<-function(model, hypothesis.matrix, rhs=0,
     }
 
 linear.hypothesis.glm<-function(model, hypothesis.matrix, rhs=0, 
-        summary.model=summary(model, corr = FALSE)) {
+        summary.model=summary(model, corr = FALSE), ...) {
     # last modified by J.Fox 13 Dec 2000
     if (is.aliased(model)) stop ("One or more terms aliased in model.")
     V<-summary.model$dispersion*summary.model$cov.unscaled

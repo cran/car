@@ -1,6 +1,6 @@
 # Component + Residual Plots (J. Fox)
 
-# last modified 2 April 02 by J. Fox
+# last modified 9 Nov 02 by J. Fox
 
 crp<-function(...) cr.plots(...)
 
@@ -51,7 +51,7 @@ cr.plot<-function (model, ...) {
 
 cr.plot.lm<-function(model, variable, order=1, line=TRUE, smooth=TRUE,
     iter, span=.5, las=par("las"), col=palette()[2], pch=1, lwd=2,
-    main="Component+Residual Plot") {
+    main="Component+Residual Plot", ...) {
     # last modified 20 Feb 2002 by J. Fox
     # method also works for glm objects
     if(!is.null(class(model$na.action)) && 

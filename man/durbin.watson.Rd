@@ -14,15 +14,15 @@ durbin.watson(model, ...)
 
 durbin.watson.lm(model, max.lag=1, simulate=TRUE, reps=1000,
     method=c("resample","normal"),
-    alternative=c("two.sided", "positive", "negative"))
+    alternative=c("two.sided", "positive", "negative"), ...)
 
-durbin.watson.default(residuals, max.lag=1)
+durbin.watson.default(model, max.lag=1, ...)
 
 \method{print}{durbin.watson}(x, ...)
 }
 
 \arguments{
-  \item{model}{a linear-model object.}
+  \item{model}{a linear-model object, or a vector of residuals from a linear model.}
   \item{max.lag}{maximum lag to which to compute residual autocorrelations
     and Durbin-Watson statistics.}
   \item{simulate}{if \code{TRUE} p-values will be estimated by bootstrapping.}
@@ -33,7 +33,6 @@ durbin.watson.default(residuals, max.lag=1)
   \item{alternative}{sign of autocorrelation in alternative hypothesis; specify
     only if \code{max.lag = 1}; if \code{max.lag > 1}, then \code{alternative} is
     taken to be \code{"two.sided"}.}
-  \item{residuals}{vector of residuals from a linear model.}
   \item{\dots}{arguments to be passed down to method functions.}
   \item{x}{\code{durbin.watson} object.}
 }

@@ -19,9 +19,9 @@ Var(object, ...)
 
 Var.default(object, diagonal=FALSE, ...)
 
-Var.lm(object, diagonal=FALSE)
+Var.lm(object, diagonal=FALSE, ...)
 
-Var.glm(object, diagonal=FALSE)
+Var.glm(object, diagonal=FALSE, ...)
 }
 
 \arguments{

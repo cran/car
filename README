@@ -15,3 +15,29 @@ Changes to Version 1.0-1
    o Added reset.par argument to scatterplot.default to allow addition of graphical elements to the plot.
    
    o The generic function Var and its methods are deprecated, in favour of vcov, now in the base package.
+   
+Changes to Version 1.0-2
+
+    o The fitted line can be suppressed in qq.plot.
+    
+    o ceres.plots can now handle models that include transformed predictors -- e.g., log(x), I(x^2).
+    
+    o Fixed bug in Anova which caused it to fail calculating type-II F or LR tests for glms in certain circumstances. (Bug introduced in version 1.0-1.)
+
+    o Made arguments of method functions consistent with generics (mostly adding ... to methods).
+    
+    o Fixed a bug in plot.effect which caused nonalphabetical orderings of factor levels to be lost; added arguments cex, xlim, and ylim to plot.effect.
+    
+    o Modified effect to permit computing effects for terms not in the model or with higher-order relatives in the model.
+    
+    o Added functions contr.Treatment, contr.Sum, and contr.Helmert; see help(Contrasts).
+    
+    o Added Burt.txt data set (to go with Burt.Rd documentation file already there).
+    
+    o Added Arrests.txt data set.
+    
+    o Fixed an error in hccm.lm which produced incorrect values for the "hc1", "hc2", and "hc3" corrections; added "hc4" correction.
+    
+    o Modified influence.glm to handle 0 prior weights; changes to influence.lm and influence.glm to insure compatibility with R 1.7.0.
+    
+    o removed quietly=TRUE from several calls to require(), to avoid invisibly altering the search path.

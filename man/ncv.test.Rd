@@ -13,7 +13,7 @@
 \usage{
 ncv.test(model, ...)
 
-ncv.test.lm(model, var.formula, data=NULL, subset, na.action)
+ncv.test.lm(model, var.formula, data=NULL, subset, na.action, ...)
 
 ncv.test.glm(model, ...)
 }
@@ -28,7 +28,7 @@ ncv.test.glm(model, ...)
   \item{subset}{an optional vector specifying a subset of observations to be used.}
   \item{na.action}{a function that indicates what should happen when the data contain \code{NA}s. 
     The default is set by the \code{na.action} setting of \code{options}.}
-  \item{\dots}{not for the user.}
+  \item{\dots}{arguments passed down to methods functions.}
 }
 \details{
   This test is often called the Breusch-Pagan test; it was independently

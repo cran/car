@@ -1,6 +1,6 @@
 # Type II and III tests for linear and generalized linear models (J. Fox)
 
-# last modified 20 Aug 02
+# last modified 9 Nov 2002
 
 relatives<-function(term, names, factors){
     is.relative<-function(term1, term2) {
@@ -137,7 +137,7 @@ Anova.III.lm<-function(mod, error, ...){
     # generalized linear models
     
 Anova.glm<-function(mod, type=c("II","III"), test.statistic=c("LR", "Wald", "F"), 
-    error, error.estimate=c("pearson", "dispersion", "deviance")){
+    error, error.estimate=c("pearson", "dispersion", "deviance"), ...){
     #last modified by J. Fox 15 Feb 2001
     type<-match.arg(type)
     test.statistic<-match.arg(test.statistic)
@@ -158,7 +158,7 @@ Anova.glm<-function(mod, type=c("II","III"), test.statistic=c("LR", "Wald", "F")
         
             # Wald test
         
-Anova.III.Wald.glm<-function(mod){
+Anova.III.Wald.glm<-function(mod, ...){
     # last modified by J.Fox 11 Dec 2000
     intercept<-has.intercept(mod)
     p<-length(coefficients(mod))
@@ -188,7 +188,7 @@ Anova.III.Wald.glm<-function(mod){
      
             # LR test
 
-Anova.III.LR.glm<-function(mod){
+Anova.III.LR.glm<-function(mod, ...){
     Source<-if (has.intercept(mod)) term.names(mod)[-1]
         else term.names(mod)
     n.terms<-length(Source)
@@ -214,7 +214,7 @@ Anova.III.LR.glm<-function(mod){
 
             # F test
 
-Anova.III.F.glm<-function(mod, error, error.estimate){
+Anova.III.F.glm<-function(mod, error, error.estimate, ...){
     # last modified by J. Fox 30 Jan 2001
     if (missing(error)) error<-mod
     df.res <- df.residual(error)
@@ -251,7 +251,7 @@ Anova.III.F.glm<-function(mod, error, error.estimate){
         
             # Wald test
         
-Anova.II.Wald.glm<-function(mod){
+Anova.II.Wald.glm<-function(mod, ...){
     # last modified by J.Fox 11 Dec 2000
     chisq.term<-function(term){
         which.term<-which(term==names)
@@ -294,8 +294,8 @@ Anova.II.Wald.glm<-function(mod){
 
             # LR test
             
-Anova.II.LR.glm <- function(mod){
-    # last modified 16 Aug 2002 by J. Fox
+Anova.II.LR.glm <- function(mod, ...){
+    # last modified 5 Nov 2002 by J. Fox
     # (some code adapted from drop1.glm)
     which.nms <- function(name) which(asgn == which(names == name))
     fac <- attr(mod$terms, "factors")
@@ -314,13 +314,13 @@ Anova.II.LR.glm <- function(mod){
     dispersion <- summary(mod, corr = FALSE)$dispersion
     for (term in 1:n.terms){
         rels <- names[relatives(names[term], names, fac)]
-        exclude.1 <- as.vector(sapply(c(names[term], rels), which.nms))
+        exclude.1 <- as.vector(unlist(sapply(c(names[term], rels), which.nms)))
         mod.1 <- glm.fit(X[, -exclude.1, drop = FALSE], y, wt, offset = mod$offset, 
             family = mod$family, control = mod$control)
         dev.1 <- deviance(mod.1)
         mod.2 <- if (length(rels) == 0) mod
             else {
-                exclude.2 <- as.vector(sapply(rels, which.nms))
+                exclude.2 <- as.vector(unlist(sapply(rels, which.nms)))
                 glm.fit(X[, -exclude.2, drop = FALSE], y, wt, offset = mod$offset, 
                     family = mod$family, control = mod$control)
                 }
@@ -340,8 +340,8 @@ Anova.II.LR.glm <- function(mod){
 
             # F test
             
-Anova.II.F.glm <- function(mod, error, error.estimate){
-    # last modified 16 Aug 2002 by J. Fox
+Anova.II.F.glm <- function(mod, error, error.estimate, ...){
+    # last modified 5 Nov 2002 by J. Fox
     # (some code adapted from drop1.glm)
     which.nms <- function(name) which(asgn == which(names == name))
     if (missing(error)) error <- mod
@@ -368,13 +368,13 @@ Anova.II.F.glm <- function(mod, error, error.estimate){
     df <- c(df.terms(mod), df.res)
     for (term in 1:n.terms){
         rels <- names[relatives(names[term], names, fac)]
-        exclude.1 <- as.vector(sapply(c(names[term], rels), which.nms))
+        exclude.1 <- as.vector(unlist(sapply(c(names[term], rels), which.nms)))
         mod.1 <- glm.fit(X[, -exclude.1, drop = FALSE], y, wt, offset = mod$offset, 
             family = mod$family, control = mod$control)
         dev.1 <- deviance(mod.1)
         mod.2 <- if (length(rels) == 0) mod
             else {
-                exclude.2 <- as.vector(sapply(rels, which.nms))
+                exclude.2 <- as.vector(unlist(sapply(rels, which.nms)))
                 glm.fit(X[, -exclude.2, drop = FALSE], y, wt, offset = mod$offset, 
                     family = mod$family, control = mod$control)
                 }
