@@ -68,3 +68,12 @@ Changes to Version 1.0-7
 
     o More small changes to scatterplot to avoid "condition has length > 1" warnings.
     
+Changes to Version 1.0-8
+
+    o Small correction to documentation for recode.
+    
+    o Restored missing States data frame.
+    
+    o Small documentation changes to pass new package checks.
+    
+    

@@ -27,8 +27,8 @@ recode(var, recodes, as.factor.result)
   \describe{
     \item{single value}{For example, \code{0=NA}.}
     \item{vector of values}{For example, \code{c(7,8,9)='high'}.}
-    \item{range of values}{For example, \code{7:9='C'}. The special values \code{low}
-      and \code{high} may appear in a range. For example, \code{low:10=1}.}
+    \item{range of values}{For example, \code{7:9='C'}. The special values \code{lo}
+      and \code{hi} may appear in a range. For example, \code{lo:10=1}.}
     \item{\code{else}}{everything that does not fit a previous specification.
       For example, \code{else=NA}. Note that \code{else} matches \emph{all} otherwise
       unspecified values on input, including \code{NA}.}

@@ -1,6 +1,6 @@
 Package: car
-Version: 1.0-7
-Date: 2003/7/15
+Version: 1.0-8
+Date: 2003/10/9
 Title: Companion to Applied Regression
 Author: John Fox <jfox@mcmaster.ca>. I am grateful to Douglas Bates, David Firth, Michael Friendly, 
     Georges Monette, Brian Ripley, and Sanford Weisberg for various suggestions.
@@ -18,4 +18,4 @@ Description:
   objects produced by the regsubsets function in the leaps package. Where relevant, the functions in
   car are consistent with na.action = na.omit or na.exclude.
 License: GPL version 2 or newer
-URL: http://www.r-project.org, http://www.socsci.mcmaster.ca/jfox/
+URL: http://www.r-project.org, http://socserv.socsci.mcmaster.ca/jfox/

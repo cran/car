@@ -13,18 +13,21 @@ are married women.
 \format{
   This data frame contains the following columns:
   \describe{
-    \item{lfp}{labor-force participation; a factor with levels}
-    \item{lfp}{\code{no} }
-    \item{lfp}{\code{yes} }
+    \item{lfp}{labor-force participation; a factor with levels:
+        \code{no};
+        \code{yes}.
+    }
     \item{k5}{number of children 5 years old or younger.}
     \item{k618}{number of children 6 to 18 years old.}
     \item{age}{in years.}
-    \item{wc}{wife's college attendance; a factor with levels}
-    \item{wc}{\code{no} }
-    \item{wc}{\code{yes} }
-    \item{hc}{husband's college attendance; a factor with levels}
-    \item{hc}{\code{no} }
-    \item{hc}{\code{yes} }
+    \item{wc}{wife's college attendance; a factor with levels:
+        \code{no};
+        \code{yes}.
+    }
+    \item{hc}{husband's college attendance; a factor with levels:
+        \code{no};
+        \code{yes}.
+    }
     \item{lwg}{log expected wage rate; for women in the labor force, the actual
       wage rate; for women not in the labor force, an imputed value based on the
       regression of \code{lwg} on the other variables.}

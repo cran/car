@@ -14,9 +14,10 @@ girls hospitalized for eating disorders and 98 control subjects.
     \item{subject}{a factor with subject id codes.}
     \item{age}{age in years.}
     \item{exercise}{hours per week of exercise.}
-    \item{group}{a factor with levels}
-    \item{group}{\code{control} Control subjects.}
-    \item{group}{\code{patient} Eating-disordered patients.}
+    \item{group}{a factor with levels:
+        \code{control}, Control subjects;
+        \code{patient}, Eating-disordered patients.
+    }
   }
 }
 
