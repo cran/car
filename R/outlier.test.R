@@ -5,7 +5,7 @@ outlier.test<-function(model, ...){
     }
 
 outlier.test.lm<-function(model, labels=names(rstud)){
-    #last modified 29 July 2001 by J. Fox
+    #last modified 13 Nov 2001 by J. Fox
     rstud<-abs(rstudent(model))
     labels<-if(is.null(labels)) seq(along=rstud) else labels
     if (length(rstud) != length(labels)) 
@@ -15,7 +15,8 @@ outlier.test.lm<-function(model, labels=names(rstud)){
     df<-df.residual(model)-1
     n<-sum(!is.na(rstud))
     p<-2*(1-pt(rstud.max,df))
-    result<-c(rstud.max, df, p, n*p)
+    bp <- if (n*p <= 1) n*p else NA
+    result<-c(rstud.max, df, p, bp)
     names(result)<-c("max|rstudent|", "df", "unadjusted p", "Bonferroni p")
     result<-list(test=result, obs=labels[which.max])
     class(result)<-"outlier.test"
@@ -23,7 +24,7 @@ outlier.test.lm<-function(model, labels=names(rstud)){
     }
     
 outlier.test.glm<-function(model, labels=names(rstud)){
-    #last modified 29 July 2001 by J. Fox
+    #last modified 13 Nov 2001 by J. Fox
     rstud<-abs(rstudent(model))
     labels<-if(is.null(labels)) seq(along=rstud) else labels
     if (length(rstud) != length(labels)) 
@@ -32,7 +33,8 @@ outlier.test.glm<-function(model, labels=names(rstud)){
     which.max<-which(rstud==rstud.max)
     n<-sum(!is.na(rstud))
     p<-2*(1-pnorm(rstud.max))
-    result<-c(rstud.max, p, n*p)
+    bp <- if (n*p <= 1) n*p else NA
+    result<-c(rstud.max, p, bp)
     names(result)<-c("max|rstudent|", "unadjusted p", "Bonferroni p")
     result<-list(test=result, obs=labels[which.max])
     class(result)<-"outlier.test"
@@ -40,7 +42,7 @@ outlier.test.glm<-function(model, labels=names(rstud)){
     }
 
     
-print.outlier.test<-function(x){
+print.outlier.test<-function(x, ...){
     # last modified 27 Jan 2001 by J. Fox
     test<-matrix(x$test, nrow=1)
     colnames(test)<-names(x$test)

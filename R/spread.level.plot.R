@@ -11,7 +11,7 @@ spread.level.plot.default<-function(x, by, robust.line=any("MASS"==.packages(all
         main=paste("Spread-Level Plot for", deparse(substitute(x)), 
         "by", deparse(substitute(by))), col=palette()[2], pch=1, lwd=2, ...)
     {
-    #last modified 1 Feb 2001 by J. Fox
+    #last modified 27 Sept 2001 by J. Fox
     good<-!(is.na(x) | is.na(by))
     if (sum(good) != length(x)) {
         warning("NAs ignored")
@@ -52,7 +52,9 @@ spread.level.plot.default<-function(x, by, robust.line=any("MASS"==.packages(all
         col=col, lwd=lwd, ...)
     p<-1-(coefficients(mod))[2]
     names(p)<-NULL
-    list(Statistics=result[ord,], PowerTransformation=p)
+    result <- list(Statistics=result[ord,], PowerTransformation=p)
+    class(result) <- 'spread.level.plot'
+    result
     }
     
 spread.level.plot.lm<-function(x, start=0, 
@@ -62,7 +64,7 @@ spread.level.plot.lm<-function(x, start=0,
         main=paste("Spread-Level Plot for", deparse(substitute(x))),
         pch=1, col=palette()[2], lwd=2, ...)
     {
-    #last modified 2 Aug 2001 by J. Fox
+    #last modified 27 Sept 2001 by J. Fox
     resid<-na.omit(abs(rstudent(x)))
     fitval<-na.omit(fitted.values(x))
     min<-min(fitval)
@@ -85,7 +87,9 @@ spread.level.plot.lm<-function(x, start=0,
         lwd=lwd, col=col, ...)
     p<-1-(coefficients(mod))[2]
     names(p)<-NULL
-    list(PowerTransformation=p)
+    result <- list(PowerTransformation=p)
+    class(result) <- 'spread.level.plot'
+    result
     }
   
 spread.level.plot.formula<-function (formula, data=NULL, subset, na.action, 
@@ -105,4 +109,10 @@ spread.level.plot.formula<-function (formula, data=NULL, subset, na.action,
     x <- mf[[response]]
     by <- mf[[varnames[-response]]]
     spread.level.plot.default(x, by, main=main, ...)
+    }
+    
+print.spread.level.plot <- function(x, ...){
+    if (!is.null(x$Statistics)) print(x$Statistics, ...)
+    cat('\nSuggested power transformation: ', x$PowerTransformation,'\n')
+    invisible(x)
     }

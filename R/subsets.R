@@ -1,17 +1,18 @@
 # Plot optimal subsets regressions -- output from regsubsets
 # function in leaps package
 
-# last modified 23 Feb 2001 by J. Fox
+# last modified 23 Dec 2001 by J. Fox
 
-plot.subsets <- function(object, ...){
-    UseMethod("plot.subsets")
+subsets <- function(object, ...){
+    UseMethod("subsets")
     }
 
 
-plot.subsets.regsubsets <- function(object, 
+subsets.regsubsets <- function(object, 
     names=abbreviate(object$xnames, minlength=abbrev), abbrev=1,
     min.size=1, max.size=length(names), legend,
-    statistic=c("bic", "cp", "adjr2", "rsq", "rss"), las=1, cex.subsets=1) {
+    statistic=c("bic", "cp", "adjr2", "rsq", "rss"), las=1, cex.subsets=1,
+    ...) {
     if (missing(legend)) legend <- missing(names)
     sumry <- summary(object)
     incidence <- sumry$which
@@ -32,7 +33,7 @@ plot.subsets.regsubsets <- function(object,
     stat <- stat[select]
     incidence <- incidence[select, ]
     plot(c(min.size, max.size), range(stat), type="n", xlab="Subset Size", 
-        ylab=paste("Statistic:", statistic), las=las)
+        ylab=paste("Statistic:", statistic), las=las, ...)
     for (i in seq(along=stat)){
         adj <- if (subset.size[i] == min.size) 0
                 else if (subset.size[i] == max.size) 1

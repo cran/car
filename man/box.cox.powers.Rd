@@ -12,6 +12,10 @@
 }
 \usage{
 box.cox.powers(X, start=NULL, ...)
+
+print.box.cox.powers(x, ...)
+
+summary.box.cox.powers(object, digits=4, ...)
 }
 
 \arguments{
@@ -20,8 +24,9 @@ box.cox.powers(X, start=NULL, ...)
   \item{start}{start values for the power transformation parameters;
     if \code{NULL} (the default), univariate Box-Cox transformations will
     be computed and used as the start values.}
-  \item{\dots}{optional arguments to be passed to the \code{optim}
-    function.}
+  \item{...}{optional arguments to be passed to the \code{optim} function.}
+  \item{digits}{number of places to round result.}
+  \item{x, object}{\code{box.cox.powers} object.}
 }
 \details{
   Note that this is \emph{unconditional} Box-Cox. That is, there is

@@ -10,7 +10,9 @@ Burt                     Fraudulent Data on IQs of Twins Raised Apart
 Can.pop                  Canadian Population Data
 Chile                    Voting Intentions in the 1988 Chilean Plebiscite
 Chirot                   The 1907 Romanian Peasant Rebellion
+Cowles                   Cowles and Davis's Data on Volunteering
 Davis                    Self-Reports of Height and Weight
+DavisThin                Davis's Data on Drive for Thinness
 Deletion Diagnostics     Deletion Diagnostics for Linear and Generalized
                          Linear Models
 Duncan                   Duncan's Occupational Prestige Data
@@ -61,13 +63,13 @@ n.bins                   Number of Bins for Histogram
 ncv.test                 Score Test for Non-Constant Error Variance
 outlier.test             Bonferroni Outlier Test
 panel.car                Panel Function Coplots
-plot.subsets             Plot Output from regsubsets Function in leaps
-                         package
 qq.plot                  Quantile-Comparison Plots
 recode                   Recode a Variable
 reg.line                 Plot Regression Line
 scatterplot              Scatterplots with Boxplots
 scatterplot.matrix       Scatterplot Matrices
 spread.level.plot        Spread-Level Plots
+subsets                  Plot Output from regsubsets Function in leaps
+                         package
 vif                      Variance Inflation Factors
 which.names              Position of Row Names

@@ -20,6 +20,8 @@ box.tidwell.formula(formula, other.x=NULL, data=NULL, subset,
 
 box.tidwell.default(y, x1, x2=NULL, max.iter=25, tol=0.001, 
   verbose=F, ...)
+  
+print.box.tidwell(x, digits, ...)
 }
 
 \arguments{
@@ -41,6 +43,8 @@ box.tidwell.default(y, x1, x2=NULL, max.iter=25, tol=0.001,
   \item{x1}{matrix of predictors to transform.}
   \item{x2}{matrix of predictors that are \emph{not} candidates for transformation.}
   \item{\dots}{not for the user.}
+  \item{x}{\code{box.tidwell} object.}
+  \item{digits}{number of digits for rounding.}
 }
 
 \details{

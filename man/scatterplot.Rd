@@ -17,7 +17,7 @@ scatterplot.formula(formula, data, xlab, ylab, subset, labels=F, ...)
 
 scatterplot.default(x, y, smooth=T, span=0.5, reg.line=lm, 
   boxplots="xy", xlab=deparse(substitute(x)), ylab=deparse(substitute(y)), 
-  las=1, lwd=1, labels=F, log="", groups=FALSE, by.groups=!(groups == FALSE),
+  las=par('las'), lwd=1, labels=F, log="", groups=FALSE, by.groups=!(groups == FALSE),
   ellipse=FALSE, levels=c(.5, .9), robust=FALSE, 
   col=palette(), pch=1:n.groups, legend.plot=length(levels(groups)) > 1, ...)
   
@@ -43,7 +43,7 @@ sp{...}
   \item{xlab}{label for horizontal axis.}
   \item{ylab}{label for vertical axis.}
   \item{las}{if \code{0}, ticks labels are drawn parallel to the
-    axis; set to \code{1} (the default) for horizontal labels (see \code{\link[base]{par}}).}
+    axis; set to \code{1} for horizontal labels (see \code{\link[base]{par}}).}
   \item{lwd}{width of plotted lines.}
   \item{labels}{if not \code{FALSE} a vector of point labels, to be used interactively
     to identify points on the plot.}

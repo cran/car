@@ -17,13 +17,14 @@ qqp(...)
 
 qq.plot.default(x, distribution="norm", 
   ylab=deparse(substitute(x)), 
-  xlab=paste(distribution, "quantiles"), main="", las=1,
+  xlab=paste(distribution, "quantiles"), main="", las=par('las'),
   envelope=0.95, labels=F, col=palette()[2], lwd=2, pch=1,
   line=c("quartiles", "robust"), ...)
 
-qq.plot.lm(x, main="", xlab="t Quantiles", 
+qq.plot.lm(x, main="", xlab=paste(distribution, "Quantiles"), 
   ylab=paste("Studentized Residuals(", deparse(substitute(x)), ")",
-    sep = ""), line=c("quartiles", "robust"), las=1,
+    sep = ""), 
+  distribution=c("t", "norm"), line=c("quartiles", "robust"), las=par('las'),
   simulate=F, envelope=0.95, labels=F, reps=100, 
   col=palette()[2], lwd=2, pch=1, ...)
 }
@@ -39,7 +40,7 @@ qq.plot.lm(x, main="", xlab="t Quantiles",
   \item{labels}{vector of point labels for interactive point identification,
     or \code{FALSE} for no labels.}
   \item{las}{if \code{0}, ticks labels are drawn parallel to the
-    axis; set to \code{1} (the default) for horizontal labels (see \code{\link[base]{par}}).}
+    axis; set to \code{1} for horizontal labels (see \code{\link[base]{par}}).}
   \item{col}{color for points and lines; the default is the \emph{second} entry
     in the current color palette (see \code{\link[base]{palette}}
     and \code{\link[base]{par}}).}

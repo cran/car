@@ -18,7 +18,7 @@ leverage.plot(model, ...)
 
 leverage.plot.lm(model, term.name, 
   labels=names(residuals(model)[!is.na(residuals(model))]),  
-  identify.points=T, las=1, col=palette()[2], pch=1, lwd=2, 
+  identify.points=T, las=par('las'), col=palette()[2], pch=1, lwd=2, 
   main="Leverage Plot")
 
 leverage.plot.glm(model, ...)
@@ -33,7 +33,7 @@ leverage.plot.glm(model, ...)
   \item{labels}{observation names.}
   \item{identify.points}{if \code{TRUE}, then identify points interactively.}
   \item{las}{if \code{0}, ticks labels are drawn parallel to the
-    axis; set to \code{1} (the default) for horizontal labels (see \code{\link[base]{par}}).}
+    axis; set to \code{1} for horizontal labels (see \code{\link[base]{par}}).}
   \item{col}{color for points and lines; the default is the \emph{second} entry
     in the current color palette (see \code{\link[base]{palette}}
     and \code{\link[base]{par}}).}

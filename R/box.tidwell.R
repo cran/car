@@ -59,7 +59,7 @@ box.tidwell.default<-function(y, x1, x2=NULL, max.iter=25, tol=.001, verbose=F, 
     result
     }
 
-print.box.tidwell<-function(x, digits=5){ 
+print.box.tidwell<-function(x, digits=5, ...){ 
     # last modified 15 Dec 2000 by J. Fox  
     print(round(x$result, digits))
     cat("\niterations = ", x$iterations,"\n")

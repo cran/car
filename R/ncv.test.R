@@ -6,8 +6,10 @@ ncv.test<-function(model, ...){
     }
 
 ncv.test.lm<-function (model, var.formula, data=NULL, subset, na.action) {
-    # last modified 29 July 2001 by J. Fox
+    # last modified 13 Nov 2001 by J. Fox
     if (!is.null(weights(model))) stop("requires unweighted linear model")
+    if ((!is.null(class(model$na.action))) && class(model$na.action) == 'exclude') 
+        model <- update(model, na.action=na.omit)
     sumry<-summary(model)
     residuals<-residuals(model)
     S.sq<-df.residual(model)*(sumry$sigma)^2/sum(!is.na(residuals))
@@ -19,8 +21,10 @@ ncv.test.lm<-function (model, var.formula, data=NULL, subset, na.action) {
         df<-1
         }
     else {
-        if (missing(na.action)) 
-            na.action <- options()$na.action
+        if (missing(na.action)){
+            na.action <- if (is.null(model$na.action)) options()$na.action
+                else parse(text=paste('na.',class(mod$na.action), sep=''))
+            }
         m <- match.call(expand.dots = FALSE)
         if (is.matrix(eval(m$data, sys.frame(sys.parent())))) 
             m$data <- as.data.frame(data)

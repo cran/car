@@ -13,23 +13,23 @@
 \usage{
 ellipse(center, shape, radius, center.pch=19, center.cex=1.5, 
   segments=51, add=T, xlab="", ylab="", 
-   las=1, col=palette()[2], lwd=2, lty=1, ...)
+   las=par('las'), col=palette()[2], lwd=2, lty=1, ...)
 
 data.ellipse(x, y, levels=c(0.5, 0.9), center.pch=19, center.cex=1.5, 
   plot.points=T, add=!plot.points, segments=51, robust=F,
   xlab=deparse(substitute(x)), 
   ylab=deparse(substitute(y)), 
-  las=1, col=palette()[2], pch=1, lwd=2, lty=1, ...)
+  las=par('las'), col=palette()[2], pch=1, lwd=2, lty=1, ...)
 
 confidence.ellipse(model, ...)
 
 confidence.ellipse.lm(model, which.coef, levels=0.95, Scheffe=F, 
   center.pch=19, center.cex=1.5, segments=51, xlab, ylab, 
-  las=1, col=palette()[2], lwd=2, lty=1, ...)
+  las=par('las'), col=palette()[2], lwd=2, lty=1, ...)
 
 confidence.ellipse.glm(model, which.coef, levels=0.95, Scheffe=F, 
   center.pch=19, center.cex=1.5, segments=51, xlab, ylab, 
-  las=1, col=palette()[2], lwd=2, lty=1, ...)
+  las=par('las'), col=palette()[2], lwd=2, lty=1, ...)
 }
 
 \arguments{
@@ -56,7 +56,7 @@ confidence.ellipse.glm(model, which.coef, levels=0.95, Scheffe=F,
   \item{Scheffe}{if \code{TRUE} scale the ellipse so that its projections onto the
     axes give Scheffe confidence intervals for the coefficients.}
   \item{las}{if \code{0}, ticks labels are drawn parallel to the
-    axis; set to \code{1} (the default) for horizontal labels (see \code{\link[base]{par}}).}
+    axis; set to \code{1} for horizontal labels (see \code{\link[base]{par}}).}
   \item{col}{color for points and lines; the default is the \emph{second} entry
     in the current color palette (see \code{\link[base]{palette}}
     and \code{\link[base]{par}}).}

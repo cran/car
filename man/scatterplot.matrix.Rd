@@ -31,6 +31,7 @@ spm(x, ...)
     evaluates to a factor or other variable to divide the data into groups.}
   \item{data}{data matrix or numeric data frame, or (for \code{scatterplot.matrix.formula})
     a data frame within which to evaluate the formula.}
+  \item{x}{data matrix or formula.}
   \item{subset}{expression defining a subset of observations.}
   \item{labels}{variable labels (for the diagonal of the plot).}
   \item{diagonal}{contents of the diagonal panels of the plot.}
@@ -66,6 +67,7 @@ spm(x, ...)
   \item{lwd}{width for lines.}
   \item{legend.plot}{if \code{TRUE} then a legend for the groups is plotted
     in the bottom-right cell.}
+  \item{...}{arguments to pass down.}
 }
 
 \value{

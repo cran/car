@@ -21,9 +21,10 @@ hccm.default(model, ...)
   \item{model}{an unweighted linear model, produced by \code{lm}.}
   \item{type}{one of \code{"hc0"}, \code{"hc1"}, \code{"hc2"}, or \code{"hc3"}; the
     first of these gives the classic White correction. The others are described in
-    Long and Ervin (2000).
- }
+    Long and Ervin (2000).}
+  \item{...}{arguments to pass to \code{hccm.lm}.}
 }
+
 \details{
   The classical White-corrected coefficient covariance matrix (\code{"hc0"}) is
   \deqn{V(b)=(X^{\prime }X)^{-1}X^{\prime }diag(e_{i}^{2})X(X^{\prime }X)^{-1}}{V(b) = inv(X'X) X' diag(e^2) X inv(X'X)}

@@ -16,7 +16,7 @@ ceres.plots(model, variable, ask=missing(variable), one.page=!ask,
 ceres.plot(model, ...)
 
 ceres.plot.lm(model, variable, line=T, smooth=T, span=0.5, iter,
-  las=1, col=palette()[2], pch=1, lwd=2, main="ceres Plot")
+  las=par('las'), col=palette()[2], pch=1, lwd=2, main="ceres Plot")
 
 ceres.plot.glm(model, ...)
 }
@@ -37,7 +37,7 @@ ceres.plot.glm(model, ...)
   \item{line}{\code{TRUE} to plot least-squares line.}
   \item{smooth}{\code{TRUE} to plot nonparametric-regression (lowess) line.}
   \item{las}{if \code{0}, ticks labels are drawn parallel to the
-    axis; set to \code{1} (the default) for horizontal labels (see \code{\link[base]{par}}).}
+    axis; set to \code{1} for horizontal labels (see \code{\link[base]{par}}).}
   \item{col}{color for points and lines; the default is the \emph{second} entry
     in the current color palette (see \code{\link[base]{palette}}
     and \code{\link[base]{par}}).}

@@ -46,7 +46,7 @@ linear.hypothesis.glm<-function(model, hypothesis.matrix, rhs=0,
     }
  
 
- print.chisq.test<-function(x){
+ print.chisq.test<-function(x, ...){
     title<-if (!is.null(x$test)) x$test else "Chisquare Test"
     cat(title,"\n")
     if (!is.null(x$formula)) cat(x$formula.name, 
@@ -56,7 +56,7 @@ linear.hypothesis.glm<-function(model, hypothesis.matrix, rhs=0,
     invisible(x)
     }
  
- print.F.test<-function(x){
+ print.F.test<-function(x, ...){
     title<-if (!is.null(x$test)) x$test else "F-Test"
     cat(title,"\n")
     if (!is.null(x$formula)) cat(x$formula.name, 

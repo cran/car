@@ -1,10 +1,10 @@
 # recode function (J. Fox)
-# last modified 8 Mar 2001
+# last modified 15 Nov 2001
 
 recode<-function(var, recodes, as.factor.result){
     recode.list<-rev(strsplit(gsub(" ","",recodes),";")[[1]])
-    if (missing(as.factor.result)) as.factor.result <- is.factor(var)
     is.fac<-is.factor(var)
+    if (missing(as.factor.result)) as.factor.result <- is.fac
     if (is.fac) var<-as.character(var)
     result<-var
     if (is.numeric(var)) {
