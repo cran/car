@@ -56,3 +56,7 @@ Changes to Version 1.0-4
     
     o Added warnings to Anova methods for F-tests in binomial and Poisson GLMs that the dispersion is estimated rather than taken as 1.
     
+Changes to Version 1.0-5
+
+    o Small changes to scatterplot and scatterplot.matrix to avoid "condition has length > 1" warnings.
+    
