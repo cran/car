@@ -6,13 +6,14 @@ vif<-function(mod){
     }
 
 vif.lm<-function(mod) {
-    #last modified 13 Dec 2000 by J. Fox
+    #last modified 2 Dec 2003 by J. Fox
     if (!is.null(weights(mod))) stop("requires unweighted lm")
-    if(!has.intercept(mod)) stop("requires model with intercept.")    
-    R<-cor(model.matrix(mod)[,-1])
-    detR<-det(as.matrix(R))
+    if(!has.intercept(mod)) stop("requires model with intercept.")   
     terms<-term.names(mod)[-1]
     n.terms<-length(terms)
+    if (n.terms < 2) stop("model contains fewer than 2 terms") 
+    R<-cor(model.matrix(mod)[,-1])
+    detR<-det(as.matrix(R))
     result<-matrix(0,n.terms,3)
     rownames(result)<-terms
     colnames(result)<-c("GVIF","Df","GVIF^(1/2Df)")

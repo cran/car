@@ -1,6 +1,6 @@
 # fancy scatterplot matrices (J. Fox)
 
-# last modified: 1 May 03 by J. Fox
+# last modified: 2 Dec 03 by J. Fox
 
 scatterplot.matrix<-function(x, ...){
     UseMethod("scatterplot.matrix")
@@ -97,13 +97,13 @@ scatterplot.matrix.default<-function(x, labels=colnames(x),
                 if (smooth & by.groups) lines(lowess(x[subs], y[subs]), col=col[i+1])
                 if (is.function(reg.line) & by.groups) reg(x[subs], y[subs], col=col[i+1])
                 if (ellipse  & by.groups) data.ellipse(x[subs], y[subs], plot.points=FALSE, 
-                    levels=levels, col=col[i+1], robust=robust)
+                    levels=levels, col=col[i+1], robust=robust, lwd=1)
                 }
             if (!by.groups){
                 if (is.function(reg.line)) abline(reg.line(y~x),lty=2, lwd=lwd, col=col[1])
                 if (smooth) lines(lowess(x,y, f=span), lwd=lwd, col=col[1])
                 if (ellipse) data.ellipse(x, y, plot.points=FALSE, levels=levels, col=col[1],
-                    robust=robust)
+                    robust=robust, lwd=1)
                 }
             }
         )
