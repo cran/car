@@ -1,4 +1,4 @@
-## last modified 1 January 03 by J. Fox
+## last modified 26 March 03 by J. Fox
 
 effect <- function (term, mod, xlevels=list(), default.levels=10, se=TRUE, 
     confidence.level=.95, transformation=family(mod)$linkinv, typical=mean){
@@ -319,12 +319,24 @@ as.data.frame.effect <- function(x, row.names=NULL, optional=TRUE){
 plot.effect <- function(x, x.var=which.max(levels), 
     z.var=which.min(levels), multiline=is.null(x$se), rug=TRUE, xlab,
     ylab=x$response, colors=palette(), symbols=1:10, lines=1:10, cex=1.5, ylim,
-    factor.names=TRUE, ...){
+    factor.names=TRUE, transform=list(link=I, inverse=I, at=NULL, n=5), ...){
     lrug <- function(x) {
                 if (length(unique(x)) < 0.8 * length(x)) x <- jitter(x)
                 grid.segments(x, unit(0, "npc"), x, unit(0.5, "lines"),
                     default.units="native")
                 }
+    ticks <- function(range, link, inverse, at, n) {
+                        if (is.null(inverse)) inverse <- I
+                        if (is.null(link)) link <- function(x) nlm(function(y) (inverse(y) - x)^2, 
+                            mean(range))$estimate
+                        if (is.null(n)) n <- 5
+                        labels <- if (is.null(at)){
+                            labels <- pretty(sapply(range, inverse), n=n+1)
+                            }
+                            else at
+                        ticks <- sapply(labels, link)
+                        list(at=ticks, labels=as.character(labels))
+                        }
     require(lattice)
     ylab # force evaluation
     x.data <- x$data
@@ -341,6 +353,8 @@ plot.effect <- function(x, x.var=which.max(levels),
         range <- if (has.se) range(c(x$lower, x$upper)) else range(x$fit)
         ylim <- if (!missing(ylim)) ylim else c(range[1] - .025*(range[2] - range[1]),                                              
                                                 range[2] + .025*(range[2] - range[1]))
+        ticks <- ticks(ylim, link=transform$link, inverse=transform$inverse, 
+            at=transform$at, n=transform$n)
         if (is.factor(x[,1])){
             levs <- levels(x[,1])
             print(xyplot(eval(parse(
@@ -356,7 +370,8 @@ plot.effect <- function(x, x.var=which.max(levels),
                 ylim=ylim,
                 ylab=ylab,
                 xlab=if (missing(xlab)) names(x)[1] else xlab,
-                scales=list(x=list(at=1:length(levs), labels=levs)),
+                scales=list(x=list(at=1:length(levs), labels=levs), 
+                    y=list(at=ticks$at, labels=ticks$labels)),
                 main=paste(effect, "effect plot"),
                 lower=x$lower, upper=x$upper, has.se=has.se, data=x, ...))
             }        
@@ -377,7 +392,8 @@ plot.effect <- function(x, x.var=which.max(levels),
                 ylab=ylab,
                 x.vals=x.vals, rug=rug,
                 main=paste(effect, "effect plot"),
-                lower=x$lower, upper=x$upper, has.se=has.se, data=x, ...))
+                lower=x$lower, upper=x$upper, has.se=has.se, data=x, 
+                scales=list(y=list(at=ticks$at, labels=ticks$labels)), ...))
             }
         return(invisible())
         }
@@ -387,6 +403,8 @@ plot.effect <- function(x, x.var=which.max(levels),
     range <- if (has.se && (!multiline)) range(c(x$lower, x$upper)) else range(x$fit)
     ylim <- if (!missing(ylim)) ylim else c(range[1] - .025*(range[2] - range[1]),                                              
                                                 range[2] + .025*(range[2] - range[1]))
+    ticks <- ticks(ylim, link=transform$link, inverse=transform$inverse, 
+        at=transform$at, n=transform$n)
     if (multiline){
         zvals <- unique(x[, z.var])
         if (length(zvals) > min(c(length(colors), length(lines), length(symbols))))
@@ -409,7 +427,8 @@ plot.effect <- function(x, x.var=which.max(levels),
                 ylab=ylab,
                 xlab=if (missing(xlab)) predictors[x.var] else xlab,
                 z=x[,z.var],
-                scales=list(x=list(at=1:length(levs), labels=levs)),
+                scales=list(x=list(at=1:length(levs), labels=levs), 
+                    y=list(at=ticks$at, labels=ticks$labels)),
                 zvals=zvals,
                 main=paste(effect, "effect plot"),
                 key=list(title=predictors[z.var], cex.title=1, border=TRUE,
@@ -442,7 +461,7 @@ plot.effect <- function(x, x.var=which.max(levels),
                 key=list(title=predictors[z.var], cex.title=1, border=TRUE,
                     text=list(as.character(zvals)), 
                     lines=list(col=colors[1:length(zvals)], lty=lines[1:length(zvals)], lwd=2)), 
-                data=x, ...))
+                data=x, scales=list(y=list(at=ticks$at, labels=ticks$labels)), ...))
             }
         return(invisible())
         }
@@ -462,7 +481,8 @@ plot.effect <- function(x, x.var=which.max(levels),
             ylim=ylim,
             ylab=ylab,
             xlab=if (missing(xlab)) predictors[x.var] else xlab,
-            scales=list(x=list(at=1:length(levs), labels=levs)),
+            scales=list(x=list(at=1:length(levs), labels=levs), 
+                y=list(at=ticks$at, labels=ticks$labels)),
             main=paste(effect, "effect plot"),
             lower=x$lower, upper=x$upper, has.se=has.se, data=x, ...))
         }    
@@ -485,7 +505,8 @@ plot.effect <- function(x, x.var=which.max(levels),
             xlab=if (missing(xlab)) predictors[x.var] else xlab,
             x.vals=x.vals, rug=rug,
             main=paste(effect, "effect plot"),
-            lower=x$lower, upper=x$upper, has.se=has.se, data=x, ...))
+            lower=x$lower, upper=x$upper, has.se=has.se, data=x, 
+            scales=list(y=list(at=ticks$at, labels=ticks$labels)), ...))
         }
     }
 

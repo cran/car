@@ -41,3 +41,10 @@ Changes to Version 1.0-2
     o Modified influence.glm to handle 0 prior weights; changes to influence.lm and influence.glm to insure compatibility with R 1.7.0.
     
     o removed quietly=TRUE from several calls to require(), to avoid invisibly altering the search path.
+    
+Changes to Version 1.0-3
+
+    o All deletion diagnostics (with the exception of cookd) have been moved to the base package (as of R 1.7.0) and are removed from car; cookd now simply calls cooks.distance in the base package.
+    
+    o plot.effect modified was modified so that it can plot on the scale of the "link" function but label axes on the scale of the response. See ?plot.effect for details.
+    
