@@ -1,6 +1,6 @@
 # fancy scatterplots  (J. Fox)
 
-# last modified 15 July 2003
+# last modified 17 Jan 2005
 
 scatterplot<-function(x, ...){
     # last modified 28 Jan 2001 by J. Fox
@@ -46,11 +46,14 @@ scatterplot.formula<-function (formula, data, xlab, ylab, subset, labels=FALSE, 
 
 scatterplot.default<-function(x, y, smooth=TRUE, span=.5, reg.line=lm, boxplots="xy",
     xlab=deparse(substitute(x)), ylab=deparse(substitute(y)), las=par("las"),
-    lwd=1, labels=FALSE, log="", groups=FALSE, by.groups=!(groups[1]==FALSE), 
+    lwd=1, labels=FALSE, log="", jitter=list(),
+    cex=par("cex"), cex.axis=par("cex.axis"), cex.lab=par("cex.lab"), 
+    cex.main=par("cex.main"), cex.sub=par("cex.sub"),
+    groups=FALSE, by.groups=!(groups[1]==FALSE), 
     ellipse=FALSE, levels=c(.5, .9), robust=FALSE,
     col=palette(), pch=1:n.groups, 
     legend.plot=length(levels(groups)) > 1, reset.par=TRUE, ...){
-    # last modified 1 May 2003 by J. Fox
+    # last modified 16 Jan 2005 by J. Fox
     lowess.line<-function(x, y, col) {
         x<-if (0==length(grep("x", log))) x else log(x)
         y<-if (0==length(grep("y", log))) y else log(y)
@@ -110,7 +113,7 @@ scatterplot.default<-function(x, y, smooth=TRUE, span=.5, reg.line=lm, boxplots=
         lines(c(M,M),c(0,1))
         lines(c(LW,Q1),c(.5,.5))
         lines(c(Q3,UW),c(.5,.5))
-        if (!is.null(res$out)) points(res$out,rep(.5, length(res$out)))
+        if (!is.null(res$out)) points(res$out,rep(.5, length(res$out)), cex=cex)
         }
     vbox<-function(y){
         if (length(grep("y", log))==0){
@@ -136,7 +139,7 @@ scatterplot.default<-function(x, y, smooth=TRUE, span=.5, reg.line=lm, boxplots=
         lines(c(0,1),c(M,M))
         lines(c(.5,.5),c(LW,Q1))
         lines(c(.5,.5),c(Q3,UW))
-        if (!is.null(res$out)) points(rep(.5, length(res$out)),res$out)
+        if (!is.null(res$out)) points(rep(.5, length(res$out)),res$out, cex=cex)
         }
     mar<-par("mar")
     mfcol<-par("mfcol")
@@ -170,12 +173,15 @@ scatterplot.default<-function(x, y, smooth=TRUE, span=.5, reg.line=lm, boxplots=
     par(mar=c(0,mar[2],0,mar[4]))
     if (length(grep("x",boxplots))>0) hbox(.x) else plot(0,0,xlab="",ylab="",axes=FALSE,type="n")
     par(mar=mar)
-    plot(.x, .y, xlab=xlab, ylab=ylab, las=las, log=log, type="n", ...)
+    plot(.x, .y, xlab=xlab, ylab=ylab, las=las, log=log, cex=cex, cex.axis=cex.axis, cex.lab=cex.lab,
+        cex.main=cex.main, cex.sub=cex.sub, type="n", ...)
     n.groups<-length(levels(groups))
     if (n.groups >= length(col)) stop("number of groups exceeds number of available colors")
     for (i in 1:n.groups){
         subs<-groups==levels(groups)[i]
-        points(.x[subs], .y[subs], pch=pch[i], col=col[i+1])
+        points(if (is.null(jitter$x) || jitter$x == 0) .x[subs] else jitter(.x[subs], factor=jitter$x), 
+            if (is.null(jitter$y) || jitter$y == 0) .y[subs] else jitter(.y[subs], factor=jitter$y), 
+            pch=pch[i], col=col[i+1], cex=cex)
         if (smooth & by.groups) lowess.line(.x[subs], .y[subs], col=col[i+1])
         if (is.function(reg.line) & by.groups) reg(.x[subs], .y[subs], col=col[i+1])
         if (ellipse  & by.groups) data.ellipse(.x[subs], .y[subs], plot.points=FALSE, 
@@ -188,7 +194,7 @@ scatterplot.default<-function(x, y, smooth=TRUE, span=.5, reg.line=lm, boxplots=
             robust=robust)
         }
     if(legend.plot) legend(locator(1), legend=levels(groups), 
-        pch=pch, col=col[2:(n.groups+1)])
+        pch=pch, col=col[2:(n.groups+1)], pt.cex=cex, cex=cex.lab)
     if (labels[1]==TRUE & length(labels)==1) labels<-seq(along=z)
     indices<-if (labels[1] != FALSE) identify(.x, .y, labels)
     if (is.null(indices)) invisible(indices) else indices

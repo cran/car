@@ -118,8 +118,22 @@ Changes to Version 1.0-14
 
     o cr.plots() ignored its span argument when variable was specified in the call (thanks to Christophe Pallier for pointing this out).
     
-    o added some(), which prints a few randomly selected elements (or rows) of an object.
+    o Added some(), which prints a few randomly selected elements (or rows) of an object.
     
-    o added Anova() methods for multinomial logistic regression [via multinom() in the nnet package], and for proportional-odds logistic regression [via polr() in the MASS package). 
+    o Added Anova() methods for multinomial logistic regression [via multinom() in the nnet package], and for proportional-odds logistic regression [via polr() in the MASS package). 
     
-    o made influence.plot() generic, with a method for lm objects that handles glm objects as well. 
+    o Made influence.plot() generic, with a method for lm objects that handles glm objects as well. 
+    
+Changes to Version 1.0-15
+
+    o Changed recode() to accommodate factor levels with spaces (suggested by Dan Putler).
+    
+    o Added cex* arguments to scatterplot() and scatterplot.matrix(), and a jitter argument to scatterplot (suggested by CG Pettersson).
+    
+    o Added symbox() function for selecting a transformation to symmetry (a modified version of a function contributed by Gregor Gorjanc).
+    
+    o ncv.test() modified so that it doesn't fail when the variance formula has a different pattern of NAs than the model formula (adapting a suggestion by Achim Zeileis).
+    
+    o Added argument to spread.level.plot.default() to optionally suppress point labels (suggested by Josyf Mychaleckyj). 
+    
+    o vif() modified by Henric Nilsson to be applicable to generalized linear models and other models inheriting from class lm. Weighted linear models are now allowed. 

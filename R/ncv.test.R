@@ -1,6 +1,6 @@
 # score test of nonconstant variance (J. Fox)
 
-# last modified 30 Apr 04 by J. Fox
+# last modified 16 Jan 05 by J. Fox
 
 ncv.test<-function(model, ...){
     # last modified 15 Dec 2000 by J. Fox
@@ -8,7 +8,7 @@ ncv.test<-function(model, ...){
     }
 
 ncv.test.lm<-function (model, var.formula, data=NULL, subset, na.action, ...) {
-    # last modified 30 Apr 2004 by J. Fox
+    # last modified 16 Jan 2005 by J. Fox
     if ((!is.null(class(model$na.action))) && class(model$na.action) == 'exclude') 
         model <- update(model, na.action=na.omit)
     sumry<-summary(model)
@@ -35,9 +35,9 @@ ncv.test.lm<-function (model, var.formula, data=NULL, subset, na.action, ...) {
         mf <- eval(m, sys.frame(sys.parent()))
         response <- attr(attr(mf, "terms"), "response")
         if (response) stop(paste("Variance formula contains a response."))
-        mf$U<-U
-        .X<-model.matrix(as.formula(paste("U~",as.character(var.formula)[2],"-1")), data=mf)
-        mod<-lm(U~.X)
+        .X<-model.matrix(as.formula(paste("~",as.character(var.formula)[2],"-1")), data=mf)
+        common.obs <- intersect(names(U), rownames(.X))
+        mod<-lm(U[common.obs]~.X[common.obs,])
         df<-sum(!is.na(coefficients(mod)))-1
         }
     SS<-anova(mod)$"Sum Sq"

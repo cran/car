@@ -1,29 +1,27 @@
 \name{vif}
 \alias{vif}
 \alias{vif.lm}
-\alias{vif.default}
 
 \title{Variance Inflation Factors}
 \description{
   Calculates variance-inflation and generalized variance-inflation factors
-  for linear models.
+  for linear and generalized linear models.
 }
 \usage{
 vif(mod)
 
 \method{vif}{lm}(mod)
-
-\method{vif}{default}(mod)
 }
  
 \arguments{
-  \item{mod}{an unweighted \code{lm} object.}
+  \item{mod}{an object that inherits from class \code{lm}, such as an \code{lm}
+  or \code{glm} object.}
 }
 \details{
-  If all terms in the model have 1 df, then the usual variance-inflation
+  If all terms in an unweighted linear model have 1 df, then the usual variance-inflation
   factors are calculated.
   
-  If any terms have more than 1 df, then generalized variance-inflation factors
+  If any terms in an unweighted linear model have more than 1 df, then generalized variance-inflation factors
   (Fox and Monette, 1992) are calculated. These are interpretable as the inflation
   in size of the confidence ellipse or ellipsoid for the coefficients of the term in
   comparison with what would be obtained for orthogonal data. 
@@ -34,8 +32,8 @@ vif(mod)
   invariant). To adjust for the dimension of the confidence ellipsoid, the function
   also prints \eqn{GVIF^{1/(2\times df)}}.
   
-  Currently, \code{vif} is only defined for linear models; \code{vif.default} is
-  a dummy function that generates an error.
+  Through a further generalization, the implementation here is applicable as well to other sorts of models,
+  in particular weighted linear models and  generalized linear models, that inherit from class \code{lm}.
 }
 \value{
   A vector of vifs, or a matrix containing one row for each term in the model, and
@@ -49,7 +47,7 @@ vif(mod)
   Fox, J. (1997)
   \emph{Applied Regression, Linear Models, and Related Methods.} Sage.
 }
-\author{John Fox \email{jfox@mcmaster.ca}}
+\author{Henric Nilsson and John Fox \email{jfox@mcmaster.ca}}
 
 \examples{
 data(Duncan)

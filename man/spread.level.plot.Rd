@@ -23,7 +23,7 @@ slp(x, ...)
 
 \method{spread.level.plot}{default}(x, by, 
   robust.line=any("MASS"==.packages(all=TRUE)), 
-  start=0, xlab="Median", ylab="Hinge-Spread", las=par("las"),
+  start=0, xlab="Median", ylab="Hinge-Spread", point.labels=TRUE, las=par("las"),
   main=paste("Spread-Level Plot for", deparse(substitute(x)), 
   "by", deparse(substitute(by))), col=palette()[2], pch=1, lwd=2, ...)
 
@@ -54,6 +54,7 @@ slp(x, ...)
   \item{main}{title for the plot.}
   \item{xlab}{label for horizontal axis.}
   \item{ylab}{label for vertical axis.}
+  \item{point.labels}{if \code{TRUE} label the points in the plot with group names.}
   \item{las}{if \code{0}, ticks labels are drawn parallel to the
     axis; set to \code{1} for horizontal labels (see \code{\link[base]{par}}).}
   \item{col}{color for points and lines; the default is the \emph{second} entry
