@@ -11,6 +11,7 @@
   partial-regression) plots for  linear and generalized linear
   models.
 }
+
 \usage{
 av.plots(model, variable, ask=missing(variable), one.page=!ask, ...)
 
@@ -27,8 +28,9 @@ av.plot.glm(model, variable, labels=names(residuals(model)),
   identify.points=T, las=1, col=palette()[2], pch=1, lwd=2,
   main="Added-Variable Plot", type=c("Wang", "Weisberg"))
 }
+
 \arguments{
-  \item{model}{model object produced by \code{lm} or \code{glm}}.
+  \item{model}{model object produced by \code{lm} or \code{glm}.}
   \item{variable}{variable (if it exists in the search path) or
     name of variable. This argument usually is omitted for \code{avp}
     or \code{av.plots}.}
@@ -53,6 +55,7 @@ av.plot.glm(model, variable, labels=names(residuals(model)),
   \item{\dots}{arguments to be passed down to \code{av.plot.lm} or
     \code{av.plot.glm}.}
 }
+
 \details{
   The function intended for direct use is \code{av.plots} (for which \code{avp}
   is an abbreviation). By default, these functions are used interactively
@@ -61,10 +64,12 @@ av.plot.glm(model, variable, labels=names(residuals(model)),
   The model can contain factors and interactions. An added-variable plot can be
   drawn for each column of the model matrix, including the constant.
 }
+
 \value{
   \code{NULL}. These functions are used for their side effect: producing
   plots.
 }
+
 \references{
   Cook, R. D. and Weisberg, S. (1999)
   \emph{Applied Regression, Including Computing and Graphics.} Wiley.
@@ -76,10 +81,10 @@ av.plot.glm(model, variable, labels=names(residuals(model)),
   Adding a variable in generalized linear models.
   \emph{Technometrics} \bold{27}, 273--276.
 }
+
 \author{John Fox \email{jfox@mcmaster.ca}}
 
-
-\seealso{\code{\link{cr.plots}}, \code{\link{ceres.plots}}, \code{\link{leverage.plots}}
+\seealso{\code{\link{cr.plots}}, \code{\link{ceres.plots}}, \code{\link{leverage.plots}}}
 
 \examples{
     \dontrun{

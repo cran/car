@@ -5,10 +5,12 @@
 \alias{print.box.tidwell}
 
 \title{Box-Tidwell Transformations}
+
 \description{
   Computes the Box-Tidwell power transformations of the predictors in a
   linear model.
 }
+
 \usage{
 box.tidwell(y, ...)
 
@@ -40,15 +42,18 @@ box.tidwell.default(y, x1, x2=NULL, max.iter=25, tol=0.001,
   \item{x2}{matrix of predictors that are \emph{not} candidates for transformation.}
   \item{\dots}{not for the user.}
 }
+
 \details{
   The maximum-likelihood estimates of the transformation parameters are computed
   by Box and Tidwell's (1962) method, which is usually more efficient than using
   a general nonlinear least-squares routine for this problem. Score tests for the
   transformations are also reported.
 }
+
 \value{
   an object of class \code{box.tidwell}, which is normally just printed.
 }
+
 \references{ 
   Box, G. E. P. and Tidwell, P. W. (1962)
   Transformation of the independent variables.
@@ -58,7 +63,7 @@ box.tidwell.default(y, x1, x2=NULL, max.iter=25, tol=0.001,
   \emph{Applied Regression, Linear Models, and Related Methods.} Sage. 
 }
 
-\author{John Fox \email{jfox@mcmaster.ca}
+\author{John Fox \email{jfox@mcmaster.ca}}
 
 \examples{
 data(Prestige)

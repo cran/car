@@ -28,6 +28,7 @@ Var.glm(object, diagonal=F)
 
 \value{
   A variance-covariance matrix or a vector of variances.
+  }
 
 \author{John Fox \email{jfox@mcmaster.ca}}
 
