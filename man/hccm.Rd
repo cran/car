@@ -12,16 +12,16 @@
 \usage{
 hccm(model, ...)
 
-hccm.lm(model, type=c("hc3", "hc0", "hc1", "hc2"))
+hccm.lm(model, type=c("hc3", "hc0", "hc1", "hc2", "hc4"), ...)
 
 hccm.default(model, ...)
 }
 
 \arguments{
   \item{model}{an unweighted linear model, produced by \code{lm}.}
-  \item{type}{one of \code{"hc0"}, \code{"hc1"}, \code{"hc2"}, or \code{"hc3"}; the
-    first of these gives the classic White correction. The others are described in
-    Long and Ervin (2000).}
+  \item{type}{one of \code{"hc0"}, \code{"hc1"}, \code{"hc2"}, \code{"hc3"}, or \code{"hc4"}; the
+    first of these gives the classic White correction. The \code{"hc1"}, \code{"hc2"}, and \code{"hc3"}
+    corrections are described in Long and Ervin (2000); \code{"hc4"} is described in Cribari-Neto (in press).}
   \item{...}{arguments to pass to \code{hccm.lm}.}
 }
 
@@ -37,6 +37,10 @@ hccm.default(model, ...)
   The heteroscedasticity-corrected covariance matrix for the model.
 }
 \references{
+  Cribari-Neto, F. (in press)
+  Asymptotic inference under heteroskedasticity of unknown form.
+  \emph{Computational Statistics and Data Analysis}.
+  
   Long, J. S. and Ervin, L. H. (2000) 
   Using heteroscedasity consistent standard errors in the linear regression model. 
   \emph{The American Statistician} \bold{54}, 217--224.
@@ -62,11 +66,11 @@ Var(mod)
 ## nationUS     -1.032e+00  1.109e-05  1.003e+00  1.017e+00  2.128e+00
 hccm(mod)             
 ##             (Intercept)     assets  nationOTH   nationUK   nationUS
-## (Intercept)   1.4808521 -1.640e-05 -1.445e+00 -1.460e+00 -1.455e+00
-## assets       -0.0000164  2.425e-09  1.079e-05  1.324e-05  1.161e-05
-## nationOTH    -1.4451983  1.079e-05  6.743e+00  1.432e+00  1.430e+00
-## nationUK     -1.4600207  1.324e-05  1.432e+00  3.722e+00  1.440e+00
-## nationUS     -1.4550976  1.161e-05  1.430e+00  1.440e+00  1.840e+00
+## (Intercept)   1.664e+00 -3.957e-05 -1.569e+00 -1.611e+00 -1.572e+00
+## assets       -3.957e-05  6.752e-09  2.275e-05  3.051e-05  2.231e-05
+## nationOTH    -1.569e+00  2.275e-05  8.209e+00  1.539e+00  1.520e+00
+## nationUK     -1.611e+00  3.051e-05  1.539e+00  4.476e+00  1.543e+00
+## nationUS     -1.572e+00  2.231e-05  1.520e+00  1.543e+00  1.946e+00
 }
 
 \keyword{regression}

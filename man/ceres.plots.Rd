@@ -16,7 +16,7 @@ ceres.plots(model, variable, ask=missing(variable), one.page=!ask,
 ceres.plot(model, ...)
 
 ceres.plot.lm(model, variable, line=TRUE, smooth=TRUE, span=0.5, iter,
-  las=par('las'), col=palette()[2], pch=1, lwd=2, main="ceres Plot")
+  las=par('las'), col=palette()[2], pch=1, lwd=2, main="ceres Plot", ...)
 
 ceres.plot.glm(model, ...)
 }

@@ -11,8 +11,8 @@
 
 \title{Functions For Constructing Effect Plots}
 \description{
-  \code{effect} constructs an \code{"effect"} object for a high-order term in a
-  linear or generalized linear model, absorbing the lower-order terms marginal
+  \code{effect} constructs an \code{"effect"} object for a term (usually a high-order term) 
+  in a linear or generalized linear model, absorbing the lower-order terms marginal
   to the term in question, and averaging over other terms in the model. 
   
   \code{all.effects} identifies all of the high-order terms in a model and returns
@@ -30,15 +30,16 @@ all.effects(mod, ...)
 \method{summary}{effect}(object, ...)
 %% \method{summary{effect.list}(object, ...)
 \method{plot}{effect}(x, x.var=which.max(levels), 
-    z.var=which.min(levels), multiline=is.null(x$se), rug=TRUE,
-    ylab=x$response, colors=palette(), symbols=1:10, lines=1:10,
+    z.var=which.min(levels), multiline=is.null(x$se), rug=TRUE, xlab,
+    ylab=x$response, colors=palette(), symbols=1:10, lines=1:10, cex=1.5, ylim=NULL,
     factor.names=TRUE, ...)
 \method{plot}{effect.list}(x, selection, ...)
 as.data.frame.effect(x, row.names=NULL, optional=TRUE)
 }
 
 \arguments{
-  \item{term}{the quoted name of a high-order term in the model.}
+  \item{term}{the quoted name of a term, usually, but not necessarily, a high-order 
+    term in the model.}
   \item{mod}{an object of class \code{"lm"} or \code{"glm"}.}
   \item{xlevels}{an optional list of values at which to set covariates,
     with components of the form \code{covariate.name = vector.of.values}.}
@@ -52,7 +53,7 @@ as.data.frame.effect(x, row.names=NULL, optional=TRUE)
     based on the standard-normal distribution; the default is \code{0.95}.}
   \item{transformation}{a function to be applied to the calculated effects
     and confidence limits; the default is the inverse-link function for the
-    model, which is a the identity function for a linear model
+    model, which is the identity function for a linear model
     (i.e., no transformation.)}
   \item{typical}{a function to be applied to the columns of the model matrix
     over which the effect is "averaged"; the default is \code{mean}.}
@@ -79,8 +80,13 @@ as.data.frame.effect(x, row.names=NULL, optional=TRUE)
   \item{symbols, lines}{corresponding to the levels of the \code{z.var} covariate
     or factor on a multiline plot. These arguments are used only if \code{multiline = TRUE};
     in this case a legend is drawn at the top of the display.}
+  \item{cex}{character expansion for plotted symbols; default is \code{1}.}
+  \item{ylim}{2-element vector containing the lower and upper limits of the vertical axes;
+    if \code{NULL}, the default, then the vertical axes are scaled from the data.}
   \item{factor.names}{a logical value, default \code{TRUE}, that controls the inclusion of
     factor names in conditioning-variable labels.}
+  \item{xlab}{the label for the horizontal axis of the effect plot; if missing, the
+    function will use the name of the predictor on the horizontal axis.}
   \item{ylab}{the label for the vertical axis of the effect plot; the default is the
     response variable for the model from which the effect was computed.}
   \item{selection}{the optional index (number) or quoted name of the effect in an effect
@@ -91,11 +97,19 @@ as.data.frame.effect(x, row.names=NULL, optional=TRUE)
 
 \details{
   Normally, the functions to be used directly are \code{all.effects}, to return
-  a list of effects, and the generic \code{plot} function to plot the effects.
+  a list of high-order effects, and the generic \code{plot} function to plot the effects.
   Plots are drawn using the \code{\link[lattice]{xyplot}} function in the 
   \code{lattice} package. Effects may also be printed (implicitly or explicitly via
   \code{print}) or summarized (using \code{summary}).
   
+  If asked, the \code{effect} function will compute effects for terms that have 
+  higher-order relatives in the model, averaging over those terms (which rarely makes sense), or for terms that
+  do not appear in the model but are higher-order relatives of terms that do. 
+  For example, for the model \code{Y ~ A*B + A*C + B*C}, one could
+  compute the effect corresponding to the absent term \code{A:B:C}, which absorbs the constant, the
+  \code{A}, \code{B}, and \code{C} main effects, and the three two-way interactions. In either of these
+  cases, a warning is printed.
+   
   In calculating effects, the strategy for "safe" prediction described
   in Hastie (1992: Sec. 7.3.3) is employed.
 }

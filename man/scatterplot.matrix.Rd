@@ -15,23 +15,23 @@ scatterplot.matrix(x, ...)
 
 scatterplot.matrix.formula(formula, data=NULL, subset, ...)
 
-scatterplot.matrix.default(data, labels=colnames(data), 
-diagonal=c("density", "boxplot", "histogram", "qqplot", "none"), 
-adjust=1, nclass, plot.points=TRUE, smooth=TRUE, span=0.5, reg.line=lm, 
-transform=FALSE, ellipse=FALSE, levels=c(.5, .9), robust=FALSE,
-groups=FALSE, by.groups=FALSE, col=palette(), 
-pch=1:n.groups, lwd=1, legend.plot=length(levels(groups)) > 1)
+scatterplot.matrix.default(x, labels=colnames(x), 
+    diagonal=c("density", "boxplot", "histogram", "qqplot", "none"), 
+    adjust=1, nclass, plot.points=TRUE, smooth=TRUE, span=0.5, reg.line=lm, 
+    transform=FALSE, ellipse=FALSE, levels=c(.5, .9), robust=FALSE,
+    groups=FALSE, by.groups=FALSE, col=palette(), 
+    pch=1:n.groups, lwd=1, legend.plot=length(levels(groups)) > 1, ...)
 
 spm(x, ...)
 }
 
 \arguments{
+  \item{x}{a data matrix, numeric data frame, or formula.}
   \item{formula}{a one-side ``model'' formula, of the form 
     \code{ ~ x1 + x2 + ... + xk} or \code{ ~ x1 + x2 + ... + xk | z} where \code{z}
     evaluates to a factor or other variable to divide the data into groups.}
-  \item{data}{data matrix or numeric data frame, or (for \code{scatterplot.matrix.formula})
+  \item{data}{for \code{scatterplot.matrix.formula},
     a data frame within which to evaluate the formula.}
-  \item{x}{data matrix or formula.}
   \item{subset}{expression defining a subset of observations.}
   \item{labels}{variable labels (for the diagonal of the plot).}
   \item{diagonal}{contents of the diagonal panels of the plot.}

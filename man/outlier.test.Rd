@@ -15,9 +15,9 @@
 \usage{
 outlier.test(model, ...)
 
-outlier.test.lm(model, labels=names(rstud))
+outlier.test.lm(model, labels=names(rstud), ...)
 
-outlier.test.glm(model, labels=names(rstud))
+outlier.test.glm(model, labels=names(rstud), ...)
 
 \method{print}{outlier.test}(x, ...)
 }
@@ -25,7 +25,7 @@ outlier.test.glm(model, labels=names(rstud))
 \arguments{
   \item{model}{a suitable model object.}
   \item{labels}{an optional vector of observation names.}
-  \item{...}{not for the user.}
+  \item{...}{arguments passed down to methods functions.}
   \item{x}{\code{outlier.test} object.}
 }
 

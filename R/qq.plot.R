@@ -1,6 +1,6 @@
 # Quantile-comparison plots (J. Fox)
 
-# last modified 2 April 02 by J. Fox
+# last modified 26 October 02 by J. Fox
 
 qqp<-function(...) qq.plot(...)
 
@@ -11,8 +11,8 @@ qq.plot<-function(x, ...) {
 qq.plot.default<-function(x, distribution="norm", ylab=deparse(substitute(x)),
         xlab=paste(distribution, "quantiles"), main="", las=par("las"),
         envelope=.95, labels=FALSE, col=palette()[2], lwd=2, pch=1,
-        line=c("quartiles", "robust"), ...){
-    # last modified 20 Feb 2002
+        line=c("quartiles", "robust", "none"), ...){
+    # last modified 23 February 2003
     result <- NULL
     line<-match.arg(line)
     good<-!is.na(x)
@@ -32,13 +32,13 @@ qq.plot.default<-function(x, distribution="norm", ylab=deparse(substitute(x)),
         abline(a, b, col=col, lwd=lwd)
         }
     if (line=="robust"){
-        if (!require("MASS", quietly=TRUE)) stop("MASS package not available")
+        if (!require("MASS")) stop("MASS package not available")
         coef<-coefficients(rlm(ord.x~z))
         a<-coef[1]
         b<-coef[2]
         abline(a,b)
         }
-    if (envelope != FALSE) {
+    if (line != 'none' & envelope != FALSE) {
         zz<-qnorm(1-(1-envelope)/2)
         SE<-(b/d.function(z, ...))*sqrt(P*(1-P)/n)
         fit.value<-a+b*z
@@ -57,10 +57,10 @@ qq.plot.default<-function(x, distribution="norm", ylab=deparse(substitute(x)),
     
 qq.plot.lm<-function(x, main="", xlab=paste(distribution, "Quantiles"),
     ylab=paste("Studentized Residuals(",deparse(substitute(x)),")",sep=""),
-    distribution=c("t", "norm"), line=c("quartiles", "robust"), las=par("las"),
+    distribution=c("t", "norm"), line=c("quartiles", "robust", "none"), las=par("las"),
     simulate=FALSE, envelope=.95, labels=names(rstudent), reps=100, 
     col=palette()[2], lwd=2, pch=1, ...){
-    # last modified 20 Feb 2002
+    # last modified 23 Feb 2003
     result <- NULL
     distribution <- match.arg(distribution)
     line<-match.arg(line)
@@ -104,7 +104,7 @@ qq.plot.lm<-function(x, main="", xlab=paste(distribution, "Quantiles"),
             abline(a, b, col=col, lwd=lwd)
             }
         if (line=="robust"){
-            if (!require("MASS", quietly=TRUE)) stop("MASS package not available")
+            if (!require("MASS")) stop("MASS package not available")
             coef<-coefficients(rlm(ord.x~z))
             a<-coef[1]
             b<-coef[2]
@@ -119,6 +119,6 @@ qq.plot.lm<-function(x, main="", xlab=paste(distribution, "Quantiles"),
     if (is.null(result)) invisible(result) else sort(result)
     }
  
-qq.plot.glm<-function(mod, ...){
+qq.plot.glm<-function(x, ...){
     stop("QQ plot for studentized residuals not available for glm")
     }

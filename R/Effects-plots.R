@@ -1,4 +1,4 @@
-## last modified 8 April 02 by J. Fox
+## last modified 1 January 03 by J. Fox
 
 effect <- function (term, mod, xlevels=list(), default.levels=10, se=TRUE, 
     confidence.level=.95, transformation=family(mod)$linkinv, typical=mean){
@@ -62,12 +62,20 @@ effect <- function (term, mod, xlevels=list(), default.levels=10, se=TRUE,
     ancestors <- function(term, mod){
         names <- term.names(mod)
         if (has.intercept(mod)) names <- names[-1]
-        factors <- attr(mod$terms, "factors")
         if(length(names)==1) return(NULL)
         which.term<-which(term==names)
-        result<-(1:length(names))[-which.term][sapply(names[-which.term],
-            function(term2) is.relative(term2, term, factors))]
-        if (0 ==  length(result)) which.term else result
+        if (length(which.term) == 0){
+            factors <- attr(terms(mod.aug), "factors")
+            result<-(1:length(names))[sapply(names,
+                function(term2) is.relative(term2, term, factors))]
+            if (0 ==  length(result)) which.term else result
+            }
+        else {
+            factors <- attr(mod$terms, "factors")        
+            result<-(1:length(names))[-which.term][sapply(names[-which.term],
+                function(term2) is.relative(term2, term, factors))]
+            if (0 ==  length(result)) which.term else result
+            }
         }
     first.order.ancestors <- function(term, mod){
         ancestors <- ancestors(term, mod)
@@ -76,11 +84,18 @@ effect <- function (term, mod, xlevels=list(), default.levels=10, se=TRUE,
     descendants<-function(term, mod){
         names <- term.names(mod)
         if (has.intercept(mod)) names <- names[-1]
-        factors <- attr(mod$terms, "factors")
         if(length(names)==1) return(NULL)
         which.term<-which(term==names)
-        (1:length(names))[-which.term][sapply(names[-which.term],
-            function(term2) is.relative(term, term2, factors))]
+        if (length(which.term) == 0){
+            factors <- attr(terms(mod.aug), "factors")
+            (1:length(names))[sapply(names,
+                function(term2) is.relative(term, term2, factors))]
+            }
+        else {
+            factors <- attr(mod$terms, "factors")
+            (1:length(names))[-which.term][sapply(names[-which.term],
+                function(term2) is.relative(term, term2, factors))]
+            }
         }
     is.high.order.term <- function(term, mod){
         0 == length(descendants(term, mod))
@@ -94,17 +109,21 @@ effect <- function (term, mod, xlevels=list(), default.levels=10, se=TRUE,
         sort(setdiff(1:ncol(attr(mod$terms, "factors")),
             union(union(ancestors, descendants), self)))
         }
-    if (!is.high.order.term(term, mod))
-        stop(paste(term, 'is not a high-order term in the model'))
+    term <- gsub("\\*", ":", term)
+    intercept <- has.intercept(mod)
     terms <- term.names(mod)
+    if (intercept) terms <- terms[-1]
+    which.term <- which(term==terms)
+    if (length(which.term) == 0){
+        warning(paste(term,"does not appear in the model"))
+        mod.aug <- update(formula(mod), eval(parse(text=paste(". ~ . +", term))))
+        }
+    if (!is.high.order.term(term, mod))
+        warning(paste(term, 'is not a high-order term in the model'))
     basic.vars <- first.order.ancestors(term, mod)
     all.vars <- (1:nrow(attr(mod$terms, 'factors')))[
             0 != apply(attr(mod$terms, 'factors'), 1, sum) ]
-    intercept <- has.intercept(mod)
-    if (intercept) {
-        all.vars <- all.vars - 1
-        terms <- terms[-1]
-        }
+    if (intercept) all.vars <- all.vars - 1
     excluded.vars <- setdiff(all.vars, basic.vars)
     all.vars <- all.vars(as.formula(paste ("~", paste(terms[all.vars], collapse="+"))))
     basic.vars <- all.vars(as.formula(paste ("~", paste(terms[basic.vars], collapse="+"))))
@@ -298,8 +317,8 @@ as.data.frame.effect <- function(x, row.names=NULL, optional=TRUE){
     }
 
 plot.effect <- function(x, x.var=which.max(levels), 
-    z.var=which.min(levels), multiline=is.null(x$se), rug=TRUE,
-    ylab=x$response, colors=palette(), symbols=1:10, lines=1:10,
+    z.var=which.min(levels), multiline=is.null(x$se), rug=TRUE, xlab,
+    ylab=x$response, colors=palette(), symbols=1:10, lines=1:10, cex=1.5, ylim,
     factor.names=TRUE, ...){
     lrug <- function(x) {
                 if (length(unique(x)) < 0.8 * length(x)) x <- jitter(x)
@@ -310,19 +329,25 @@ plot.effect <- function(x, x.var=which.max(levels),
     ylab # force evaluation
     x.data <- x$data
     effect <- paste(sapply(x$variables, "[[", "name"), collapse="*")
+    vars <- x$variables
     x <- as.data.frame(x)
+    for (i in 1:length(vars)){
+        if (!(vars[[i]]$is.factor)) next
+        x[,i] <- factor(x[,i], levels=vars[[i]]$levels)
+        }
     has.se <- !is.null(x$se)
     n.predictors <- ncol(x) - 2 - 3*has.se
     if (n.predictors == 1){
-        ylim <- if (has.se) range(c(x$lower, x$upper))
-            else range(x$fit)
+        range <- if (has.se) range(c(x$lower, x$upper)) else range(x$fit)
+        ylim <- if (!missing(ylim)) ylim else c(range[1] - .025*(range[2] - range[1]),                                              
+                                                range[2] + .025*(range[2] - range[1]))
         if (is.factor(x[,1])){
             levs <- levels(x[,1])
             print(xyplot(eval(parse(
                 text=paste("fit ~ as.numeric(", names(x)[1], ")"))), 
                 strip=function(...) strip.default(..., strip.names=c(factor.names, TRUE)),
                 panel=function(x, y, lower, upper, has.se, ...){
-                    llines(x, y, lwd=2, col=colors[1], type='b', pch=19, cex=1.5, ...)
+                    llines(x, y, lwd=2, col=colors[1], type='b', pch=19, cex=cex, ...)
                     if (has.se){
                         llines(x, lower, lty=2, col=colors[2])
                         llines(x, upper, lty=2, col=colors[2])
@@ -330,7 +355,7 @@ plot.effect <- function(x, x.var=which.max(levels),
                     },
                 ylim=ylim,
                 ylab=ylab,
-                xlab=names(x)[1],
+                xlab=if (missing(xlab)) names(x)[1] else xlab,
                 scales=list(x=list(at=1:length(levs), labels=levs)),
                 main=paste(effect, "effect plot"),
                 lower=x$lower, upper=x$upper, has.se=has.se, data=x, ...))
@@ -359,8 +384,9 @@ plot.effect <- function(x, x.var=which.max(levels),
     predictors <- names(x)[1:n.predictors]
     levels <- sapply(apply(x[,predictors], 2, unique), length)
     if (x.var == z.var) z.var <- z.var + 1
-    ylim <- if (has.se) range(c(x$lower, x$upper))
-        else range(x$fit)
+    range <- if (has.se && (!multiline)) range(c(x$lower, x$upper)) else range(x$fit)
+    ylim <- if (!missing(ylim)) ylim else c(range[1] - .025*(range[2] - range[1]),                                              
+                                                range[2] + .025*(range[2] - range[1]))
     if (multiline){
         zvals <- unique(x[, z.var])
         if (length(zvals) > min(c(length(colors), length(lines), length(symbols))))
@@ -376,12 +402,12 @@ plot.effect <- function(x, x.var=which.max(levels),
                     for (i in 1:length(zvals)){
                         sub <- z[subscripts] == zvals[i]
                         llines(x[sub], y[sub], lwd=2, type='b', col=colors[i], 
-                            pch=symbols[i], lty=lines[i], cex=1.5, ...)
+                            pch=symbols[i], lty=lines[i], cex=cex, ...)
                         }
                     },
                 ylim=ylim,
                 ylab=ylab,
-                xlab=predictors[x.var],
+                xlab=if (missing(xlab)) predictors[x.var] else xlab,
                 z=x[,z.var],
                 scales=list(x=list(at=1:length(levs), labels=levs)),
                 zvals=zvals,
@@ -403,11 +429,12 @@ plot.effect <- function(x, x.var=which.max(levels),
                     if (rug) lrug(x.vals)
                     for (i in 1:length(zvals)){
                         sub <- z[subscripts] == zvals[i]
-                        llines(x[sub], y[sub], lwd=2, type='l', col=colors[i], lty=lines[i], cex=1.5, ...)
+                        llines(x[sub], y[sub], lwd=2, type='l', col=colors[i], lty=lines[i], cex=cex, ...)
                         }
                     },
                 ylim=ylim,
                 ylab=ylab,
+                xlab=if (missing(xlab)) predictors[x.var] else xlab,
                 x.vals=x.vals, rug=rug,
                 z=x[,z.var],
                 zvals=zvals,
@@ -426,7 +453,7 @@ plot.effect <- function(x, x.var=which.max(levels),
                 paste(predictors[-x.var], collapse="*")))),
             strip=function(...) strip.default(..., strip.names=c(factor.names, TRUE)),
             panel=function(x, y, subscripts, lower, upper, has.se, ...){
-                llines(x, y, lwd=2, type='b', col=colors[1], pch=19, cex=1.5, ...)
+                llines(x, y, lwd=2, type='b', col=colors[1], pch=19, cex=cex, ...)
                 if (has.se){
                     llines(x, lower[subscripts], lty=2, col=colors[2])
                     llines(x, upper[subscripts], lty=2, col=colors[2])
@@ -434,7 +461,7 @@ plot.effect <- function(x, x.var=which.max(levels),
                 },
             ylim=ylim,
             ylab=ylab,
-            xlab=predictors[x.var],
+            xlab=if (missing(xlab)) predictors[x.var] else xlab,
             scales=list(x=list(at=1:length(levs), labels=levs)),
             main=paste(effect, "effect plot"),
             lower=x$lower, upper=x$upper, has.se=has.se, data=x, ...))
@@ -455,6 +482,7 @@ plot.effect <- function(x, x.var=which.max(levels),
                 },
             ylim=ylim,
             ylab=ylab,
+            xlab=if (missing(xlab)) predictors[x.var] else xlab,
             x.vals=x.vals, rug=rug,
             main=paste(effect, "effect plot"),
             lower=x$lower, upper=x$upper, has.se=has.se, data=x, ...))

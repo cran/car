@@ -17,10 +17,10 @@ lht(...)
 
 linear.hypothesis.lm(model, hypothesis.matrix, rhs=0, 
   summary.model=summary(model, corr = FALSE), 
-  white.adjust=FALSE, error.SS, error.df)
+  white.adjust=FALSE, error.SS, error.df, ...)
 
 linear.hypothesis.glm(model, hypothesis.matrix, rhs=0, 
-  summary.model=summary(model, corr = FALSE))
+  summary.model=summary(model, corr = FALSE), ...)
   
 \method{print}{chisq.test}(x, ...)
 

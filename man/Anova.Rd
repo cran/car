@@ -26,7 +26,7 @@ Anova.lm(mod, error, type=c("II", "III"), ...)
 Anova.aov(mod, ...)
 
 Anova.glm(mod, type=c("II", "III"), test.statistic=c("LR", "Wald", "F"), 
-    error, error.estimate=c("pearson", "dispersion", "deviance"))
+    error, error.estimate=c("pearson", "dispersion", "deviance"), ...)
 }
 
 \arguments{

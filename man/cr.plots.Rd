@@ -20,7 +20,7 @@ cr.plot(model, ...)
 
 cr.plot.lm(model, variable, order=1, line=TRUE, smooth=TRUE, iter, 
   span=0.5, las=par('las'), col=palette()[2], pch=1, lwd=2,
-  main="Component+Residual Plot")
+  main="Component+Residual Plot", ...)
 
 cr.plot.glm(model, ...)
 }

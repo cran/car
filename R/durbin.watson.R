@@ -1,6 +1,6 @@
 # generalized Durbin-Watson statistic (J. Fox)
 
-# last modified 22 May 02 by J. Fox
+# last modified 9 Nov 02 by J. Fox
 
 durbin.watson <- function(model, ...){
   UseMethod("durbin.watson")
@@ -8,7 +8,7 @@ durbin.watson <- function(model, ...){
 
 durbin.watson.lm <- function(model, max.lag=1, simulate=TRUE, reps=1000, 
     method=c("resample","normal"), 
-    alternative=c("two.sided", "positive", "negative")){
+    alternative=c("two.sided", "positive", "negative"), ...){
     method<-match.arg(method)
     alternative <- if (max.lag == 1) match.arg(alternative)
         else "two.sided"
@@ -59,14 +59,15 @@ durbin.watson.lm <- function(model, max.lag=1, simulate=TRUE, reps=1000,
             }
     }
 
-durbin.watson.default<-function(residuals, max.lag=1){
-    if ( (!is.vector(residuals)) || (!is.numeric(residuals)) ) stop("requires vector of residuals")
-    if (any(is.na(residuals))) stop ('residuals include missing values')
-    n<-length(residuals)
+durbin.watson.default<-function(model, max.lag=1, ...){
+    # in this case, "model" is the residual vectors
+    if ( (!is.vector(model)) || (!is.numeric(model)) ) stop("requires vector of residuals")
+    if (any(is.na(model))) stop ('residuals include missing values')
+    n<-length(model)
     dw<-rep(0, max.lag)
-    den<-sum(residuals^2)
+    den<-sum(model^2)
     for (lag in 1:max.lag){
-        dw[lag]<-(sum((residuals[(lag+1):n] - residuals[1:(n-lag)])^2))/den
+        dw[lag]<-(sum((model[(lag+1):n] - model[1:(n-lag)])^2))/den
         }
     dw
     }

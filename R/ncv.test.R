@@ -1,11 +1,13 @@
 # score test of nonconstant variance (J. Fox)
 
+# last modified 9 Nov 02 by J. Fox
+
 ncv.test<-function(model, ...){
     # last modified 15 Dec 2000 by J. Fox
     UseMethod("ncv.test")
     }
 
-ncv.test.lm<-function (model, var.formula, data=NULL, subset, na.action) {
+ncv.test.lm<-function (model, var.formula, data=NULL, subset, na.action, ...) {
     # last modified 13 Nov 2001 by J. Fox
     if (!is.null(weights(model))) stop("requires unweighted linear model")
     if ((!is.null(class(model$na.action))) && class(model$na.action) == 'exclude') 

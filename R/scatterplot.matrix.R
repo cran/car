@@ -1,5 +1,7 @@
 # fancy scatterplot matrices (J. Fox)
 
+# last modified: 9 Nov 02 by J. Fox
+
 scatterplot.matrix<-function(x, ...){
     UseMethod("scatterplot.matrix")
     }
@@ -32,21 +34,21 @@ scatterplot.matrix.formula<-function (formula, data=NULL, subset,  ...) {
         }
     }
 
-scatterplot.matrix.default<-function(data, labels=colnames(data), 
+scatterplot.matrix.default<-function(x, labels=colnames(x), 
     diagonal=c("density", "boxplot", "histogram", "qqplot", "none"), adjust=1, nclass,
     plot.points=TRUE, smooth=TRUE, span=.5, reg.line=lm, transform=FALSE,
     ellipse=FALSE, levels=c(.5, .9), robust=FALSE,
     groups=FALSE, by.groups=FALSE,
     col=palette(), pch=1:n.groups, lwd=1,
-    legend.plot=length(levels(groups)) > 1){
-    # last modified 2 May 2001 by J. Fox
+    legend.plot=length(levels(groups)) > 1, ...){
+    # last modified 6 Feb 2003 by J. Fox
     if (groups != FALSE){
-        data<-na.omit(cbind(as.data.frame(groups),data))
-        groups<-as.factor(as.character(data[,1]))
-        data<-data[,-1]
+        x<-na.omit(cbind(as.data.frame(groups),x))
+        groups<-as.factor(as.character(x[,1]))
+        x<-x[,-1]
         }
-        else data<-na.omit(data)
-    if (missing(nclass)) nclass<-n.bins(data[,1])
+        else x<-na.omit(x)
+    if (missing(nclass)) nclass<-n.bins(x[,1])
     reg<-function(x, y, col){
         mod<-reg.line(y~x)
         y.hat<-fitted.values(mod)
@@ -76,17 +78,17 @@ scatterplot.matrix.default<-function(data, labels=colnames(data),
     panel.blank<-function(x) NULL
     which.fn<-match(match.arg(diagonal), c("density", "boxplot", "histogram", "qqplot", "none"))
     diag<-list(panel.density, panel.boxplot, panel.histogram, panel.qqplot, panel.blank)[[which.fn]]
-    groups<-as.factor(if(FALSE==groups) rep(1, length(data[,1])) else groups)
+    groups<-as.factor(if(FALSE==groups) rep(1, length(x[,1])) else groups)
     n.groups<-length(levels(groups))
     if (n.groups >= length(col)) stop("number of groups exceeds number of available colors")
-    if (transform != FALSE | length(transform) == ncol(data)){
-        if (transform == TRUE & length(transform) == 1) transform <- box.cox.powers(data)$lambda
-        for (i in 1:ncol(data)){
-            data[,i]<-box.cox(data[,i], transform[i])
+    if (transform != FALSE | length(transform) == ncol(x)){
+        if (transform == TRUE & length(transform) == 1) transform <- box.cox.powers(x)$lambda
+        for (i in 1:ncol(x)){
+            x[,i]<-box.cox(x[,i], transform[i])
             labels[i] <- paste(labels[i], "^(", round(transform[i],2), ")", sep="")
             }
         }          
-    pairs(data, labels=labels,
+    pairs(x, labels=labels,
         diag.panel=diag,
         panel=function(x, y, ...){ 
             for (i in 1:n.groups){
@@ -106,7 +108,7 @@ scatterplot.matrix.default<-function(data, labels=colnames(data),
             }
         )
     if(legend.plot) {
-        frac<-1/ncol(data)
+        frac<-1/ncol(x)
         legend(1 - .95*frac, 0.8*frac,
             legend=levels(groups), pch=pch, col=col[2:(n.groups+1)], 
             cex=cumprod(par("fin"))[2]*sqrt(frac)/(sqrt(n.groups)*20))

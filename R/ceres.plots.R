@@ -1,6 +1,6 @@
 # CERES plots (J. Fox)
 
-# last modified 2 April 02 by J. Fox
+# last modified 2 Nov 02 by J. Fox
 
 ceres.plots<-function(model, variable, ask=missing(variable), one.page=!ask, span=.5, ...){
     # last modified 2 Aug 2001 by J. Fox
@@ -52,9 +52,39 @@ ceres.plot<-function (model, ...) {
     }
 
 ceres.plot.lm<-function(model, variable, line=TRUE, smooth=TRUE, span=.5, iter, 
-    las=par("las"), col=palette()[2], pch=1, lwd=2, main="Ceres Plot"){
+    las=par("las"), col=palette()[2], pch=1, lwd=2, main="Ceres Plot", ...){
     # the lm method works with glm's too
-    # last modified 20 Feb 2002 by J. Fox
+    # last modified 2 Nov 2002 by J. Fox
+    expand.model.frame <- function (model, extras, envir = environment(formula(model)),
+        na.expand = FALSE){  # modified version of R base function
+        f <- formula(model)
+        data <- eval(model$call$data, envir)
+        ff <- foo ~ bar + baz
+        if (is.call(extras)) 
+            gg <- extras
+        else gg <- parse(text = paste("~", paste(extras, collapse = "+")))[[1]]
+        ff[[2]] <- f[[2]]
+        ff[[3]][[2]] <- f[[3]]
+        ff[[3]][[3]] <- gg[[2]]
+        if (!na.expand) {
+            naa <- model$call$na.action
+            subset <- model$call$subset
+            rval <- if (is.null(data)) eval(call("model.frame", ff, # modified
+                subset = subset, na.action = naa), envir)           #  lines
+            else eval(call("model.frame", ff, data = data,          #
+                subset = subset, na.action = naa), envir)           #
+            }
+        else {
+            subset <- model$call$subset
+            rval <- eval(call("model.frame", ff, data = data, subset = subset, 
+                na.action = I), envir)
+            oldmf <- model.frame(model)
+            keep <- match(rownames(oldmf), rownames(rval))
+            rval <- rval[keep, ]
+            class(rval) <- "data.frame"
+            }
+        return(rval)
+        }
     if(!is.null(class(model$na.action)) && 
         class(model$na.action) == 'exclude') class(model$na.action) <- 'omit'
     if (missing(iter)){
@@ -88,10 +118,10 @@ ceres.plot.lm<-function(model, variable, line=TRUE, smooth=TRUE, span=.5, iter,
         }
     if (is.null(xvars)) stop("There are no covariates.")
     n.x<-length(xvars)
-    mf<-model.frame(model)
+    mf<-na.omit(expand.model.frame(model, all.vars(formula(model))))
     rownames(.x)<-all.obs
     mf$.x<-.x[obs,]
-    aug.model<-update(model, .~.+.x, data=mf)
+    aug.model <- update(model, . ~ . + .x, data=mf)
     aug.mod.mat<-model.matrix(aug.model)
     coef<-coefficients(aug.model)
     k<-length(coef)

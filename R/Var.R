@@ -1,18 +1,18 @@
 # Variance-Covariance matrices (J. Fox)
 
-# last modified 2 April 02 by J. Fox
+# last modified 9 Nov 02 by J. Fox
 
 Var<-function(object, ...){
     UseMethod("Var")
     }
     
-Var.lm<-function(object, diagonal=FALSE){
+Var.lm<-function(object, diagonal=FALSE, ...){
     summary<-summary(object, corr=FALSE)
     V<-(summary$sigma^2)*summary$cov.unscaled
     if (diagonal) diag(V) else V
     }
     
-Var.glm<-function(object, diagonal=FALSE){
+Var.glm<-function(object, diagonal=FALSE, ...){
     summary<-summary(object, corr = FALSE)
     V<-summary$dispersion*summary$cov.unscaled
     if (diagonal) diag(V) else V

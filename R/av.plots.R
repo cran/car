@@ -1,6 +1,6 @@
 # Added-Variable plots (J. Fox)
 
-# last modified 2 April 02 by J. Fox
+# last modified 9 Nov 02 by J. Fox
 
 avp<-function(...) av.plots(...)
 
@@ -37,7 +37,7 @@ av.plot<-function (model, ...) {
     }
 
 av.plot.lm<-function(model, variable, labels=names(residuals(model)[!is.na(residuals(model))]), 
-    identify.points=TRUE, las=par('las'), col=palette()[2], pch=1, lwd=2, main="Added-Variable Plot"){
+    identify.points=TRUE, las=par('las'), col=palette()[2], pch=1, lwd=2, main="Added-Variable Plot", ...){
     #last modified 20 Feb 2002 by J. Fox
     variable<-if (is.character(variable) & 1==length(variable)) variable
         else deparse(substitute(variable))
@@ -60,7 +60,7 @@ av.plot.lm<-function(model, variable, labels=names(residuals(model)[!is.na(resid
 
 av.plot.glm<-function(model, variable, labels=names(residuals(model)[!is.na(residuals(model))]), 
     identify.points=TRUE, las=par("las"), col=palette()[2], pch=1, lwd=2, main="Added-Variable Plot",
-    type=c("Wang", "Weisberg")){
+    type=c("Wang", "Weisberg"), ...){
     #last modified 20 Feb 2002 by J. Fox
     type<-match.arg(type)
     variable<-if (is.character(variable) & 1==length(variable)) variable

@@ -1,7 +1,7 @@
 
 # Utility functions (J. Fox)
 
-    # last modified 31 July 2001 by J. Fox
+    # last modified 9 Nov 02 by J. Fox
 
 inv<-function(x) solve(x)
 
@@ -10,7 +10,7 @@ has.intercept<-function (model, ...) {
     UseMethod("has.intercept")
     }
 
-has.intercept.default<-function(model) any(names(coefficients(model))=="(Intercept)")
+has.intercept.default<-function(model, ...) any(names(coefficients(model))=="(Intercept)")
 
 
 
@@ -18,7 +18,7 @@ term.names<-function (model, ...) {
     UseMethod("term.names")
     }
 
-term.names.default<-function (model) {
+term.names.default<-function (model, ...) {
     term.names<-labels(terms(model))
     if (has.intercept(model)) c("(Intercept)", term.names)
         else term.names
@@ -30,7 +30,7 @@ predictor.names<-function(model, ...) {
     UseMethod("predictor.names")
     }
     
-predictor.names.default<-function(model){
+predictor.names.default<-function(model, ...){
     predictors<-attr(terms(model),"variables")
     as.character(predictors[3:length(predictors)])
     }
@@ -41,13 +41,13 @@ response.name<-function (model, ...) {
     UseMethod("response.name")
     }
 
-response.name.default<-function (model) deparse(attr(terms(model), "variables")[[2]])
+response.name.default<-function (model, ...) deparse(attr(terms(model), "variables")[[2]])
 
 response<-function(model, ...) {
     UseMethod("response")
     }
 
-response.default<-function (model) model.response(model.frame(model))
+response.default<-function (model, ...) model.response(model.frame(model))
 
 is.aliased<-function(model){
     !is.null(alias(model)$Complete)

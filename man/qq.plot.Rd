@@ -19,13 +19,13 @@ qq.plot.default(x, distribution="norm",
   ylab=deparse(substitute(x)), 
   xlab=paste(distribution, "quantiles"), main="", las=par('las'),
   envelope=0.95, labels=FALSE, col=palette()[2], lwd=2, pch=1,
-  line=c("quartiles", "robust"), ...)
+  line=c("quartiles", "robust", "none"), ...)
 
 qq.plot.lm(x, main="", xlab=paste(distribution, "Quantiles"), 
   ylab=paste("Studentized Residuals(", deparse(substitute(x)), ")",
     sep = ""), 
-  distribution=c("t", "norm"), line=c("quartiles", "robust"), las=par('las'),
-  simulate=FALSE, envelope=0.95, labels=FALSE, reps=100, 
+  distribution=c("t", "norm"), line=c("quartiles", "robust", "none"), 
+  las=par('las'), simulate=FALSE, envelope=0.95, labels=FALSE, reps=100, 
   col=palette()[2], lwd=2, pch=1, ...)
 }
 \arguments{
@@ -50,7 +50,7 @@ qq.plot.lm(x, main="", xlab=paste(distribution, "Quantiles"),
     Confidence envelopes are drawn at half this line width.}
   \item{line}{\code{"quartiles"} to pass a line through the quartile-pairs, or
     \code{"robust"} for a robust-regression line; the latter uses the \code{rlm}
-    function in the \code{MASS} package.}
+    function in the \code{MASS} package. Specifying \code{line = "none"} suppresses the line.}
   \item{simulate}{if \code{TRUE} calculate confidence envelope by parametric bookstrap;
     for \code{lm} object only. The method is due to Atkinson (1985).}
   \item{reps}{integer; number of bootstrap replications for confidence envelope.}

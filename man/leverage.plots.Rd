@@ -19,7 +19,7 @@ leverage.plot(model, ...)
 leverage.plot.lm(model, term.name, 
   labels=names(residuals(model)[!is.na(residuals(model))]),  
   identify.points=TRUE, las=par('las'), col=palette()[2], pch=1, lwd=2, 
-  main="Leverage Plot")
+  main="Leverage Plot", ...)
 
 leverage.plot.glm(model, ...)
 }
@@ -41,7 +41,7 @@ leverage.plot.glm(model, ...)
     (a circle, see \code{\link[base]{par}}).}
   \item{lwd}{line width; default is \code{2} (see \code{\link[base]{par}}).}
   \item{main}{title for plot.}
-  \item{\dots}{not for the user.}
+  \item{\dots}{arguments passed down to method functions.}
 }
 \details{
   The function intended for direct use is \code{leverage.plots}. By default, this

@@ -1,12 +1,12 @@
 # Bonferroni test for an outlier (J. Fox)
 
-# last modified 2 April 02 by J. Fox
+# last modified 9 Nov 02 by J. Fox
 
 outlier.test<-function(model, ...){
     UseMethod("outlier.test")
     }
 
-outlier.test.lm<-function(model, labels=names(rstud)){
+outlier.test.lm<-function(model, labels=names(rstud), ...){
     #last modified 13 Nov 2001 by J. Fox
     rstud<-abs(rstudent(model))
     labels<-if(is.null(labels)) seq(along=rstud) else labels
@@ -25,7 +25,7 @@ outlier.test.lm<-function(model, labels=names(rstud)){
     result
     }
     
-outlier.test.glm<-function(model, labels=names(rstud)){
+outlier.test.glm<-function(model, labels=names(rstud), ...){
     #last modified 13 Nov 2001 by J. Fox
     rstud<-abs(rstudent(model))
     labels<-if(is.null(labels)) seq(along=rstud) else labels
