@@ -82,4 +82,10 @@ Changes to Version 1.0-9
     
     o Small changes.
     
+Changes to Version 1.0-10
+
+    o scatterplot.formula made compatible with na.action=na.exclude.
+    
+    o Documentation corrections to satisfy package checks in R 1.9.0 (devel).
+    
     

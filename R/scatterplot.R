@@ -8,7 +8,9 @@ scatterplot<-function(x, ...){
     }
     
 scatterplot.formula<-function (formula, data, xlab, ylab, subset, labels=FALSE, ...) {
-    # last modified 1 Feb 2001 by J. Fox
+    # last modified 6 Jan 2004 by J. Fox
+    na.save <- options(na.action=na.omit)
+    on.exit(options(na.save))
     na.pass<-function(dframe) dframe
     m <- match.call(expand.dots = FALSE)
     if (is.matrix(eval(m$data, sys.frame(sys.parent())))) 
