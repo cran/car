@@ -1,6 +1,6 @@
 # fancy scatterplot matrices (J. Fox)
 
-# last modified: 9 Nov 02 by J. Fox
+# last modified: 1 May 03 by J. Fox
 
 scatterplot.matrix<-function(x, ...){
     UseMethod("scatterplot.matrix")
@@ -41,8 +41,8 @@ scatterplot.matrix.default<-function(x, labels=colnames(x),
     groups=FALSE, by.groups=FALSE,
     col=palette(), pch=1:n.groups, lwd=1,
     legend.plot=length(levels(groups)) > 1, ...){
-    # last modified 6 Feb 2003 by J. Fox
-    if (groups != FALSE){
+    # last modified 1 May 2003 by J. Fox
+    if (groups[1] != FALSE){
         x<-na.omit(cbind(as.data.frame(groups),x))
         groups<-as.factor(as.character(x[,1]))
         x<-x[,-1]
@@ -64,11 +64,11 @@ scatterplot.matrix.default<-function(x, labels=colnames(x),
         }
     panel.histogram<-function(x){
         par(new=TRUE)
-        hist(x, main="", axes=FALSE, nclass=nclass, col=col[1])
+        hist(x, main="", axes=FALSE, nclass=nclass, col=col[2])
         }
     panel.boxplot<-function(x){
         par(new=TRUE)
-        boxplot(x, axes=FALSE, main="", col=col[1])
+        boxplot(x, axes=FALSE, main="", col=col[2])
         }
     panel.qqplot<-function(x){
         par(new=TRUE)
@@ -78,7 +78,7 @@ scatterplot.matrix.default<-function(x, labels=colnames(x),
     panel.blank<-function(x) NULL
     which.fn<-match(match.arg(diagonal), c("density", "boxplot", "histogram", "qqplot", "none"))
     diag<-list(panel.density, panel.boxplot, panel.histogram, panel.qqplot, panel.blank)[[which.fn]]
-    groups<-as.factor(if(FALSE==groups) rep(1, length(x[,1])) else groups)
+    groups<-as.factor(if(FALSE==groups[1]) rep(1, length(x[,1])) else groups)
     n.groups<-length(levels(groups))
     if (n.groups >= length(col)) stop("number of groups exceeds number of available colors")
     if (transform != FALSE | length(transform) == ncol(x)){

@@ -1,6 +1,6 @@
 # fancy scatterplots  (J. Fox)
 
-# last modified 27 Aug 2002
+# last modified 26 May 2003
 
 scatterplot<-function(x, ...){
     # last modified 28 Jan 2001 by J. Fox
@@ -44,11 +44,11 @@ scatterplot.formula<-function (formula, data, xlab, ylab, subset, labels=FALSE, 
 
 scatterplot.default<-function(x, y, smooth=TRUE, span=.5, reg.line=lm, boxplots="xy",
     xlab=deparse(substitute(x)), ylab=deparse(substitute(y)), las=par("las"),
-    lwd=1, labels=FALSE, log="", groups=FALSE, by.groups=!(groups==FALSE), 
+    lwd=1, labels=FALSE, log="", groups=FALSE, by.groups=!(groups[1]==FALSE), 
     ellipse=FALSE, levels=c(.5, .9), robust=FALSE,
     col=palette(), pch=1:n.groups, 
     legend.plot=length(levels(groups)) > 1, reset.par=TRUE, ...){
-    # last modified 27 Aug 2002 by J. Fox
+    # last modified 1 May 2003 by J. Fox
     lowess.line<-function(x, y, col) {
         x<-if (0==length(grep("x", log))) x else log(x)
         y<-if (0==length(grep("y", log))) y else log(y)
@@ -140,7 +140,7 @@ scatterplot.default<-function(x, y, smooth=TRUE, span=.5, reg.line=lm, boxplots=
     mfcol<-par("mfcol")
     if (reset.par) on.exit(par(mar=mar, mfcol=mfcol))
     if(FALSE==boxplots) boxplots<-""
-    if (groups != FALSE){
+    if (groups[1] != FALSE){
         if (labels != FALSE){
             data<-na.omit(data.frame(groups,x,y,labels))
             groups<-data[,1]
@@ -159,7 +159,7 @@ scatterplot.default<-function(x, y, smooth=TRUE, span=.5, reg.line=lm, boxplots=
         .x<-x
         .y<-y
         }
-    groups<-as.factor(if(FALSE==groups) rep(1, length(.x)) else as.character(groups))
+    groups<-as.factor(if(FALSE == groups[1]) rep(1, length(.x)) else as.character(groups))
     layout(matrix(c(1,0,3,2),2,2),
         widths = c(5,95),
         heights= c(95,5))
