@@ -24,9 +24,10 @@ av.plot.lm(model, variable,
   identify.points=TRUE, las=par("las"), col=palette()[2], pch=1, lwd=2,
   main="Added-Variable Plot", ...)
 
-av.plot.glm(model, variable, labels=names(residuals(model)), 
-  identify.points=TRUE, las=par("las"), col=palette()[2], pch=1, lwd=2,
-  main="Added-Variable Plot", type=c("Wang", "Weisberg"), ...)
+av.plot.glm(model, variable, 
+    labels=names(residuals(model)[!is.na(residuals(model))]), 
+    identify.points=TRUE, las=par("las"), col=palette()[2], pch=1, lwd=2, 
+    main="Added-Variable Plot", type=c("Wang", "Weisberg"), ...)
 }
 
 \arguments{

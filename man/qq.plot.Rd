@@ -25,8 +25,8 @@ qq.plot.lm(x, main="", xlab=paste(distribution, "Quantiles"),
   ylab=paste("Studentized Residuals(", deparse(substitute(x)), ")",
     sep = ""), 
   distribution=c("t", "norm"), line=c("quartiles", "robust", "none"), 
-  las=par('las'), simulate=FALSE, envelope=0.95, labels=FALSE, reps=100, 
-  col=palette()[2], lwd=2, pch=1, ...)
+  las=par('las'), simulate=FALSE, envelope=0.95, labels=names(rstudent), 
+  reps=100, col=palette()[2], lwd=2, pch=1, ...)
 }
 \arguments{
   \item{x}{vector of numeric values or \code{lm} object.}
