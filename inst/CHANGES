@@ -114,3 +114,12 @@ Changes to Version 1.0-13
 
     o Small changes to levene.test and box.cox.powers to make output compatible with version 0.9-10 of the Rcmdr package.
     
+Changes to Version 1.0-14
+
+    o cr.plots() ignored its span argument when variable was specified in the call (thanks to Christophe Pallier for pointing this out).
+    
+    o added some(), which prints a few randomly selected elements (or rows) of an object.
+    
+    o added Anova() methods for multinomial logistic regression [via multinom() in the nnet package], and for proportional-odds logistic regression [via polr() in the MASS package). 
+    
+    o made influence.plot() generic, with a method for lm objects that handles glm objects as well. 

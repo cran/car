@@ -1,5 +1,6 @@
 \name{influence.plot}
 \alias{influence.plot}
+\alias{influence.plot.lm}
 
 \title{Regression Influence Plot}
 \description{
@@ -9,7 +10,9 @@
   studentized-residual scale.
 }
 \usage{
-influence.plot(model, scale = 10, col = c(1, 2), labels = names(rstud), ...)
+influence.plot(model, ...)
+
+\method{influence.plot}{lm}(model, scale = 10, col = c(1, 2), labels = names(rstud), ...)
 }
 
 \arguments{

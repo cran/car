@@ -1,6 +1,6 @@
 # Component + Residual Plots (J. Fox)
 
-# last modified 31 Jan 04 by J. Fox
+# last modified 2 Nov 04 by J. Fox
 
 crp<-function(...) cr.plots(...)
 
@@ -11,7 +11,7 @@ cr.plots<-function(model, variable, ask=missing(variable), one.page=!ask, span=.
     if (!missing(variable)){
         var<-if (is.character(variable) & 1==length(variable)) variable
             else deparse(substitute(variable))
-        cr.plot(model, var, ...)
+        cr.plot(model, var, span=span, ...)
         }
     else {
         vars<-predictor.names(model)

@@ -13,6 +13,8 @@
 \alias{is.aliased}
 \alias{df.terms}
 \alias{df.terms.default}
+\alias{df.terms.multinom}
+\alias{ df.terms.polr}
 \alias{mfrow}
 \alias{nice}
 \alias{relatives}
@@ -26,6 +28,8 @@ Internal functions for package car.
 \usage{
 df.terms(model, term, ...)
 \method{df.terms}{default}(model, term, ...)
+\method{df.terms}{multinom}(model, term, ...)
+\method{df.terms}{polr}(model, term, ...)
 has.intercept(model, ...)
 \method{has.intercept}{default}(model, ...)
 inv(x)

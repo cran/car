@@ -1,7 +1,7 @@
 
 # Utility functions (J. Fox)
 
-    # last modified 31 Jan 04 by J. Fox
+    # last modified 19 Nov 04 by J. Fox
 
 inv<-function(x) solve(x)
 
@@ -75,6 +75,48 @@ df.terms.default<-function(model, term, ...){
         }
     }
 
+df.terms.multinom <- function (model, term, ...)
+{
+    nlev <- length(model$lev)
+    if (!missing(term) && 1 == length(term)) {
+        assign <- attr(model.matrix(model), "assign")
+        which.term <- which(term == labels(terms(model)))
+        if (0 == length(which.term))
+            stop(paste(term, "is not in the model."))
+        sum(assign == which.term) * (nlev - 1)
+    }
+    else {
+        terms <- if (missing(term))
+            labels(terms(model))
+        else term
+        result <- numeric(0)
+        for (term in terms) result <- c(result, Recall(model,
+            term))
+        names(result) <- terms
+        result
+    }
+ }
+ 
+df.terms.polr <- function (model, term, ...)
+{
+    if (!missing(term) && 1 == length(term)) {
+        assign <- attr(model.matrix(model), "assign")
+        which.term <- which(term == labels(terms(model)))
+        if (0 == length(which.term))
+            stop(paste(term, "is not in the model."))
+        sum(assign == which.term)
+    }
+    else {
+        terms <- if (missing(term))
+            labels(terms(model))
+        else term
+        result <- numeric(0)
+        for (term in terms) result <- c(result, Recall(model,
+            term))
+        names(result) <- terms
+        result
+    }
+}
  
  mfrow <- function(n, max.plots=0){
     # number of rows and columns for array of n plots
