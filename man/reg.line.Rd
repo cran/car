@@ -1,0 +1,52 @@
+\name{reg.line}
+\alias{reg.line}
+
+\title{Plot Regression Line}
+\description{
+  Plots a regression line on a scatterplot; the line is plotted 
+  between the minimum and maximum x-values.
+}
+\usage{
+reg.line(mod, col=palette()[2], lwd=2, lty=1,...)
+}
+
+\arguments{
+  \item{mod}{a model, such as produced by \code{lm},
+    that responds to the \code{coefficients} function
+    by returning a 2-element vector, whose elements are
+    interpreted respectively as the
+    intercept and slope of a regresison line.}
+  \item{col}{color for points and lines; the default is the \emph{second} entry
+    in the current color palette (see \code{\link[base]{palette}}
+    and \code{\link[base]{par}}).}
+  \item{lwd}{line width; default is \code{2} (see \code{\link[base]{par}}).}
+  \item{lty}{line type; default is \code{1}, a solid line (see \code{\link[base]{par}}).}
+  \item{\dots}{optional arguments to be passed to the
+    \code{lines} plotting function.}
+}
+\details{
+  In contrast to \code{abline}, this function plots only over
+  the range of the observed x-values. The x-values are extracted from
+  \code{mod} as the second column of the model matrix. 
+}
+\value{
+  \code{NULL}. This function is used for its side effect: adding
+  a line to the plot.
+}
+
+\author{John Fox \email{jfox@mcmaster.ca}}
+
+
+\seealso{\code{\link[base]{abline}}, \code{\link[base]{lines}}}
+
+\examples{
+data(Davis)
+attach(Davis)
+mod.M<-lm(repwt~weight, subset=sex=="M")
+mod.F<-lm(repwt~weight, subset=sex=="F")
+plot(weight, repwt, pch=c(1,2)[sex])
+reg.line(mod.M)
+reg.line(mod.F, lty=2)
+}
+
+\keyword{aplot}

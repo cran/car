@@ -1,0 +1,62 @@
+\name{plot.subsets}
+\alias{plot.subsets}
+\alias{plot.subsets.regsubsets}
+\title{Plot Output from regsubsets Function in leaps package}
+\description{
+  The \code{\link[leaps]{regsubsets}} function in the \code{leaps} package finds
+  optimal subsets of predictors. This function plots a measure of fit
+  (see the \code{statistic} argument below) against subset size).
+}
+\usage{
+plot.subsets(object, ...)
+
+plot.subsets.regsubsets(object, 
+    names=abbreviate(object$xnames, minlength = abbrev), 
+    abbrev=1, min.size=1, max.size=length(names), legend, 
+    statistic=c("bic", "cp", "adjr2", "rsq", "rss"))
+}
+
+\arguments{
+  \item{object}{a \code{regsubsets} object produced by the \code{regsubsets} function
+    in the \code{leaps} package.}
+  \item{names}{a vector of (short) names for the predictors, excluding the
+    regression intercept, if one is present; if missing, these are
+    derived from the predictor names in \code{object}.}
+  \item{abbrev}{minimum number of characters to use in abbreviating predictor names.}
+  \item{min.size}{minimum size subset to plot; default is 1.}
+  \item{max.size}{maximum size subset to plot; default is number of predictors.}
+  \item{legend}{TRUE to plot a legend of predictor names; defaults to TRUE if
+    abbreviations are computed for predictor names. The legend is placed on the
+    plot interactively with the mouse.}
+  \item{statistic}{statistic to plot for each predictor subset; one of: 
+    \code{"bic"}, Bayes Information Criterion; 
+    \code{"cp"}, Mallows\'s \eqn{C_{p}}{Cp};
+    \code{"adjr2"}, \eqn{R^{2}}{R^2} adjusted for degrees of freedom;
+    \code{"rsq"}, unadjusted \eqn{R^{2}}{R^2};
+    \code{"rss"}, residual sum of squares.}
+  \item{las}{if \code{0}, ticks labels are drawn parallel to the
+    axis; set to \code{1} (the default) for horizontal labels (see \code{\link[base]{par}}).}
+  \item{cex.subsets}{can be used to change the relative size of the characters used to
+    plot the regression subsets; default is \code{1}.}
+  \item{\dots}{arguments to be passed down to 
+    \code{plot.subsets.regsubsets}.}
+}
+
+\value{
+  \code{NULL}. This function is used for its side effect --
+  to create a plot.
+}
+ 
+\author{John Fox}
+
+\seealso{\code{\link[leaps]{regsubsets}}}
+
+\examples{
+library(leaps)
+data(Ericksen)
+\testonly{plot.subsets(regsubsets(undercount ~ ., data=Ericksen), legend=F)}
+\dontrun{plot.subsets(regsubsets(undercount ~ ., data=Ericksen))}
+}
+
+\keyword{hplot}
+\keyword{regression}

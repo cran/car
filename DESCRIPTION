@@ -1,0 +1,15 @@
+Package: car
+Version: 0.8-1
+Date: 2001/4/27
+Title: Companion to Applied Regression
+Author: John Fox <jfox@mcmaster.ca>. I am grateful to Douglas Bates, Georges Monette,
+	and Sanford Weisberg for various suggestions.
+Maintainer: John Fox <jfox@mcmaster.ca>
+Depends: R (>= 1.2.0), MASS
+Description: This package contains mostly functions for applied regession, linear models, and
+  generalized linear models, with an emphasis on regression diagnostics, particularly 
+  graphical diagnostic methods. There are also some utility functions. 
+  With some exceptions, I have tried not to duplicate capabilities in the basic distribution of R, 
+  nor in widely used packages.
+License: GPL version 2 or newer
+URL: http://www.r-project.org, http:/www.socsci.mcmaster.ca/jfox/
