@@ -46,7 +46,7 @@ States                  Education and Related Statistics for the U.S.
 Transformation Axes     Axes for Transformed Variables
 UN                      GDP and Infant Mortality
 US.pop                  Population of the United States
-Var                     Variance-Covariance Matrices
+Var                     Variance-Covariance Matrices (deprecated)
 Vocab                   Vocabulary and Education
 Womenlf                 Canadian Women's Labour-Force Participation
 av.plots                Added-Variable Plots
