@@ -11,6 +11,12 @@
 \alias{Anova.III.F.glm}
 \alias{Anova.III.LR.glm}
 \alias{Anova.III.Wald.glm}
+\alias{Anova.multinom}
+\alias{Anova.II.multinom}
+\alias{Anova.III.multinom}
+\alias{Anova.polr}
+\alias{Anova.II.polr}
+\alias{Anova.III.polr}
 \title{Anova Tables for Linear and Generalized Linear Models}
 \description{
   Calculates type-II or type-III analysis-of-variance tables for
@@ -27,10 +33,14 @@ Anova(mod, ...)
 
 \method{Anova}{glm}(mod, type=c("II", "III"), test.statistic=c("LR", "Wald", "F"), 
     error, error.estimate=c("pearson", "dispersion", "deviance"), ...)
+    
+\method{Anova}{multinom}(mod, type = c("II", "III"), ...)
+
+\method{Anova}{polr}(mod, type = c("II", "III"), ...)
 }
 
 \arguments{
-  \item{mod}{\code{lm} or \code{glm} model object.}
+  \item{mod}{\code{lm}, \code{aov}, \code{glm}, \code{multinom}, or \code{polr} model object.}
   \item{error}{for a linear model, an \code{lm} model object from which the
     error sum of squares and degrees of freedom are to be calculated. For 
     F-tests for a generalized linear model, a \code{glm} object from which the
@@ -61,7 +71,7 @@ Anova(mod, ...)
   As implemented here, type-II Wald tests for generalized linear models are actually
   \emph{differences} of Wald statistics.
   
-  For all but type-II likelihood-ratio and \emph{F} tests for generalized linear models, 
+  For tests for linear models, and Wald tests for generalized linear models,
   \code{Anova} finds the test statistics without refitting the model.
   
   The standard R \code{anova} function calculates sequential ("type-I") tests.

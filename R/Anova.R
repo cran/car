@@ -1,6 +1,6 @@
 # Type II and III tests for linear and generalized linear models (J. Fox)
 
-# last modified 31 Jan 04
+# last modified 16 Nov 04
 
 relatives<-function(term, names, factors){
     is.relative<-function(term1, term2) {
@@ -397,3 +397,156 @@ Anova.II.F.glm <- function(mod, error, error.estimate, ...){
         paste("Response:", responseName(mod)))
      result
      }
+
+# multinomial logit models (via multinom in the nnet package)
+
+Anova.multinom <-
+function (mod, type = c("II", "III"), ...)
+{
+    type <- match.arg(type)
+    switch(type,
+        II = Anova.II.multinom(mod, ...),
+        III = Anova.III.multinom(mod, ...))
+}
+
+Anova.II.multinom <- function (mod, ...)
+{
+    which.nms <- function(name) which(asgn == which(names ==
+        name))
+    fac <- attr(mod$terms, "factors")
+    names <- term.names(mod)
+    n.terms <- length(names)
+    X <- model.matrix(mod)
+    y <- model.response(model.frame(mod))
+    wt <- mod$weights
+    asgn <- attr(X, "assign")
+    LR <- rep(0, n.terms)
+    df <- df.terms(mod)
+    p <- rep(0, n.terms)
+    for (term in 1:n.terms) {
+        rels <- names[relatives(names[term], names, fac)]
+        exclude.1 <- as.vector(unlist(sapply(c(names[term], rels),
+            which.nms)))
+        mod.1 <- multinom(y ~ X[, -c(1, exclude.1)], weights=wt, trace=FALSE)
+        dev.1 <- deviance(mod.1)
+        mod.2 <- if (length(rels) == 0)
+            mod
+        else {
+            exclude.2 <- as.vector(unlist(sapply(rels, which.nms)))
+            multinom(y ~ X[, -c(1, exclude.2)], weights=wt, trace=FALSE)
+        }
+        dev.2 <- deviance(mod.2)
+        LR[term] <- dev.1 - dev.2
+        p[term] <- 1 - pchisq(LR[term], df[term])
+    }
+    result <- data.frame(LR, df, p)
+    row.names(result) <- names
+    names(result) <- c("LR Chisq", "Df", "Pr(>Chisq)")
+    class(result) <- c("anova", "data.frame")
+    attr(result, "heading") <- c("Anova Table (Type II tests)\n",
+        paste("Response:", responseName(mod)))
+    result
+}
+
+Anova.III.multinom <- function (mod, ...)
+{
+    names <- term.names(mod)
+    n.terms <- length(names)
+    X <- model.matrix(mod)
+    y <- model.response(model.frame(mod))
+    wt <- mod$weights
+    asgn <- attr(X, "assign")
+    LR <- rep(0, n.terms)
+    df <- df.terms(mod)
+    p <- rep(0, n.terms)
+    deviance <- deviance(mod)
+    for (term in 1:n.terms) {
+        mod.1 <- multinom(y ~ X[, term != asgn][, -1], weights=wt, trace=FALSE)
+        LR[term] <- deviance(mod.1) - deviance
+        p[term] <- 1 - pchisq(LR[term], df[term])
+    }
+    result <- data.frame(LR, df, p)
+    row.names(result) <- names
+    names(result) <- c("LR Chisq", "Df", "Pr(>Chisq)")
+    class(result) <- c("anova", "data.frame")
+    attr(result, "heading") <- c("Anova Table (Type III tests)\n",
+        paste("Response:", responseName(mod)))
+    result
+}
+
+
+# proportional-odds logit models (via polr in the MASS package)
+
+ Anova.polr <-
+function (mod, type = c("II", "III"), ...)
+{
+    type <- match.arg(type)
+    switch(type,
+        II = Anova.II.polr(mod, ...),
+        III = Anova.III.polr(mod, ...))
+}
+
+Anova.II.polr <- function (mod, ...)
+{
+    which.nms <- function(name) which(asgn == which(names ==
+        name))
+    fac <- attr(mod$terms, "factors")
+    names <- term.names(mod)
+    n.terms <- length(names)
+    X <- model.matrix(mod)
+    y <- model.response(model.frame(mod))
+    wt <- mod$weights
+    asgn <- attr(X, "assign")
+    LR <- rep(0, n.terms)
+    df <- df.terms(mod)
+    p <- rep(0, n.terms)
+    for (term in 1:n.terms) {
+        rels <- names[relatives(names[term], names, fac)]
+        exclude.1 <- as.vector(unlist(sapply(c(names[term], rels),
+            which.nms)))
+        mod.1 <- polr(y ~ X[, -c(1, exclude.1)], weights=wt)
+        dev.1 <- deviance(mod.1)
+        mod.2 <- if (length(rels) == 0)
+            mod
+        else {
+            exclude.2 <- as.vector(unlist(sapply(rels, which.nms)))
+            polr(y ~ X[, -c(1, exclude.2)], weights=wt)
+        }
+        dev.2 <- deviance(mod.2)
+        LR[term] <- dev.1 - dev.2
+        p[term] <- 1 - pchisq(LR[term], df[term])
+    }
+    result <- data.frame(LR, df, p)
+    row.names(result) <- names
+    names(result) <- c("LR Chisq", "Df", "Pr(>Chisq)")
+    class(result) <- c("anova", "data.frame")
+    attr(result, "heading") <- c("Anova Table (Type II tests)\n",
+        paste("Response:", responseName(mod)))
+    result
+}
+
+Anova.III.polr <- function (mod, ...)
+{
+    names <- term.names(mod)
+    n.terms <- length(names)
+    X <- model.matrix(mod)
+    y <- model.response(model.frame(mod))
+    wt <- mod$weights
+    asgn <- attr(X, "assign")
+    LR <- rep(0, n.terms)
+    df <- df.terms(mod)
+    p <- rep(0, n.terms)
+    deviance <- deviance(mod)
+    for (term in 1:n.terms) {
+        mod.1 <- polr(y ~ X[, term != asgn][, -1], weights=wt)
+        LR[term] <- deviance(mod.1) - deviance
+        p[term] <- 1 - pchisq(LR[term], df[term])
+    }
+    result <- data.frame(LR, df, p)
+    row.names(result) <- names
+    names(result) <- c("LR Chisq", "Df", "Pr(>Chisq)")
+    class(result) <- c("anova", "data.frame")
+    attr(result, "heading") <- c("Anova Table (Type III tests)\n",
+        paste("Response:", responseName(mod)))
+    result
+}
