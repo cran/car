@@ -9,7 +9,7 @@ spread.level.plot<-function(x, ...) {
     }
 
 spread.level.plot.default<-function(x, by, robust.line=any("MASS"==.packages(all=TRUE)), 
-        start=0, xlab="Median", ylab="Hinge-Spread", las=par("las"),
+        start=0, xlab="Median", ylab="Hinge-Spread", point.labels=TRUE, las=par("las"),
         main=paste("Spread-Level Plot for", deparse(substitute(x)), 
         "by", deparse(substitute(by))), col=palette()[2], pch=1, lwd=2, ...)
     {
@@ -41,7 +41,7 @@ spread.level.plot.default<-function(x, by, robust.line=any("MASS"==.packages(all
     plot(medians, spreads, log="xy", main=main, xlab=xlab, ylab=ylab, 
         las=las, pch=pch, col=col, ...)
     pos<-ifelse(medians>median(medians), 2, 4)
-    text(medians, spreads, as.character(values), pos=pos, ...)
+    if (point.labels) text(medians, spreads, as.character(values), pos=pos, ...)
     if (robust.line){
         if (!require("MASS")) stop("MASS package not available")
         mod<-rlm(log(spreads)~log(medians))

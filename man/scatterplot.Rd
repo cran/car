@@ -17,7 +17,10 @@ scatterplot(x, ...)
 
 \method{scatterplot}{default}(x, y, smooth=TRUE, span=0.5, reg.line=lm, 
   boxplots="xy", xlab=deparse(substitute(x)), ylab=deparse(substitute(y)), 
-  las=par('las'), lwd=1, labels=FALSE, log="", groups=FALSE, by.groups=!(groups[1]==FALSE),
+  las=par('las'), lwd=1, labels=FALSE, log="", jitter=list(),
+  cex=par("cex"), cex.axis=par("cex.axis"), cex.lab=par("cex.lab"), 
+  cex.main=par("cex.main"), cex.sub=par("cex.sub"),
+  groups=FALSE, by.groups=!(groups[1]==FALSE),
   ellipse=FALSE, levels=c(.5, .9), robust=FALSE, 
   col=palette(), pch=1:n.groups, legend.plot=length(levels(groups)) > 1, 
   reset.par=TRUE, ...)
@@ -49,6 +52,10 @@ sp(...)
   \item{labels}{if not \code{FALSE} a vector of point labels, to be used interactively
     to identify points on the plot.}
   \item{log}{same as the \code{log} argument to \code{plot}, to produce log axes.}
+  \item{jitter}{a list with elements \code{x} or \code{y} or both, specifying jitter factors
+    for the horizontal and vertical coordinates of the points in the scatterplot. The 
+    \code{\link[base]{jitter}} function is used to randomly perturb the points; specifying a
+    factor of \code{1} produces the default jitter. Fitted lines are unaffected by the jitter.}
   \item{groups}{a factor or other variable dividing the data into groups; groups are
     plotted with different colors and plotting characters.}
   \item{by.groups}{if \code{TRUE}, regression lines are fit by groups.}
@@ -62,6 +69,8 @@ sp(...)
     (see \code{\link[base]{palette}} and \code{\link[base]{par}}).}
   \item{pch}{plotting characters for points; default is the plotting characters in
     order (see \code{\link[base]{par}}).}
+  \item{cex, cex.axis, cex.lab, cex.main, cex.sub}{set sizes of various graphical elements; 
+    (see \code{\link[base]{par}}).}
   \item{legend.plot}{if \code{TRUE} then a legend for the groups is plotted, and positioned
     interactively with a mouse click; if points are to be labelled, then the legend is 
     positioned first.}
@@ -80,18 +89,23 @@ sp(...)
 \author{John Fox \email{jfox@mcmaster.ca}}
 
 
-\seealso{\code{\link[base]{plot}}, \code{\link[base]{boxplot}}, 
+\seealso{\code{\link[base]{graphics}}, \code{\link[graphics]{boxplot}},
+  \code{\link[base]{jitter}} 
   \code{\link{scatterplot.matrix}}, \code{\link{data.ellipse}},
   \code{\link[base]{par}}, \code{\link[MASS]{cov.trob}}.}
 
 \examples{
 data(Prestige)
-scatterplot(prestige~income|type, data=Prestige, span=1, legend=FALSE)
+scatterplot(prestige ~ income|type, data=Prestige, span=1, legend=FALSE)
+
+data(Vocab)
+scatterplot(vocabulary ~ education, jitter=list(x=1, y=1), data=Vocab)
+
   \dontrun{
 data(UN)
-scatterplot(infant.mortality~gdp, labels=row.names(UN), data=UN)
+scatterplot(infant.mortality ~ gdp, labels=row.names(UN), data=UN)
 
-scatterplot(infant.mortality~gdp, log="xy", labels=row.names(UN), data=UN)
+scatterplot(infant.mortality ~ gdp, log="xy", labels=row.names(UN), data=UN)
   }
 }
 

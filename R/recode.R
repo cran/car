@@ -1,8 +1,8 @@
 # recode function (J. Fox)
-# last modified 2 April 2002
+# last modified 31 Dec 2004
 
 recode<-function(var, recodes, as.factor.result){
-    recode.list<-rev(strsplit(gsub(" ","",recodes),";")[[1]])
+    recode.list<-rev(strsplit(recodes, ";")[[1]])
     is.fac<-is.factor(var)
     if (missing(as.factor.result)) as.factor.result <- is.fac
     if (is.fac) var<-as.character(var)

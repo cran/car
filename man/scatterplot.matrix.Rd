@@ -20,7 +20,10 @@ scatterplot.matrix(x, ...)
     adjust=1, nclass, plot.points=TRUE, smooth=TRUE, span=0.5, reg.line=lm, 
     transform=FALSE, ellipse=FALSE, levels=c(.5, .9), robust=FALSE,
     groups=FALSE, by.groups=FALSE, col=palette(), 
-    pch=1:n.groups, lwd=1, legend.plot=length(levels(groups)) > 1, ...)
+    pch=1:n.groups, lwd=1, 
+    cex=par("cex"), cex.axis=par("cex.axis"), cex.labels=NULL, 
+    cex.main=par("cex.main"),
+    legend.plot=length(levels(groups)) > 1, ...)
 
 spm(x, ...)
 }
@@ -65,6 +68,8 @@ spm(x, ...)
     in the current color palette, starting at the \emph{second} entry
     (see \code{\link[base]{palette}} and \code{\link[base]{par}}).}
   \item{lwd}{width for lines.}
+  \item{cex, cex.axis, cex.labels, cex.main}{set sizes of various graphical elements; 
+    (see \code{\link[base]{par}}).}
   \item{legend.plot}{if \code{TRUE} then a legend for the groups is plotted
     in the bottom-right cell.}
   \item{...}{arguments to pass down.}

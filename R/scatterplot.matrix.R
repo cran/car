@@ -1,6 +1,6 @@
 # fancy scatterplot matrices (J. Fox)
 
-# last modified: 30 Apr 04 by J. Fox
+# last modified: 16 Jan 05 by J. Fox
 
 scatterplot.matrix<-function(x, ...){
     UseMethod("scatterplot.matrix")
@@ -40,8 +40,10 @@ scatterplot.matrix.default<-function(x, labels=colnames(x),
     ellipse=FALSE, levels=c(.5, .9), robust=FALSE,
     groups=FALSE, by.groups=FALSE,
     col=palette(), pch=1:n.groups, lwd=1,
+    cex=par("cex"), cex.axis=par("cex.axis"), cex.labels=NULL, 
+    cex.main=par("cex.main"),
     legend.plot=length(levels(groups)) > 1, ...){
-    # last modified 30 Apr 2004 by J. Fox
+    # last modified 16 Jan 2005 by J. Fox
     if (groups[1] != FALSE){
         x<-na.omit(cbind(as.data.frame(groups),x))
         groups<-as.factor(as.character(x[,1]))
@@ -89,11 +91,12 @@ scatterplot.matrix.default<-function(x, labels=colnames(x),
             }
         }          
     pairs(x, labels=labels,
+        cex.axis=cex.axis, cex.main=cex.main, cex.labels=cex.labels,
         diag.panel=diag,
         panel=function(x, y, ...){ 
             for (i in 1:n.groups){
                 subs<-groups==levels(groups)[i]
-                if (plot.points) points(x[subs], y[subs], pch=pch[i], col=col[i+1])
+                if (plot.points) points(x[subs], y[subs], pch=pch[i], col=col[i+1], cex=cex)
                 if (smooth & by.groups) lines(lowess(x[subs], y[subs]), col=col[i+1])
                 if (is.function(reg.line) & by.groups) reg(x[subs], y[subs], col=col[i+1])
                 if (ellipse  & by.groups) data.ellipse(x[subs], y[subs], plot.points=FALSE, 
@@ -110,7 +113,7 @@ scatterplot.matrix.default<-function(x, labels=colnames(x),
     if(legend.plot) {
         frac<-1/ncol(x)
         legend(1 - .95*frac, 0.8*frac,
-            legend=levels(groups), pch=pch, col=col[2:(n.groups+1)], 
+            legend=levels(groups), pch=pch, col=col[2:(n.groups+1)],
             cex=cumprod(par("fin"))[2]*sqrt(frac)/(sqrt(n.groups)*20))
         }
     }
