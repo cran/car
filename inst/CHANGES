@@ -76,4 +76,10 @@ Changes to Version 1.0-8
     
     o Small documentation changes to pass new package checks.
     
+Changes to Version 1.0-9
+
+    o vif now reports an error if the model has fewer than 2 terms (not counting the constant)
+    
+    o Small changes.
+    
     
