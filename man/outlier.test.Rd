@@ -5,11 +5,13 @@
 \alias{print.outlier.test}
 
 \title{Bonferroni Outlier Test}
+
 \description{
   Reports the Bonferroni p-value for the most extreme observation.
   At present, there are methods for studentized residuals in
   linear and generalized linear models.
 }
+
 \usage{
 outlier.test(model, ...)
 
@@ -23,6 +25,7 @@ outlier.test.glm(model, labels=names(rstud))
   \item{labels}{an optional vector of observation names.}
   \item{\dots}{not for the user.}
 }
+
 \details{
   For a linear model, the p-value reported is for the largest absolute
   studentized residual, using the \eqn{t} distribution with degrees of
@@ -40,7 +43,7 @@ outlier.test.glm(model, labels=names(rstud))
 
 \references{
   Cook, R. D. and Weisberg, S. (1984)
-  \emph{Residuals and Influence in Regression.) Wiley.
+  \emph{Residuals and Influence in Regression.} Wiley.
   
   Fox, J. (1997)
   \emph{Applied Regression, Linear Models, and Related Methods.} Sage.

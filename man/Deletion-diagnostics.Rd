@@ -115,7 +115,7 @@ influence.glm(model)
   \emph{Regression Diagnostics.} Wiley.
   
   Cook, R. D. and Weisberg, S. (1984)
-  \emph{Residuals and Influence in Regression.) Wiley.
+  \emph{Residuals and Influence in Regression.} Wiley.
   
   Fox, J. (1997)
   \emph{Applied Regression, Linear Models, and Related Methods.} Sage.
