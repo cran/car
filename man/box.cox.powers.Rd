@@ -13,7 +13,7 @@
 \usage{
 box.cox.powers(X, start=NULL, hypotheses=NULL, ...)
 
-\method{print}{box.cox.powers}(x, ...)
+\method{print}{box.cox.powers}(x, digits=4, ...)
 
 \method{summary}{box.cox.powers}(object, digits=4, ...)
 }
@@ -48,7 +48,8 @@ box.cox.powers(X, start=NULL, hypotheses=NULL, ...)
 }
 \value{
   returns an object of class \code{box.cox.powers}, which may be printed
-  or summarized.
+  or summarized. the \code{print} and \code{summary} methods are now identical; I've 
+  retained the latter for backwards compatibility.
 }
 
 \references{
@@ -68,7 +69,7 @@ box.cox.powers(X, start=NULL, hypotheses=NULL, ...)
 \examples{
 data(Prestige)
 attach(Prestige)
-summary(box.cox.powers(cbind(income, education)))
+box.cox.powers(cbind(income, education))
 ## Box-Cox Transformations to Multinormality  
 ## 
 ##           Est.Power Std.Err. Wald(Power=0) Wald(Power=1) 
@@ -80,7 +81,7 @@ summary(box.cox.powers(cbind(income, education)))
 plot(income, education)
 plot(box.cox(income, .26), box.cox(education, .42))
 
-summary(box.cox.powers(income))
+box.cox.powers(income)
 ## Box-Cox Transformation to Normality 
 ## 
 ##  Est.Power Std.Err. Wald(Power=0) Wald(Power=1)

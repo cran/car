@@ -110,4 +110,7 @@ Changes to Version 1.0-12
     
     o scatterplot.matrix now passes ... argument to pairs (also suggested by Sandy Weisberg).
     
+Changes to Version 1.0-13
+
+    o Small changes to levene.test and box.cox.powers to make output compatible with version 0.9-10 of the Rcmdr package.
     
