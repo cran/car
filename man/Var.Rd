@@ -7,17 +7,17 @@
 \title{Variance-Covariance Matrices}
 \description{
   Computes variance-covariance matrices or variances for model objects or data.
-  The default methods uses the function \code{var}.
+  The default method uses the function \code{var}.
 }
 
 \usage{
 Var(object, ...)
 
-Var.default(object, diagonal=F, ...)
+Var.default(object, diagonal=FALSE, ...)
 
-Var.lm(object, diagonal=F)
+Var.lm(object, diagonal=FALSE)
 
-Var.glm(object, diagonal=F)
+Var.glm(object, diagonal=FALSE)
 }
 
 \arguments{
@@ -37,7 +37,7 @@ Var.glm(object, diagonal=F)
 \examples{
 data(Davis)
 attach(Davis)
-Var(cbind(weight, repwt), na.rm=T)
+Var(cbind(weight, repwt), na.rm=TRUE)
 ##          weight    repwt
 ## weight 233.8781 176.1014
 ## repwt  176.1014 189.7966

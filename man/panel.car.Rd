@@ -8,7 +8,7 @@
 }
 \usage{
 panel.car(x, y, col, pch, cex=1, span=0.5, lwd=2, 
-  regression.line=lm, lowess.line=T, ...)
+  regression.line=lm, lowess.line=TRUE, ...)
 }
 
 \arguments{

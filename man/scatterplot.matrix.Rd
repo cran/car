@@ -85,7 +85,7 @@ spm(x, ...)
 data(Duncan)
 scatterplot.matrix(~income + education + prestige | type, data=Duncan)
 scatterplot.matrix(~income + education + prestige, 
-    transform=T, data=Duncan)
+    transform=TRUE, data=Duncan)
 }
 
 \keyword{hplot}

@@ -6,7 +6,7 @@
   Compute the logit transformation of proportions or percentages.
 }
 \usage{
-logit(p, percents=max(p, na.rm = T) > 1, adjust)
+logit(p, percents=max(p, na.rm = TRUE) > 1, adjust)
 }
 
 \arguments{

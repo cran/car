@@ -13,9 +13,9 @@
 \usage{
 box.cox.powers(X, start=NULL, ...)
 
-print.box.cox.powers(x, ...)
+\method{print}{box.cox.powers}(x, ...)
 
-summary.box.cox.powers(object, digits=4, ...)
+\method{summary}{box.cox.powers}(object, digits=4, ...)
 }
 
 \arguments{

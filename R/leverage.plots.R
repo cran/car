@@ -1,5 +1,7 @@
 # Leverage plots (J. Fox)
 
+# last modified 2 April 02 by J. Fox
+
 leverage.plots<-function(model, term.name, ask=missing(term.name), ...){
     # last modified 19 Dec 2000 by J. Fox
     if (!missing(term.name)){
@@ -30,8 +32,8 @@ leverage.plot<-function (model, ...) {
 
 leverage.plot.lm<-function(model, term.name, 
     labels=names(residuals(model)[!is.na(residuals(model))]), 
-    identify.points=T, las=1, col=palette()[2], pch=1, lwd=2, main="Leverage Plot"){
-    # last modified 29 July 2001
+    identify.points=TRUE, las=par("las"), col=palette()[2], pch=1, lwd=2, main="Leverage Plot"){
+    # last modified 20 July 2002
     term.name<-if (is.character(term.name) & 1==length(term.name)) term.name
         else deparse(substitute(term.name))
     b<-coefficients(model)

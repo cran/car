@@ -16,10 +16,10 @@ scatterplot.matrix.formula<-function (formula, data=NULL, subset,  ...) {
         stop("invalid formula")
     rhs <- formula[[2]]
     if ("|"!=deparse(rhs[[1]])){
-        groups <- F
+        groups <- FALSE
         }
     else{
-        groups <- T
+        groups <- TRUE
         formula<-as.character(c(formula))
         formula<-as.formula(sub("\\|", "+", formula))   
         }
@@ -56,21 +56,21 @@ scatterplot.matrix.default<-function(data, labels=colnames(data),
         lines(c(x[min],x[max]),c(y.hat[min],y.hat[max]), lty=2, lwd=lwd, col=col)
         }
     panel.density<-function(x){
-        par(new=T)
-        plot(density(x, adjust=adjust), axes=F, main="")
+        par(new=TRUE)
+        plot(density(x, adjust=adjust), axes=FALSE, main="")
         points(x, rep(0,length(x)), pch="|", col=col[1])
         }
     panel.histogram<-function(x){
-        par(new=T)
-        hist(x, main="", axes=F, nclass=nclass, col=col[1])
+        par(new=TRUE)
+        hist(x, main="", axes=FALSE, nclass=nclass, col=col[1])
         }
     panel.boxplot<-function(x){
-        par(new=T)
-        boxplot(x, axes=F, main="", col=col[1])
+        par(new=TRUE)
+        boxplot(x, axes=FALSE, main="", col=col[1])
         }
     panel.qqplot<-function(x){
-        par(new=T)
-        qqnorm(x, axes=F, xlab="", ylab="", main="", col=col[1])
+        par(new=TRUE)
+        qqnorm(x, axes=FALSE, xlab="", ylab="", main="", col=col[1])
         qqline(x)
         }
     panel.blank<-function(x) NULL
@@ -79,8 +79,8 @@ scatterplot.matrix.default<-function(data, labels=colnames(data),
     groups<-as.factor(if(FALSE==groups) rep(1, length(data[,1])) else groups)
     n.groups<-length(levels(groups))
     if (n.groups >= length(col)) stop("number of groups exceeds number of available colors")
-    if (transform != F | length(transform) == ncol(data)){
-        if (transform == T & length(transform) == 1) transform <- box.cox.powers(data)$lambda
+    if (transform != FALSE | length(transform) == ncol(data)){
+        if (transform == TRUE & length(transform) == 1) transform <- box.cox.powers(data)$lambda
         for (i in 1:ncol(data)){
             data[,i]<-box.cox(data[,i], transform[i])
             labels[i] <- paste(labels[i], "^(", round(transform[i],2), ")", sep="")
@@ -94,13 +94,13 @@ scatterplot.matrix.default<-function(data, labels=colnames(data),
                 if (plot.points) points(x[subs], y[subs], pch=pch[i], col=col[i+1])
                 if (smooth & by.groups) lines(lowess(x[subs], y[subs]), col=col[i+1])
                 if (is.function(reg.line) & by.groups) reg(x[subs], y[subs], col=col[i+1])
-                if (ellipse  & by.groups) data.ellipse(x[subs], y[subs], plot.points=F, 
+                if (ellipse  & by.groups) data.ellipse(x[subs], y[subs], plot.points=FALSE, 
                     levels=levels, col=col[i+1], robust=robust)
                 }
             if (!by.groups){
                 if (is.function(reg.line)) abline(reg.line(y~x),lty=2, lwd=lwd, col=col[1])
                 if (smooth) lines(lowess(x,y, f=span), lwd=lwd, col=col[1])
-                if (ellipse) data.ellipse(x, y, plot.points=F, levels=levels, col=col[1],
+                if (ellipse) data.ellipse(x, y, plot.points=FALSE, levels=levels, col=col[1],
                     robust=robust)
                 }
             }

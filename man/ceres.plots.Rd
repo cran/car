@@ -15,7 +15,7 @@ ceres.plots(model, variable, ask=missing(variable), one.page=!ask,
 
 ceres.plot(model, ...)
 
-ceres.plot.lm(model, variable, line=T, smooth=T, span=0.5, iter,
+ceres.plot.lm(model, variable, line=TRUE, smooth=TRUE, span=0.5, iter,
   las=par('las'), col=palette()[2], pch=1, lwd=2, main="ceres Plot")
 
 ceres.plot.glm(model, ...)
@@ -29,7 +29,7 @@ ceres.plot.glm(model, ...)
   \item{ask}{if \code{TRUE}, a menu is provided in the R Console for the
     user to select the variable(s) to plot, and to modify the span for the smoother
     used to draw a nonparametric-regression line on the plot.}
-  \item{one.page}{if \code{TRUE} (and \code{ask=F}), put all plots on one
+  \item{one.page}{if \code{TRUE} (and \code{ask=FALSE}), put all plots on one
     graph.}
   \item{span}{span for lowess smoother.}
   \item{iter}{number of robustness iterations for nonparametric-regression smooth;

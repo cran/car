@@ -38,7 +38,7 @@ bc(x, p)
   
   Box, G. E. P. and Cox, D. R. (1964)
   An analysis of transformations.
-  \emph{JRSS B} \bold{26} 211--246.
+  \emph{JRSS B} \bold{26}, 211--246.
   
   Fox, J. (1997)
   \emph{Applied Regression, Linear Models, and Related Methods.} Sage. 

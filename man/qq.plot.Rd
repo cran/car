@@ -18,22 +18,22 @@ qqp(...)
 qq.plot.default(x, distribution="norm", 
   ylab=deparse(substitute(x)), 
   xlab=paste(distribution, "quantiles"), main="", las=par('las'),
-  envelope=0.95, labels=F, col=palette()[2], lwd=2, pch=1,
+  envelope=0.95, labels=FALSE, col=palette()[2], lwd=2, pch=1,
   line=c("quartiles", "robust"), ...)
 
 qq.plot.lm(x, main="", xlab=paste(distribution, "Quantiles"), 
   ylab=paste("Studentized Residuals(", deparse(substitute(x)), ")",
     sep = ""), 
   distribution=c("t", "norm"), line=c("quartiles", "robust"), las=par('las'),
-  simulate=F, envelope=0.95, labels=F, reps=100, 
+  simulate=FALSE, envelope=0.95, labels=FALSE, reps=100, 
   col=palette()[2], lwd=2, pch=1, ...)
 }
 \arguments{
   \item{x}{vector of numeric values or \code{lm} object.}
   \item{distribution}{root name of comparison distribution -- e.g., \code{norm} for the
     normal distribution; \code{t} for the t-distribution.}
-  \item{ylab}{label for vertical (comparison quantiles) axis.}
-  \item{xlab}{label for horizontal (empirical quantiles) axis.}
+  \item{ylab}{label for vertical (empirical quantiles) axis.}
+  \item{xlab}{label for horizontal (comparison quantiles) axis.}
   \item{main}{label for plot.}
   \item{envelope}{confidence level for point-wise confidence envelope, or 
     \code{FALSE} for no envelope.}
@@ -91,7 +91,7 @@ qq.plot(x, dist="chisq", df=2)
 
 data(Ornstein)
 mod<-lm(interlocks~assets+sector+nation, data=Ornstein)
-qq.plot(mod, sim=T)
+qq.plot(mod, sim=TRUE)
 }
 
 \keyword{distribution}

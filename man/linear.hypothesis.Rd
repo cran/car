@@ -17,14 +17,14 @@ lht(...)
 
 linear.hypothesis.lm(model, hypothesis.matrix, rhs=0, 
   summary.model=summary(model, corr = FALSE), 
-  white.adjust=F, error.SS, error.df)
+  white.adjust=FALSE, error.SS, error.df)
 
 linear.hypothesis.glm(model, hypothesis.matrix, rhs=0, 
   summary.model=summary(model, corr = FALSE))
   
-print.chisq.test(x, ...)
+\method{print}{chisq.test}(x, ...)
 
-print.F.test(x, ...)
+\method{print}{F.test}(x, ...)
 }
 \arguments{
   \item{model}{model object produced by \code{lm} or \code{glm}.}
@@ -51,7 +51,7 @@ print.F.test(x, ...)
   Returns an \code{F.test} or \code{chisq.test} object, with components:
   \item{SSH}{sum of squares for hypothesis (for a linear model).}
   \item{SSE}{error sum of squares (for a linear model).}
-  \item{F}{F-statistic for the hypothesis (for a linear model.)}
+  \item{f}{F-statistic for the hypothesis (for a linear model.)}
   \item{Df}{degrees of freedom for F or chisquare.}
   \item{p}{p-value for the hypothesis.}
   \item{ChiSquare}{chisquare statistic for the hypothesis (for a generalized linear model).}

@@ -1,5 +1,7 @@
 # Axes for transformations (J. Fox)
 
+# last modified 2 April 02 by J. Fox
+
 # function to find "nice" numbers
 
 nice<-function(x, direction=c("round", "down", "up")){
@@ -19,9 +21,9 @@ nice<-function(x, direction=c("round", "down", "up")){
 #  for power or Box-Cox power transformations
 
 power.axis<-function(power, base=exp(1), side=c("right", "above", "left", "below"), 
-    at, grid=F, grid.col=gray(.50), grid.lty=3,
-    axis.title = "Untransformed Data", cex = 1, las=0) {
-    # last modified 30 July 2001 by J. Fox
+    at, grid=FALSE, grid.col=gray(.50), grid.lty=3,
+    axis.title = "Untransformed Data", cex = 1, las=par("las")) {
+    # last modified 20 Feb 2002 by J. Fox
     side<-if(is.numeric(side)) side 
         else which(match.arg(side)==c("below", "left", "above", "right"))
     axp<-if (side %% 2 == 1) par("xaxp") else par("yaxp")
@@ -39,9 +41,9 @@ power.axis<-function(power, base=exp(1), side=c("right", "above", "left", "below
     }
 
 box.cox.axis<-function(power, side=c("right", "above", "left", "below"), 
-    at, grid=F, grid.col=gray(.50), grid.lty=3,
-    axis.title = "Untransformed Data", cex = 1, las=0) {
-    # last modified 1 Feb by J. Fox
+    at, grid=FALSE, grid.col=gray(.50), grid.lty=3,
+    axis.title = "Untransformed Data", cex = 1, las=par("las")) {
+    # last modified 20 Feb 2002 by J. Fox
     inverse.power<-function(x,p){
         if (p==0) exp(x)
         else (1+p*x)^(1/p)
@@ -66,10 +68,10 @@ box.cox.axis<-function(power, side=c("right", "above", "left", "below"),
 # function to add a right or top probability axis to a plot of logits
 
 prob.axis<-function(at, side=c("right", "above", "left", "below"),
-    grid=F, grid.lty=3, grid.col=gray(.50),
-    axis.title = "Probability", interval = 0.1, cex = 1, las=0)
+    grid=FALSE, grid.lty=3, grid.col=gray(.50),
+    axis.title = "Probability", interval = 0.1, cex = 1, las=par("las"))
 {
-    # last modified 1 Feb 2001 by J. Fox
+    # last modified 20 Feb 2002 by J. Fox
     side<-if(is.numeric(side)) side 
         else which(match.arg(side)==c("below", "left", "above", "right"))
     logit<-if (side %% 2 == 1) par("usr")[c(1,2)] else par("usr")[c(3,4)]

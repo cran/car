@@ -1,5 +1,7 @@
 # Bonferroni test for an outlier (J. Fox)
 
+# last modified 2 April 02 by J. Fox
+
 outlier.test<-function(model, ...){
     UseMethod("outlier.test")
     }
@@ -10,7 +12,7 @@ outlier.test.lm<-function(model, labels=names(rstud)){
     labels<-if(is.null(labels)) seq(along=rstud) else labels
     if (length(rstud) != length(labels)) 
         stop("Number of labels does not correspond to number of residuals.")
-    rstud.max<-max(rstud, na.rm=T)
+    rstud.max<-max(rstud, na.rm=TRUE)
     which.max<-which(rstud==rstud.max)
     df<-df.residual(model)-1
     n<-sum(!is.na(rstud))
@@ -29,7 +31,7 @@ outlier.test.glm<-function(model, labels=names(rstud)){
     labels<-if(is.null(labels)) seq(along=rstud) else labels
     if (length(rstud) != length(labels)) 
         stop("Number of labels does not correspond to number of residuals.")
-    rstud.max<-max(rstud, na.rm=T)
+    rstud.max<-max(rstud, na.rm=TRUE)
     which.max<-which(rstud==rstud.max)
     n<-sum(!is.na(rstud))
     p<-2*(1-pnorm(rstud.max))

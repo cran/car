@@ -1,17 +1,19 @@
 # spread-level plots (J. Fox)
 
+# last modified 2 April 02
+
 slp<-function(x, ...) spread.level.plot(x, ...)
 
 spread.level.plot<-function(x, ...) {
     UseMethod("spread.level.plot")
     }
 
-spread.level.plot.default<-function(x, by, robust.line=any("MASS"==.packages(all=T)), 
-        start=0, xlab="Median", ylab="Hinge-Spread", las=1,
+spread.level.plot.default<-function(x, by, robust.line=any("MASS"==.packages(all=TRUE)), 
+        start=0, xlab="Median", ylab="Hinge-Spread", las=par("las"),
         main=paste("Spread-Level Plot for", deparse(substitute(x)), 
         "by", deparse(substitute(by))), col=palette()[2], pch=1, lwd=2, ...)
     {
-    #last modified 27 Sept 2001 by J. Fox
+    #last modified 20 Feb 2002 by J. Fox
     good<-!(is.na(x) | is.na(by))
     if (sum(good) != length(x)) {
         warning("NAs ignored")
@@ -41,7 +43,7 @@ spread.level.plot.default<-function(x, by, robust.line=any("MASS"==.packages(all
     pos<-ifelse(medians>median(medians), 2, 4)
     text(medians, spreads, as.character(values), pos=pos, ...)
     if (robust.line){
-        if (!require("MASS", quietly=T)) stop("MASS package not available")
+        if (!require("MASS", quietly=TRUE)) stop("MASS package not available")
         mod<-rlm(log(spreads)~log(medians))
         }
         else mod<-lm(log(spreads)~log(medians), ...)
@@ -58,13 +60,13 @@ spread.level.plot.default<-function(x, by, robust.line=any("MASS"==.packages(all
     }
     
 spread.level.plot.lm<-function(x, start=0, 
-        robust.line=any("MASS"==.packages(all=T)), 
+        robust.line=any("MASS"==.packages(all=TRUE)), 
         xlab="Fitted Values",
-        ylab="Absolute Studentized Residuals", las=0,
+        ylab="Absolute Studentized Residuals", las=par("las"),
         main=paste("Spread-Level Plot for", deparse(substitute(x))),
         pch=1, col=palette()[2], lwd=2, ...)
     {
-    #last modified 27 Sept 2001 by J. Fox
+    #last modified 20 Feb 2002 by J. Fox
     resid<-na.omit(abs(rstudent(x)))
     fitval<-na.omit(fitted.values(x))
     min<-min(fitval)
@@ -77,7 +79,7 @@ spread.level.plot.lm<-function(x, start=0,
     plot(fitval+start, resid, log="xy", main=main, xlab=xlab, ylab=ylab, 
         las=las, col=col, pch=pch, ...)
     if (robust.line){
-        if (!require("MASS", quietly=T)) stop("MASS package not available")
+        if (!require("MASS", quietly=TRUE)) stop("MASS package not available")
         mod<-rlm(log(resid)~log(fitval+start))
         }
         else mod<-lm(log(resid)~log(fitval+start), ...)

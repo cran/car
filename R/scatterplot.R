@@ -1,11 +1,13 @@
 # fancy scatterplots  (J. Fox)
 
+# last modified 2 April 02
+
 scatterplot<-function(x, ...){
     # last modified 28 Jan 2001 by J. Fox
     UseMethod("scatterplot", x)
     }
     
-scatterplot.formula<-function (formula, data, xlab, ylab, subset, labels=F, ...) {
+scatterplot.formula<-function (formula, data, xlab, ylab, subset, labels=FALSE, ...) {
     # last modified 1 Feb 2001 by J. Fox
     na.pass<-function(dframe) dframe
     m <- match.call(expand.dots = FALSE)
@@ -23,12 +25,12 @@ scatterplot.formula<-function (formula, data, xlab, ylab, subset, labels=F, ...)
     m$formula<-formula
     if (missing(data)){ 
         X <- na.omit(eval(m, parent.frame()))
-        if(labels != F) labels<-labels[as.numeric(gsub("X","", row.names(X)))]
+        if(labels != FALSE) labels<-labels[as.numeric(gsub("X","", row.names(X)))]
         }
     else{
-        if (labels != F) row.names(data)<-labels
+        if (labels != FALSE) row.names(data)<-labels
         X <- eval(m, parent.frame())
-        if (labels != F) labels<-row.names(X)
+        if (labels != FALSE) labels<-row.names(X)
         }
     names<-names(X)
     if (missing(xlab)) xlab<-names[2]
@@ -40,13 +42,13 @@ scatterplot.formula<-function (formula, data, xlab, ylab, subset, labels=F, ...)
     }
 
 
-scatterplot.default<-function(x, y, smooth=T, span=.5, reg.line=lm, boxplots="xy",
-    xlab=deparse(substitute(x)), ylab=deparse(substitute(y)), las=1,
-    lwd=1, labels=F, log="", groups=FALSE, by.groups=!(groups==FALSE), 
+scatterplot.default<-function(x, y, smooth=TRUE, span=.5, reg.line=lm, boxplots="xy",
+    xlab=deparse(substitute(x)), ylab=deparse(substitute(y)), las=par("las"),
+    lwd=1, labels=FALSE, log="", groups=FALSE, by.groups=!(groups==FALSE), 
     ellipse=FALSE, levels=c(.5, .9), robust=FALSE,
     col=palette(), pch=1:n.groups, 
     legend.plot=length(levels(groups)) > 1, ...){
-    # last modified 31 Jan 2001 by J. Fox
+    # last modified 20 Feb 2002 by J. Fox
     lowess.line<-function(x, y, col) {
         x<-if (0==length(grep("x", log))) x else log(x)
         y<-if (0==length(grep("y", log))) y else log(y)
@@ -91,8 +93,8 @@ scatterplot.default<-function(x, y, smooth=T, span=.5, reg.line=lm, boxplots="xy
             log.x<-"x"
             .x<-log(x)
             }
-        plot(x, seq(0,1,length=length(x)), type="n", axes=F, xlab="", ylab="", log=log.x)
-        res<-boxplot.stats(.x, coef = 1.5, do.conf=F)
+        plot(x, seq(0,1,length=length(x)), type="n", axes=FALSE, xlab="", ylab="", log=log.x)
+        res<-boxplot.stats(.x, coef = 1.5, do.conf=FALSE)
         if (length(grep("x", log))!=0){
             res$stats<-exp(res$stats)
             if (!is.null(res$out)) res$out<-exp(res$out)
@@ -117,8 +119,8 @@ scatterplot.default<-function(x, y, smooth=T, span=.5, reg.line=lm, boxplots="xy
             log.y<-"y"
             .y<-log(y)
             }
-        plot(seq(0,1,length=length(y)), y, type="n", axes=F, xlab="", ylab="", log=log.y)
-        res<-boxplot.stats(.y, coef = 1.5, do.conf=F)
+        plot(seq(0,1,length=length(y)), y, type="n", axes=FALSE, xlab="", ylab="", log=log.y)
+        res<-boxplot.stats(.y, coef = 1.5, do.conf=FALSE)
         if (length(grep("y", log))!=0){
             res$stats<-exp(res$stats)
             if (!is.null(res$out)) res$out<-exp(res$out)
@@ -162,9 +164,9 @@ scatterplot.default<-function(x, y, smooth=T, span=.5, reg.line=lm, boxplots="xy
         widths = c(5,95),
         heights= c(95,5))
     par(mar=c(mar[1],0,mar[3],0))
-    if (length(grep("y",boxplots))>0) vbox(.y) else plot(0,0,xlab="",ylab="",axes=F,type="n")
+    if (length(grep("y",boxplots))>0) vbox(.y) else plot(0,0,xlab="",ylab="",axes=FALSE,type="n")
     par(mar=c(0,mar[2],0,mar[4]))
-    if (length(grep("x",boxplots))>0) hbox(.x) else plot(0,0,xlab="",ylab="",axes=F,type="n")
+    if (length(grep("x",boxplots))>0) hbox(.x) else plot(0,0,xlab="",ylab="",axes=FALSE,type="n")
     par(mar=mar)
     plot(.x, .y, xlab=xlab, ylab=ylab, las=las, log=log, type="n", ...)
     n.groups<-length(levels(groups))
@@ -174,19 +176,19 @@ scatterplot.default<-function(x, y, smooth=T, span=.5, reg.line=lm, boxplots="xy
         points(.x[subs], .y[subs], pch=pch[i], col=col[i+1])
         if (smooth & by.groups) lowess.line(.x[subs], .y[subs], col=col[i+1])
         if (is.function(reg.line) & by.groups) reg(.x[subs], .y[subs], col=col[i+1])
-        if (ellipse  & by.groups) data.ellipse(.x[subs], .y[subs], plot.points=F, 
+        if (ellipse  & by.groups) data.ellipse(.x[subs], .y[subs], plot.points=FALSE, 
             levels=levels, col=col[i+1], robust=robust)
         }
     if (!by.groups){
         if (smooth) lowess.line(.x, .y, col=col[1])
         if (is.function(reg.line)) reg(.x, .y, col=col[1])
-        if (ellipse) data.ellipse(.x, .y, plot.points=F, levels=levels, col=col[1],
+        if (ellipse) data.ellipse(.x, .y, plot.points=FALSE, levels=levels, col=col[1],
             robust=robust)
         }
     if(legend.plot) legend(locator(1), legend=levels(groups), 
         pch=pch, col=col[2:(n.groups+1)])
-    if (labels[1]==T & length(labels)==1) labels<-seq(along=z)
-    indices<-if (labels != F) identify(.x, .y, labels)
+    if (labels[1]==TRUE & length(labels)==1) labels<-seq(along=z)
+    indices<-if (labels != FALSE) identify(.x, .y, labels)
     if (is.null(indices)) invisible(indices) else indices
     }
 

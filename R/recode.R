@@ -1,5 +1,5 @@
 # recode function (J. Fox)
-# last modified 15 Nov 2001
+# last modified 2 April 2002
 
 recode<-function(var, recodes, as.factor.result){
     recode.list<-rev(strsplit(gsub(" ","",recodes),";")[[1]])
@@ -8,8 +8,8 @@ recode<-function(var, recodes, as.factor.result){
     if (is.fac) var<-as.character(var)
     result<-var
     if (is.numeric(var)) {
-        lo<-min(var, na.rm=T)
-        hi<-max(var, na.rm=T)
+        lo<-min(var, na.rm=TRUE)
+        hi<-max(var, na.rm=TRUE)
         }
     for (term in recode.list){
         if (0<length(grep(":", term))) {

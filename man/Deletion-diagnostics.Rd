@@ -84,11 +84,11 @@ influence.glm(model)
   The following diagnostics are provided:
   
   \describe{
-    \item{\code{rstudent}} {studentized residuals.}
-    \item{\code{hatvalues}} {observation leverages.}
-    \item{\code{cookd}} {Cook's distance influence measure for observations.}
-    \item{\code{dfbeta}} {change in each coefficient upon deleting observations.}
-    \item{\code{dfbetas}} {standardized change in each coefficient for deleting observations.}
+    \item{rstudent}{studentized residuals.}
+    \item{hatvalues}{observation leverages.}
+    \item{cookd}{Cook's distance influence measure for observations.}
+    \item{dfbeta}{change in each coefficient upon deleting observations.}
+    \item{dfbetas}{standardized change in each coefficient for deleting observations.}
     }
 }
 

@@ -1,5 +1,7 @@
 # Added-Variable plots (J. Fox)
 
+# last modified 2 April 02 by J. Fox
+
 avp<-function(...) av.plots(...)
 
 av.plots<-function(model, variable, ask=missing(variable), one.page=!ask, ...){
@@ -35,8 +37,8 @@ av.plot<-function (model, ...) {
     }
 
 av.plot.lm<-function(model, variable, labels=names(residuals(model)[!is.na(residuals(model))]), 
-    identify.points=T, las=1, col=palette()[2], pch=1, lwd=2, main="Added-Variable Plot"){
-    #last modified 29 July 2001 by J. Fox
+    identify.points=TRUE, las=par('las'), col=palette()[2], pch=1, lwd=2, main="Added-Variable Plot"){
+    #last modified 20 Feb 2002 by J. Fox
     variable<-if (is.character(variable) & 1==length(variable)) variable
         else deparse(substitute(variable))
     mod.mat<-model.matrix(model)
@@ -48,7 +50,7 @@ av.plot.lm<-function(model, variable, labels=names(residuals(model)[!is.na(resid
     if (is.null(weights(model))) wt<-rep(1, length(response))
         else wt<-weights(model)
     res<-lsfit(mod.mat[,-var], cbind(mod.mat[,var], response), wt=wt,    
-        intercept=F)$residuals
+        intercept=FALSE)$residuals
     plot(res[,1], res[,2], xlab=paste(var.names[var],"| others"), 
         ylab=paste(response.name," | others"), main=main, las=las, col=col, pch=pch)
     abline(lsfit(res[,1], res[,2], wt=wt), col=col, lwd=lwd)
@@ -57,9 +59,9 @@ av.plot.lm<-function(model, variable, labels=names(residuals(model)[!is.na(resid
 
 
 av.plot.glm<-function(model, variable, labels=names(residuals(model)[!is.na(residuals(model))]), 
-    identify.points=T, las=1, col=palette()[2], pch=1, lwd=2, main="Added-Variable Plot",
+    identify.points=TRUE, las=par("las"), col=palette()[2], pch=1, lwd=2, main="Added-Variable Plot",
     type=c("Wang", "Weisberg")){
-    #last modified 14 Dec 2001 by J. Fox
+    #last modified 20 Feb 2002 by J. Fox
     type<-match.arg(type)
     variable<-if (is.character(variable) & 1==length(variable)) variable
         else deparse(substitute(variable))
@@ -74,7 +76,7 @@ av.plot.glm<-function(model, variable, labels=names(residuals(model)[!is.na(resi
     res.y<-residuals(mod, type="pearson")
     wt<-if (type=="Wang") wt*model$weights else wt
     res.x<-lsfit(mod.mat[,-var], mod.mat[,var], wt=wt,    
-        intercept=F)$residuals
+        intercept=FALSE)$residuals
     plot(res.x, res.y, xlab=paste(var.names[var],"| others"), 
         ylab=paste(response.name," | others"), main=main, las=las, col=col, pch=pch)
     abline(lsfit(res.x, res.y, wt=wt), col=col, lwd=lwd)

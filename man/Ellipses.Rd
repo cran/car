@@ -12,22 +12,22 @@
 }
 \usage{
 ellipse(center, shape, radius, center.pch=19, center.cex=1.5, 
-  segments=51, add=T, xlab="", ylab="", 
+  segments=51, add=TRUE, xlab="", ylab="", 
    las=par('las'), col=palette()[2], lwd=2, lty=1, ...)
 
 data.ellipse(x, y, levels=c(0.5, 0.9), center.pch=19, center.cex=1.5, 
-  plot.points=T, add=!plot.points, segments=51, robust=F,
+  plot.points=TRUE, add=!plot.points, segments=51, robust=FALSE,
   xlab=deparse(substitute(x)), 
   ylab=deparse(substitute(y)), 
   las=par('las'), col=palette()[2], pch=1, lwd=2, lty=1, ...)
 
 confidence.ellipse(model, ...)
 
-confidence.ellipse.lm(model, which.coef, levels=0.95, Scheffe=F, 
+confidence.ellipse.lm(model, which.coef, levels=0.95, Scheffe=FALSE, 
   center.pch=19, center.cex=1.5, segments=51, xlab, ylab, 
   las=par('las'), col=palette()[2], lwd=2, lty=1, ...)
 
-confidence.ellipse.glm(model, which.coef, levels=0.95, Scheffe=F, 
+confidence.ellipse.glm(model, which.coef, levels=0.95, Scheffe=FALSE, 
   center.pch=19, center.cex=1.5, segments=51, xlab, ylab, 
   las=par('las'), col=palette()[2], lwd=2, lty=1, ...)
 }
@@ -96,7 +96,7 @@ confidence.ellipse.glm(model, which.coef, levels=0.95, Scheffe=F,
 data(Prestige)
 attach(Prestige)
 data.ellipse(income, education, levels=0.1*1:9, lty=2)
-confidence.ellipse(lm(prestige~income+education), Scheffe=T)
+confidence.ellipse(lm(prestige~income+education), Scheffe=TRUE)
 }
 
 \keyword{hplot}

@@ -18,7 +18,7 @@ crp(...)
 
 cr.plot(model, ...)
 
-cr.plot.lm(model, variable, order=1, line=T, smooth=T, iter, 
+cr.plot.lm(model, variable, order=1, line=TRUE, smooth=TRUE, iter, 
   span=0.5, las=par('las'), col=palette()[2], pch=1, lwd=2,
   main="Component+Residual Plot")
 
@@ -33,7 +33,7 @@ cr.plot.glm(model, ...)
   \item{ask}{if \code{TRUE}, a menu is provided in the R Console for the
     user to select the variable(s) to plot, and to modify the span for the smoother
     used to draw a nonparametric-regression line on the plot.}
-  \item{one.page}{if \code{TRUE} (and \code{ask=F}), put all plots on one
+  \item{one.page}{if \code{TRUE} (and \code{ask=FALSE}), put all plots on one
     graph.}
   \item{order}{order of polynomial regression performed for predictor to be plotted.}
   \item{line}{\code{TRUE} to plot least-squares line.}

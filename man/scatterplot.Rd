@@ -13,11 +13,11 @@
 \usage{
 scatterplot(x, ...)
 
-scatterplot.formula(formula, data, xlab, ylab, subset, labels=F, ...)
+scatterplot.formula(formula, data, xlab, ylab, subset, labels=FALSE, ...)
 
-scatterplot.default(x, y, smooth=T, span=0.5, reg.line=lm, 
+scatterplot.default(x, y, smooth=TRUE, span=0.5, reg.line=lm, 
   boxplots="xy", xlab=deparse(substitute(x)), ylab=deparse(substitute(y)), 
-  las=par('las'), lwd=1, labels=F, log="", groups=FALSE, by.groups=!(groups == FALSE),
+  las=par('las'), lwd=1, labels=FALSE, log="", groups=FALSE, by.groups=!(groups == FALSE),
   ellipse=FALSE, levels=c(.5, .9), robust=FALSE, 
   col=palette(), pch=1:n.groups, legend.plot=length(levels(groups)) > 1, ...)
   
@@ -51,14 +51,13 @@ sp{...}
   \item{groups}{a factor or other variable dividing the data into groups; groups are
     plotted with different colors and plotting characters.}
   \item{by.groups}{if \code{TRUE}, regression lines are fit by groups.}
-  \item{ellipse}{if \code{TRUE} data-concentration ellipses are plotted in
-    the off-diagonal panels.}
-  \item{levels}{levels or levels at which concentration ellipses are plotted;
+  \item{ellipse}{if \code{TRUE} data-concentration ellipses are plotted.}
+  \item{levels}{level or levels at which concentration ellipses are plotted;
     the default is \code{c(.5, .9)}.}
   \item{robust}{if \code{TRUE} use the \code{cov.trob} function in the \code{MASS} package
     to calculate the center and covariance matrix for the data ellipse.}
   \item{col}{colors for points and lines; the default is the
-    in the current color palette, starting at the \emph{second} entry
+    current color palette, starting at the \emph{second} entry
     (see \code{\link[base]{palette}} and \code{\link[base]{par}}).}
   \item{pch}{plotting characters for points; default is the plotting characters in
     order (see \code{\link[base]{par}}).}
@@ -82,7 +81,7 @@ sp{...}
 
 \examples{
 data(Prestige)
-scatterplot(prestige~income|type, data=Prestige, span=1, legend=F)
+scatterplot(prestige~income|type, data=Prestige, span=1, legend=FALSE)
   \dontrun{
 data(UN)
 scatterplot(infant.mortality~gdp, labels=row.names(UN), data=UN)

@@ -18,7 +18,7 @@ leverage.plot(model, ...)
 
 leverage.plot.lm(model, term.name, 
   labels=names(residuals(model)[!is.na(residuals(model))]),  
-  identify.points=T, las=par('las'), col=palette()[2], pch=1, lwd=2, 
+  identify.points=TRUE, las=par('las'), col=palette()[2], pch=1, lwd=2, 
   main="Leverage Plot")
 
 leverage.plot.glm(model, ...)
@@ -45,7 +45,7 @@ leverage.plot.glm(model, ...)
 }
 \details{
   The function intended for direct use is \code{leverage.plots}. By default, this
-  functions is used interactively through a text menu.
+  function is used interactively through a text menu.
   
   The model can contain factors and interactions. A leverage plot can be
   drawn for each term in the model, including the constant.

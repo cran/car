@@ -1,75 +1,81 @@
-Adler                    Experimenter Expectations
-Angell                   Moral Integration of American Cities
-Anova                    Anova Tables for Linear and Generalized Linear
-                         Models
-Anscombe                 U. S. State Public-School Expenditures
-Ask                      Change Argument to a Function Interactively
-Baumann                  Methods of Teaching Reading Comprehension
-Bfox                     Canadian Women's Labour-Force Participation
-Burt                     Fraudulent Data on IQs of Twins Raised Apart
-Can.pop                  Canadian Population Data
-Chile                    Voting Intentions in the 1988 Chilean Plebiscite
-Chirot                   The 1907 Romanian Peasant Rebellion
-Cowles                   Cowles and Davis's Data on Volunteering
-Davis                    Self-Reports of Height and Weight
-DavisThin                Davis's Data on Drive for Thinness
-Deletion Diagnostics     Deletion Diagnostics for Linear and Generalized
-                         Linear Models
-Duncan                   Duncan's Occupational Prestige Data
-Ellipses                 Ellipses, Data Ellipses, and Confidence Ellipses
-Ericksen                 The 1980 U.S. Census Undercount
-Florida                  Florida County Voting
-Freedman                 Crowding and Crime in U. S. Metropolitan Areas
-Friendly                 Format Effects on Recall
-Ginzberg                 Data on Depression
-Greene                   Refugee Appeals
-Guyer                    Anonymity and Cooperation
-Hartnagel                Canadian Crime-Rates Time Series
-Leinhardt                Data on Infant-Mortality
-Mandel                   Contrived Collinear Data
-Migration                Canadian Interprovincial Migration Data
-Moore                    Status, Authoritarianism, and Conformity
-Mroz                     U.S. Women's Labor-Force Participation
-Ornstein                 Interlocking Directorates Among Major Canadian
-                         Firms
-Prestige                 Prestige of Canadian Occupations
-Quartet                  Four Regression Datasets
-Robey                    Fertility and Contraception
-SLID                     Survey of Labour and Income Dynamics
-Sahlins                  Agricultural Production in Mazulu Village
-States                   Education and Related Statistics for the U.S.
-                         States
-Transformation Axes      Axes for Transformed Variables
-UN                       GDP and Infant Mortality
-US.pop                   Population of the United States
-Var                      Variance-Covariance Matrices
-Vocab                    Vocabulary and Education
-Womenlf                  Canadian Women's Labour-Force Participation
-av.plots                 Added-Variable Plots
-box.cox                  Box-Cox Family of Transformations
-box.cox.powers           Multivariate Unconditional Box-Cox
-                         Transformations
-box.cox.var              Constructed Variable for Box-Cox Transformation
-box.tidwell              Box-Tidwell Transformations
-car-internal             Internal car functions
-ceres.plots              Ceres Plots
-cr.plots                 Component+Residual (Partial Residual) Plots
-durbin.watson            Durbin-Watson Test for Autocorrelated Errors
-hccm                     Heteroscedasticity-Corrected Covariance Matrices
-leverage.plots           Regression Leverage Plots
-linear.hypothesis        Test Linear Hypothesis
-logit                    Logit Transformation
-n.bins                   Number of Bins for Histogram
-ncv.test                 Score Test for Non-Constant Error Variance
-outlier.test             Bonferroni Outlier Test
-panel.car                Panel Function Coplots
-qq.plot                  Quantile-Comparison Plots
-recode                   Recode a Variable
-reg.line                 Plot Regression Line
-scatterplot              Scatterplots with Boxplots
-scatterplot.matrix       Scatterplot Matrices
-spread.level.plot        Spread-Level Plots
-subsets                  Plot Output from regsubsets Function in leaps
-                         package
-vif                      Variance Inflation Factors
-which.names              Position of Row Names
+Adler                   Experimenter Expectations
+Angell                  Moral Integration of American Cities
+Anova                   Anova Tables for Linear and Generalized Linear
+                        Models
+Anscombe                U. S. State Public-School Expenditures
+Ask                     Change Argument to a Function Interactively
+Baumann                 Methods of Teaching Reading Comprehension
+Bfox                    Canadian Women's Labour-Force Participation
+Blackmoor               Exercise Histories of Eating-Disordered and
+                        Control Subjects
+Burt                    Fraudulent Data on IQs of Twins Raised Apart
+Can.pop                 Canadian Population Data
+Chile                   Voting Intentions in the 1988 Chilean
+                        Plebiscite
+Chirot                  The 1907 Romanian Peasant Rebellion
+Cowles                  Cowles and Davis's Data on Volunteering
+Davis                   Self-Reports of Height and Weight
+DavisThin               Davis's Data on Drive for Thinness
+Deletion Diagnostics    Deletion Diagnostics for Linear and Generalized
+                        Linear Models
+Duncan                  Duncan's Occupational Prestige Data
+Ellipses                Ellipses, Data Ellipses, and Confidence
+                        Ellipses
+Ericksen                The 1980 U.S. Census Undercount
+Florida                 Florida County Voting
+Freedman                Crowding and Crime in U. S. Metropolitan Areas
+Friendly                Format Effects on Recall
+Ginzberg                Data on Depression
+Greene                  Refugee Appeals
+Guyer                   Anonymity and Cooperation
+Hartnagel               Canadian Crime-Rates Time Series
+Leinhardt               Data on Infant-Mortality
+Mandel                  Contrived Collinear Data
+Migration               Canadian Interprovincial Migration Data
+Moore                   Status, Authoritarianism, and Conformity
+Mroz                    U.S. Women's Labor-Force Participation
+Ornstein                Interlocking Directorates Among Major Canadian
+                        Firms
+Prestige                Prestige of Canadian Occupations
+Quartet                 Four Regression Datasets
+Robey                   Fertility and Contraception
+SLID                    Survey of Labour and Income Dynamics
+Sahlins                 Agricultural Production in Mazulu Village
+States                  Education and Related Statistics for the U.S.
+                        States
+Transformation Axes     Axes for Transformed Variables
+UN                      GDP and Infant Mortality
+US.pop                  Population of the United States
+Var                     Variance-Covariance Matrices
+Vocab                   Vocabulary and Education
+Womenlf                 Canadian Women's Labour-Force Participation
+av.plots                Added-Variable Plots
+box.cox                 Box-Cox Family of Transformations
+box.cox.powers          Multivariate Unconditional Box-Cox
+                        Transformations
+box.cox.var             Constructed Variable for Box-Cox Transformation
+box.tidwell             Box-Tidwell Transformations
+car-internal            Internal car functions
+ceres.plots             Ceres Plots
+cr.plots                Component+Residual (Partial Residual) Plots
+durbin.watson           Durbin-Watson Test for Autocorrelated Errors
+effect                  Functions For Constructing Effect Plots
+hccm                    Heteroscedasticity-Corrected Covariance
+                        Matrices
+leverage.plots          Regression Leverage Plots
+linear.hypothesis       Test Linear Hypothesis
+logit                   Logit Transformation
+n.bins                  Number of Bins for Histogram
+ncv.test                Score Test for Non-Constant Error Variance
+outlier.test            Bonferroni Outlier Test
+panel.car               Panel Function Coplots
+qq.plot                 Quantile-Comparison Plots
+recode                  Recode a Variable
+reg.line                Plot Regression Line
+scatterplot             Scatterplots with Boxplots
+scatterplot.matrix      Scatterplot Matrices
+spread.level.plot       Spread-Level Plots
+subsets                 Plot Output from regsubsets Function in leaps
+                        package
+vif                     Variance Inflation Factors
+which.names             Position of Row Names

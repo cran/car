@@ -21,11 +21,11 @@ av.plot(model, ...)
 
 av.plot.lm(model, variable, 
   labels=names(residuals(model)[!is.na(residuals(model))]), 
-  identify.points=T, las=1, col=palette()[2], pch=1, lwd=2,
+  identify.points=TRUE, las=par("las"), col=palette()[2], pch=1, lwd=2,
   main="Added-Variable Plot")
 
 av.plot.glm(model, variable, labels=names(residuals(model)), 
-  identify.points=T, las=1, col=palette()[2], pch=1, lwd=2,
+  identify.points=TRUE, las=par("las"), col=palette()[2], pch=1, lwd=2,
   main="Added-Variable Plot", type=c("Wang", "Weisberg"))
 }
 
@@ -36,12 +36,12 @@ av.plot.glm(model, variable, labels=names(residuals(model)),
     or \code{av.plots}.}
   \item{ask}{if \code{TRUE}, a menu is provided in the R Console for the
     user to select the term(s) to plot.}
-  \item{one.page}{if \code{TRUE} (and \code{ask=F}), put all plots on one
+  \item{one.page}{if \code{TRUE} (and \code{ask=FALSE}), put all plots on one
     graph.}
   \item{labels}{observation names.}
   \item{identify.points}{if \code{TRUE}, then identify points interactively.}
   \item{las}{if \code{0}, ticks labels are drawn parallel to the
-    axis; set to \code{1} (the default) for horizontal labels (see \code{\link[base]{par}}).}
+    axis; set to \code{1} for horizontal labels (see \code{\link[base]{par}}).}
   \item{col}{color for points and lines; the default is the \emph{second} entry
     in the current color palette (see \code{\link[base]{palette}}
     and \code{\link[base]{par}}).}
