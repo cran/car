@@ -19,7 +19,7 @@ outlier.test.lm(model, labels=names(rstud), ...)
 
 outlier.test.glm(model, labels=names(rstud), ...)
 
-\method{print}{outlier.test}(x, ...)
+\method{print}{outlier.test}(x, digits=options("digits")[[1]], ...)
 }
 
 \arguments{
@@ -27,6 +27,7 @@ outlier.test.glm(model, labels=names(rstud), ...)
   \item{labels}{an optional vector of observation names.}
   \item{...}{arguments passed down to methods functions.}
   \item{x}{\code{outlier.test} object.}
+  \item{digits}{number of digits for printed output.}
 }
 
 \details{

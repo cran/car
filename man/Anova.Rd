@@ -47,20 +47,25 @@ Anova.glm(mod, type=c("II", "III"), test.statistic=c("LR", "Wald", "F"),
     \code{white.adjust} for a linear model.}
 }
 \details{
-  So-called type-II tests are calculated according to the principle of marginality,
+  The designations "type-II" and "type-III" are borrowed from SAS, but the
+  definitions used here do not correspond precisely to those employed by SAS. 
+  Type-II tests are calculated according to the principle of marginality,
   testing each term after all others, except ignoring the term's higher-order relatives;
   so-called type-III tests violate marginality, testing 
-  each term in the model after all of the others. Be
-  very careful in formulating the model for type-III tests, or the hypotheses tested
-  will not make sense. As implemented here, type-II Wald tests 
-  for generalized linear models are actually
+  each term in the model after all of the others. This definition of Type-II tests 
+  corresponds to the tests produced by SAS for analysis-of-variance models, where all of the predictors
+  are factors, but not more generally (i.e., when there are quantitative predictors).
+  Be very careful in formulating the model for type-III tests, or the hypotheses tested
+  will not make sense. 
+  
+  As implemented here, type-II Wald tests for generalized linear models are actually
   \emph{differences} of Wald statistics.
   
   For all but type-II likelihood-ratio and \emph{F} tests for generalized linear models, 
   \code{Anova} finds the test statistics without refitting the model.
   
-  The standard R \code{anova} function calculates sequential (type-I) tests.
-  These rarely test meaningful hypotheses.
+  The standard R \code{anova} function calculates sequential ("type-I") tests.
+  These rarely test interesting hypotheses.
 }
 \value{
   An object of class \code{anova}, usually printed.

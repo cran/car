@@ -44,12 +44,14 @@ outlier.test.glm<-function(model, labels=names(rstud), ...){
     }
 
     
-print.outlier.test<-function(x, ...){
-    # last modified 27 Jan 2001 by J. Fox
-    test<-matrix(x$test, nrow=1)
-    colnames(test)<-names(x$test)
-    rownames(test)<-""
-    print.matrix(test)
+print.outlier.test<-function(x, digits=options("digits")[[1]], ...){
+    # last modified 30 May 2003 by J. Fox
+    test<-signif(x$test, digits=digits)
+    cat(paste("\nmax|rstudent| = ", test[1], ", degrees of freedom = ", test[2],
+        ",\nunadjusted p = ", test[3], 
+        ", Bonferroni p", if (is.na(test[4])) " > 1" else paste(" =", test[4]), "\n",
+        sep=""))
     if(length(x$obs)>1) cat("\nObservations:",x$obs,"\n")
       else cat("\nObservation:",x$obs,"\n")
+    invisible(x)
     }

@@ -1,6 +1,6 @@
 # fancy scatterplots  (J. Fox)
 
-# last modified 26 May 2003
+# last modified 15 July 2003
 
 scatterplot<-function(x, ...){
     # last modified 28 Jan 2001 by J. Fox
@@ -25,12 +25,12 @@ scatterplot.formula<-function (formula, data, xlab, ylab, subset, labels=FALSE, 
     m$formula<-formula
     if (missing(data)){ 
         X <- na.omit(eval(m, parent.frame()))
-        if(labels != FALSE) labels<-labels[as.numeric(gsub("X","", row.names(X)))]
+        if (labels[1] != FALSE) labels<-labels[as.numeric(gsub("X","", row.names(X)))]
         }
     else{
-        if (labels != FALSE) row.names(data)<-labels
+        if (labels[1] != FALSE) row.names(data)<-labels
         X <- eval(m, parent.frame())
-        if (labels != FALSE) labels<-row.names(X)
+        if (labels[1] != FALSE) labels<-row.names(X)
         }
     names<-names(X)
     if (missing(xlab)) xlab<-names[2]
@@ -141,7 +141,7 @@ scatterplot.default<-function(x, y, smooth=TRUE, span=.5, reg.line=lm, boxplots=
     if (reset.par) on.exit(par(mar=mar, mfcol=mfcol))
     if(FALSE==boxplots) boxplots<-""
     if (groups[1] != FALSE){
-        if (labels != FALSE){
+        if (labels[1] != FALSE){
             data<-na.omit(data.frame(groups,x,y,labels))
             groups<-data[,1]
             .x<-data[,2]
@@ -188,7 +188,7 @@ scatterplot.default<-function(x, y, smooth=TRUE, span=.5, reg.line=lm, boxplots=
     if(legend.plot) legend(locator(1), legend=levels(groups), 
         pch=pch, col=col[2:(n.groups+1)])
     if (labels[1]==TRUE & length(labels)==1) labels<-seq(along=z)
-    indices<-if (labels != FALSE) identify(.x, .y, labels)
+    indices<-if (labels[1] != FALSE) identify(.x, .y, labels)
     if (is.null(indices)) invisible(indices) else indices
     }
 
