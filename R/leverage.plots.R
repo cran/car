@@ -33,7 +33,7 @@ leverage.plot<-function (model, ...) {
 leverage.plot.lm<-function(model, term.name, 
     labels=names(residuals(model)[!is.na(residuals(model))]), 
     identify.points=TRUE, las=par("las"), col=palette()[2], pch=1, lwd=2, main="Leverage Plot"){
-    # last modified 20 July 2002
+    # last modified 19 Sept 2002
     term.name<-if (is.character(term.name) & 1==length(term.name)) term.name
         else deparse(substitute(term.name))
     b<-coefficients(model)
@@ -47,7 +47,7 @@ leverage.plot.lm<-function(model, term.name,
     intercept<-has.intercept(model)
     assign<-model$assign
     X<-model.matrix(model)
-    V<-Var(model)
+    V<-vcov(model)
     wt<-if (is.null(weights(model))) rep(1, length(X[,1]))
         else weights(model)
     subs<-which(assign==term-intercept)

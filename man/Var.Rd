@@ -4,10 +4,14 @@
 \alias{Var.lm}
 \alias{Var.glm}
 
-\title{Variance-Covariance Matrices}
+\title{Variance-Covariance Matrices (deprecated)}
 \description{
   Computes variance-covariance matrices or variances for model objects or data.
-  The default method uses the function \code{var}.
+  The default method uses the function \code{var}. 
+  
+  These functions are now deprecated; instead, use
+  the \code{vcov} function, now in the base package. Note that \code{vcov} has no \code{diagonal}
+  argument and no default method.
 }
 
 \usage{

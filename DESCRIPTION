@@ -1,11 +1,11 @@
 Package: car
-Version: 1.0-0
-Date: 2002/5/27
+Version: 1.0-1
+Date: 2002/9/17
 Title: Companion to Applied Regression
 Author: John Fox <jfox@mcmaster.ca>. I am grateful to Douglas Bates, Georges Monette,
-    and Sanford Weisberg for various suggestions.
+    Brian Ripley, and Sanford Weisberg for various suggestions.
 Maintainer: John Fox <jfox@mcmaster.ca>
-Depends: R (>= 1.4.1), modreg, lattice, grid
+Depends: R (>= 1.6.0), modreg, lattice, grid
 Description: 
   This package accompanies J. Fox, An R and S-PLUS Companion to Applied Regression,
   Sage, 2002.

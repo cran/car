@@ -1,6 +1,6 @@
 # Ellipses (J. Fox and G. Monette)
 
-# last modified 2 April 02 by J. Fox
+# last modified 19 Sept 02 by J. Fox
 
 ellipse<-function(center, shape, radius, center.pch=19, center.cex=1.5, segments=51, add=TRUE, 
         xlab="", ylab="", las=par("las"), col=palette()[2], lwd=2, lty=1, ...) {
@@ -73,7 +73,7 @@ confidence.ellipse.lm<-function(model, which.coef, levels=0.95, Scheffe=FALSE,
     ylab<-if (missing(ylab)) paste(names(coef)[2], "coefficient")
     dfn<-if (Scheffe) sum(df.terms(model)) else 2
     dfd<-df.residual(model)
-    shape<-Var(model)[which.coef, which.coef]
+    shape<-vcov(model)[which.coef, which.coef]
     for (level in rev(sort(levels))){
         radius<-sqrt(dfn*qf(level, dfn, dfd))
         add<-!level==max(levels)
@@ -99,7 +99,7 @@ confidence.ellipse.glm<-function(model, which.coef, levels=0.95, Scheffe=FALSE,
     ylab<-if (missing(ylab)) paste(names(coef)[2], "coefficient")
     df<-if (Scheffe) sum(df.terms(model)) else 2
     sumry<-summary(model, corr = FALSE)
-    shape<-Var(model)[which.coef, which.coef]
+    shape<-vcov(model)[which.coef, which.coef]
     for (level in rev(sort(levels))){
         radius<-sqrt(qchisq(level, df))
         add<-!level==max(levels)

@@ -19,7 +19,8 @@ scatterplot.default(x, y, smooth=TRUE, span=0.5, reg.line=lm,
   boxplots="xy", xlab=deparse(substitute(x)), ylab=deparse(substitute(y)), 
   las=par('las'), lwd=1, labels=FALSE, log="", groups=FALSE, by.groups=!(groups == FALSE),
   ellipse=FALSE, levels=c(.5, .9), robust=FALSE, 
-  col=palette(), pch=1:n.groups, legend.plot=length(levels(groups)) > 1, ...)
+  col=palette(), pch=1:n.groups, legend.plot=length(levels(groups)) > 1, 
+  reset.par=TRUE, ...)
   
 sp{...}
 }
@@ -64,6 +65,10 @@ sp{...}
   \item{legend.plot}{if \code{TRUE} then a legend for the groups is plotted, and positioned
     interactively with a mouse click; if points are to be labelled, then the legend is 
     positioned first.}
+  \item{reset.par}{if \code{TRUE} then plotting parameters are reset to their previous values
+    when \code{scatterplot} exits; if \code{FALSE} then the \code{mar} and \code{mfcol} parameters are
+    altered for the current plotting device. Set to \code{FALSE} if you want to add graphical elements
+    (such as lines) to the plot.}
   \item{\dots}{other arguments passed to \code{plot}.}
 }
 
@@ -77,7 +82,7 @@ sp{...}
 
 \seealso{\code{\link[base]{plot}}, \code{\link[base]{boxplot}}, 
   \code{\link{scatterplot.matrix}}, \code{\link{data.ellipse}},
-  \code{\link[MASS]{cov.trob}}.}
+  \code{\link[base]{par}}, \code{\link[MASS]{cov.trob}}.}
 
 \examples{
 data(Prestige)

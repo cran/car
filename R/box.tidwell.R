@@ -26,7 +26,7 @@ box.tidwell.formula<-function(formula, other.x=NULL, data=NULL, subset, na.actio
     }
 
 box.tidwell.default<-function(y, x1, x2=NULL, max.iter=25, tol=.001, verbose=FALSE, ...) {
-    # last modified 15 Dec 2000 by J. Fox
+    # last modified 19 Sept 02 by J. Fox
     x1<-as.matrix(x1)
     var.names<-if(is.null(colnames(x1))) 1:ncol(x1) else colnames(x1)
     k.x1<-length(var.names)
@@ -34,7 +34,7 @@ box.tidwell.default<-function(y, x1, x2=NULL, max.iter=25, tol=.001, verbose=FAL
     mod.1<-lm(y~cbind(x1, x2), ...)
     mod.2<-lm(y~cbind(x.log.x, x1, x2), ...)
     sumry<-summary(mod.2)
-    seb<-sqrt(Var(mod.2, diagonal=TRUE))
+    seb<-sqrt(diag(vcov(mod.2)))
     t.vals<-((coefficients(mod.2))/seb)[2:(1+k.x1)]
     initial<-powers<-1+coefficients(mod.2)[2:(1+k.x1)]/coefficients(mod.1)[2:(1+k.x1)]
     pvalues<-2*(1-pnorm(abs(t.vals)))

@@ -1,6 +1,6 @@
 # Type II and III tests for linear and generalized linear models (J. Fox)
 
-# last modified 2 April 02
+# last modified 20 Aug 02
 
 relatives<-function(term, names, factors){
     is.relative<-function(term1, term2) {
@@ -294,75 +294,100 @@ Anova.II.Wald.glm<-function(mod){
 
             # LR test
             
-Anova.II.LR.glm<-function(mod){
-    fac<-attr(mod$terms, "factors")
-    names<-if (has.intercept(mod)) term.names(mod)[-1]
+Anova.II.LR.glm <- function(mod){
+    # last modified 16 Aug 2002 by J. Fox
+    # (some code adapted from drop1.glm)
+    which.nms <- function(name) which(asgn == which(names == name))
+    fac <- attr(mod$terms, "factors")
+    names <- if (has.intercept(mod)) term.names(mod)[-1]
         else term.names(mod)
-    n.terms<-length(names)
-    LR<-rep(0, n.terms)
-    df<-df.terms(mod)
-    p<-rep(0, n.terms)
-    dispersion<-summary(mod, corr = FALSE)$dispersion
+    n.terms <- length(names)
+    X <- model.matrix(mod)
+    y <- mod$y
+    if (is.null(y)) y <- model.response(model.frame(mod), "numeric")
+    wt <- mod$prior.weights
+    if (is.null(wt)) wt <- rep(1, length(y))
+    asgn <- attr(X, 'assign')
+    LR <- rep(0, n.terms)
+    df <- df.terms(mod)
+    p <- rep(0, n.terms)
+    dispersion <- summary(mod, corr = FALSE)$dispersion
     for (term in 1:n.terms){
-        rels<-names[relatives(names[term], names, fac)]
-        mod.1<-update(mod,
-            eval(parse(text=paste(".~.-",paste(c(names[term], rels), collapse="-")))))
-        dev.1<-deviance(mod.1)
-        mod.2<-if (length(rels)==0) mod
-            else update(mod,
-                    eval(parse(text=paste(".~.-",paste(rels, collapse="-")))))
-        dev.2<-deviance(mod.2)
-        LR[term]<-(dev.1-dev.2)/dispersion
-        p[term]<-1-pchisq(LR[term], df[term])
+        rels <- names[relatives(names[term], names, fac)]
+        exclude.1 <- as.vector(sapply(c(names[term], rels), which.nms))
+        mod.1 <- glm.fit(X[, -exclude.1, drop = FALSE], y, wt, offset = mod$offset, 
+            family = mod$family, control = mod$control)
+        dev.1 <- deviance(mod.1)
+        mod.2 <- if (length(rels) == 0) mod
+            else {
+                exclude.2 <- as.vector(sapply(rels, which.nms))
+                glm.fit(X[, -exclude.2, drop = FALSE], y, wt, offset = mod$offset, 
+                    family = mod$family, control = mod$control)
+                }
+        dev.2 <- deviance(mod.2)
+        LR[term] <- (dev.1 - dev.2)/dispersion
+        p[term] <- 1 - pchisq(LR[term], df[term])
         }
-     result<-data.frame(LR, df, p)
-     row.names(result)<-names
-     names(result)<-c("LR Chisq","Df","Pr(>Chisq)")
-     class(result)<-c("anova","data.frame")
-     attr(result,"heading")<-c("Anova Table (Type II tests)\n", paste("Response:", response.name(mod)))
+     result <- data.frame(LR, df, p)
+     row.names(result) <- names
+     names(result) <- c("LR Chisq", "Df", "Pr(>Chisq)")
+     class(result) <- c("anova", "data.frame")
+     attr(result,"heading") <- 
+        c("Anova Table (Type II tests)\n", paste("Response:", response.name(mod)))
      result
      }
 
 
             # F test
             
-Anova.II.F.glm<-function(mod, error, error.estimate){
-    # last modified by J. Fox 30 Jan 2001
-    if (missing(error)) error<-mod
+Anova.II.F.glm <- function(mod, error, error.estimate){
+    # last modified 16 Aug 2002 by J. Fox
+    # (some code adapted from drop1.glm)
+    which.nms <- function(name) which(asgn == which(names == name))
+    if (missing(error)) error <- mod
     df.res <- df.residual(error)
-    error.SS<-switch(error.estimate,
-        pearson=sum(residuals(error, "pearson")^2),
-        dispersion=df.res*summary(error, corr = FALSE)$dispersion,
-        deviance=deviance(error))
-    fac<-attr(mod$terms, "factors")
+    error.SS <- switch(error.estimate,
+        pearson = sum(residuals(error, "pearson")^2),
+        dispersion = df.res*summary(error, corr = FALSE)$dispersion,
+        deviance = deviance(error))
+    fac <- attr(mod$terms, "factors")
     names<-if (has.intercept(mod)) term.names(mod)[-1]
         else term.names(mod)
-    n.terms<-length(names)
-    p <- df <- f <- SS <-rep(0, n.terms+1)
+    n.terms <- length(names)
+    X <- model.matrix(mod)
+    y <- mod$y
+    if (is.null(y)) y <- model.response(model.frame(mod), "numeric")
+    wt <- mod$prior.weights
+    if (is.null(wt)) wt <- rep(1, length(y))
+    asgn <- attr(X, 'assign')
+    p <- df <- f <- SS <- rep(0, n.terms+1)
     f[n.terms+1] <- p[n.terms+1] <- NA
-    df[n.terms+1]<-df.res
-    SS[n.terms+1]<-error.SS
-    dispersion<-error.SS/df.res
-    f <- p <- rep(0, n.terms+1)
-    f[n.terms+1] <- p[n.terms+1] <- NA
-    df<-c(df.terms(mod), df.res)
+    df[n.terms+1] <- df.res
+    SS[n.terms+1] <- error.SS
+    dispersion <- error.SS/df.res
+    df <- c(df.terms(mod), df.res)
     for (term in 1:n.terms){
-        rels<-names[relatives(names[term], names, fac)]
-        mod.1<-update(mod,
-            eval(parse(text=paste(".~.-",paste(c(names[term], rels), collapse="-")))))
-        dev.1<-deviance(mod.1)
-        mod.2<-if (length(rels)==0) mod
-            else update(mod,
-                    eval(parse(text=paste(".~.-",paste(rels, collapse="-")))))
-        dev.2<-deviance(mod.2)
-        SS[term]<-dev.1 - dev.2
-        f[term]<-SS[term]/(dispersion*df[term])
-        p[term]<-1-pf(f[term], df[term], df.res)
+        rels <- names[relatives(names[term], names, fac)]
+        exclude.1 <- as.vector(sapply(c(names[term], rels), which.nms))
+        mod.1 <- glm.fit(X[, -exclude.1, drop = FALSE], y, wt, offset = mod$offset, 
+            family = mod$family, control = mod$control)
+        dev.1 <- deviance(mod.1)
+        mod.2 <- if (length(rels) == 0) mod
+            else {
+                exclude.2 <- as.vector(sapply(rels, which.nms))
+                glm.fit(X[, -exclude.2, drop = FALSE], y, wt, offset = mod$offset, 
+                    family = mod$family, control = mod$control)
+                }
+        dev.2 <- deviance(mod.2)
+        SS[term] <- dev.1 - dev.2
+        f[term] <- SS[term]/(dispersion*df[term])
+        p[term] <- 1 - pf(f[term], df[term], df.res)
         }
-     result<-data.frame(SS, df, f, p)
-     row.names(result)<-c(names, "Residuals")
-     names(result)<-c("SS","Df","F","Pr(>F)")
-     class(result)<-c("anova","data.frame")
-     attr(result,"heading")<-c("Anova Table (Type II tests)\n", paste("Response:", response.name(mod)))
+     result <- data.frame(SS, df, f, p)
+     row.names(result) <- c(names, "Residuals")
+     names(result) <- c("SS","Df","F","Pr(>F)")
+     class(result) <- c("anova","data.frame")
+     attr(result,"heading") <- c("Anova Table (Type II tests)\n", 
+        paste("Response:", response.name(mod)))
      result
      }

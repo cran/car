@@ -7,3 +7,11 @@ Changes to Version 1.0-0
    o Changed some F's to f's
    
    o Modified durbin.watson to allow directional alternative hypotheses
+   
+Changes to Version 1.0-1
+
+   o Reworked glm methods for Anova for type II LR and F tests to avoid scoping issues produced by use of update.
+   
+   o Added reset.par argument to scatterplot.default to allow addition of graphical elements to the plot.
+   
+   o The generic function Var and its methods are deprecated, in favour of vcov, now in the base package.
