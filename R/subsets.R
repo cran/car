@@ -11,8 +11,9 @@ subsets <- function(object, ...){
 subsets.regsubsets <- function(object, 
     names=abbreviate(object$xnames, minlength=abbrev), abbrev=1,
     min.size=1, max.size=length(names), legend,
-    statistic=c("bic", "cp", "adjr2", "rsq", "rss"), las=1, cex.subsets=1,
+    statistic=c("bic", "cp", "adjr2", "rsq", "rss"), las=par("las"), cex.subsets=1,
     ...) {
+    # last modified 20 Feb 2002 by J. Fox
     if (missing(legend)) legend <- missing(names)
     sumry <- summary(object)
     incidence <- sumry$which

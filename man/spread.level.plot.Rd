@@ -22,18 +22,19 @@ spread.level.plot.formula(formula, data=NULL, subset, na.action,
   varnames[-response]), ...)
 
 spread.level.plot.default(x, by, 
-  robust.line=any("MASS" == .packages(all = T)), 
+  robust.line=any("MASS" == .packages(all = TRUE)), 
   start=0, xlab="Median", ylab="Hinge-Spread", las=par('las'),
   main=paste("Spread-Level Plot for", deparse(substitute(x)), 
   "by", col=palette()[2], pch=1, lwd=2, ...)
 
 spread.level.plot.lm(x, start=0, 
-  robust.line=any("MASS" == .packages(all = T)), 
-  xlab="Fitted Values", ylab="Absolute Studentized Residuals", las
+  robust.line=any("MASS" == .packages(all = TRUE)), 
+  xlab="Fitted Values", ylab="Absolute Studentized Residuals", 
+  las=par("las"),
   main=paste("Spread-Level Plot for", deparse(substitute(x))),
   pch=1, col=palette()[2], lwd=2, ...)
   
-print.spread.level.plot(x, ...)
+\method{print}{spread.level.plot}(x, ...)
 }
 
 \arguments{

@@ -1,5 +1,7 @@
 # Quantile-comparison plots (J. Fox)
 
+# last modified 2 April 02 by J. Fox
+
 qqp<-function(...) qq.plot(...)
 
 qq.plot<-function(x, ...) {
@@ -7,10 +9,10 @@ qq.plot<-function(x, ...) {
     }
   
 qq.plot.default<-function(x, distribution="norm", ylab=deparse(substitute(x)),
-        xlab=paste(distribution, "quantiles"), main="", las=1,
-        envelope=.95, labels=F, col=palette()[2], lwd=2, pch=1,
+        xlab=paste(distribution, "quantiles"), main="", las=par("las"),
+        envelope=.95, labels=FALSE, col=palette()[2], lwd=2, pch=1,
         line=c("quartiles", "robust"), ...){
-    # last modified 15 Nov 2001
+    # last modified 20 Feb 2002
     result <- NULL
     line<-match.arg(line)
     good<-!is.na(x)
@@ -30,13 +32,13 @@ qq.plot.default<-function(x, distribution="norm", ylab=deparse(substitute(x)),
         abline(a, b, col=col, lwd=lwd)
         }
     if (line=="robust"){
-        if (!require("MASS", quietly=T)) stop("MASS package not available")
+        if (!require("MASS", quietly=TRUE)) stop("MASS package not available")
         coef<-coefficients(rlm(ord.x~z))
         a<-coef[1]
         b<-coef[2]
         abline(a,b)
         }
-    if (envelope != F) {
+    if (envelope != FALSE) {
         zz<-qnorm(1-(1-envelope)/2)
         SE<-(b/d.function(z, ...))*sqrt(P*(1-P)/n)
         fit.value<-a+b*z
@@ -45,8 +47,8 @@ qq.plot.default<-function(x, distribution="norm", ylab=deparse(substitute(x)),
         lines(z, upper, lty=2, lwd=lwd/2, col=col)
         lines(z, lower, lty=2, lwd=lwd/2, col=col)
         }
-    if (labels[1]==T & length(labels)==1) labels<-seq(along=z)
-    if (labels != F) {
+    if (labels[1]==TRUE & length(labels)==1) labels<-seq(along=z)
+    if (labels != FALSE) {
         selected<-identify(z, ord.x, labels[good][ord])
         result <- seq(along=x)[good][ord][selected]
         }
@@ -55,10 +57,10 @@ qq.plot.default<-function(x, distribution="norm", ylab=deparse(substitute(x)),
     
 qq.plot.lm<-function(x, main="", xlab=paste(distribution, "Quantiles"),
     ylab=paste("Studentized Residuals(",deparse(substitute(x)),")",sep=""),
-    distribution=c("t", "norm"), line=c("quartiles", "robust"), las=1,
-    simulate=F, envelope=.95, labels=names(rstudent), reps=100, 
+    distribution=c("t", "norm"), line=c("quartiles", "robust"), las=par("las"),
+    simulate=FALSE, envelope=.95, labels=names(rstudent), reps=100, 
     col=palette()[2], lwd=2, pch=1, ...){
-    # last modified 28 Aug 2001
+    # last modified 20 Feb 2002
     result <- NULL
     distribution <- match.arg(distribution)
     line<-match.arg(line)
@@ -102,14 +104,14 @@ qq.plot.lm<-function(x, main="", xlab=paste(distribution, "Quantiles"),
             abline(a, b, col=col, lwd=lwd)
             }
         if (line=="robust"){
-            if (!require("MASS", quietly=T)) stop("MASS package not available")
+            if (!require("MASS", quietly=TRUE)) stop("MASS package not available")
             coef<-coefficients(rlm(ord.x~z))
             a<-coef[1]
             b<-coef[2]
             abline(a, b, col=col, lwd=lwd)
             }
-        if (labels[1]==T & length(labels)==1) labels<-seq(along=z)
-        if (labels != F) {
+        if (labels[1]==TRUE & length(labels)==1) labels<-seq(along=z)
+        if (labels != FALSE) {
             selected<-identify(z, ord.x, labels[ord])
             result <- (1:n)[good][ord][selected]
             }

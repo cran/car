@@ -9,20 +9,20 @@
   transformed variables. Typically these would appear as additional
   axes to the right or
   at the top of the plot, but if the plot is produced with 
-  \code{axes=F}, then these functions could be used for axes below or to
+  \code{axes=FALSE}, then these functions could be used for axes below or to
   the left of the plot as well.
 }
 \usage{
 power.axis(power, base=exp(1), side=c("right", "above", "left", "below"), 
-  at, grid=F, grid.col=gray(0.5), grid.lty=3, 
-  axis.title="Untransformed Data", cex=1, las=0)
+  at, grid=FALSE, grid.col=gray(0.5), grid.lty=3, 
+  axis.title="Untransformed Data", cex=1, las=par("las"))
 
 box.cox.axis(power, side=c("right", "above", "left", "below"), 
-  at, grid=F, grid.col=gray(0.5), grid.lty=3, 
-  axis.title="Untransformed Data", cex=1, las=0)
+  at, grid=FALSE, grid.col=gray(0.5), grid.lty=3, 
+  axis.title="Untransformed Data", cex=1, las=par("las"))
 
-prob.axis(at, side=c("right", "above", "left", "below"), grid=F, grid.lty=3, 
-  grid.col=gray(0.5), axis.title="Probability", interval=0.1, cex=1, las=0)
+prob.axis(at, side=c("right", "above", "left", "below"), grid=FALSE, grid.lty=3, 
+  grid.col=gray(0.5), axis.title="Probability", interval=0.1, cex=1, las=par("las"))
 }
 
 \arguments{
@@ -39,7 +39,7 @@ prob.axis(at, side=c("right", "above", "left", "below"), grid=F, grid.lty=3,
   \item{grid.lty}{line type for grid lines.}
   \item{axis.title}{title for axis.}
   \item{cex}{relative character expansion for axis label.}
-  \item{las}{if \code{0} (the default), ticks labels are drawn parallel to the
+  \item{las}{if \code{0}, ticks labels are drawn parallel to the
     axis; set to \code{1} for horizontal labels (see \code{\link[base]{par}}).}
   \item{base}{base of log transformation for \code{power.axis}
     when \code{power = 0}.}
@@ -78,15 +78,15 @@ par(mar=c(5, 4, 4, 4)+.1)
 
 plot(log(gdp, 10), log(infant.mortality, 10))
 power.axis(0, base=10, side="above", 
-  at=c(50,200,500,2000,5000,20000),grid=T, axis.title="GDP per capita")
+  at=c(50,200,500,2000,5000,20000),grid=TRUE, axis.title="GDP per capita")
 power.axis(0, base=10, side="right",
-  at=c(5,10,20,50,100), grid=T, axis.title="infant mortality rate per 1000")
+  at=c(5,10,20,50,100), grid=TRUE, axis.title="infant mortality rate per 1000")
 
 plot(box.cox(gdp, 0), box.cox(infant.mortality, 0))
 box.cox.axis(0, side="above", 
-  grid=T, axis.title="GDP per capita")
+  grid=TRUE, axis.title="GDP per capita")
 box.cox.axis(0, side="right",
-  grid=T, axis.title="infant mortality rate per 1000")
+  grid=TRUE, axis.title="infant mortality rate per 1000")
 
 qq.plot(logit(infant.mortality/1000))
 prob.axis()

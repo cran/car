@@ -53,6 +53,7 @@ The \code{Migration} data frame has 90 rows and 8 columns.
         QUE, Montreal;
         ONT, Toronto;
         MAN, Winnipeg;
+        SASK, Regina;
         ALTA, Edmonton;
         BC, Vancouver.
         }

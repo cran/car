@@ -54,6 +54,12 @@ some missing data.
 }
 
 \references{
+  Fox, J., and Hartnagel, T. F (1979)
+  Changing social roles and female crime in Canada:
+  A time series analysis.
+  \emph{Canadian Review of Sociology and Anthroplogy}, 
+  \bold{16}, 96--104.
+  
   Fox, J. (1997)
   \emph{Applied Regression, Linear Models, and Related Methods.} Sage.
 }

@@ -23,14 +23,12 @@ scale, to be formed by summing the items.
 }
 
 \source{
-    Davis, C., G. Claridge, and D. Cerullo. (1997) Personality factors 
+    Davis, C., G. Claridge, and D. Cerullo (1997) 
+    Personality factors 
     predisposing to weight preoccupation: A continuum approach to the 
     association between eating disorders and personality disorders. 
     \emph{Journal of Psychiatric Research} \bold{31}, 467--480.
 }
 
-\examples{
-data(DavisThin)
 
-}
 \keyword{datasets}

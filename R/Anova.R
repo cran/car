@@ -1,5 +1,7 @@
 # Type II and III tests for linear and generalized linear models (J. Fox)
 
+# last modified 2 April 02
+
 relatives<-function(term, names, factors){
     is.relative<-function(term1, term2) {
         all(!(factors[,term1]&(!factors[,term2])))
@@ -21,6 +23,12 @@ Anova.lm<-function(mod, error, type=c("II","III"), ...){
     switch(type,
         II=Anova.II.lm(mod, error, ...),
         III=Anova.III.lm(mod, error, ...))
+    }
+
+Anova.aov <- function(mod, ...){
+    # last modified 8 Mar 2002 by J. Fox
+    class(mod) <- "lm"
+    Anova.lm(mod, ...)
     }
 
         # type II
@@ -56,20 +64,20 @@ Anova.II.lm<-function(mod, error, ...){
     n.terms<-length(names)
     SS<-rep(0, n.terms+1)
     df<-rep(0, n.terms+1)
-    F<-rep(0, n.terms+1)
+    f<-rep(0, n.terms+1)
     p<-rep(0, n.terms+1)
     sumry<-summary(mod, corr = FALSE)
     SS[n.terms+1]<-if (missing(error)) sumry$sigma^2*mod$df.residual else error.SS   
     df[n.terms+1]<-if (missing(error)) mod$df.residual else error.df
-    F[n.terms+1]<-NA
+    f[n.terms+1]<-NA
     p[n.terms+1]<-NA
     for (i in 1:n.terms){
         SS[i]<-SS.term(names[i])
         df[i]<-df.terms(mod, names[i])
-        F[i]<-df[n.terms+1]*SS[i]/(df[i]*SS[n.terms+1])
-        p[i]<-1-pf(F[i],df[i],df[n.terms+1])
+        f[i]<-df[n.terms+1]*SS[i]/(df[i]*SS[n.terms+1])
+        p[i]<-1-pf(f[i],df[i],df[n.terms+1])
         }    
-    result<-data.frame(SS, df, F, p)
+    result<-data.frame(SS, df, f, p)
     row.names(result)<-c(names,"Residuals")
     names(result)<-c("Sum Sq", "Df", "F value", "Pr(>F)")
     class(result)<-c("anova","data.frame")
@@ -94,7 +102,7 @@ Anova.III.lm<-function(mod, error, ...){
     n.terms<-length(Source)
     SS<-rep(0, n.terms+1)
     df<-rep(0, n.terms+1)
-    F<-rep(0, n.terms+1)
+    f<-rep(0, n.terms+1)
     p<-rep(0, n.terms+1)
     assign<-mod$assign
     sumry<-summary(mod, corr = FALSE)
@@ -106,7 +114,7 @@ Anova.III.lm<-function(mod, error, ...){
                 summary.model=sumry, ...)
         SS[term]<-test$SSH
         df[term]<-test$Df[1]
-        F[term]<-test$F
+        f[term]<-test$f
         p[term]<-test$p
         }
      Source[n.terms+1]<-"Residuals"
@@ -116,9 +124,9 @@ Anova.III.lm<-function(mod, error, ...){
      SS[n.terms+1]<-if (missing(error)) s2*df.res
         else error.SS
      df[n.terms+1]<-df.res
-     F[n.terms+1]<-NA
+     f[n.terms+1]<-NA
      p[n.terms+1]<-NA
-     result<-data.frame(SS, df, F, p)
+     result<-data.frame(SS, df, f, p)
      row.names(result)<-Source
      names(result)<-c("Sum Sq", "Df", "F value", "Pr(>F)")
      class(result)<-c("anova","data.frame")

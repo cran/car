@@ -1,5 +1,7 @@
 # CERES plots (J. Fox)
 
+# last modified 2 April 02 by J. Fox
+
 ceres.plots<-function(model, variable, ask=missing(variable), one.page=!ask, span=.5, ...){
     # last modified 2 Aug 2001 by J. Fox
     if(!is.null(class(model$na.action)) && 
@@ -49,10 +51,10 @@ ceres.plot<-function (model, ...) {
     UseMethod("ceres.plot")
     }
 
-ceres.plot.lm<-function(model, variable, line=T, smooth=T, span=.5, iter, 
-    las=1, col=palette()[2], pch=1, lwd=2, main="Ceres Plot"){
+ceres.plot.lm<-function(model, variable, line=TRUE, smooth=TRUE, span=.5, iter, 
+    las=par("las"), col=palette()[2], pch=1, lwd=2, main="Ceres Plot"){
     # the lm method works with glm's too
-    # last modified 2 Aug 2001 by J. Fox
+    # last modified 20 Feb 2002 by J. Fox
     if(!is.null(class(model$na.action)) && 
         class(model$na.action) == 'exclude') class(model$na.action) <- 'omit'
     if (missing(iter)){

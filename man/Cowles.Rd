@@ -4,7 +4,7 @@
 \title{Cowles and Davis's Data on Volunteering}
 \usage{data(Cowles)}
 \description{
-The \code{Cowles} data frame has 1421 rows and 7 columns.
+The \code{Cowles} data frame has 1421 rows and 4 columns.
 These data come from a study of the personality determinants
 of volunteering for psychological research.
 }
@@ -29,8 +29,5 @@ of volunteering for psychological research.
  \emph{British Journal of Social Psychology} \bold{26}, 97--102.
 }
  
-}
-\examples{
-data(Cowles)
-}
+
 \keyword{datasets}

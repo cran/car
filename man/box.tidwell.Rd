@@ -15,13 +15,13 @@
 box.tidwell(y, ...)
 
 box.tidwell.formula(formula, other.x=NULL, data=NULL, subset, 
-  na.action=options()$na.action, verbose=F, tol=0.001, 
+  na.action=options()$na.action, verbose=FALSE, tol=0.001, 
   max.iter=25, ...)
 
 box.tidwell.default(y, x1, x2=NULL, max.iter=25, tol=0.001, 
-  verbose=F, ...)
+  verbose=FALSE, ...)
   
-print.box.tidwell(x, digits, ...)
+\method{print}{box.tidwell}(x, digits, ...)
 }
 
 \arguments{

@@ -1,5 +1,7 @@
 # Linear hypothesis tests for lm and glm (J. Fox)
 
+# last modified 2 April 02
+
 lht<-function(...) linear.hypothesis(...)
 
 linear.hypothesis<-function (model, ...) {
@@ -8,7 +10,7 @@ linear.hypothesis<-function (model, ...) {
     
 linear.hypothesis.lm<-function(model, hypothesis.matrix, rhs=0, 
         summary.model=summary(model, corr = FALSE),
-        white.adjust=F, error.SS, error.df) {
+        white.adjust=FALSE, error.SS, error.df) {
     # last modified by J.Fox 13 Dec 2000
     if (is.aliased(model)) stop ("One or more terms aliased in model.")
     s2<-if (missing(error.SS)) summary.model$sigma^2
@@ -20,11 +22,11 @@ linear.hypothesis.lm<-function(model, hypothesis.matrix, rhs=0,
         else hypothesis.matrix
     q<-nrow(L)
     SSH<-t(L %*% b - rhs) %*% inv(L %*% V %*% t(L)) %*% (L %*% b - rhs)
-    F<-SSH/(q*s2)
+    f<-SSH/(q*s2)
     df<-if (missing(error.df)) model$df.residual
         else error.df
-    p<-1-pf(F, q, df)
-    result<-list(SSH=SSH[1,1], SSE=s2*df, F=F[1,1], Df=c(q, df), p=p[1,1])
+    p<-1-pf(f, q, df)
+    result<-list(SSH=SSH[1,1], SSE=s2*df, f=f[1,1], Df=c(q, df), p=p[1,1])
     class(result)<-"F.test"
     result
     }
@@ -61,7 +63,7 @@ linear.hypothesis.glm<-function(model, hypothesis.matrix, rhs=0,
     cat(title,"\n")
     if (!is.null(x$formula)) cat(x$formula.name, 
         "formula:", as.character(x$formula), "\n")
-    cat("SS =", x$SSH, "    SSE =", x$SSE, "    F =", x$F,
+    cat("SS =", x$SSH, "    SSE =", x$SSE, "    F =", x$f,
         " Df =", x$Df[1], "and", x$Df[2], "    p =", x$p, "\n")
     invisible(x)
     }

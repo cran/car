@@ -15,8 +15,8 @@ There are some missing data.
   \describe{
     \item{sex}{
       A factor with levels:
-      \code{F}, male;
-      \code{M}, female.
+      \code{F}, female;
+      \code{M}, male.
       }
     \item{weight}{
       Measured weight in kg. 
@@ -40,6 +40,11 @@ There are some missing data.
 }
 
 \references{
+  Davis, C. (1990)
+  Body image and weight preoccupation: A comparison between exercising
+  and non-exercising women.
+  \emph{Appetite}, \bold{15}, 13--21.
+  
   Fox, J. (1997)
   \emph{Applied Regression, Linear Models, and Related Methods.} Sage.
 }

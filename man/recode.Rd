@@ -17,7 +17,7 @@ recode(var, recodes, as.factor.result)
     \code{var} is a factor, \code{FALSE} otherwise.}
 }
 \details{
-  Recode specifications appear in a character vector, separated by
+  Recode specifications appear in a character string, separated by
   semicolons (see the examples below), of the form \code{input=output}.
   If an input value satisfies more than one specification, 
   then the first (from left to right) applies.

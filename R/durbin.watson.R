@@ -1,14 +1,17 @@
 # generalized Durbin-Watson statistic (J. Fox)
 
-# last modified 29 July 2001 by J. Fox
+# last modified 22 May 02 by J. Fox
 
 durbin.watson <- function(model, ...){
   UseMethod("durbin.watson")
   }
 
-durbin.watson.lm <- function(model, max.lag=1, simulate=T, reps=1000, 
-    method=c("resample","normal")){
+durbin.watson.lm <- function(model, max.lag=1, simulate=TRUE, reps=1000, 
+    method=c("resample","normal"), 
+    alternative=c("two.sided", "positive", "negative")){
     method<-match.arg(method)
+    alternative <- if (max.lag == 1) match.arg(alternative)
+        else "two.sided"
     residuals<-residuals(model)
     if (any(is.na(residuals))) stop ('residuals include missing values')
     n<-length(residuals)
@@ -28,17 +31,29 @@ durbin.watson.lm <- function(model, max.lag=1, simulate=T, reps=1000,
             X<-model.matrix(model)
             mu<-fitted.values(model)
             Y<-if (method == "resample") 
-                matrix(sample(residuals, n*reps, replace=T), n, reps) + matrix(mu, n, reps)
+                matrix(sample(residuals, n*reps, replace=TRUE), n, reps) + matrix(mu, n, reps)
                 else matrix(rnorm(n*reps, 0, S), n, reps) + matrix(mu, n, reps)
             E<-residuals(lm(Y~X-1))
             DW<-apply(E, 2, durbin.watson, max.lag=max.lag)
             if (max.lag == 1) DW <- rbind(DW)
             p<-rep(0, max.lag)
-            for (lag in 1:max.lag) {
-                p[lag] <- (sum(dw[lag] < DW[lag,]))/reps
-                p[lag] <- 2*(min(p[lag], 1-p[lag]))
+            if (alternative == 'two.sided'){
+                for (lag in 1:max.lag) {
+                    p[lag] <- (sum(dw[lag] < DW[lag,]))/reps
+                    p[lag] <- 2*(min(p[lag], 1-p[lag]))
+                    }
                 }
-            result<-list(r=r, dw=dw, p=p)
+            else if (alternative == 'positive'){
+                for (lag in 1:max.lag) {
+                    p[lag] <- (sum(dw[lag] > DW[lag,]))/reps
+                    }
+                }
+            else {
+                for (lag in 1:max.lag) {
+                    p[lag] <- (sum(dw[lag] < DW[lag,]))/reps
+                    }
+                }
+            result<-list(r=r, dw=dw, p=p, alternative=alternative)
             class(result)<-"durbin.watson"
             result
             }
@@ -59,8 +74,12 @@ durbin.watson.default<-function(residuals, max.lag=1){
 print.durbin.watson<-function(x, ...){
     max.lag<-length(x$dw)
     result<- if (is.null(x$p)) cbind(lag=1:max.lag,Autocorrelation=x$r, "D-W Statistic"=x$dw)
-            else cbind(lag=1:max.lag,Autocorrelation=x$r, "D-W Statistic"=x$dw, "p-value"=x$p)
+            else cbind(lag=1:max.lag,Autocorrelation = x$r, "D-W Statistic" = x$dw, 
+                  "p-value"= x$p)
     rownames(result)<-rep("", max.lag)
     print(result)
+    cat(paste(" Alternative hypothesis: rho", if(max.lag > 1) "[lag]" else "",
+        c(" != ", " > ", " < ")[which(x$alternative == c("two.sided", "positive", "negative"))],
+        "0\n", sep=""))
     invisible(x)
     }

@@ -1,6 +1,6 @@
 # multivariate unconditional Box-Cox transformations (J. Fox)
 
-# last modified 18 Sept 2001 by J. Fox
+# last modified 2 April 02 by J. Fox
 # (with bug fixes by S. Weisberg)
 
 box.cox.powers<-function(X, start=NULL, ...){
@@ -30,7 +30,7 @@ box.cox.powers<-function(X, start=NULL, ...){
             start[j] <- res$minimum
             }
         }
-    res<-optim(start, neg.kernel.profile.logL, hessian=T, method="L-BFGS-B", X=X, gm=gm, ...)
+    res<-optim(start, neg.kernel.profile.logL, hessian=TRUE, method="L-BFGS-B", X=X, gm=gm, ...)
     result<-list()
     result$start<-start
     result$criterion<-res$value

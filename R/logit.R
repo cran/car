@@ -1,9 +1,11 @@
 # logit transformation of proportion or percent (J. Fox)
 
-logit<-function(p, percents=max(p, na.rm=T)>1, adjust){   
+# last modified 2 April 02
+
+logit<-function(p, percents=max(p, na.rm=TRUE)>1, adjust){   
     if (percents) p<-p/100
     a<-if (missing(adjust)) {
-        if (min(p, na.rm=T)==0 | max(p, na.rm=T)==1) .025 else 0
+        if (min(p, na.rm=TRUE)==0 | max(p, na.rm=TRUE)==1) .025 else 0
         }
         else adjust
     if (missing(adjust) & a != 0) warning(paste("Proportions remapped to (",

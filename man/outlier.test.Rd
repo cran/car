@@ -19,7 +19,7 @@ outlier.test.lm(model, labels=names(rstud))
 
 outlier.test.glm(model, labels=names(rstud))
 
-print.outlier.test(x, ...)
+\method{print}{outlier.test}(x, ...)
 }
 
 \arguments{

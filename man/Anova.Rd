@@ -1,6 +1,7 @@
 \name{Anova}
 \alias{Anova}
 \alias{Anova.lm}
+\alias{Anova.aov}
 \alias{Anova.II.lm}
 \alias{Anova.III.lm}
 \alias{Anova.glm}
@@ -21,6 +22,8 @@
 Anova(mod, ...)
 
 Anova.lm(mod, error, type=c("II", "III"), ...)
+
+Anova.aov(mod, ...)
 
 Anova.glm(mod, type=c("II", "III"), test.statistic=c("LR", "Wald", "F"), 
     error, error.estimate=c("pearson", "dispersion", "deviance"))

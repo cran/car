@@ -1,11 +1,13 @@
 # Box-Tidwell transformations (J. Fox)
 
+# last modified 2 April 02 by J. Fox
+
 box.tidwell<-function(y, ...){
     UseMethod("box.tidwell")
     }
 
 box.tidwell.formula<-function(formula, other.x=NULL, data=NULL, subset, na.action=options()$na.action, 
-    verbose=F, tol=.001, max.iter=25, ...) {
+    verbose=FALSE, tol=.001, max.iter=25, ...) {
     m <- match.call(expand.dots = FALSE)
     if (is.matrix(eval(m$data, sys.frame(sys.parent())))) 
         m$data <- as.data.frame(data)
@@ -23,7 +25,7 @@ box.tidwell.formula<-function(formula, other.x=NULL, data=NULL, subset, na.actio
     box.tidwell.default(y, X1, X2, max.iter=max.iter, tol=tol, verbose=verbose, ...)
     }
 
-box.tidwell.default<-function(y, x1, x2=NULL, max.iter=25, tol=.001, verbose=F, ...) {
+box.tidwell.default<-function(y, x1, x2=NULL, max.iter=25, tol=.001, verbose=FALSE, ...) {
     # last modified 15 Dec 2000 by J. Fox
     x1<-as.matrix(x1)
     var.names<-if(is.null(colnames(x1))) 1:ncol(x1) else colnames(x1)
@@ -32,7 +34,7 @@ box.tidwell.default<-function(y, x1, x2=NULL, max.iter=25, tol=.001, verbose=F, 
     mod.1<-lm(y~cbind(x1, x2), ...)
     mod.2<-lm(y~cbind(x.log.x, x1, x2), ...)
     sumry<-summary(mod.2)
-    seb<-sqrt(Var(mod.2, diagonal=T))
+    seb<-sqrt(Var(mod.2, diagonal=TRUE))
     t.vals<-((coefficients(mod.2))/seb)[2:(1+k.x1)]
     initial<-powers<-1+coefficients(mod.2)[2:(1+k.x1)]/coefficients(mod.1)[2:(1+k.x1)]
     pvalues<-2*(1-pnorm(abs(t.vals)))
@@ -41,7 +43,7 @@ box.tidwell.default<-function(y, x1, x2=NULL, max.iter=25, tol=.001, verbose=F, 
     while ( (max(abs((powers-last.powers)/(powers+tol))) > tol) &
         (iter <= max.iter) ) {
         iter<-iter+1
-        x1.p<-x1^matrix(powers, nrow=nrow(x1), ncol=ncol(x1), byrow=T)
+        x1.p<-x1^matrix(powers, nrow=nrow(x1), ncol=ncol(x1), byrow=TRUE)
         x.log.x<-x1.p*log(x1.p)
         mod.1<-lm(y~cbind(x1.p, x2), ...)
         mod.2<-lm(y~cbind(x.log.x, x1.p, x2), ...)

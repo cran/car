@@ -12,12 +12,13 @@
 \usage{
 durbin.watson(model, ...)
 
-durbin.watson.lm(model, max.lag=1, simulate=T, reps=1000,
-    method=c("resample","normal"))
+durbin.watson.lm(model, max.lag=1, simulate=TRUE, reps=1000,
+    method=c("resample","normal"),
+    alternative=c("two.sided", "positive", "negative"))
 
 durbin.watson.default(residuals, max.lag=1)
 
-print.durbin.watson(x, ...)
+\method{print}{durbin.watson}(x, ...)
 }
 
 \arguments{
@@ -29,6 +30,9 @@ print.durbin.watson(x, ...)
   \item{method}{bootstrap method: \code{"resample"} to resample from the observed
     residuals; \code{"normal"} to sample normally distributed errors with 0 mean
     and standard deviation equal to the standard error of the regression.}
+  \item{alternative}{sign of autocorrelation in alternative hypothesis; specify
+    only if \code{max.lag = 1}; if \code{max.lag > 1}, then \code{alternative} is
+    taken to be \code{"two.sided"}.}
   \item{residuals}{vector of residuals from a linear model.}
   \item{\dots}{arguments to be passed down to method functions.}
   \item{x}{\code{durbin.watson} object.}
@@ -50,6 +54,7 @@ data(Hartnagel)
 durbin.watson(lm(fconvict ~ tfr + partic + degrees + mconvict, data=Hartnagel))
 ##  lag Autocorrelation D-W Statistic p-value 
 ##    1        0.688345     0.6168636       0 
+##  Alternative hypothesis: rho != 0
 }
 
 \keyword{regression}
