@@ -56,7 +56,7 @@ durbin.watson.default<-function(residuals, max.lag=1){
     dw
     }
     
-print.durbin.watson<-function(x){
+print.durbin.watson<-function(x, ...){
     max.lag<-length(x$dw)
     result<- if (is.null(x$p)) cbind(lag=1:max.lag,Autocorrelation=x$r, "D-W Statistic"=x$dw)
             else cbind(lag=1:max.lag,Autocorrelation=x$r, "D-W Statistic"=x$dw, "p-value"=x$p)

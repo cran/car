@@ -16,6 +16,8 @@ durbin.watson.lm(model, max.lag=1, simulate=T, reps=1000,
     method=c("resample","normal"))
 
 durbin.watson.default(residuals, max.lag=1)
+
+print.durbin.watson(x, ...)
 }
 
 \arguments{
@@ -29,6 +31,7 @@ durbin.watson.default(residuals, max.lag=1)
     and standard deviation equal to the standard error of the regression.}
   \item{residuals}{vector of residuals from a linear model.}
   \item{\dots}{arguments to be passed down to method functions.}
+  \item{x}{\code{durbin.watson} object.}
 }
 
 \value{
@@ -44,9 +47,9 @@ durbin.watson.default(residuals, max.lag=1)
 
 \examples{
 data(Hartnagel)
-durbin.watson(lm(fconvict ~ tfr + partic + degrees + fconvict, data=Hartnagel))
-##  lag Autocorrelation D-W Statistic p-value
-##    1          0.6894        0.6148       0
+durbin.watson(lm(fconvict ~ tfr + partic + degrees + mconvict, data=Hartnagel))
+##  lag Autocorrelation D-W Statistic p-value 
+##    1        0.688345     0.6168636       0 
 }
 
 \keyword{regression}

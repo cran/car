@@ -4,6 +4,7 @@
 \alias{spread.level.plot.formula}
 \alias{spread.level.plot.default}
 \alias{spread.level.plot.lm}
+\alias{print.spread.level.plot}
 
 \title{Spread-Level Plots}
 \description{
@@ -22,7 +23,7 @@ spread.level.plot.formula(formula, data=NULL, subset, na.action,
 
 spread.level.plot.default(x, by, 
   robust.line=any("MASS" == .packages(all = T)), 
-  start=0, xlab="Median", ylab="Hinge-Spread", las=1,
+  start=0, xlab="Median", ylab="Hinge-Spread", las=par('las'),
   main=paste("Spread-Level Plot for", deparse(substitute(x)), 
   "by", col=palette()[2], pch=1, lwd=2, ...)
 
@@ -31,6 +32,8 @@ spread.level.plot.lm(x, start=0,
   xlab="Fitted Values", ylab="Absolute Studentized Residuals", las
   main=paste("Spread-Level Plot for", deparse(substitute(x))),
   pch=1, col=palette()[2], lwd=2, ...)
+  
+print.spread.level.plot(x, ...)
 }
 
 \arguments{
@@ -51,14 +54,14 @@ spread.level.plot.lm(x, start=0,
   \item{xlab}{label for horizontal axis.}
   \item{ylab}{label for vertical axis.}
   \item{las}{if \code{0}, ticks labels are drawn parallel to the
-    axis; set to \code{1} (the default) for horizontal labels (see \code{\link[base]{par}}).}
+    axis; set to \code{1} for horizontal labels (see \code{\link[base]{par}}).}
   \item{col}{color for points and lines; the default is the \emph{second} entry
     in the current color palette (see \code{\link[base]{palette}}
     and \code{\link[base]{par}}).}
   \item{pch}{plotting character for points; default is \code{1} 
     (a circle, see \code{\link[base]{par}}).}
   \item{lwd}{line width; default is \code{2} (see \code{\link[base]{par}}).}
-  \item{\dots}{arguments passed to plotting functions.}
+  \item{...}{arguments passed to plotting functions.}
 }
 \details{
   Except for linear models, computes the statistics for, and plots, a Tukey spread-level plot

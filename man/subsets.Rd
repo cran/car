@@ -1,6 +1,6 @@
-\name{plot.subsets}
-\alias{plot.subsets}
-\alias{plot.subsets.regsubsets}
+\name{subsets}
+\alias{subsets}
+\alias{subsets.regsubsets}
 \title{Plot Output from regsubsets Function in leaps package}
 \description{
   The \code{\link[leaps]{regsubsets}} function in the \code{leaps} package finds
@@ -8,13 +8,13 @@
   (see the \code{statistic} argument below) against subset size).
 }
 \usage{
-plot.subsets(object, ...)
+subsets(object, ...)
 
-plot.subsets.regsubsets(object, 
+subsets.regsubsets(object, 
     names=abbreviate(object$xnames, minlength = abbrev), 
     abbrev=1, min.size=1, max.size=length(names), legend, 
     statistic=c("bic", "cp", "adjr2", "rsq", "rss"), 
-    las=1, cex.subsets=1)
+    las=par('las'), cex.subsets=1, ...)
 }
 
 \arguments{
@@ -36,11 +36,11 @@ plot.subsets.regsubsets(object,
     \code{"rsq"}, unadjusted \eqn{R^{2}}{R^2};
     \code{"rss"}, residual sum of squares.}
   \item{las}{if \code{0}, ticks labels are drawn parallel to the
-    axis; set to \code{1} (the default) for horizontal labels (see \code{\link[base]{par}}).}
+    axis; set to \code{1} for horizontal labels (see \code{\link[base]{par}}).}
   \item{cex.subsets}{can be used to change the relative size of the characters used to
     plot the regression subsets; default is \code{1}.}
   \item{\dots}{arguments to be passed down to 
-    \code{plot.subsets.regsubsets}.}
+    \code{subsets.regsubsets} and \code{plot}.}
 }
 
 \value{
@@ -53,10 +53,11 @@ plot.subsets.regsubsets(object,
 \seealso{\code{\link[leaps]{regsubsets}}}
 
 \examples{
+    \dontrun{
 library(leaps)
 data(Ericksen)
-\testonly{plot.subsets(regsubsets(undercount ~ ., data=Ericksen), legend=F)}
-\dontrun{plot.subsets(regsubsets(undercount ~ ., data=Ericksen))}
+subsets(regsubsets(undercount ~ ., data=Ericksen))
+    }
 }
 
 \keyword{hplot}

@@ -18,12 +18,15 @@ outlier.test(model, ...)
 outlier.test.lm(model, labels=names(rstud))
 
 outlier.test.glm(model, labels=names(rstud))
+
+print.outlier.test(x, ...)
 }
 
 \arguments{
   \item{model}{a suitable model object.}
   \item{labels}{an optional vector of observation names.}
-  \item{\dots}{not for the user.}
+  \item{...}{not for the user.}
+  \item{x}{\code{outlier.test} object.}
 }
 
 \details{

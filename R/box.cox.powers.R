@@ -1,7 +1,7 @@
 # multivariate unconditional Box-Cox transformations (J. Fox)
 
-# last modified 24 April 2001 by J. Fox
-# with bug fixes by S. Weisberg
+# last modified 18 Sept 2001 by J. Fox
+# (with bug fixes by S. Weisberg)
 
 box.cox.powers<-function(X, start=NULL, ...){
     modified.power<-function(x, lambda, gm){
@@ -41,13 +41,13 @@ box.cox.powers<-function(X, start=NULL, ...){
     result$LR1<-2*(neg.kernel.profile.logL(X,rep(1,ncol(X)),gm)-res$value)
     result$return.code<-res$convergence
     if(result$return.code != 0) 
-        warning(cat("Convergence failure: return code =",
+        warning(paste("Convergence failure: return code =",
             result$return.code))
     class(result)<-"box.cox.powers"
     result
     }
       
-summary.box.cox.powers<-function(object, round=4){
+summary.box.cox.powers<-function(object, digits=4, ...){
     one<-1==length(object$lambda)
     cat(paste("Box-Cox", (if(one) "Transformation to Normality" else "Transformations to Multinormality"),"\n\n"))
     lambda<-object$lambda
@@ -58,15 +58,15 @@ summary.box.cox.powers<-function(object, round=4){
     colnames(result)<-c("Est.Power","Std.Err.",
         "Wald(Power=0)","Wald(Power=1)")
     if (one)rownames(result)<-""
-    print(round(result,round))
-    cat(paste("\nL.R. test,", (if(one) "power" else "all powers"), "= 0: ",round(object$LR0,round),"  df =",df,
-        "  p =",round(1-pchisq(object$LR0,df),round)))
-    cat(paste("\nL.R. test,", (if(one) "power" else "all powers"), "= 1: ",round(object$LR1,round),"  df =",df,
-        "  p =",round(1-pchisq(object$LR1,df),round),"\n"))
+    print(round(result,digits))
+    cat(paste("\nL.R. test,", (if(one) "power" else "all powers"), "= 0: ",round(object$LR0,digits),"  df =",df,
+        "  p =",round(1-pchisq(object$LR0,df),digits)))
+    cat(paste("\nL.R. test,", (if(one) "power" else "all powers"), "= 1: ",round(object$LR1,digits),"  df =",df,
+        "  p =",round(1-pchisq(object$LR1,df),digits),"\n"))
     invisible(object)
     }
 
-print.box.cox.powers <- function(x){
+print.box.cox.powers <- function(x, ...){
     lambda <- x$lambda
     names(lambda) <- x$names
     print(lambda)

@@ -43,6 +43,18 @@ term.names(model, ...)
 term.names.default(model)
 }
 
+\arguments{
+  \item{model}{}
+  \item{term}{}
+  \item{...}{}
+  \item{x}{}
+  \item{n}{}
+  \item{max.plots}{}
+  \item{direction}{}
+  \item{names}{}
+  \item{factors}{}
+}
+
 \details{
 These functions are not intended to be called by the user.
 }

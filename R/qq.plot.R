@@ -10,7 +10,8 @@ qq.plot.default<-function(x, distribution="norm", ylab=deparse(substitute(x)),
         xlab=paste(distribution, "quantiles"), main="", las=1,
         envelope=.95, labels=F, col=palette()[2], lwd=2, pch=1,
         line=c("quartiles", "robust"), ...){
-    # last modified 1 Feb 2001
+    # last modified 15 Nov 2001
+    result <- NULL
     line<-match.arg(line)
     good<-!is.na(x)
     ord<-order(x[good])
@@ -47,24 +48,32 @@ qq.plot.default<-function(x, distribution="norm", ylab=deparse(substitute(x)),
     if (labels[1]==T & length(labels)==1) labels<-seq(along=z)
     if (labels != F) {
         selected<-identify(z, ord.x, labels[good][ord])
-        seq(along=x)[good][ord][selected]
+        result <- seq(along=x)[good][ord][selected]
         }
+    if (is.null(result)) invisible(result) else sort(result)
     }
     
-qq.plot.lm<-function(x, main="", xlab="t Quantiles",
+qq.plot.lm<-function(x, main="", xlab=paste(distribution, "Quantiles"),
     ylab=paste("Studentized Residuals(",deparse(substitute(x)),")",sep=""),
-    line=c("quartiles", "robust"), las=1,
+    distribution=c("t", "norm"), line=c("quartiles", "robust"), las=1,
     simulate=F, envelope=.95, labels=names(rstudent), reps=100, 
     col=palette()[2], lwd=2, pch=1, ...){
-    # last modified 1 Feb 2001
+    # last modified 28 Aug 2001
+    result <- NULL
+    distribution <- match.arg(distribution)
     line<-match.arg(line)
     rstudent<-rstudent(x)
-    sumry<-summary(x)
+    sumry <- summary.lm(x)
     res.df<-sumry$df[2]
     if(!simulate){
-        qq.plot.default(rstudent, dist="t", df=res.df-1, line=line,
-            main=main, xlab=xlab, ylab=ylab, las=las, envelope=envelope, labels=labels, 
-            col=col, lwd=lwd, pch=pch, ...)
+        if (distribution == 't')
+            result <- qq.plot.default(rstudent, distribution='t', df=res.df-1, line=line,
+                main=main, xlab=xlab, ylab=ylab, las=las, envelope=envelope, labels=labels, 
+                col=col, lwd=lwd, pch=pch, ...)
+        else
+            result <- qq.plot.default(rstudent, distribution='norm', line=line,
+                main=main, xlab=xlab, ylab=ylab, las=las, envelope=envelope, labels=labels, 
+                col=col, lwd=lwd, pch=pch, ...) 
         }
     else {
         good <- !is.na(rstudent)
@@ -74,7 +83,7 @@ qq.plot.lm<-function(x, main="", xlab="t Quantiles",
         ord.x<-rstudent[ord]
         n<-length(ord)
         P<-ppoints(n)
-        z<-qt(P, df=res.df-1)
+        z<-if (distribution == 't') qt(P, df=res.df-1) else qnorm(P)
         plot(z, ord.x, xlab=xlab, ylab=ylab, main=main, las=las, pch=pch, col=col)
         yhat<-na.omit(fitted.values(x))
         S<-sumry$sigma
@@ -87,7 +96,7 @@ qq.plot.lm<-function(x, main="", xlab="t Quantiles",
         lines(z, lower, lty=2, lwd=lwd/2, col=col)
         if (line=="quartiles"){
             Q.x<-quantile(rstudent, c(.25,.75))
-            Q.z<-qt(c(.25,.75),df=res.df-1)
+            Q.z <- if (distribution == 't') qt(c(.25,.75),df=res.df-1) else qnorm(c(.25,.75))
             b<-(Q.x[2]-Q.x[1])/(Q.z[2]-Q.z[1])
             a<-Q.x[1]-b*Q.z[1]
             abline(a, b, col=col, lwd=lwd)
@@ -102,9 +111,10 @@ qq.plot.lm<-function(x, main="", xlab="t Quantiles",
         if (labels[1]==T & length(labels)==1) labels<-seq(along=z)
         if (labels != F) {
             selected<-identify(z, ord.x, labels[ord])
-            (1:n)[good][ord][selected]
+            result <- (1:n)[good][ord][selected]
             }
         }
+    if (is.null(result)) invisible(result) else sort(result)
     }
  
 qq.plot.glm<-function(mod, ...){

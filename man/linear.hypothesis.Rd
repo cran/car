@@ -21,6 +21,10 @@ linear.hypothesis.lm(model, hypothesis.matrix, rhs=0,
 
 linear.hypothesis.glm(model, hypothesis.matrix, rhs=0, 
   summary.model=summary(model, corr = FALSE))
+  
+print.chisq.test(x, ...)
+
+print.F.test(x, ...)
 }
 \arguments{
   \item{model}{model object produced by \code{lm} or \code{glm}.}
@@ -36,6 +40,8 @@ linear.hypothesis.glm(model, hypothesis.matrix, rhs=0,
     taken from \code{model}.}
   \item{error.df}{error degrees of freedom for the hypothesis; if not specified,
     will be taken from \code{model}.}
+  \item{x}{\code{chisq.test} or \code{F.test} object.}
+  \item{...}{aruments to pass down.}
 }
 \details{
   Computes an F-test for the hypothesis in a linear model, or a Wald test in a
