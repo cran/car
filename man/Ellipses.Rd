@@ -23,11 +23,11 @@ data.ellipse(x, y, levels=c(0.5, 0.9), center.pch=19, center.cex=1.5,
 
 confidence.ellipse(model, ...)
 
-confidence.ellipse.lm(model, which.coef, levels=0.95, Scheffe=FALSE, 
+\method{confidence.ellipse}{lm}(model, which.coef, levels=0.95, Scheffe=FALSE, 
   center.pch=19, center.cex=1.5, segments=51, xlab, ylab, 
   las=par('las'), col=palette()[2], lwd=2, lty=1, ...)
 
-confidence.ellipse.glm(model, which.coef, levels=0.95, Scheffe=FALSE, 
+\method{confidence.ellipse}{glm}(model, which.coef, levels=0.95, Scheffe=FALSE, 
   center.pch=19, center.cex=1.5, segments=51, xlab, ylab, 
   las=par('las'), col=palette()[2], lwd=2, lty=1, ...)
 }

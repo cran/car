@@ -11,9 +11,9 @@
 \usage{
 vif(mod)
 
-vif.lm(mod)
+\method{vif}{lm}(mod)
 
-vif.default(mod)
+\method{vif}{default}(mod)
 }
  
 \arguments{

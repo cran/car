@@ -16,12 +16,12 @@ leverage.plots(model, term.name, ask=missing(term.name), ...)
 
 leverage.plot(model, ...)
 
-leverage.plot.lm(model, term.name, 
+\method{leverage.plot}{lm}(model, term.name, 
   labels=names(residuals(model)[!is.na(residuals(model))]),  
   identify.points=TRUE, las=par('las'), col=palette()[2], pch=1, lwd=2, 
   main="Leverage Plot", ...)
 
-leverage.plot.glm(model, ...)
+\method{leverage.plot}{glm}(model, ...)
 }
 
 \arguments{

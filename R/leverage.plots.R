@@ -1,6 +1,6 @@
 # Leverage plots (J. Fox)
 
-# last modified 9 Nov 02 by J. Fox
+# last modified 31 Jan 04 by J. Fox
 
 leverage.plots<-function(model, term.name, ask=missing(term.name), ...){
     # last modified 19 Dec 2000 by J. Fox
@@ -43,7 +43,7 @@ leverage.plot.lm<-function(model, term.name,
     term.names<-term.names(model)
     term<-which(term.name==term.names)
     if (0==length(term)) stop(paste(term.name,"is not a term in the model."))
-    response.name<-response.name(model)
+    responseName<-responseName(model)
     intercept<-has.intercept(model)
     assign<-model$assign
     X<-model.matrix(model)
@@ -58,7 +58,7 @@ leverage.plot.lm<-function(model, term.name,
     v.x<-X %*% V %*% t(L) %*% u
     v.y<-v.x + e
     plot(v.x, v.y, xlab=paste(term.names[term],"| others"), 
-        ylab=paste(response.name," | others"), main=main,
+        ylab=paste(responseName," | others"), main=main,
         las=las, col=col, pch=pch)
     abline(lsfit(v.x, v.y, wt=wt), col=col, lwd=lwd)
     if (identify.points) identify(v.x, v.y, labels)

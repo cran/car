@@ -88,4 +88,10 @@ Changes to Version 1.0-10
     
     o Documentation corrections to satisfy package checks in R 1.9.0 (devel).
     
+Changes to Version 1.0-11
+
+    o More documentation fixes.
+    
+    o Fix to print method for outlier.test.
+    
     

@@ -15,13 +15,13 @@ qq.plot(x, ...)
 
 qqp(...)
 
-qq.plot.default(x, distribution="norm", 
+\method{qq.plot}{default}(x, distribution="norm", 
   ylab=deparse(substitute(x)), 
   xlab=paste(distribution, "quantiles"), main="", las=par('las'),
   envelope=0.95, labels=FALSE, col=palette()[2], lwd=2, pch=1,
   line=c("quartiles", "robust", "none"), ...)
 
-qq.plot.lm(x, main="", xlab=paste(distribution, "Quantiles"), 
+\method{qq.plot}{lm}(x, main="", xlab=paste(distribution, "Quantiles"), 
   ylab=paste("Studentized Residuals(", deparse(substitute(x)), ")",
     sep = ""), 
   distribution=c("t", "norm"), line=c("quartiles", "robust", "none"), 

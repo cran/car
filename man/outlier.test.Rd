@@ -15,9 +15,9 @@
 \usage{
 outlier.test(model, ...)
 
-outlier.test.lm(model, labels=names(rstud), ...)
+\method{outlier.test}{lm}(model, labels=names(rstud), ...)
 
-outlier.test.glm(model, labels=names(rstud), ...)
+\method{outlier.test}{glm}(model, labels=names(rstud), ...)
 
 \method{print}{outlier.test}(x, digits=options("digits")[[1]], ...)
 }

@@ -21,11 +21,11 @@
 \usage{
 Anova(mod, ...)
 
-Anova.lm(mod, error, type=c("II", "III"), ...)
+\method{Anova}{lm}(mod, error, type=c("II", "III"), ...)
 
-Anova.aov(mod, ...)
+\method{Anova}{aov}(mod, ...)
 
-Anova.glm(mod, type=c("II", "III"), test.statistic=c("LR", "Wald", "F"), 
+\method{Anova}{glm}(mod, type=c("II", "III"), test.statistic=c("LR", "Wald", "F"), 
     error, error.estimate=c("pearson", "dispersion", "deviance"), ...)
 }
 

@@ -1,6 +1,6 @@
 # Added-Variable plots (J. Fox)
 
-# last modified 9 Nov 02 by J. Fox
+# last modified 31 Jan 04 by J. Fox
 
 avp<-function(...) av.plots(...)
 
@@ -46,13 +46,13 @@ av.plot.lm<-function(model, variable, labels=names(residuals(model)[!is.na(resid
     var<-which(variable==var.names)
     if (0==length(var)) stop(paste(variable,"is not a column of the model matrix."))
     response<-response(model)
-    response.name<-response.name(model)
+    responseName<-responseName(model)
     if (is.null(weights(model))) wt<-rep(1, length(response))
         else wt<-weights(model)
     res<-lsfit(mod.mat[,-var], cbind(mod.mat[,var], response), wt=wt,    
         intercept=FALSE)$residuals
     plot(res[,1], res[,2], xlab=paste(var.names[var],"| others"), 
-        ylab=paste(response.name," | others"), main=main, las=las, col=col, pch=pch)
+        ylab=paste(responseName," | others"), main=main, las=las, col=col, pch=pch)
     abline(lsfit(res[,1], res[,2], wt=wt), col=col, lwd=lwd)
     if (identify.points) identify(res[,1], res[,2], labels)
     }
@@ -70,7 +70,7 @@ av.plot.glm<-function(model, variable, labels=names(residuals(model)[!is.na(resi
     var<-which(variable==var.names)
     if (0==length(var)) stop(paste(variable,"is not a column of the model matrix."))
     response<-response(model)
-    response.name<-response.name(model)
+    responseName<-responseName(model)
     wt<-model$prior.weights
     mod<-glm(response~mod.mat[,-var]-1, weights=wt, family=family(model))
     res.y<-residuals(mod, type="pearson")
@@ -78,7 +78,7 @@ av.plot.glm<-function(model, variable, labels=names(residuals(model)[!is.na(resi
     res.x<-lsfit(mod.mat[,-var], mod.mat[,var], wt=wt,    
         intercept=FALSE)$residuals
     plot(res.x, res.y, xlab=paste(var.names[var],"| others"), 
-        ylab=paste(response.name," | others"), main=main, las=las, col=col, pch=pch)
+        ylab=paste(responseName," | others"), main=main, las=las, col=col, pch=pch)
     abline(lsfit(res.x, res.y, wt=wt), col=col, lwd=lwd)
     if (identify.points) identify(res.x, res.y, labels)
     }
