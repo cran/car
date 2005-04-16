@@ -143,3 +143,8 @@ Changes to Version 1.0-16
     o Modified to linear.hypothesis by Achim Zeleis to support alternative coefficient covariance-matrix estimators for linear models (via new vcov argument); to provide both chisquare and F tests for both linear and generalized-linear models (via new test argument); and to produce neater output (from both .lm and .glm methods).
     
     o Anova methods modified to work with new linear.hypothesis functions.
+    
+Changes to Version 1.0-17
+
+    o Fixed a bug in scatterplot() that caused marginal boxplots to be incorrect when xlim or ylim arguments are supplied (pointed out by Erich Neuwirth).
+    

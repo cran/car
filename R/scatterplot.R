@@ -1,6 +1,6 @@
 # fancy scatterplots  (J. Fox)
 
-# last modified 17 Jan 2005
+# last modified 16 April 2005
 
 scatterplot<-function(x, ...){
     # last modified 28 Jan 2001 by J. Fox
@@ -46,7 +46,7 @@ scatterplot.formula<-function (formula, data, xlab, ylab, subset, labels=FALSE, 
 
 scatterplot.default<-function(x, y, smooth=TRUE, span=.5, reg.line=lm, boxplots="xy",
     xlab=deparse(substitute(x)), ylab=deparse(substitute(y)), las=par("las"),
-    lwd=1, labels=FALSE, log="", jitter=list(),
+    lwd=1, labels=FALSE, log="", jitter=list(), xlim=NULL, ylim=NULL,
     cex=par("cex"), cex.axis=par("cex.axis"), cex.lab=par("cex.lab"), 
     cex.main=par("cex.main"), cex.sub=par("cex.sub"),
     groups=FALSE, by.groups=!(groups[1]==FALSE), 
@@ -98,7 +98,7 @@ scatterplot.default<-function(x, y, smooth=TRUE, span=.5, reg.line=lm, boxplots=
             log.x<-"x"
             .x<-log(x)
             }
-        plot(x, seq(0,1,length=length(x)), type="n", axes=FALSE, xlab="", ylab="", log=log.x)
+        plot(x, seq(0,1,length=length(x)), type="n", axes=FALSE, xlab="", ylab="", log=log.x, xlim=xlim)
         res<-boxplot.stats(.x, coef = 1.5, do.conf=FALSE)
         if (length(grep("x", log))!=0){
             res$stats<-exp(res$stats)
@@ -124,7 +124,7 @@ scatterplot.default<-function(x, y, smooth=TRUE, span=.5, reg.line=lm, boxplots=
             log.y<-"y"
             .y<-log(y)
             }
-        plot(seq(0,1,length=length(y)), y, type="n", axes=FALSE, xlab="", ylab="", log=log.y)
+        plot(seq(0,1,length=length(y)), y, type="n", axes=FALSE, xlab="", ylab="", log=log.y, ylim=ylim)
         res<-boxplot.stats(.y, coef = 1.5, do.conf=FALSE)
         if (length(grep("y", log))!=0){
             res$stats<-exp(res$stats)
@@ -169,12 +169,12 @@ scatterplot.default<-function(x, y, smooth=TRUE, span=.5, reg.line=lm, boxplots=
         widths = c(5,95),
         heights= c(95,5))
     par(mar=c(mar[1],0,mar[3],0))
-    if (length(grep("y",boxplots))>0) vbox(.y) else plot(0,0,xlab="",ylab="",axes=FALSE,type="n")
+    if (length(grep("y",boxplots))>0) vbox(.y) else plot(0,0,xlab="",ylab="",axes=FALSE,type="n", xlim=xlim, ylim=ylim)
     par(mar=c(0,mar[2],0,mar[4]))
-    if (length(grep("x",boxplots))>0) hbox(.x) else plot(0,0,xlab="",ylab="",axes=FALSE,type="n")
+    if (length(grep("x",boxplots))>0) hbox(.x) else plot(0,0,xlab="",ylab="",axes=FALSE,type="n", xlim=xlim, ylim=ylim)
     par(mar=mar)
     plot(.x, .y, xlab=xlab, ylab=ylab, las=las, log=log, cex=cex, cex.axis=cex.axis, cex.lab=cex.lab,
-        cex.main=cex.main, cex.sub=cex.sub, type="n", ...)
+        cex.main=cex.main, cex.sub=cex.sub, type="n", xlim=xlim, ylim=ylim, ...)
     n.groups<-length(levels(groups))
     if (n.groups >= length(col)) stop("number of groups exceeds number of available colors")
     for (i in 1:n.groups){

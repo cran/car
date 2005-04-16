@@ -17,7 +17,7 @@ scatterplot(x, ...)
 
 \method{scatterplot}{default}(x, y, smooth=TRUE, span=0.5, reg.line=lm, 
   boxplots="xy", xlab=deparse(substitute(x)), ylab=deparse(substitute(y)), 
-  las=par('las'), lwd=1, labels=FALSE, log="", jitter=list(),
+  las=par('las'), lwd=1, labels=FALSE, log="", jitter=list(), xlim=NULL, ylim=NULL,
   cex=par("cex"), cex.axis=par("cex.axis"), cex.lab=par("cex.lab"), 
   cex.main=par("cex.main"), cex.sub=par("cex.sub"),
   groups=FALSE, by.groups=!(groups[1]==FALSE),
@@ -56,6 +56,8 @@ sp(...)
     for the horizontal and vertical coordinates of the points in the scatterplot. The 
     \code{\link[base]{jitter}} function is used to randomly perturb the points; specifying a
     factor of \code{1} produces the default jitter. Fitted lines are unaffected by the jitter.}
+  \item{xlim}{the x limits (min,max) of the plot; if \code{NULL}, determined from the data.}
+  \item{ylim}{the y limits (min,max) of the plot; if \code{NULL}, determined from the data.}
   \item{groups}{a factor or other variable dividing the data into groups; groups are
     plotted with different colors and plotting characters.}
   \item{by.groups}{if \code{TRUE}, regression lines are fit by groups.}
