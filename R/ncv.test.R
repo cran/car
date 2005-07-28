@@ -1,6 +1,6 @@
 # score test of nonconstant variance (J. Fox)
 
-# last modified 16 Jan 05 by J. Fox
+# last modified 5 June 05 by J. Fox
 
 ncv.test<-function(model, ...){
     # last modified 15 Dec 2000 by J. Fox
@@ -52,4 +52,14 @@ ncv.test.lm<-function (model, var.formula, data=NULL, subset, na.action, ...) {
 ncv.test.glm<-function(model, ...){
     # last modified 15 Dec 2000 by J. Fox
     stop("requires lm object")
+    }
+    
+ print.chisq.test<-function(x, ...){
+    title<-if (!is.null(x$test)) x$test else "Chisquare Test"
+    cat(title,"\n")
+    if (!is.null(x$formula)) cat(x$formula.name, 
+        "formula:", as.character(x$formula), "\n")
+    cat("Chisquare =", x$ChiSquare,"   Df =", x$Df,
+        "    p =", x$p, "\n")
+    invisible(x)
     }
