@@ -66,7 +66,6 @@ contr.Helmert(n, contrasts = TRUE)
 \examples{
 # contr.Treatment vs. contr.treatment in the base package:
 
-data(Prestige)
 lm(prestige ~ (income + education)*type, data=Prestige, 
     contrasts=list(type="contr.Treatment"))
 

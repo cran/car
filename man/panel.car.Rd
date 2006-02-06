@@ -37,7 +37,6 @@ panel.car(x, y, col, pch, cex=1, span=0.5, lwd=2,
 \seealso{\code{\link[base]{coplot}}, \code{\link{reg.line}}}
 
 \examples{
-data(Prestige)
 coplot(prestige~income|education, panel=panel.car, 
   col="red", data=Prestige)
 }

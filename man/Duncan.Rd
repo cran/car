@@ -45,7 +45,7 @@
 }
 
 \usage{
-data(Duncan)
+Duncan
 }
 
 \keyword{datasets}

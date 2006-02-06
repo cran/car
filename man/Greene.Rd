@@ -93,6 +93,6 @@ Court of Appeal for leave to appeal the negative ruling of the Board.
 
 
 \usage{
-data(Greene)
+Greene
 }
 \keyword{datasets}

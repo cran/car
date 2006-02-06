@@ -51,6 +51,6 @@ A note on the voting irregularities in Palm Beach, FL.
 \url{http://madison.hss.cmu.edu/}.
 }
 \usage{
-data(Florida)
+Florida
 }
 \keyword{datasets}

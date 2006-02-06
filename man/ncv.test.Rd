@@ -58,13 +58,12 @@ ncv.test(model, ...)
 \seealso{\code{\link{hccm}}, \code{\link{spread.level.plot}} }
 
 \examples{
-data(Ornstein)
-mod<-lm(interlocks~assets+sector+nation, data=Ornstein)
-ncv.test(mod)
+ncv.test(lm(interlocks~assets+sector+nation, data=Ornstein))
 ## Non-constant Variance Score Test 
 ## Variance formula: ~ fitted.values 
 ## Chisquare = 46.98537    Df = 1     p = 7.151835e-12 
-ncv.test(mod, ~ assets+sector+nation, data=Ornstein)
+ncv.test(lm(interlocks~assets+sector+nation, data=Ornstein), 
+    ~ assets+sector+nation, data=Ornstein)
 ## Non-constant Variance Score Test 
 ## Variance formula: ~ assets + sector + nation 
 ## Chisquare = 74.73535    Df = 13     p = 1.066320e-10 

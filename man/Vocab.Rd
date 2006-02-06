@@ -35,7 +35,7 @@ The observations are respondents to the 1989 U. S. General Social Survey.
 
 
 \usage{
-data(Vocab)
+Vocab
 }
 
 \keyword{datasets}

@@ -55,7 +55,6 @@ hccm(model, ...)
 
 \examples{
 options(digits=4)
-data(Ornstein)
 mod<-lm(interlocks~assets+nation, data=Ornstein)
 Var(mod)
 ##             (Intercept)     assets  nationOTH   nationUK   nationUS

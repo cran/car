@@ -50,7 +50,6 @@ n.bins(x, rule=c("freedman.diaconis", "sturges", "scott", "simple"))
 \seealso{\code{\link[base]{hist}}}
 
 \examples{
-data(UN)
 attach(UN)
 n.bins(gdp)
 ## [1] 19

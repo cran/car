@@ -93,24 +93,19 @@ slp(x, ...)
 \seealso{\code{\link{hccm}}, \code{\link{ncv.test}} }
 
 \examples{
-data(Ornstein)
-attach(Ornstein)
-spread.level.plot(interlocks+1~nation)
-## $Statistics
+spread.level.plot(interlocks+1~nation, data=Ornstein)
+## Loading required package: MASS
 ##     LowerHinge Median UpperHinge Hinge-Spread
 ## US           2    6.0         13           11
 ## UK           4    9.0         14           10
 ## CAN          6   13.0         30           24
 ## OTH          4   15.5         24           20
-## 
-## $PowerTransformation
-## [1] 0.1534487
-mod<-lm(interlocks ~ assets + sector + nation)
-slp(mod)
-## $PowerTransformation
-## [1] 0.3222165
-## 
-## Warning message: 
+##
+## Suggested power transformation:  0.1534487 
+
+slp(lm(interlocks ~ assets + sector + nation, data=Ornstein))
+## Suggested power transformation:  0.3222165 
+## Warning message:
 ## Start =  3 added to fitted values to avoid 0 or negative values. in: spread.level.plot.lm(x, ...) 
 }
 

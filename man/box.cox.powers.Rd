@@ -67,7 +67,6 @@ box.cox.powers(X, start=NULL, hypotheses=NULL, ...)
     \code{\link{box.cox.axis}}}
 
 \examples{
-data(Prestige)
 attach(Prestige)
 box.cox.powers(cbind(income, education))
 ## Box-Cox Transformations to Multinormality  

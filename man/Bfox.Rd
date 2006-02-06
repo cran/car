@@ -49,7 +49,7 @@ Time-series data on Canadian women's labor-force participation,
 }
 
 \usage{
-data(Bfox)
+Bfox
 }
 
 \keyword{datasets}

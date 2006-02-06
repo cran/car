@@ -49,7 +49,6 @@ durbin.watson(model, ...)
 \author{John Fox \email{jfox@mcmaster.ca}}
 
 \examples{
-data(Hartnagel)
 durbin.watson(lm(fconvict ~ tfr + partic + degrees + mconvict, data=Hartnagel))
 ##  lag Autocorrelation D-W Statistic p-value 
 ##    1        0.688345     0.6168636       0 

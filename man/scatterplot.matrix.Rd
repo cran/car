@@ -87,7 +87,6 @@ spm(x, ...)
   \code{\link{box.cox}}, \code{\link[MASS]{cov.trob}}.}
 
 \examples{
-data(Duncan)
 scatterplot.matrix(~income + education + prestige | type, data=Duncan)
 scatterplot.matrix(~income + education + prestige, 
     transform=TRUE, data=Duncan)

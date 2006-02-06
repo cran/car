@@ -2,7 +2,7 @@
 \alias{DavisThin}
 \non_function{}
 \title{Davis's Data on Drive for Thinness}
-\usage{data(DavisThin)}
+\usage{DavisThin}
 \description{
 The \code{DavisThin} data frame has 191 rows and 7 columns.
 This is part of a larger dataset for a study of eating disorders.

@@ -9,12 +9,14 @@
 \usage{
 box.cox(x, p, start=0)
 
-bc(x, p)
+bc(x, p, start=0)
 }
 
 \arguments{
   \item{x}{numeric vector to transform.}
-  \item{p}{power (0 = log).}
+  \item{p}{power (0 = log); if \code{p} is a vector then a matrix
+    of transformed values with columns labelled by powers will be
+    returned.}
   \item{start}{constant to be added to each value of \code{x} prior
     to transformation.}
 }
@@ -30,7 +32,7 @@ bc(x, p)
   \code{bc} is just an abbreviation for \code{box.cox}.
 }
 \value{
-  a vector of transformed values.
+  a vector or matrix of transformed values.
 }
 \references{
   Atkinson, A. C. (1985)
@@ -58,10 +60,20 @@ linear model.}
 \examples{
 box.cox(1:10, 2)
 ## [1]  0.0  1.5  4.0  7.5 12.0 17.5 24.0 31.5 40.0 49.5
+
+box.cox(1:5, c(0,2))
+##              0    2
+## [1,] 0.0000000  0.0
+## [2,] 0.6931472  1.5
+## [3,] 1.0986123  4.0
+## [4,] 1.3862944  7.5
+## [5,] 1.6094379 12.0
+
 box.cox(-5:5, 2)
 ##  [1]  0.0  1.5  4.0  7.5 12.0 17.5 24.0 31.5 40.0 49.5 60.0
 ## Warning message: 
 ## start =  6 added to data prior to transformation in: box.cox(-5:5, 2)
+
 options(digits=4)
 box.cox(-5:5, 0, start=6)
 ##  [1] 0.0000 0.6931 1.0986 1.3863 1.6094 1.7918 1.9459 2.0794 2.1972

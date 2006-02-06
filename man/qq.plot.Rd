@@ -15,18 +15,17 @@ qq.plot(x, ...)
 
 qqp(...)
 
-\method{qq.plot}{default}(x, distribution="norm", 
-  ylab=deparse(substitute(x)), 
-  xlab=paste(distribution, "quantiles"), main="", las=par('las'),
-  envelope=0.95, labels=FALSE, col=palette()[2], lwd=2, pch=1,
-  line=c("quartiles", "robust", "none"), ...)
+\method{qq.plot}{default}(x, distribution="norm", ylab=deparse(substitute(x)),
+        xlab=paste(distribution, "quantiles"), main=NULL, las=par("las"),
+        envelope=.95, labels=FALSE, col=palette()[2], lwd=2, pch=1, cex=1,
+        line=c("quartiles", "robust", "none"), ...)
 
-\method{qq.plot}{lm}(x, main="", xlab=paste(distribution, "Quantiles"), 
+\method{qq.plot}{lm}(x, main=NULL, xlab=paste(distribution, "Quantiles"), 
   ylab=paste("Studentized Residuals(", deparse(substitute(x)), ")",
     sep = ""), 
   distribution=c("t", "norm"), line=c("quartiles", "robust", "none"), 
   las=par('las'), simulate=FALSE, envelope=0.95, labels=names(rstudent), 
-  reps=100, col=palette()[2], lwd=2, pch=1, ...)
+  reps=100, col=palette()[2], lwd=2, pch=1, cex=1, ...)
 }
 \arguments{
   \item{x}{vector of numeric values or \code{lm} object.}
@@ -46,12 +45,14 @@ qqp(...)
     and \code{\link[base]{par}}).}
   \item{pch}{plotting character for points; default is \code{1} 
     (a circle, see \code{\link[base]{par}}).}
+  \item{cex}{factor for expanding the size of plotted symbols; the default is
+    \code{1}.}
   \item{lwd}{line width; default is \code{2} (see \code{\link[base]{par}}).
     Confidence envelopes are drawn at half this line width.}
   \item{line}{\code{"quartiles"} to pass a line through the quartile-pairs, or
     \code{"robust"} for a robust-regression line; the latter uses the \code{rlm}
     function in the \code{MASS} package. Specifying \code{line = "none"} suppresses the line.}
-  \item{simulate}{if \code{TRUE} calculate confidence envelope by parametric bookstrap;
+  \item{simulate}{if \code{TRUE} calculate confidence envelope by parametric bootstrap;
     for \code{lm} object only. The method is due to Atkinson (1985).}
   \item{reps}{integer; number of bootstrap replications for confidence envelope.}
   \item{\dots}{arguments such as \code{df} to be passed to the appropriate quantile function.}
@@ -89,9 +90,7 @@ x<-rchisq(100, df=2)
 qq.plot(x)
 qq.plot(x, dist="chisq", df=2)
 
-data(Ornstein)
-mod<-lm(interlocks~assets+sector+nation, data=Ornstein)
-qq.plot(mod, sim=TRUE)
+qq.plot(lm(interlocks~assets+sector+nation, data=Ornstein), sim=TRUE)
 }
 
 \keyword{distribution}

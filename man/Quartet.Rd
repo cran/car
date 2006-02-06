@@ -41,6 +41,6 @@ These are contrived data.
 }
 
 \usage{
-data(Quartet)
+Quartet
 }
 \keyword{datasets}

@@ -93,10 +93,8 @@ confidence.ellipse(model, ...)
 \seealso{\code{\link[MASS]{cov.trob}}.}
   
 \examples{
-data(Prestige)
-attach(Prestige)
-data.ellipse(income, education, levels=0.1*1:9, lty=2)
-confidence.ellipse(lm(prestige~income+education), Scheffe=TRUE)
+data.ellipse(Prestige$income, Prestige$education, levels=0.1*1:9, lty=2)
+confidence.ellipse(lm(prestige~income+education, data=Prestige), Scheffe=TRUE)
 }
 
 \keyword{hplot}

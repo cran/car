@@ -67,4 +67,4 @@ These functions are not intended to be called by the user.
 
 \author{John Fox \email{jfox@mcmaster.ca}}
 
-\keyword{misc}
+\keyword{internal}

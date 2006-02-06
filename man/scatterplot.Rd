@@ -97,14 +97,11 @@ sp(...)
   \code{\link[base]{par}}, \code{\link[MASS]{cov.trob}}.}
 
 \examples{
-data(Prestige)
 scatterplot(prestige ~ income|type, data=Prestige, span=1, legend=FALSE)
 
-data(Vocab)
 scatterplot(vocabulary ~ education, jitter=list(x=1, y=1), data=Vocab)
 
   \dontrun{
-data(UN)
 scatterplot(infant.mortality ~ gdp, labels=row.names(UN), data=UN)
 
 scatterplot(infant.mortality ~ gdp, log="xy", labels=row.names(UN), data=UN)

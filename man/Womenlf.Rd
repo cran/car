@@ -50,7 +50,7 @@
 }
 
 \usage{
-data(Womenlf)
+Womenlf
 }
 
 \keyword{datasets}

@@ -42,6 +42,6 @@ Third post-test.
   Freeman [pp. 794--795].
 }
 \usage{
-data(Baumann)
+Baumann
 }
 \keyword{datasets}

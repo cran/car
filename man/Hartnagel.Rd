@@ -65,7 +65,7 @@ some missing data.
 }
 
 \usage{
-data(Hartnagel)
+Hartnagel
 }
 
 \keyword{datasets}

@@ -36,6 +36,6 @@ Decennial time-series of Canadian population, 1851--1991.
 }
 
 \usage{
-data(Can.pop)
+Can.pop
 }
 \keyword{datasets}

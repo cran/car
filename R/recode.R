@@ -1,5 +1,5 @@
 # recode function (J. Fox)
-# last modified 28 July 2005
+# last modified 31 Dec 2004
 
 recode<-function(var, recodes, as.factor.result){
     recode.list<-rev(strsplit(recodes, ";")[[1]])
@@ -34,11 +34,8 @@ recode<-function(var, recodes, as.factor.result){
         }
     if (as.factor.result) result<-as.factor(result)
         else if (!is.numeric(result)) {
-            save.warn <- options(warn=-1)
-            on.exit(options(save.warn))
             result.valid <- na.omit(result)
-            if (length(result.valid) == 
-                    length(na.omit(as.numeric(result.valid))))
+            if (length(result.valid) == length(grep("[0-9]",result.valid)))
                 result <- as.numeric(result)
             }
     result

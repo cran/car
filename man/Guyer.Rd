@@ -45,7 +45,7 @@ The observations are 20 groups.
 }
 
 \usage{
-data(Guyer)
+Guyer
 }
 
 \keyword{datasets}

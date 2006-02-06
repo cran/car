@@ -73,7 +73,6 @@ leverage.plot(model, ...)
 
 \examples{
   \dontrun{
-data(Duncan)
 leverage.plots(lm(prestige~(income+education)*type, data=Duncan))
   }
 }

@@ -65,7 +65,7 @@
 }
 
 \usage{
-data(States)
+States
 }
 
 \keyword{datasets}
