@@ -77,7 +77,6 @@ ceres.plot(model, ...)
 
 \examples{
   \dontrun{
-data(Prestige)
 ceres.plots(lm(prestige~income+education+type, data=Prestige))
   }
 }

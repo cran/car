@@ -89,10 +89,8 @@ av.plot(model, ...)
 
 \examples{
     \dontrun{
-data(Duncan)
 av.plots(lm(prestige~income+education+type, data=Duncan))
 
-data(Womenlf)
 av.plots(glm(partic != "not.work" ~ hincome + children, 
   data=Womenlf, family=binomial))
     }

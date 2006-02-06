@@ -50,7 +50,6 @@ vif(mod)
 \author{Henric Nilsson and John Fox \email{jfox@mcmaster.ca}}
 
 \examples{
-data(Duncan)
 vif(lm(prestige~income+education, data=Duncan))
 ##    income education 
 ##  2.104900  2.104900 

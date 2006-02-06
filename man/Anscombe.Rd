@@ -41,6 +41,6 @@ Sage.
 }
 
 \usage{
-data(Anscombe)
+Anscombe
 }
 \keyword{datasets}

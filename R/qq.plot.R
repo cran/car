@@ -1,6 +1,6 @@
 # Quantile-comparison plots (J. Fox)
 
-# last modified 26 October 02 by J. Fox
+# last modified 8 October 05 by J. Fox
 
 qqp<-function(...) qq.plot(...)
 
@@ -9,8 +9,8 @@ qq.plot<-function(x, ...) {
     }
   
 qq.plot.default<-function(x, distribution="norm", ylab=deparse(substitute(x)),
-        xlab=paste(distribution, "quantiles"), main="", las=par("las"),
-        envelope=.95, labels=FALSE, col=palette()[2], lwd=2, pch=1,
+        xlab=paste(distribution, "quantiles"), main=NULL, las=par("las"),
+        envelope=.95, labels=FALSE, col=palette()[2], lwd=2, pch=1, cex=1,
         line=c("quartiles", "robust", "none"), ...){
     # last modified 23 February 2003
     result <- NULL
@@ -23,7 +23,8 @@ qq.plot.default<-function(x, distribution="norm", ylab=deparse(substitute(x)),
     n<-length(ord.x)
     P<-ppoints(n)
     z<-q.function(P, ...)
-    plot(z, ord.x, xlab=xlab, ylab=ylab, main=main, las=las, col=col, pch=pch)
+    plot(z, ord.x, xlab=xlab, ylab=ylab, main=main, las=las, col=col, pch=pch,
+        cex=cex)
     if (line=="quartiles"){
         Q.x<-quantile(ord.x, c(.25,.75))
         Q.z<-q.function(c(.25,.75), ...)
@@ -55,11 +56,11 @@ qq.plot.default<-function(x, distribution="norm", ylab=deparse(substitute(x)),
     if (is.null(result)) invisible(result) else sort(result)
     }
     
-qq.plot.lm<-function(x, main="", xlab=paste(distribution, "Quantiles"),
+qq.plot.lm<-function(x, main=NULL, xlab=paste(distribution, "Quantiles"),
     ylab=paste("Studentized Residuals(",deparse(substitute(x)),")",sep=""),
     distribution=c("t", "norm"), line=c("quartiles", "robust", "none"), las=par("las"),
     simulate=FALSE, envelope=.95, labels=names(rstudent), reps=100, 
-    col=palette()[2], lwd=2, pch=1, ...){
+    col=palette()[2], lwd=2, pch=1, cex=1, ...){
     # last modified 23 Feb 2003
     result <- NULL
     distribution <- match.arg(distribution)
@@ -71,11 +72,11 @@ qq.plot.lm<-function(x, main="", xlab=paste(distribution, "Quantiles"),
         if (distribution == 't')
             result <- qq.plot.default(rstudent, distribution='t', df=res.df-1, line=line,
                 main=main, xlab=xlab, ylab=ylab, las=las, envelope=envelope, labels=labels, 
-                col=col, lwd=lwd, pch=pch, ...)
+                col=col, lwd=lwd, pch=pch, cex=cex, ...)
         else
             result <- qq.plot.default(rstudent, distribution='norm', line=line,
                 main=main, xlab=xlab, ylab=ylab, las=las, envelope=envelope, labels=labels, 
-                col=col, lwd=lwd, pch=pch, ...) 
+                col=col, lwd=lwd, pch=pch, cex=cex, ...) 
         }
     else {
         good <- !is.na(rstudent)
@@ -86,7 +87,7 @@ qq.plot.lm<-function(x, main="", xlab=paste(distribution, "Quantiles"),
         n<-length(ord)
         P<-ppoints(n)
         z<-if (distribution == 't') qt(P, df=res.df-1) else qnorm(P)
-        plot(z, ord.x, xlab=xlab, ylab=ylab, main=main, las=las, pch=pch, col=col)
+        plot(z, ord.x, xlab=xlab, ylab=ylab, main=main, las=las, pch=pch, col=col, cex=cex)
         yhat<-na.omit(fitted.values(x))
         S<-sumry$sigma
         Y<-matrix(yhat,n,reps)+matrix(rnorm(n*reps, sd=S),n,reps)

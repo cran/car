@@ -44,7 +44,7 @@
 
 
 \usage{
-data(Friendly)
+Friendly
 }
 
 \keyword{datasets}

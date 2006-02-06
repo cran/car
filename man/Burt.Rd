@@ -37,7 +37,7 @@ The ``data'' were simply (and notoriously) manufactured.
 
 
 \usage{
-data(Burt)
+Burt
 }
 
 \keyword{datasets}

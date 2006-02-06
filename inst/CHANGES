@@ -152,5 +152,27 @@ Changes to Version 1.0-18
 
     o Restored print.chisq.test(), used by ncv.test() (which had been removed when linear.hypothesis was changed).
     
-    o Fixed bug in recode(), which caused error when all of the recode targets for a numeric variable contain a numeral but can't be coerced to numeric (reported by David Dailey).
+    o Fixed bug in recode() that could cause values with mixed letters and numbers to be treated incorrectly (reported by David Dailey and Tom Mulholland).
+    
+Changes to Version 1.0-19
+
+    o Fix to linear.hypothesis.lm and linear.hypothesis.glm, which were printing long formulas awkwardly (thanks to Henric Nilsson).
+    
+Changes to Version 1.0-20
+
+    o Major reworking of linear.hypothesis (mostly due to Achim Zeleis) (1) to allow symbollic specification of the hypothesis, and (2) to provide a default method that is applicable to any model for which coef and vcov methods exist (or, in the latter case, for which a coefficient-covariance matrix is supplied).
+    
+    o The car package now has a namespace.
+
+    o Fixes to Anova.multinom and Anova.polr reflecting changes to multinom and polr (thanks Huaibao Feng for a bug report).
+    
+    o Added cex argument to qq.plot methods, suggested by Peter Ehlers.
+    
+    o Modified box.cox so that the power argument can be a vector, returning a matrix of transformed values, adapting code contributed by Spencer Graves (but implementing different behaviour than the one suggested by Spencer).
+    
+    o Added identity.cex and identify.col arguments to influence.plot, as suggested by John Wilkinson.
+    
+    o Data sets are now provided as lazy data; Rd files updated to remove references to data() in examples.
+    
+    o Small modifications to documentation. 
     

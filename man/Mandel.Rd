@@ -37,7 +37,7 @@
 
 
 \usage{
-data(Mandel)
+Mandel
 }
 
 \keyword{datasets}

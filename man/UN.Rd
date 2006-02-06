@@ -26,6 +26,6 @@ GDP per capita, in US dollars.
  \url{http://www.un.org/Depts/unsd/social/main.htm}.
 }
 \usage{
-data(UN)
+UN
 }
 \keyword{datasets}

@@ -70,7 +70,6 @@ box.tidwell(y, ...)
 \author{John Fox \email{jfox@mcmaster.ca}}
 
 \examples{
-data(Prestige)
 box.tidwell(prestige~income+education, ~ poly(women,2), data=Prestige)
 ##                   income education
 ## Initial Power   -0.91030   2.24354

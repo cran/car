@@ -41,6 +41,6 @@ The observations are developing nations around 1990.
 
 
 \usage{
-data(Robey)
+Robey
 }
 \keyword{datasets}

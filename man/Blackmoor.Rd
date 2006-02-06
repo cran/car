@@ -2,7 +2,7 @@
 \alias{Blackmoor}
 \non_function{}
 \title{Exercise Histories of Eating-Disordered and Control Subjects}
-\usage{data(Blackmoor)}
+\usage{Blackmoor}
 \description{
 The \code{Blackmoor} data frame has 945 rows and 4 columns.
 Blackmoor and Davis's data on exercise histories of 138 teenaged

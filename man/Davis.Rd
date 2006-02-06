@@ -51,7 +51,7 @@ There are some missing data.
 
 
 \usage{
-data(Davis)
+Davis
 }
 
 \keyword{datasets}

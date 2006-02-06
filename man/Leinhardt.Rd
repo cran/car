@@ -58,6 +58,6 @@ The infant-mortality rate for Jamaica is misprinted in
 
 
 \usage{
-data(Leinhardt)
+Leinhardt
 }
 \keyword{datasets}

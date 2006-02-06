@@ -57,7 +57,7 @@ Ericksen, E. P., Kadane, J. B. and Tukey, J. W. (1989)
 }
 
 \usage{
-data(Ericksen)
+Ericksen
 }
 
 \keyword{datasets}

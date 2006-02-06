@@ -40,13 +40,9 @@ reg.line(mod, col=palette()[2], lwd=2, lty=1,...)
 \seealso{\code{\link[base]{abline}}, \code{\link[base]{lines}}}
 
 \examples{
-data(Davis)
-attach(Davis)
-mod.M<-lm(repwt~weight, subset=sex=="M")
-mod.F<-lm(repwt~weight, subset=sex=="F")
-plot(weight, repwt, pch=c(1,2)[sex])
-reg.line(mod.M)
-reg.line(mod.F, lty=2)
+plot(repwt ~ weight, pch=c(1,2)[sex], data=Davis)
+reg.line(lm(repwt~weight, subset=sex=="M", data=Davis))
+reg.line(lm(repwt~weight, subset=sex=="F", data=Davis), lty=2)
 }
 
 \keyword{aplot}

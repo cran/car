@@ -23,7 +23,7 @@
 
 \value{as returned by \code{boxplot}.}
 
-\authors{Gregor Gorjanc, John Fox \email{jfox@mcmaster.ca}}
+\author{Gregor Gorjanc, John Fox \email{jfox@mcmaster.ca}}
 
 \references{
     Friendly, M. (2005)
@@ -33,7 +33,6 @@
 \seealso{\code{\link[graphics]{boxplot}}, \code{\link[MASS]{boxcox}}, \code{\link{box.cox}}}
 
 \examples{
-data(Prestige)
 symbox(Prestige$income)
 }
 

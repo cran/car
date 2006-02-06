@@ -46,7 +46,7 @@ The data are for psychiatric patients hospitalized for depression.
 }
 
 \usage{
-data(Ginzberg)
+Ginzberg
 }
 
 \keyword{datasets}

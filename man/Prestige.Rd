@@ -54,7 +54,7 @@ The observations are occupations.
 
 
 \usage{
-data(Prestige)
+Prestige
 }
 
 \keyword{datasets}

@@ -35,7 +35,6 @@ Ask(arg, fun, ...)
 
 \examples{
     \dontrun{
-data(UN)
 attach(UN)
 
 # enter the power-transformation parameter

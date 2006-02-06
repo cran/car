@@ -60,7 +60,6 @@ outlier.test(model, ...)
 \author{John Fox \email{jfox@mcmaster.ca}}
 
 \examples{
-data(Duncan)
 outlier.test(lm(prestige~income+education, data=Duncan))
 ##  max|rstudent| df unadjusted p Bonferroni p
 ##       3.134519 41  0.003177202    0.1429741

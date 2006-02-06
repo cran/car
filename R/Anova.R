@@ -399,6 +399,7 @@ Anova.II.F.glm <- function(mod, error, error.estimate, ...){
      }
 
 # multinomial logit models (via multinom in the nnet package)
+# last modified: 1 Oct 05 by J. Fox
 
 Anova.multinom <-
 function (mod, type = c("II", "III"), ...)
@@ -414,7 +415,8 @@ Anova.II.multinom <- function (mod, ...)
     which.nms <- function(name) which(asgn == which(names ==
         name))
     fac <- attr(mod$terms, "factors")
-    names <- term.names(mod)
+    names <- if (has.intercept(mod)) term.names(mod)[-1]
+        else term.names(mod)
     n.terms <- length(names)
     X <- model.matrix(mod)
     y <- model.response(model.frame(mod))
@@ -450,7 +452,8 @@ Anova.II.multinom <- function (mod, ...)
 
 Anova.III.multinom <- function (mod, ...)
 {
-    names <- term.names(mod)
+    names <- if (has.intercept(mod)) term.names(mod)[-1]
+        else term.names(mod)
     n.terms <- length(names)
     X <- model.matrix(mod)
     y <- model.response(model.frame(mod))
@@ -476,6 +479,7 @@ Anova.III.multinom <- function (mod, ...)
 
 
 # proportional-odds logit models (via polr in the MASS package)
+# last modified 1 Oct 05 by J. Fox
 
  Anova.polr <-
 function (mod, type = c("II", "III"), ...)
@@ -495,7 +499,7 @@ Anova.II.polr <- function (mod, ...)
     n.terms <- length(names)
     X <- model.matrix(mod)
     y <- model.response(model.frame(mod))
-    wt <- mod$weights
+    wt <- model.weights(model.frame(mod))
     asgn <- attr(X, "assign")
     LR <- rep(0, n.terms)
     df <- df.terms(mod)
@@ -531,7 +535,7 @@ Anova.III.polr <- function (mod, ...)
     n.terms <- length(names)
     X <- model.matrix(mod)
     y <- model.response(model.frame(mod))
-    wt <- mod$weights
+    wt <- model.weights(model.frame(mod))
     asgn <- attr(X, "assign")
     LR <- rep(0, n.terms)
     df <- df.terms(mod)

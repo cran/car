@@ -61,7 +61,7 @@ of the firms were not available.
 
 
 \usage{
-data(Ornstein)
+Ornstein
 }
 
 \keyword{datasets}

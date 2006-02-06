@@ -33,7 +33,7 @@
 }
 
 \usage{
-data(US.pop)
+US.pop
 }
 
 \keyword{datasets}

@@ -46,7 +46,7 @@ The observations are 43 U. S. cities around 1950.
 }
 
 \usage{
-data(Angell)
+Angell
 }
 
 \keyword{datasets}

@@ -55,7 +55,6 @@ subsets(object, ...)
 \examples{
     \dontrun{
 library(leaps)
-data(Ericksen)
 subsets(regsubsets(undercount ~ ., data=Ericksen))
     }
 }

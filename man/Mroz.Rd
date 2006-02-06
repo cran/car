@@ -3,7 +3,7 @@
 \non_function{}
 
 \title{U.S. Women's Labor-Force Participation}
-\usage{data(Mroz)}
+\usage{Mroz}
 \description{
 The \code{Mroz} data frame has 753 rows and 8 columns.
 The observations, from the Panel Study of Income Dynamics (PSID),

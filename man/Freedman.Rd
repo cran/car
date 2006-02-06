@@ -37,7 +37,7 @@ Freedman, J. (1975)
 }
 
 \usage{
-data(Freedman)
+Freedman
 }
 
 \keyword{datasets}

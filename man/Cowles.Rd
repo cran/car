@@ -2,7 +2,7 @@
 \alias{Cowles}
 \non_function{}
 \title{Cowles and Davis's Data on Volunteering}
-\usage{data(Cowles)}
+\usage{Cowles}
 \description{
 The \code{Cowles} data frame has 1421 rows and 4 columns.
 These data come from a study of the personality determinants

@@ -12,7 +12,8 @@
 \usage{
 influence.plot(model, ...)
 
-\method{influence.plot}{lm}(model, scale = 10, col = c(1, 2), labels = names(rstud), ...)
+\method{influence.plot}{lm}(model, scale = 10, col = c(1, 2), labels = names(rstud), 
+  identify.cex=par("cex"), identify.col=par("col"), ...)
 }
 
 \arguments{
@@ -21,6 +22,7 @@ influence.plot(model, ...)
   \item{col}{colors for plotting points that do not and do have noteworthy Cook's distances.}
   \item{labels}{if \code{FALSE} do not identify points interactively with the mouse; otherwise
     a vector of observation labels.}
+  \item{identify.cex, identify.col}{aguments to be passed to \code{identify}.}
   \item{\dots}{arguments to pass to the \code{plot} function.}
 }
 
@@ -41,7 +43,6 @@ influence.plot(model, ...)
 
 \examples{
     \dontrun{
-    data(Duncan)
     influence.plot(lm(prestige ~ income + education, data=Duncan))
     }
 }

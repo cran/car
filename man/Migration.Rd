@@ -98,6 +98,6 @@ provinces.
 
 
 \usage{
-data(Migration)
+Migration
 }
 \keyword{datasets}

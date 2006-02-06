@@ -71,7 +71,6 @@ prob.axis(at, side=c("right", "above", "left", "below"), grid=FALSE, grid.lty=3,
 \seealso{ \code{\link{box.cox}}, \code{\link{logit}}}
 
 \examples{
-data(UN)
 UN<-na.omit(UN)
 attach(UN)
 par(mar=c(5, 4, 4, 4)+.1)

@@ -48,9 +48,8 @@ box.cox.var(y)
   \code{\link{box.cox.axis}}, \code{\link{av.plots}}}
 
 \examples{
-data(Ornstein)
-mod<-lm(interlocks+1~assets, data=Ornstein)
-mod.aux<-update(mod, .~.+box.cox.var(interlocks+1))
+mod <- lm(interlocks + 1 ~ assets, data=Ornstein)
+mod.aux <- update(mod, . ~ . + box.cox.var(interlocks + 1))
 summary(mod.aux)
 ## Call:
 ## lm(formula = interlocks + 1 ~ assets + box.cox.var(interlocks + 

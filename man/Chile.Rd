@@ -61,6 +61,6 @@ a factor with levels:
 }
 
 \usage{
-data(Chile)
+Chile
 }
 \keyword{datasets}

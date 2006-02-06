@@ -52,6 +52,6 @@ partner's judgment or stick with their own judgment.
 
 
 \usage{
-data(Moore)
+Moore
 }
 \keyword{datasets}

@@ -35,7 +35,7 @@ The observations are households in a Central African village.
 
 
 \usage{
-data(Sahlins)
+Sahlines
 }
 
 \keyword{datasets}

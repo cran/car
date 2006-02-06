@@ -41,6 +41,6 @@ A factor with levels:
  York University.
 }
 \usage{
-data(SLID)
+SLID
 }
 \keyword{datasets}

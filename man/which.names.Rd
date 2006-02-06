@@ -22,7 +22,6 @@ Returns the index or indices of \code{names} within \code{object}.
 \author{John Fox \email{jfox@mcmaster.ca}}
 
 \examples{
-data(Duncan)
 which.names(c('minister', 'conductor'), Duncan)
 ## [1]  6 16
 }

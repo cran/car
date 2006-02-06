@@ -48,10 +48,7 @@ cookd(model, ...)
 \seealso{\code{\link[base:cooks.distance]{cooks.distance}}, \code{\link[base:influence]{influence}}}
 
 \examples{
-data(Duncan)
-attach(Duncan)
-mod <- lm(prestige ~ income + education)
-plot(cookd(mod))
+plot(cookd(lm(prestige ~ income + education, data=Duncan)))
 }
 
 \keyword{regression}

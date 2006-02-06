@@ -17,12 +17,16 @@
 \alias{Anova.polr}
 \alias{Anova.II.polr}
 \alias{Anova.III.polr}
-\title{Anova Tables for Linear and Generalized Linear Models}
+\title{Anova Tables for Various Statistical Models}
 \description{
   Calculates type-II or type-III analysis-of-variance tables for
-  model objects produced by \code{lm} and \code{glm}. For linear
+  model objects produced by \code{lm}, \code{glm}, \code{multinom} 
+  (in the \code{nnet} package), and \code{polr} (in the \code{MASS}
+  package). For linear
   models, F-tests are calculated; for generalized linear models, 
-  likelihood-ratio chisquare, Wald chisquare, or F-tests are calculated.
+  likelihood-ratio chisquare, Wald chisquare, or F-tests are calculated;
+  for multinomial logit and proportional-odds logit models, likelihood-ratio
+  tests are calculated.
 }
 \usage{
 Anova(mod, ...)
@@ -91,7 +95,6 @@ Anova(mod, ...)
 \seealso{ \code{\link{linear.hypothesis}}, \code{\link[base]{anova}}}
 
 \examples{
-data(Moore)
 mod<-lm(conformity~fcategory*partner.status, data=Moore, 
   contrasts=list(fcategory=contr.sum, partner.status=contr.sum))
 Anova(mod)

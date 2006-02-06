@@ -44,7 +44,7 @@ The observations are counties in Romania.
 
 
 \usage{
-data(Chirot)
+Chirot
 }
 
 \keyword{datasets}

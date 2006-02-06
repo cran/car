@@ -77,14 +77,11 @@ cr.plot(model, ...)
 \seealso{\code{\link{ceres.plots}}, \code{\link{av.plots}}}
 
 \examples{
-  \dontrun{
-data(Womenlf)
-cr.plots(glm(partic != "not.work" ~ hincome + children, 
-  data=Womenlf, family=binomial))
-
-data(Prestige)
 cr.plots(lm(prestige~income+education, data=Prestige), 
   variable="income")
+  \dontrun{
+cr.plots(glm(partic != "not.work" ~ hincome + children, 
+  data=Womenlf, family=binomial))
   }
 }
 

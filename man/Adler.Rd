@@ -52,7 +52,7 @@ an unbalanced design.
 }
 
 \usage{
-data(Adler)
+Adler
 }
 
 \keyword{datasets}
