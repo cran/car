@@ -39,7 +39,7 @@ influence.plot(model, ...)
 \author{John Fox \email{jfox@mcmaster.ca}}
 
 
-\seealso{\code{\link[car]{cookd}}, \code{\link[base]{rstudent}}, \code{\link[base]{hatvalues}}}
+\seealso{\code{\link[car]{cookd}}, \code{\link[stats]{rstudent}}, \code{\link[stats]{hatvalues}}}
 
 \examples{
     \dontrun{

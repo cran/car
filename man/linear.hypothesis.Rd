@@ -103,9 +103,9 @@ lht(model, ...)
   \emph{Applied Regression, Linear Models, and Related Methods.} Sage.
 }
 
-\author{Achim Zeleis and John Fox \email{jfox@mcmaster.ca}}
+\author{Achim Zeileis and John Fox \email{jfox@mcmaster.ca}}
 
-\seealso{\code{\link[base]{anova}}, \code{\link{Anova}}, \code{\link[lmtest]{waldtest}},
+\seealso{\code{\link[stats]{anova}}, \code{\link{Anova}}, \code{\link[lmtest]{waldtest}},
   \code{\link{hccm}}, \code{\link[sandwich]{vcovHC}}, \code{\link[sandwich]{vcovHAC}}, 
   \code{\link[stats]{coef}}, \code{\link[stats]{vcov}}
 

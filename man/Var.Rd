@@ -36,7 +36,7 @@ Var(object, ...)
 
 \author{John Fox \email{jfox@mcmaster.ca}}
 
-\seealso{\code{\link[base]{var}}}
+\seealso{\code{\link[stats]{var}}}
 
 \examples{
 data(Davis)

@@ -17,10 +17,10 @@ reg.line(mod, col=palette()[2], lwd=2, lty=1,...)
     interpreted respectively as the
     intercept and slope of a regresison line.}
   \item{col}{color for points and lines; the default is the \emph{second} entry
-    in the current color palette (see \code{\link[base]{palette}}
-    and \code{\link[base]{par}}).}
-  \item{lwd}{line width; default is \code{2} (see \code{\link[base]{par}}).}
-  \item{lty}{line type; default is \code{1}, a solid line (see \code{\link[base]{par}}).}
+    in the current color palette (see \code{\link[grDevices]{palette}}
+    and \code{\link[graphics]{par}}).}
+  \item{lwd}{line width; default is \code{2} (see \code{\link[graphics]{par}}).}
+  \item{lty}{line type; default is \code{1}, a solid line (see \code{\link[graphics]{par}}).}
   \item{\dots}{optional arguments to be passed to the
     \code{lines} plotting function.}
 }
@@ -37,7 +37,7 @@ reg.line(mod, col=palette()[2], lwd=2, lty=1,...)
 \author{John Fox \email{jfox@mcmaster.ca}}
 
 
-\seealso{\code{\link[base]{abline}}, \code{\link[base]{lines}}}
+\seealso{\code{\link[graphics]{abline}}, \code{\link[graphics]{lines}}}
 
 \examples{
 plot(repwt ~ weight, pch=c(1,2)[sex], data=Davis)

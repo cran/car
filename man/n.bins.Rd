@@ -47,7 +47,7 @@ n.bins(x, rule=c("freedman.diaconis", "sturges", "scott", "simple"))
 
 \author{John Fox \email{jfox@mcmaster.ca}}
 
-\seealso{\code{\link[base]{hist}}}
+\seealso{\code{\link[graphics]{hist}}}
 
 \examples{
 attach(UN)

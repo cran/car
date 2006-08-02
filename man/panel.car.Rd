@@ -34,7 +34,7 @@ panel.car(x, y, col, pch, cex=1, span=0.5, lwd=2,
 
 \author{John Fox \email{jfox@mcmaster.ca}}
 
-\seealso{\code{\link[base]{coplot}}, \code{\link{reg.line}}}
+\seealso{\code{\link[graphics]{coplot}}, \code{\link{reg.line}}}
 
 \examples{
 coplot(prestige~income|education, panel=panel.car, 

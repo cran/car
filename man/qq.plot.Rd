@@ -39,15 +39,15 @@ qqp(...)
   \item{labels}{vector of point labels for interactive point identification,
     or \code{FALSE} for no labels.}
   \item{las}{if \code{0}, ticks labels are drawn parallel to the
-    axis; set to \code{1} for horizontal labels (see \code{\link[base]{par}}).}
+    axis; set to \code{1} for horizontal labels (see \code{\link[graphics]{par}}).}
   \item{col}{color for points and lines; the default is the \emph{second} entry
-    in the current color palette (see \code{\link[base]{palette}}
-    and \code{\link[base]{par}}).}
+    in the current color palette (see \code{\link[grDevices]{palette}}
+    and \code{\link[graphics]{par}}).}
   \item{pch}{plotting character for points; default is \code{1} 
-    (a circle, see \code{\link[base]{par}}).}
+    (a circle, see \code{\link[graphics]{par}}).}
   \item{cex}{factor for expanding the size of plotted symbols; the default is
     \code{1}.}
-  \item{lwd}{line width; default is \code{2} (see \code{\link[base]{par}}).
+  \item{lwd}{line width; default is \code{2} (see \code{\link[graphics]{par}}).
     Confidence envelopes are drawn at half this line width.}
   \item{line}{\code{"quartiles"} to pass a line through the quartile-pairs, or
     \code{"robust"} for a robust-regression line; the latter uses the \code{rlm}
@@ -82,8 +82,8 @@ qqp(...)
 }
 \author{John Fox \email{jfox@mcmaster.ca}}
 
-\seealso{\code{\link[base]{qqplot}}, \code{\link[base]{qqnorm}},
- \code{\link[base]{qqline}}}
+\seealso{\code{\link[stats]{qqplot}}, \code{\link[stats]{qqnorm}},
+ \code{\link[stats]{qqline}}}
 
 \examples{
 x<-rchisq(100, df=2)
