@@ -1,13 +1,13 @@
 # fancy scatterplots  (J. Fox)
 
-# last modified 16 April 2005
+# last modified 1 August 2006
 
 scatterplot<-function(x, ...){
     # last modified 28 Jan 2001 by J. Fox
     UseMethod("scatterplot", x)
     }
     
-scatterplot.formula<-function (formula, data, xlab, ylab, subset, labels=FALSE, ...) {
+scatterplot.formula<-function (formula, data, xlab, ylab, legend.title, subset, labels=FALSE, ...) {
     # last modified 6 Jan 2004 by J. Fox
     na.save <- options(na.action=na.omit)
     on.exit(options(na.save))
@@ -39,8 +39,11 @@ scatterplot.formula<-function (formula, data, xlab, ylab, subset, labels=FALSE, 
     if (missing(ylab)) ylab<-names[1]
     if (ncol(X) == 2) scatterplot(X[,2], X[,1],  xlab=xlab, ylab=ylab, 
             labels=labels, ...)
-    else scatterplot(X[,2], X[,1], groups=X[,3], xlab=xlab, ylab=ylab, 
-                labels=labels, ...)
+    else {
+        if (missing(legend.title)) legend.title <- names[3]
+        scatterplot(X[,2], X[,1], groups=X[,3], xlab=xlab, ylab=ylab,  
+                legend.title=legend.title, labels=labels, ...)
+        }
     }
 
 
@@ -49,7 +52,7 @@ scatterplot.default<-function(x, y, smooth=TRUE, span=.5, reg.line=lm, boxplots=
     lwd=1, labels=FALSE, log="", jitter=list(), xlim=NULL, ylim=NULL,
     cex=par("cex"), cex.axis=par("cex.axis"), cex.lab=par("cex.lab"), 
     cex.main=par("cex.main"), cex.sub=par("cex.sub"),
-    groups=FALSE, by.groups=!(groups[1]==FALSE), 
+    groups=FALSE, by.groups=!(groups[1]==FALSE), legend.title=deparse(substitute(groups)), 
     ellipse=FALSE, levels=c(.5, .9), robust=FALSE,
     col=palette(), pch=1:n.groups, 
     legend.plot=length(levels(groups)) > 1, reset.par=TRUE, ...){
@@ -146,6 +149,7 @@ scatterplot.default<-function(x, y, smooth=TRUE, span=.5, reg.line=lm, boxplots=
     if (reset.par) on.exit(par(mar=mar, mfcol=mfcol))
     if(FALSE==boxplots) boxplots<-""
     if (groups[1] != FALSE){
+        legend.title # force evaluation
         if (labels[1] != FALSE){
             data<-na.omit(data.frame(groups,x,y,labels))
             groups<-data[,1]
@@ -159,20 +163,22 @@ scatterplot.default<-function(x, y, smooth=TRUE, span=.5, reg.line=lm, boxplots=
             .x<-data[,2]
             .y<-data[,3]
             }
+        top <- 4 + length(levels(as.factor(groups)))
         }
     else{
         .x<-x
         .y<-y
+        top <- mar[3]
         }
     groups<-as.factor(if(FALSE == groups[1]) rep(1, length(.x)) else as.character(groups))
     layout(matrix(c(1,0,3,2),2,2),
         widths = c(5,95),
         heights= c(95,5))
-    par(mar=c(mar[1],0,mar[3],0))
+    par(mar=c(mar[1],0,top,0))
     if (length(grep("y",boxplots))>0) vbox(.y) else plot(0,0,xlab="",ylab="",axes=FALSE,type="n", xlim=xlim, ylim=ylim)
     par(mar=c(0,mar[2],0,mar[4]))
     if (length(grep("x",boxplots))>0) hbox(.x) else plot(0,0,xlab="",ylab="",axes=FALSE,type="n", xlim=xlim, ylim=ylim)
-    par(mar=mar)
+    par(mar=c(mar[1:2], top, mar[4]))
     plot(.x, .y, xlab=xlab, ylab=ylab, las=las, log=log, cex=cex, cex.axis=cex.axis, cex.lab=cex.lab,
         cex.main=cex.main, cex.sub=cex.sub, type="n", xlim=xlim, ylim=ylim, ...)
     n.groups<-length(levels(groups))
@@ -193,8 +199,13 @@ scatterplot.default<-function(x, y, smooth=TRUE, span=.5, reg.line=lm, boxplots=
         if (ellipse) data.ellipse(.x, .y, plot.points=FALSE, levels=levels, col=col[1],
             robust=robust)
         }
-    if(legend.plot) legend(locator(1), legend=levels(groups), 
-        pch=pch, col=col[2:(n.groups+1)], pt.cex=cex, cex=cex.lab)
+    if(legend.plot) {
+        xpd <- par(xpd=TRUE)
+        on.exit(par(xpd=xpd), add=TRUE)
+        usr <- par("usr")
+        legend(usr[1], usr[4] + 1.2*top*strheight("x"), legend=levels(groups), 
+            pch=pch, col=col[2:(n.groups+1)], pt.cex=cex, cex=cex.lab, title=legend.title)
+        }
     if (labels[1]==TRUE & length(labels)==1) labels<-seq(along=z)
     indices<-if (labels[1] != FALSE) identify(.x, .y, labels)
     if (is.null(indices)) invisible(indices) else indices

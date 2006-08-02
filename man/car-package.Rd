@@ -20,8 +20,8 @@ na.exclude.
 \details{
 \tabular{ll}{
 Package: \tab car\cr
-Version: \tab 1.1-0\cr
-Date: \tab 2006/2/6\cr
+Version: \tab 1.1-1\cr
+Date: \tab 2006/8/2\cr
 Depends: \tab R (>= 2.1.1)\cr
 Suggests: \tab MASS, nnet, leaps\cr
 License: \tab GPL version 2 or newer\cr
@@ -118,9 +118,9 @@ which.names             Position of Row Names
 }
 \author{
 John Fox <jfox@mcmaster.ca>. I am grateful to Douglas Bates,
-David Firth, Michael Friendly, Gregor Gorjanc, Spencer Graves,
-Georges Monette, Henric Nilsson, Brian Ripley, Sanford
-Weisberg, and Achim Zeleis for various suggestions and
+David Firth, Michael Friendly, Gregor Gorjanc, Spencer Graves, 
+Richard Heiberger, Georges Monette, Henric Nilsson, Brian Ripley, 
+Sanford Weisberg, and Achim Zeleis for various suggestions and
 contributions.
 
 Maintainer: John Fox <jfox@mcmaster.ca>

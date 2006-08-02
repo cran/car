@@ -16,7 +16,7 @@ scatterplot.matrix(x, ...)
 \method{scatterplot.matrix}{formula}(formula, data=NULL, subset, ...)
 
 \method{scatterplot.matrix}{default}(x, labels=colnames(x), 
-    diagonal=c("density", "boxplot", "histogram", "qqplot", "none"), 
+    diagonal=c("density", "boxplot", "histogram", "oned", "qqplot", "none"), 
     adjust=1, nclass, plot.points=TRUE, smooth=TRUE, span=0.5, reg.line=lm, 
     transform=FALSE, ellipse=FALSE, levels=c(.5, .9), robust=FALSE,
     groups=FALSE, by.groups=FALSE, col=palette(), 
@@ -63,13 +63,13 @@ spm(x, ...)
     plotted with different colors and plotting characters.}
   \item{by.groups}{if \code{TRUE}, regression lines are fit by groups.}
   \item{pch}{plotting characters for points; default is the plotting characters in
-    order (see \code{\link[base]{par}}).}
+    order (see \code{\link[graphics]{par}}).}
   \item{col}{colors for points and lines; the default is the
     in the current color palette, starting at the \emph{second} entry
-    (see \code{\link[base]{palette}} and \code{\link[base]{par}}).}
+    (see \code{\link[grDevices]{palette}} and \code{\link[graphics]{par}}).}
   \item{lwd}{width for lines.}
   \item{cex, cex.axis, cex.labels, cex.main}{set sizes of various graphical elements; 
-    (see \code{\link[base]{par}}).}
+    (see \code{\link[graphics]{par}}).}
   \item{legend.plot}{if \code{TRUE} then a legend for the groups is plotted
     in the bottom-right cell.}
   \item{...}{arguments to pass down.}
@@ -82,7 +82,7 @@ spm(x, ...)
 
 \author{John Fox \email{jfox@mcmaster.ca}}
 
-\seealso{\code{\link[base]{pairs}}, \code{\link{scatterplot}},
+\seealso{\code{\link[graphics]{pairs}}, \code{\link{scatterplot}},
   \code{\link{data.ellipse}}, \code{\link{box.cox.powers}}, 
   \code{\link{box.cox}}, \code{\link[MASS]{cov.trob}}.}
 

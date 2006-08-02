@@ -26,4 +26,19 @@ levene.test(y, group)
 \author{John Fox \email{jfox@mcmaster.ca}}
 \note{adapted from a response posted by Brian Ripley to the R-help email list.}
 
+\examples{
+attach(Moore)
+levene.test(conformity, fcategory)
+## Levene's Test for Homogeneity of Variance
+##       Df F value Pr(>F)
+## group  2   0.046 0.9551
+##       42  
+
+levene.test(conformity, interaction(fcategory, partner.status))
+## Levene's Test for Homogeneity of Variance
+##       Df F value Pr(>F)
+## group  5  1.4694 0.2219
+##       39 
+}        
+
 \keyword{htest}

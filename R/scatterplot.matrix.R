@@ -1,6 +1,6 @@
 # fancy scatterplot matrices (J. Fox)
 
-# last modified: 16 Jan 05 by J. Fox
+# last modified: 30 July 06 by J. Fox
 
 scatterplot.matrix<-function(x, ...){
     UseMethod("scatterplot.matrix")
@@ -35,7 +35,7 @@ scatterplot.matrix.formula<-function (formula, data=NULL, subset,  ...) {
     }
 
 scatterplot.matrix.default<-function(x, labels=colnames(x), 
-    diagonal=c("density", "boxplot", "histogram", "qqplot", "none"), adjust=1, nclass,
+    diagonal=c("density", "boxplot", "histogram", "oned", "qqplot", "none"), adjust=1, nclass,
     plot.points=TRUE, smooth=TRUE, span=.5, reg.line=lm, transform=FALSE,
     ellipse=FALSE, levels=c(.5, .9), robust=FALSE,
     groups=FALSE, by.groups=FALSE,
@@ -59,10 +59,11 @@ scatterplot.matrix.default<-function(x, labels=colnames(x),
         max<-which.max(x)
         lines(c(x[min],x[max]),c(y.hat[min],y.hat[max]), lty=2, lwd=lwd, col=col)
         }
+    # The following panel function adapted from Richard Heiberger
     panel.density<-function(x){
-        par(new=TRUE)
-        plot(density(x, adjust=adjust), axes=FALSE, main="")
-        points(x, rep(0,length(x)), pch="|", col=col[1])
+        dens.x <- density(x, adjust = adjust)
+        lines(dens.x$x, min(x) + dens.x$y * diff(range(x))/diff(range(dens.x$y)))
+        points(x, rep(min(x), length(x)), pch = "|", col = col[1])
         }
     panel.histogram<-function(x){
         par(new=TRUE)
@@ -72,14 +73,22 @@ scatterplot.matrix.default<-function(x, labels=colnames(x),
         par(new=TRUE)
         boxplot(x, axes=FALSE, main="", col=col[2])
         }
+    # The following panel function adapted from Richard Heiberger
+    panel.oned <- function(x) {
+      range <- range(x)
+      delta <- diff(range)/50
+      y <- mean(range)
+      segments(x-delta, x, x+delta, x, col = col[1])
+    }
     panel.qqplot<-function(x){
         par(new=TRUE)
         qqnorm(x, axes=FALSE, xlab="", ylab="", main="", col=col[1])
         qqline(x)
         }
     panel.blank<-function(x) NULL
-    which.fn<-match(match.arg(diagonal), c("density", "boxplot", "histogram", "qqplot", "none"))
-    diag<-list(panel.density, panel.boxplot, panel.histogram, panel.qqplot, panel.blank)[[which.fn]]
+    which.fn<-match(match.arg(diagonal),
+        c("density", "boxplot", "histogram", "oned", "qqplot", "none"))
+    diag<-list(panel.density, panel.boxplot, panel.histogram, panel.oned, panel.qqplot, panel.blank)[[which.fn]]
     groups<-as.factor(if(FALSE==groups[1]) rep(1, length(x[,1])) else groups)
     n.groups<-length(levels(groups))
     if (n.groups >= length(col)) stop("number of groups exceeds number of available colors")
@@ -91,7 +100,7 @@ scatterplot.matrix.default<-function(x, labels=colnames(x),
             }
         }          
     pairs(x, labels=labels,
-        cex.axis=cex.axis, cex.main=cex.main, cex.labels=cex.labels,
+        cex.axis=cex.axis, cex.main=cex.main, cex.labels=cex.labels, cex=cex,
         diag.panel=diag,
         panel=function(x, y, ...){ 
             for (i in 1:n.groups){

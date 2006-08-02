@@ -176,3 +176,15 @@ Changes to Version 1.0-20
     
     o Small modifications to documentation. 
     
+Changes to Version 1.1-0
+
+    o  New version of linear.hypothesis (mostly due to Achim Zeleis); some changes to other functions as a consequence.
+    
+Changes to Version 1.1-1
+
+    o  Small changes to scatterplot.matrix, adapting contribution of Richard Heiberger.
+    
+    o  scatterplot now places the legend in the top margin rather than positioning it interactively.
+    
+    o  Cleaned up links to help files in standard packages.
+    

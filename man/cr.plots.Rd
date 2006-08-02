@@ -42,13 +42,13 @@ cr.plot(model, ...)
     defaults to 3 for a linear model and to 0 for a non-Gaussian glm.}
   \item{span}{span for lowess smoother.}
   \item{las}{if \code{0}, ticks labels are drawn parallel to the
-    axis; set to \code{1} for horizontal labels (see \code{\link[base]{par}}).}
+    axis; set to \code{1} for horizontal labels (see \code{\link[graphics]{par}}).}
   \item{col}{color for points and lines; the default is the \emph{second} entry
-    in the current color palette (see \code{\link[base]{palette}}
-    and \code{\link[base]{par}}).}
+    in the current color palette (see \code{\link[grDevices]{palette}}
+    and \code{\link[graphics]{par}}).}
   \item{pch}{plotting character for points; default is \code{1} 
-    (a circle, see \code{\link[base]{par}}).}
-  \item{lwd}{line width; default is \code{2} (see \code{\link[base]{par}}).}
+    (a circle, see \code{\link[graphics]{par}}).}
+  \item{lwd}{line width; default is \code{2} (see \code{\link[graphics]{par}}).}
   \item{main}{title for plot.}
   \item{\dots}{pass arguments down.}
 }
