@@ -188,3 +188,7 @@ Changes to Version 1.1-1
     
     o  Cleaned up links to help files in standard packages.
     
+Changes to Version 1.1-2
+
+    o  Fixed small bug in linear.hypothesis() that caused the RHS to printed with NAs in some circumstances.
+    

@@ -20,8 +20,8 @@ na.exclude.
 \details{
 \tabular{ll}{
 Package: \tab car\cr
-Version: \tab 1.1-1\cr
-Date: \tab 2006/8/2\cr
+Version: \tab 1.1-2\cr
+Date: \tab 2006/9/28\cr
 Depends: \tab R (>= 2.1.1)\cr
 Suggests: \tab MASS, nnet, leaps\cr
 License: \tab GPL version 2 or newer\cr
