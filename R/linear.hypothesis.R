@@ -1,3 +1,5 @@
+# last modified 28 Sept 2006 by J. Fox
+
 linear.hypothesis <- function (model, ...)       
     UseMethod("linear.hypothesis")
     
@@ -109,7 +111,7 @@ linear.hypothesis.default <- function(model, hypothesis.matrix, rhs=NULL,
     else {
         L <- if (is.null(dim(hypothesis.matrix))) t(hypothesis.matrix) 
         else hypothesis.matrix
-        if(is.null(rhs)) rhs <- 0
+        if(is.null(rhs)) rhs <- rep(0, nrow(L))
         }  
     q <- NROW(L)
     if (verbose){
