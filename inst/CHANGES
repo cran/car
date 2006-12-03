@@ -192,3 +192,13 @@ Changes to Version 1.1-2
 
     o  Fixed small bug in linear.hypothesis() that caused the RHS to printed with NAs in some circumstances.
     
+Changes to Version 1.2-0
+
+    o  vif now reports a more understandable error message when a coefficient in the model is aliased (thanks to a question posed by Ulrike Grömping).
+    
+    o  recode now takes a levels argument (as suggested by Adrian Dusa).
+    
+    o  Corrected diagonal panel functions local to scatterplot.matrix.default, which omitted ... argument (pointed out by Kurt Hornik and Brian Ripley).
+    
+    o  New methods for multivariate-linear models (mlm objects) for linear.hypothesis and Anova. Added OBrienKaiser data set for examples.
+    

@@ -7,7 +7,9 @@ vif<-function(mod){
 
 
 vif.lm <- function(mod) {
-  # version by H. Nilsson, last modified 23 Jan 05 by J. Fox
+  # version by H. Nilsson, last modified 22 Oct 06 by J. Fox
+  if (any(is.na(coef(mod)))) 
+    stop ("there are aliased coefficients in the model")
   v <- vcov(mod)
   assign <- attributes(model.matrix(mod))$assign
   if (names(coefficients(mod)[1]) == "(Intercept)") {

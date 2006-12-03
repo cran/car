@@ -6,7 +6,7 @@
  according to simple recode specifications.
 }
 \usage{
-recode(var, recodes, as.factor.result)
+recode(var, recodes, as.factor.result, levels)
 }
 
 \arguments{
@@ -15,6 +15,9 @@ recode(var, recodes, as.factor.result)
     see below.}
   \item{as.factor.result}{return a factor; default is \code{TRUE} if 
     \code{var} is a factor, \code{FALSE} otherwise.}
+  \item{levels}{an optional argument specifying the order of the
+    levels in the returned factor; the default is to use the sort order
+    of the level names.}
 }
 \details{
   Recode specifications appear in a character string, separated by

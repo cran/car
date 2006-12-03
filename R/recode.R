@@ -1,7 +1,7 @@
 # recode function (J. Fox)
-# last modified 31 Dec 2004
+# last modified 22 Oct 2006
 
-recode<-function(var, recodes, as.factor.result){
+recode<-function(var, recodes, as.factor.result, levels){
     recode.list<-rev(strsplit(recodes, ";")[[1]])
     is.fac<-is.factor(var)
     if (missing(as.factor.result)) as.factor.result <- is.fac
@@ -32,7 +32,10 @@ recode<-function(var, recodes, as.factor.result){
                 }
             }
         }
-    if (as.factor.result) result<-as.factor(result)
+    if (as.factor.result) {
+        result <- if (!missing(levels)) factor(result, levels=levels) 
+            else as.factor(result)
+            }
         else if (!is.numeric(result)) {
             result.valid <- na.omit(result)
             if (length(result.valid) == length(grep("[0-9]",result.valid)))
