@@ -1,6 +1,6 @@
 # fancy scatterplot matrices (J. Fox)
 
-# last modified: 30 July 06 by J. Fox
+# last modified: 29 November 06 by J. Fox
 
 scatterplot.matrix<-function(x, ...){
     UseMethod("scatterplot.matrix")
@@ -60,32 +60,32 @@ scatterplot.matrix.default<-function(x, labels=colnames(x),
         lines(c(x[min],x[max]),c(y.hat[min],y.hat[max]), lty=2, lwd=lwd, col=col)
         }
     # The following panel function adapted from Richard Heiberger
-    panel.density<-function(x){
+    panel.density<-function(x, ...){
         dens.x <- density(x, adjust = adjust)
         lines(dens.x$x, min(x) + dens.x$y * diff(range(x))/diff(range(dens.x$y)))
         points(x, rep(min(x), length(x)), pch = "|", col = col[1])
         }
-    panel.histogram<-function(x){
+    panel.histogram<-function(x, ...){
         par(new=TRUE)
         hist(x, main="", axes=FALSE, nclass=nclass, col=col[2])
         }
-    panel.boxplot<-function(x){
+    panel.boxplot<-function(x, ...){
         par(new=TRUE)
         boxplot(x, axes=FALSE, main="", col=col[2])
         }
     # The following panel function adapted from Richard Heiberger
-    panel.oned <- function(x) {
+    panel.oned <- function(x, ...) {
       range <- range(x)
       delta <- diff(range)/50
       y <- mean(range)
       segments(x-delta, x, x+delta, x, col = col[1])
     }
-    panel.qqplot<-function(x){
+    panel.qqplot<-function(x, ...){
         par(new=TRUE)
         qqnorm(x, axes=FALSE, xlab="", ylab="", main="", col=col[1])
         qqline(x)
         }
-    panel.blank<-function(x) NULL
+    panel.blank<-function(x, ...) NULL
     which.fn<-match(match.arg(diagonal),
         c("density", "boxplot", "histogram", "oned", "qqplot", "none"))
     diag<-list(panel.density, panel.boxplot, panel.histogram, panel.oned, panel.qqplot, panel.blank)[[which.fn]]

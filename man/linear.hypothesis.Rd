@@ -3,14 +3,16 @@
 \alias{lht}
 \alias{linear.hypothesis.lm}
 \alias{linear.hypothesis.glm}
+\alias{linear.hypothesis.mlm}
 \alias{linear.hypothesis.default}
+\alias{print.linear.hypothesis.mlm}
 
 \title{Test Linear Hypothesis}
 
 \description{
 Generic function for testing a linear hypothesis, and methods
-for linear models, generalized linear models, and other models
-that have methods for \code{coef} and \code{vcov}.
+for linear models, generalized linear models, multivariate linear
+models, and other models that have methods for \code{coef} and \code{vcov}. 
 }
 
 \usage{
@@ -24,7 +26,14 @@ lht(model, ...)
 \method{linear.hypothesis}{lm}(model, hypothesis.matrix, rhs=NULL,
     test=c("F", "Chisq"), vcov.=NULL, white.adjust=FALSE, ...)
 
-\method{linear.hypothesis}{glm}(model,  ...)  
+\method{linear.hypothesis}{glm}(model,  ...)
+
+\method{linear.hypothesis}{mlm}(model, hypothesis.matrix, rhs=NULL, SSPE, V,
+    test, idata, icontrasts=c("contr.sum", "contr.poly"), idesign, iterms, 
+    P=NULL, title="", verbose=FALSE, ...)
+       
+\method{print}{linear.hypothesis.mlm}(x, SSP=TRUE, SSPE=SSP, 
+    digits=unlist(options("digits")), ...) 
 }
 
 \arguments{
@@ -37,10 +46,41 @@ lht(model, ...)
     in symbolic form (see \emph{Details}).}
   \item{rhs}{right-hand-side vector for hypothesis, with as many entries as
     rows in the hypothesis matrix; can be omitted, in which case it defaults
-    to a vector of zeroes.}
-  \item{test}{character specifying whether to compute the finite sample
-    F statistic (with approximate F distribution) or the large sample
-    Chi-squared statistic (with asymptotic Chi-squared distribution).}
+    to a vector of zeroes. For a multivariate linear model, \code{rhs} is a
+    matrix, defaulting to 0.}
+  \item{idata}{an optional data frame giving a factor or factors defining the
+    intra-subject model for multivariate repeated-measures data. See 
+    \emph{Details} for an explanation of the intra-subject design and for
+    further explanation of the other arguments relating to intra-subject factors.}
+  \item{icontrasts}{names of contrast-generating functions to be applied by default
+    to factors and ordered factors, respectively, in the within-subject
+    ``data''; the contrasts must produce an intra-subject model 
+    matrix in which different terms are orthogonal.}
+  \item{idesign}{a one-sided model formula using the ``data'' in \code{idata} and
+    specifying the intra-subject design.}
+  \item{iterms}{the quoted name of a term, or a vector of quoted names of terms,
+   in the intra-subject design to be tested.}
+  \item{P}{transformation matrix to be applied to the repeated measures in
+    multivariate repeated-measures data; if \code{NULL} \emph{and} no 
+    intra-subject model is specified, no response-transformation is applied; if
+    an intra-subject model is specified via the \code{idata}, \code{idesign},
+    and (optionally) \code{icontrasts} arguments, then \code{P} is generated 
+    automatically from the \code{iterms} argument.}
+  \item{SSPE}{in \code{linear.hypothesis} method for \code{mlm} objects: 
+    optional error sum-of-squares-and-products matrix; if missing,
+    it is computed from the model. In \code{print} method for 
+    \code{linear.hypothesis.mlm} objects: if \code{TRUE}, 
+    print the sum-of-squares and cross-products matrix for error.}
+  \item{test}{character string, \code{"F"} or \code{"Chisq"},
+    specifying whether to compute the finite-sample
+    F statistic (with approximate F distribution) or the large-sample
+    Chi-squared statistic (with asymptotic Chi-squared distribution). For a
+    multivariate linear model, the multivariate test statistic to report --- one of
+    \code{"Pillai"}, \code{"Wilks"}, \code{"Hotelling-Lawley"}, or \code{"Roy"}, 
+    with \code{"Pillai"} as the default.}
+  \item{title}{an optional character string to label the output.}
+  \item{V}{inverse of sum of squares and products of the model matrix; if missing
+    it is computed from the model.}
   \item{vcov.}{a function for estimating the covariance matrix of the regression
     coefficients, e.g., \code{\link{hccm}}, or an estimated covariance matrix
     for \code{model}. See also \code{white.adjust}.}        
@@ -49,8 +89,12 @@ lht(model, ...)
     specifying the \code{type} argument of \code{\link{hccm}} or \code{TRUE},
     in which case \code{"hc3"} is used implicitly. For backwards compatibility.}
   \item{verbose}{If \code{TRUE}, the hypothesis matrix and right-hand-side
-    vector are printed to standard output; if \code{FALSE} (the default),
+    vector (or matrix) are printed to standard output; if \code{FALSE} (the default),
     the hypothesis is only printed in symbolic form.}
+  \item{x}{an object produced by \code{linear.hypothesis.mlm}.}
+  \item{SSP}{if \code{TRUE} (the default), print the sum-of-squares and 
+    cross-products matrix for the hypothesis and the response-transformation matrix.}
+  \item{digits}{minimum number of signficiant digits to print.}
   \item{...}{aruments to pass down.}
 }
 
@@ -87,13 +131,48 @@ lht(model, ...)
   numeric constants multiplying coefficient names (in which case the number
   precedes the coefficient, and may be separated from it by spaces or an
   asterisk); constants of 1 or -1 may be omitted.  Spaces are always optional.
-  Components are separated by positive or negative signs. See the examples below.}
+  Components are separated by plus or minus signs. See the examples below.
+  
+  A linear hypothesis for a multivariate linear model (i.e., an object of
+  class \code{"mlm"}) can optionally include an intra-subject transformation matrix
+  for a repeated-measures design.
+  If the intra-subject transformation is absent (the default), the multivariate 
+  test concerns all of the corresponding coefficients for the response variables. 
+  There are two ways to specify the transformation matrix for the
+  repeated meaures: 
+  \enumerate{
+    \item The transformation matrix can be specified directly via the \code{P} 
+    argument.
+    
+    \item A data frame can be provided defining the repeated-measures factor or
+    factors 
+    via \code{idata}, with default contrasts given by the \code{icontrasts}
+    argument. An intra-subject model-matrix is generated from the one-sided formula 
+    specified by the \code{idesign} argument; columns of the model matrix 
+    corresponding to different terms in the intra-subject model must be orthogonal 
+    (as is insured by the default contrasts). Note that the contrasts given in
+    \code{icontrasts} can be overridden by assigning specific contrasts to the
+    factors in \code{idata}. 
+    The repeated-measures transformation matrix consists of the
+    columns of the intra-subject model matrix corresponding to the term or terms
+    in \code{iterms}. In most instances, this will be the simpler approach, and
+    indeed, most tests of interests can be generated automatically via the
+    \code{\link{Anova}} function.
+  }
 }
 
 \value{
-  An object of class \code{"anova"} which contains the residual degrees of freedom
+  For a univariate model, an object of class \code{"anova"} 
+  which contains the residual degrees of freedom
   in the model, the difference in degrees of freedom, Wald statistic
   (either \code{"F"} or \code{"Chisq"}) and corresponding p value.
+  
+  For a multivariate linear model, an object of class 
+  \code{"linear.hypothesis.mlm"}, which contains sums-of-squares-and-product
+  matrices for the hypothesis and for error, degrees of freedom for the 
+  hypothesis and error, and some other information.
+  
+  The returned object normally would be printed.
 }
 
 
@@ -101,6 +180,14 @@ lht(model, ...)
 \references{
   Fox, J. (1997)
   \emph{Applied Regression, Linear Models, and Related Methods.} Sage.
+  
+  Hand, D. J., and Taylor, C. C. (1987)
+  \emph{Multivariate Analysis of Variance and Repeated Measures: A Practical
+  Approach for Behavioural Scientists.} Chapman and Hall.
+  
+  O'Brien, R. G., and Kaiser, M. K. (1985)
+  MANOVA method for analyzing repeated measures designs: An extensive primer.
+  \emph{Psychological Bulletin} \bold{97}, 316--333.
 }
 
 \author{Achim Zeileis and John Fox \email{jfox@mcmaster.ca}}
@@ -112,7 +199,7 @@ lht(model, ...)
 }
 
 \examples{
-mod.davis <- lm(weight~repwt, data=Davis)
+mod.davis <- lm(weight ~ repwt, data=Davis)
 
 ## the following are equivalent:
 linear.hypothesis(mod.davis, diag(2), c(0,1))
@@ -153,7 +240,31 @@ coefs <- names(coef(mod.duncan.2))
 linear.hypothesis(mod.duncan.2, coefs[-1]) 
 
 ## test all interaction coefficients equal to 0
-linear.hypothesis(mod.duncan.2, coefs[grep(":", coefs)], verbose=TRUE) 
+linear.hypothesis(mod.duncan.2, coefs[grep(":", coefs)], verbose=TRUE)
+
+## a multivariate linear model for repeated-measures data
+## see ?OBrienKaiser for a description of the data set used in this example.
+
+mod.ok <- lm(cbind(pre.1, pre.2, pre.3, pre.4, pre.5, 
+                     post.1, post.2, post.3, post.4, post.5, 
+                     fup.1, fup.2, fup.3, fup.4, fup.5) ~  treatment*gender, 
+                data=OBrienKaiser)
+coef(mod.ok)
+
+## specify the model for the repeated measures:
+phase <- factor(rep(c("pretest", "posttest", "followup"), c(5, 5, 5)),
+    levels=c("pretest", "posttest", "followup"))
+hour <- ordered(rep(1:5, 3))
+idata <- data.frame(phase, hour)
+idata
+ 
+## test the four-way interaction among the between-subject factors 
+## treatment and gender, and the intra-subject factors 
+## phase and hour              
+    
+linear.hypothesis(mod.ok, c("treatment1:gender1", "treatment2:gender1"),
+    title="treatment:gender:phase:hour", idata=idata, idesign=~phase*hour, 
+    iterms="phase:hour")
 }
 
 \keyword{htest}

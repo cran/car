@@ -20,8 +20,8 @@ na.exclude.
 \details{
 \tabular{ll}{
 Package: \tab car\cr
-Version: \tab 1.1-2\cr
-Date: \tab 2006/9/28\cr
+Version: \tab 1.2-0\cr
+Date: \tab 2006/12/3\cr
 Depends: \tab R (>= 2.1.1)\cr
 Suggests: \tab MASS, nnet, leaps\cr
 License: \tab GPL version 2 or newer\cr
@@ -62,6 +62,7 @@ Mandel                  Contrived Collinear Data
 Migration               Canadian Interprovincial Migration Data
 Moore                   Status, Authoritarianism, and Conformity
 Mroz                    U.S. Women's Labor-Force Participation
+OBrienKaiser            O'Brien and Kaiser's Repeated-Measures Data
 Ornstein                Interlocking Directorates Among Major Canadian
                         Firms
 Prestige                Prestige of Canadian Occupations
@@ -69,6 +70,7 @@ Quartet                 Four Regression Datasets
 Robey                   Fertility and Contraception
 SLID                    Survey of Labour and Income Dynamics
 Sahlins                 Agricultural Production in Mazulu Village
+Soils                   Soil Compositions of Physical and Chemical Characteristics
 States                  Education and Related Statistics for the U.S.
                         States
 UN                      GDP and Infant Mortality
