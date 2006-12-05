@@ -20,9 +20,9 @@ na.exclude.
 \details{
 \tabular{ll}{
 Package: \tab car\cr
-Version: \tab 1.2-0\cr
-Date: \tab 2006/12/3\cr
-Depends: \tab R (>= 2.1.1)\cr
+Version: \tab 1.2-1\cr
+Date: \tab 2006/12/5\cr
+Depends: \tab R (>= 2.1.1), stats, graphics\cr
 Suggests: \tab MASS, nnet, leaps\cr
 License: \tab GPL version 2 or newer\cr
 URL: \tab http://www.r-project.org, http://socserv.socsci.mcmaster.ca/jfox/\cr
@@ -93,7 +93,7 @@ ellipse                 Ellipses, Data Ellipses, and Confidence
                         Ellipses
 hccm                    Heteroscedasticity-Corrected Covariance
                         Matrices
-influence.plot          Regression Influence Plot
+influencePlot           Regression Influence Plot
 inv                     Internal car functions
 levene.test             Levene's Test
 leverage.plots          Regression Leverage Plots

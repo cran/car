@@ -1,3 +1,5 @@
+# last modified 5 December 2006 by J. Fox
+
 export(Anova,
     Ask,
     av.plot,
@@ -25,7 +27,7 @@ export(Anova,
     ellipse,
     has.intercept,
     hccm,
-    influence.plot,
+    influencePlot,
     inv,
     is.aliased,
     levene.test,
@@ -89,7 +91,7 @@ S3method(durbin.watson, lm)
 S3method(has.intercept, default)     
 S3method(hccm, default)              
 S3method(hccm, lm)   
-S3method(influence.plot, lm)         
+S3method(influencePlot, lm)         
 S3method(leverage.plot, glm)         
 S3method(leverage.plot, lm)     
 S3method(linear.hypothesis, default) 

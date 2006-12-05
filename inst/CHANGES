@@ -202,3 +202,7 @@ Changes to Version 1.2-0
     
     o  New methods for multivariate-linear models (mlm objects) for linear.hypothesis and Anova. Added OBrienKaiser data set for examples.
     
+Changes to Version 1.2-0
+
+    o  The name of the function influence.plot was changed to influencePlot to avoid confusion with the influence generic in the stats package.
+    
