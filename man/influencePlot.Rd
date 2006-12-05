@@ -1,6 +1,7 @@
-\name{influence.plot}
+\name{influencPlot}
+\alias{influencePlot}
+\alias{influencePlot.lm}
 \alias{influence.plot}
-\alias{influence.plot.lm}
 
 \title{Regression Influence Plot}
 \description{
@@ -9,10 +10,16 @@
   at twice and three times the average hat value, horizontal reference lines at -2, 0, and 2 on the
   studentized-residual scale.
 }
-\usage{
-influence.plot(model, ...)
 
-\method{influence.plot}{lm}(model, scale = 10, col = c(1, 2), labels = names(rstud), 
+\note{
+  This function used to be named \code{influence.plot}; the name was changed to avoid confusion with
+  the \code{influence} generic function.
+}
+
+\usage{
+influencePlot(model, ...)
+
+\method{influencePlot}{lm}(model, scale = 10, col = c(1, 2), labels = names(rstud), 
   identify.cex=par("cex"), identify.col=par("col"), ...)
 }
 
@@ -43,7 +50,7 @@ influence.plot(model, ...)
 
 \examples{
     \dontrun{
-    influence.plot(lm(prestige ~ income + education, data=Duncan))
+    influencePlot(lm(prestige ~ income + education, data=Duncan))
     }
 }
 

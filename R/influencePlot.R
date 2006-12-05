@@ -1,11 +1,11 @@
-# moved from Rcmdr 5 February 2006
+# moved from Rcmdr 5 December 2006
 
 # the following function adapted from Fox, An R and S-PLUS Companion to Applied Regression
-influence.plot <- function(model, ...){
-    UseMethod("influence.plot")
+influencePlot <- function(model, ...){
+    UseMethod("influencePlot")
     }
 
-influence.plot.lm <- function(model, scale=10, col=c(1,2),
+influencePlot.lm <- function(model, scale=10, col=c(1,2),
     labels=names(rstud), identify.cex=par("cex"), identify.col=par("col"), ...){
     hatval <- hatvalues(model)
     rstud <- rstudent(model)
