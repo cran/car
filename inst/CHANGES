@@ -202,7 +202,17 @@ Changes to Version 1.2-0
     
     o  New methods for multivariate-linear models (mlm objects) for linear.hypothesis and Anova. Added OBrienKaiser data set for examples.
     
-Changes to Version 1.2-0
+Changes to Version 1.2-1
 
     o  The name of the function influence.plot was changed to influencePlot to avoid confusion with the influence generic in the stats package.
+    
+Changes to Version 1.2-2
+
+    o  Bug fixed in the bc function (reported by Henric Nilsson).
+    
+    o  Error in Bfox data set is now pointed out.
+    
+    o  levene.test now checks that second argument is a factor.
+    
+    o  Removed extended=FALSE argument to gsub() in some internal functions, since this argument is ignored when fixed=TRUE and generates a warning in R 2.6.0 (reported by Arne Henningsen).
     
