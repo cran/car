@@ -36,6 +36,11 @@ Time-series data on Canadian women's labor-force participation,
       }
     }
   }
+  
+\section{Warning}{
+The value of \code{tfr} for 1973 is misrecorded as 2931; it should be 1931.
+}
+
 
 \source{
    Fox, B. (1980) 

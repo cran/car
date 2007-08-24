@@ -1,8 +1,8 @@
 # Box-Cox power transformations, with automatic start (J. Fox)
 
-# last modified 8 Oct 05 by J. Fox (after a suggestion by Spencer Graves)
+# last modified 1 June 07 by J. Fox (after a suggestion by Henric Nilsson)
 
-bc<-function(x, p, start=0) box.cox(x, p, start)
+bc<-function(x, p, ...) box.cox(x, p, ...)
 
 box.cox<-function(x, p, start=0){
     nx <- length(x)

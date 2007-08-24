@@ -9,7 +9,7 @@
 \usage{
 box.cox(x, p, start=0)
 
-bc(x, p, start=0)
+bc(x, p, ...)
 }
 
 \arguments{
@@ -19,6 +19,7 @@ bc(x, p, start=0)
     returned.}
   \item{start}{constant to be added to each value of \code{x} prior
     to transformation.}
+  \item{...}{argument passed down.}
 }
 \details{
   Computes \eqn{x^{\prime }=(x^p-1)/p}{x' = (x^p - 1)/p} 

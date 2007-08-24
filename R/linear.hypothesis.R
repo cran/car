@@ -1,4 +1,4 @@
-# last modified 30 Nov 2006 by J. Fox
+# last modified 19 Aug 2007 by J. Fox
 
 has.intercept.matrix <- function (model, ...) {
     "(Intercept)" %in% colnames(model)
@@ -8,14 +8,14 @@ has.intercept.matrix <- function (model, ...) {
 makeHypothesis <- function(cnames, hypothesis, rhs = NULL){
     parseTerms <- function(terms){
         component <- gsub("^[-\\ 0-9\\.]+", "", terms)
-        component <- gsub(" ", "", component, extended=FALSE, fixed=TRUE)
+        component <- gsub(" ", "", component, fixed=TRUE)
         component
         }
     stripchars <- function(x) {
-        x <- gsub(" ", "", x, extended = FALSE, fixed = TRUE)
-        x <- gsub("*", "", x, extended = FALSE, fixed = TRUE)
-        x <- gsub("-", "+-", x, extended = FALSE, fixed = TRUE)
-        x <- strsplit(x, "+", extended = FALSE, fixed = TRUE)[[1]]
+        x <- gsub(" ", "", x, fixed = TRUE)
+        x <- gsub("*", "", x, fixed = TRUE)
+        x <- gsub("-", "+-", x, fixed = TRUE)
+        x <- strsplit(x, "+", fixed = TRUE)[[1]]
         x <- x[x!=""]
         x
         }
@@ -35,7 +35,7 @@ makeHypothesis <- function(cnames, hypothesis, rhs = NULL){
         x
         }
     coefvector <- function(x, y) {
-        rv <- gsub(" ", "", x, extended=FALSE, fixed=TRUE) ==
+        rv <- gsub(" ", "", x, fixed=TRUE) ==
             parseTerms(y)
         if (!any(rv)) return(0)
         if (sum(rv) > 1) stop('The hypothesis "', hypothesis, 
@@ -82,11 +82,11 @@ printHypothesis <- function(L, rhs, cnames){
         nms <- cnames[sel]
         h <- paste(h, nms) 
         h <- gsub("-1", "-", h)
-        h <- gsub("+1", "+", h, extended=FALSE, fixed=TRUE)
+        h <- gsub("+1", "+", h, fixed=TRUE)
         h <- gsub("-", " - ", h)
-        h <- gsub("+", "  + ", h, extended=FALSE, fixed=TRUE)
+        h <- gsub("+", "  + ", h, fixed=TRUE)
         h <- paste(h, collapse="")
-        h <- gsub("  ", " ", h, extended=FALSE, fixed=TRUE)
+        h <- gsub("  ", " ", h, fixed=TRUE)
         h <- sub("^\\ \\+", "", h)
         h <- sub("^\\ ", "", h)
         h <- sub("^-\\ ", "-", h)
