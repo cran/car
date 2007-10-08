@@ -1,6 +1,6 @@
 \name{Quartet}
 \alias{Quartet}
-\non_function{}
+\docType{data}
 
 \title{Four Regression Datasets}
 

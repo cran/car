@@ -1,6 +1,6 @@
 \name{Greene}
 \alias{Greene}
-\non_function{}
+\docType{data}
 
 \title{Refugee Appeals}
 

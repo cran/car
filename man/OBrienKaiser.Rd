@@ -40,14 +40,12 @@
   }
 }
 
-}
 \source{
   O'Brien, R. G., and Kaiser, M. K. (1985)
   MANOVA method for analyzing repeated measures designs: An extensive primer.
   \emph{Psychological Bulletin} \bold{97}, 316--333.
 }
 
-}
 \examples{
 OBrienKaiser
 contrasts(OBrienKaiser$treatment)

@@ -1,6 +1,6 @@
 \name{Migration}
 \alias{Migration}
-\non_function{}
+\docType{data}
 
 \title{Canadian Interprovincial Migration Data}
 

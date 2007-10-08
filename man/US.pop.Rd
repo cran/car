@@ -1,6 +1,6 @@
 \name{US.pop}
 \alias{US.pop}
-\non_function{}
+\docType{data}
 
 \title{Population of the United States}
 

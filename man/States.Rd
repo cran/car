@@ -1,6 +1,6 @@
 \name{States}
 \alias{States}
-\non_function{}
+\docType{data}
 
 \title{Education and Related Statistics for the U.S. States}
 

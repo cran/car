@@ -1,6 +1,6 @@
 \name{Anscombe}
 \alias{Anscombe}
-\non_function{}
+\docType{data}
 
 \title{U. S. State Public-School Expenditures} 
 

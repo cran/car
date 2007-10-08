@@ -1,6 +1,6 @@
 \name{Vocab}
 \alias{Vocab}
-\non_function{}
+\docType{data}
 
 \title{Vocabulary and Education}
 

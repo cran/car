@@ -1,6 +1,6 @@
 \name{Mroz}
 \alias{Mroz}
-\non_function{}
+\docType{data}
 
 \title{U.S. Women's Labor-Force Participation}
 \usage{Mroz}

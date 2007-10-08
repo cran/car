@@ -1,6 +1,6 @@
 \name{Blackmoor}
 \alias{Blackmoor}
-\non_function{}
+\docType{data}
 \title{Exercise Histories of Eating-Disordered and Control Subjects}
 \usage{Blackmoor}
 \description{

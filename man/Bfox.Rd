@@ -1,6 +1,6 @@
 \name{Bfox}
 \alias{Bfox}
-\non_function{}
+\docType{data}
 
 \title{Canadian Women's Labour-Force Participation}
 \description{

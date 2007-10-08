@@ -1,6 +1,6 @@
 \name{Adler}
 \alias{Adler}
-\non_function{}
+\docType{data}
 
 \title{Experimenter Expectations} 
 

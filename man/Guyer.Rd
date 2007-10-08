@@ -1,6 +1,6 @@
 \name{Guyer}
 \alias{Guyer}
-\non_function{}
+\docType{data}
 
 \title{Anonymity and Cooperation}
 

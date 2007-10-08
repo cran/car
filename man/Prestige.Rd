@@ -1,6 +1,6 @@
 \name{Prestige}
 \alias{Prestige}
-\non_function{}
+\docType{data}
 
 \title{Prestige of Canadian Occupations}
 

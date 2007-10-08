@@ -19,13 +19,11 @@
   }
 }
 
-}
 \source{
   Hand, D. J., Daly, F., Lunn, A. D., McConway, K. J., and E., O. (1994)
   \emph{A Handbook of Small Data Sets}. Chapman and Hall.
 }
 
-}
 \examples{
 Pottery
 }

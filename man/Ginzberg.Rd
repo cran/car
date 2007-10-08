@@ -1,6 +1,6 @@
 \name{Ginzberg}
 \alias{Ginzberg}
-\non_function{}
+\docType{data}
 
 \title{Data on Depression}
 

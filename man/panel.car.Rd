@@ -26,7 +26,6 @@ panel.car(x, y, col, pch, cex=1, span=0.5, lwd=2,
     and \code{reg.line}.}
 }
 
-}
 \value{
   \code{NULL}. This function is used for its side effect: producing
   a panel in a coplot.

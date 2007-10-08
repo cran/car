@@ -1,6 +1,6 @@
 \name{Leinhardt}
 \alias{Leinhardt}
-\non_function{}
+\docType{data}
 
 \title{Data on Infant-Mortality}
 

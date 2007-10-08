@@ -1,6 +1,6 @@
 \name{Baumann}
 \alias{Baumann}
-\non_function{}
+\docType{data}
 \title{Methods of Teaching Reading Comprehension}
 \description{
 The \code{Baumann} data frame has 66 rows and 6 columns.

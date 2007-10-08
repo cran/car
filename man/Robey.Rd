@@ -1,6 +1,6 @@
 \name{Robey}
 \alias{Robey}
-\non_function{}
+\docType{data}
 
 \title{Fertility and Contraception}
 

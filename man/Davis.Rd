@@ -1,6 +1,6 @@
 \name{Davis}
 \alias{Davis}
-\non_function{}
+\docType{data}
 
 \title{Self-Reports of Height and Weight}
 

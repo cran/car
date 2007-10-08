@@ -1,6 +1,6 @@
 \name{Chile}
 \alias{Chile}
-\non_function{}
+\docType{data}
 \title{Voting Intentions in the 1988 Chilean Plebiscite}
 \description{
 The \code{Chile} data frame has 2700 rows and 8 columns.
