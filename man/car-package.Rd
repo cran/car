@@ -20,11 +20,11 @@ na.exclude.
 \details{
 \tabular{ll}{
 Package: \tab car\cr
-Version: \tab 1.2-2\cr
-Date: \tab 2007/8/19\cr
+Version: \tab 1.2-3\cr
+Date: \tab 2007/10/08\cr
 Depends: \tab R (>= 2.1.1), stats, graphics\cr
 Suggests: \tab MASS, nnet, leaps\cr
-License: \tab GPL version 2 or newer\cr
+License: \tab GPL (>= 2)\cr
 URL: \tab http://www.r-project.org, http://socserv.socsci.mcmaster.ca/jfox/\cr
 }
 

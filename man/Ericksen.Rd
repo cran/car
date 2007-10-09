@@ -1,6 +1,6 @@
 \name{Ericksen}
 \alias{Ericksen}
-\non_function{}
+\docType{data}
 
 \title{The 1980 U.S. Census Undercount}
 

@@ -1,6 +1,6 @@
 \name{DavisThin}
 \alias{DavisThin}
-\non_function{}
+\docType{data}
 \title{Davis's Data on Drive for Thinness}
 \usage{DavisThin}
 \description{

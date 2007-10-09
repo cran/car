@@ -1,6 +1,6 @@
 \name{Ornstein}
 \alias{Ornstein}
-\non_function{}
+\docType{data}
 \title{Interlocking Directorates Among Major Canadian Firms}
 
 \description{

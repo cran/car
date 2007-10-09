@@ -1,6 +1,6 @@
 \name{Chirot}
 \alias{Chirot}
-\non_function{}
+\docType{data}
 
 \title{The 1907 Romanian Peasant Rebellion}
 

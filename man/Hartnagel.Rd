@@ -1,6 +1,6 @@
 \name{Hartnagel}
 \alias{Hartnagel}
-\non_function{}
+\docType{data}
 
 \title{Canadian Crime-Rates Time Series}
 

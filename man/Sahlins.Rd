@@ -1,6 +1,6 @@
 \name{Sahlins}
 \alias{Sahlins}
-\non_function{}
+\docType{data}
 
 \title{Agricultural Production in Mazulu Village}
 

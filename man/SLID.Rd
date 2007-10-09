@@ -1,6 +1,6 @@
 \name{SLID}
 \alias{SLID}
-\non_function{}
+\docType{data}
 \title{Survey of Labour and Income Dynamics}
 \description{
 The \code{SLID} data frame has 7425 rows and 5 columns.
@@ -34,7 +34,7 @@ A factor with levels:
 }
 }
 
-}
+
 \source{
  The data are taken from the public-use dataset made available by
  Statistics Canada, and prepared by the Institute for Social Research,

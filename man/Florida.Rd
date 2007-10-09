@@ -1,6 +1,6 @@
 \name{Florida}
 \alias{Florida}
-\non_function{}
+\docType{data}
 \title{Florida County Voting}
 \description{
 The \code{Florida} data frame has 67 rows and 11 columns.

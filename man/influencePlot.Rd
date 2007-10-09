@@ -33,7 +33,6 @@ influencePlot(model, ...)
   \item{\dots}{arguments to pass to the \code{plot} function.}
 }
 
-}
 \value{
   Returns the indices of identified points.
 }

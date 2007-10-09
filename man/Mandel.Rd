@@ -1,6 +1,6 @@
 \name{Mandel}
 \alias{Mandel}
-\non_function{}
+\docType{data}
 
 \title{Contrived Collinear Data}
 

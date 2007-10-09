@@ -1,6 +1,6 @@
 \name{Duncan}
 \alias{Duncan}
-\non_function{}
+\docType{data}
 
 \title{Duncan's Occupational Prestige Data}
 

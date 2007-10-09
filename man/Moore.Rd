@@ -1,6 +1,6 @@
 \name{Moore}
 \alias{Moore}
-\non_function{}
+\docType{data}
 
 \title{Status, Authoritarianism, and Conformity}
 

@@ -1,6 +1,6 @@
 \name{Friendly}
 \alias{Friendly}
-\non_function{}
+\docType{data}
 
 \title{Format Effects on Recall}
 

@@ -1,6 +1,6 @@
 \name{Burt}
 \alias{Burt}
-\non_function{}
+\docType{data}
 
 \title{Fraudulent Data on IQs of Twins Raised Apart}
 

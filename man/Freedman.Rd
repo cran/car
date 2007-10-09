@@ -1,6 +1,6 @@
 \name{Freedman}
 \alias{Freedman}
-\non_function{}
+\docType{data}
 \title{Crowding and Crime in U. S. Metropolitan Areas}
 \description{
 The \code{Freedman} data frame has 110 rows and 4 columns.

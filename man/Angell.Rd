@@ -1,6 +1,6 @@
 \name{Angell}
 \alias{Angell}
-\non_function{}
+\docType{data}
 
 \title{Moral Integration of American Cities}
 

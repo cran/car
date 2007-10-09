@@ -1,6 +1,6 @@
 \name{Cowles}
 \alias{Cowles}
-\non_function{}
+\docType{data}
 \title{Cowles and Davis's Data on Volunteering}
 \usage{Cowles}
 \description{
@@ -18,7 +18,6 @@ of volunteering for psychological research.
   }
 }
 
-}
 \source{
  Cowles, M. and C. Davis (1987)
  The subject matter of psychology: Volunteers.

@@ -1,6 +1,6 @@
 \name{UN}
 \alias{UN}
-\non_function{}
+\docType{data}
 \title{GDP and Infant Mortality}
 \description{
 The \code{UN} data frame has 207 rows and 2 columns.

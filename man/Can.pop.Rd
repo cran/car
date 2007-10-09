@@ -1,6 +1,6 @@
 \name{Can.pop}
 \alias{Can.pop}
-\non_function{}
+\docType{data}
 
 \title{Canadian Population Data}
 
