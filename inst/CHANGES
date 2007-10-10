@@ -220,3 +220,7 @@ Changes to Version 1.2-3
 
     o  Replaced obsolete \non_function{} markup in Rd files (reported by Kurt Hornik).
     
+Changes to Version 1.2-4
+
+    o  Avoid warnings in linear.hypothesis() produced by unnecessary use of extended = FALSE argument to strsplit() (problem reported by Alejandro Collantes Chávez-Costa).
+    

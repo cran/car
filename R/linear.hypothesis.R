@@ -1,4 +1,4 @@
-# last modified 19 Aug 2007 by J. Fox
+# last modified 10 Oct 2007 by J. Fox
 
 has.intercept.matrix <- function (model, ...) {
     "(Intercept)" %in% colnames(model)
@@ -40,7 +40,7 @@ makeHypothesis <- function(cnames, hypothesis, rhs = NULL){
         if (!any(rv)) return(0)
         if (sum(rv) > 1) stop('The hypothesis "', hypothesis, 
             '" is not well formed.')
-        rv <- sum(char2num(unlist(strsplit(y[rv], x, extended=FALSE, fixed=TRUE))))
+        rv <- sum(char2num(unlist(strsplit(y[rv], x, fixed=TRUE))))
         if (is.na(rv))
           stop('The hypothesis "', hypothesis, 
             '" is not well formed: contains non-numeric coefficients.')
@@ -50,7 +50,7 @@ makeHypothesis <- function(cnames, hypothesis, rhs = NULL){
     if (length(hypothesis) > 1)
         return(rbind(Recall(cnames, hypothesis[1], rhs[1]), 
             Recall(cnames, hypothesis[-1], rhs[-1])))
-    lhs <- strsplit(hypothesis, "=", extended = FALSE, fixed = TRUE)[[1]]
+    lhs <- strsplit(hypothesis, "=", fixed=TRUE)[[1]]
     if (is.null(rhs)) {
         if (length(lhs) < 2) rhs <- "0"
             else if (length(lhs) == 2) {
