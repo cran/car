@@ -1,6 +1,6 @@
 Package: car
-Version: 1.2-4
-Date: 2007/10/10
+Version: 1.2-5
+Date: 2007/10/11
 Title: Companion to Applied Regression
 Author: John Fox <jfox@mcmaster.ca>. I am grateful to Douglas Bates, David Firth, Michael Friendly, Gregor Gorjanc, Spencer Graves, Richard Heiberger, Georges Monette, Henric Nilsson, Brian Ripley, Sanford Weisberg, and Achim Zeleis for various suggestions and contributions.
 Maintainer: John Fox <jfox@mcmaster.ca>
@@ -19,4 +19,4 @@ Description:
   na.action = na.omit or na.exclude.
 License: GPL (>= 2)
 URL: http://www.r-project.org, http://socserv.socsci.mcmaster.ca/jfox/
-Packaged: Wed Oct 10 10:09:53 2007; John Fox
+Packaged: Thu Oct 11 10:02:21 2007; John Fox
