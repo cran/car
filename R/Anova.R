@@ -1,6 +1,6 @@
 # Type II and III tests for linear, generalized linear, and other models (J. Fox)
 
-# last modified 2 December 06
+# last modified 26 October 2007
 
 relatives<-function(term, names, factors){
     is.relative<-function(term1, term2) {
@@ -20,6 +20,11 @@ Anova<-function(mod, ...){
  
 Anova.lm<-function(mod, error, type=c("II","III", 2, 3), ...){
     type<-match.arg(type)
+    if (has.intercept(mod) && length(coef(mod)) == 1 
+            && (type == "2" || type == "II")) {
+        type <- "III"
+        warning("the model contains only an intercept: Type III test substituted")
+        }
     switch(type,
         II=Anova.II.lm(mod, error, ...),
         III=Anova.III.lm(mod, error, ...),
@@ -28,7 +33,6 @@ Anova.lm<-function(mod, error, type=c("II","III", 2, 3), ...){
     }
 
 Anova.aov <- function(mod, ...){
-    # last modified 8 Mar 2002 by J. Fox
     class(mod) <- "lm"
     Anova.lm(mod, ...)
     }
@@ -36,7 +40,6 @@ Anova.aov <- function(mod, ...){
         # type II
         
 Anova.II.lm<-function(mod, error, ...){
-    # last modified by J.Fox 04 April 2005
     if (!missing(error)){
         sumry<-summary(error, corr=FALSE)
         s2<-sumry$sigma^2
@@ -90,7 +93,6 @@ Anova.II.lm<-function(mod, error, ...){
         # type III
         
 Anova.III.lm<-function(mod, error, ...){
-    # last modified by J.Fox 4 April 2005
     if (!missing(error)){
         sumry<-summary(error, corr=FALSE)
         s2<-sumry$sigma^2
@@ -140,8 +142,12 @@ Anova.III.lm<-function(mod, error, ...){
     
 Anova.glm<-function(mod, type=c("II","III", 2, 3), test.statistic=c("LR", "Wald", "F"), 
     error, error.estimate=c("pearson", "dispersion", "deviance"), ...){
-    #last modified by J. Fox 1 Dec 2006
     type<-match.arg(type)
+    if (has.intercept(mod) && length(coef(mod)) == 1 
+            && (type == "2" || type == "II")) {
+        type <- "III"
+        warning("the model contains only an intercept: Type III test substituted")
+        }
     test.statistic<-match.arg(test.statistic)
     error.estimate<-match.arg(error.estimate)
     switch(type,
@@ -169,7 +175,6 @@ Anova.glm<-function(mod, type=c("II","III", 2, 3), test.statistic=c("LR", "Wald"
             # Wald test
         
 Anova.III.Wald.glm<-function(mod, ...){
-    # last modified by J.Fox 11 Dec 2000
     intercept<-has.intercept(mod)
     p<-length(coefficients(mod))
     I.p<-diag(p)
@@ -225,7 +230,6 @@ Anova.III.LR.glm<-function(mod, ...){
             # F test
 
 Anova.III.F.glm<-function(mod, error, error.estimate, ...){
-    # last modified by J. Fox 25 Apr 2003
     fam <- family(mod)$family
     if (fam == "binomial" || fam == "poisson") 
         warning("dispersion parameter estimated from the Pearson residuals, not taken as 1")
@@ -265,7 +269,6 @@ Anova.III.F.glm<-function(mod, error, error.estimate, ...){
             # Wald test
         
 Anova.II.Wald.glm<-function(mod, ...){
-    # last modified by J.Fox 4 April 2005
     chisq.term<-function(term){
         which.term<-which(term==names)
         subs.term<-which(assign==which.term)
@@ -308,7 +311,6 @@ Anova.II.Wald.glm<-function(mod, ...){
             # LR test
             
 Anova.II.LR.glm <- function(mod, ...){
-    # last modified 5 Nov 2002 by J. Fox
     # (some code adapted from drop1.glm)
     which.nms <- function(name) which(asgn == which(names == name))
     fac <- attr(mod$terms, "factors")
@@ -354,7 +356,6 @@ Anova.II.LR.glm <- function(mod, ...){
             # F test
             
 Anova.II.F.glm <- function(mod, error, error.estimate, ...){
-    # last modified 25 Apr 2003 by J. Fox
     # (some code adapted from drop1.glm)
     fam <- family(mod)$family
     if (fam == "binomial" || fam == "poisson") 
@@ -409,12 +410,16 @@ Anova.II.F.glm <- function(mod, error, error.estimate, ...){
      }
 
 # multinomial logit models (via multinom in the nnet package)
-# last modified: 1 Dec 06 by J. Fox
 
 Anova.multinom <-
 function (mod, type = c("II", "III", 2, 3), ...)
 {
     type <- match.arg(type)
+    if (has.intercept(mod) && length(coef(mod)) == 1 
+            && (type == "2" || type == "II")) {
+        type <- "III"
+        warning("the model contains only an intercept: Type III test substituted")
+        }
     switch(type,
         II = Anova.II.multinom(mod, ...),
         III = Anova.III.multinom(mod, ...),
@@ -491,12 +496,16 @@ Anova.III.multinom <- function (mod, ...)
 
 
 # proportional-odds logit models (via polr in the MASS package)
-# last modified 1 Oct 05 by J. Fox
 
  Anova.polr <-
 function (mod, type = c("II", "III", 2, 3), ...)
 {
     type <- match.arg(type)
+    if (has.intercept(mod) && length(coef(mod)) == 1 
+            && (type == "2" || type == "II")) {
+        type <- "III"
+        warning("the model contains only an intercept: Type III test substituted")
+        }
     switch(type,
         II = Anova.II.polr(mod, ...),
         III = Anova.III.polr(mod, ...),
@@ -570,7 +579,6 @@ Anova.III.polr <- function (mod, ...)
 }
 
 # multivariate linear models
-# last modified 1 Dec 06 by J. Fox
 
 has.intercept.mlm <- function (model, ...) 
     any(row.names(coefficients(model)) == "(Intercept)")
@@ -579,6 +587,11 @@ Anova.mlm <- function(mod, type=c("II","III", 2, 3), SSPE, error.df, idata,
     idesign, icontrasts=c("contr.sum", "contr.poly"),
     test.statistic=c("Pillai", "Wilks", "Hotelling-Lawley", "Roy"),...){
     type <- match.arg(type)
+    if (has.intercept(mod) && nrow(coef(mod)) == 1 
+            && (type == "2" || type == "II")) {
+        type <- "III"
+        warning("the model contains only an intercept: equivalent Type III test substituted")
+        }
     test.statistic <- match.arg(test.statistic)
     if (missing(SSPE)) SSPE <- crossprod(residuals(mod))
     if (missing(idata)) {
@@ -801,7 +814,15 @@ summary.Anova.mlm <- function(object, test.statistic, multivariate=TRUE, univari
         }
     HF <- function(gg, error.df, p){ # Huynh-Feldt correction
         ((error.df + 1)*p*gg - 2)/(p*(error.df - p*gg))
-        }        
+        }
+##    mauchly <- function(SSPE, df){ # Mauchly sphericity test
+##        p <- nrow(SSPE)
+##        if (p < 2) return(c(NA, NA))
+##        SSPE <- list(SSD=SSPE, df=df, call=NULL)
+##        class(SSPE) <- "SSD"
+##        mt <- mauchly.test(SSPE)
+##        c(mauchley=mt$statistic, p=mt$p.value)
+##        }        
     if (missing(test.statistic)) test.statistic <- c("Pillai", "Wilks", "Hotelling-Lawley", "Roy")
     test.statistic <- match.arg(test.statistic, c("Pillai", "Wilks", "Hotelling-Lawley", "Roy"),
             several.ok=TRUE)
@@ -829,9 +850,11 @@ summary.Anova.mlm <- function(object, test.statistic, multivariate=TRUE, univari
         error.df <- object$error.df
         table <- matrix(0, nterms, 6)
         table2 <- matrix(0, nterms, 4)
-        rownames(table2) <- rownames(table) <- object$terms
+        table3 <- matrix(0, nterms, 2)
+        rownames(table3) <- rownames(table2) <- rownames(table) <- object$terms
         colnames(table) <- c("SS", "num Df", "Error SS", "den Df", "F", "Pr(>F)")
         colnames(table2) <- c("GG eps", "Pr(>F[GG])",  "HF eps", "Pr(>F[HF])")
+        colnames(table3) <- c("Test statistic", "p-value")
         for (term in 1:nterms){
             SSP <- object$SSP[[term]]
             SSPE <- object$SSPE[[term]]
@@ -849,20 +872,24 @@ summary.Anova.mlm <- function(object, test.statistic, multivariate=TRUE, univari
                 table[term, "den Df"], lower=FALSE)
             table2[term, "GG eps"] <- gg
             table2[term, "HF eps"] <- HF(gg, error.df, p) 
+##            table3[term,] <- mauchly(SSPE, object$error.df)
             }
-        cat("\nUnivariate Type", object$type, 
-            "Repeated-Measures ANOVA Assuming Compound Symmetry\n\n")
-        print.anova(table)
+##        cat("\nUnivariate Type", object$type, 
+##            "Repeated-Measures ANOVA Assuming Sphericity\n\n")
+##        print.anova(table)
+##        cat("\n\nMauchley Tests for Sphericity\n\n")
+##        table3 <- na.omit(table3)
+##        print.anova(table3)
         cat("\n\nGreenhouse-Geisser and Huynh-Feldt Corrections\n",
-            "for Departure from Compound Symmetry\n\n")
+            "for Departure from Sphericity\n\n")
         table2[,"Pr(>F[GG])"] <- pf(table[,"F"], table2[,"GG eps"]*table[,"num Df"],
                 table2[,"GG eps"]*table[,"den Df"], lower=FALSE)
         table2[,"Pr(>F[HF])"] <- pf(table[,"F"], table2[,"HF eps"]*table[,"num Df"],
                 table2[,"HF eps"]*table[,"den Df"], lower=FALSE)
         table2 <- na.omit(table2)
-        print.anova(table2[,1:2])
+        print.anova(table2[,1:2, drop=FALSE])
         cat("\n")
-        print.anova(table2[,3:4])
+        print.anova(table2[,3:4, drop=FALSE])
         }
     invisible(object)
     }

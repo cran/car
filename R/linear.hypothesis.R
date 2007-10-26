@@ -1,4 +1,4 @@
-# last modified 10 Oct 2007 by J. Fox
+# last modified 21 Oct 2007 by J. Fox
 
 has.intercept.matrix <- function (model, ...) {
     "(Intercept)" %in% colnames(model)
@@ -252,6 +252,10 @@ linear.hypothesis.mlm <- function(model, hypothesis.matrix, rhs=NULL, SSPE, V,
         SSPE <- t(P) %*% SSPE %*% P
         B <- B %*% P
         }
+    rank <- sum(eigen(SSPE, only.values=TRUE)$values >= sqrt(.Machine$double.eps))
+    if (rank < ncol(SSPE)) 
+        stop("The error SSP matrix is apparently of deficient rank = ",
+            rank, " < ", ncol(SSPE))
     r <- ncol(B)
     if (is.null(rhs)) rhs <- matrix(0, nrow(L), r)
     rownames(rhs) <- rownames(L)
