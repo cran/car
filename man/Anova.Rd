@@ -301,62 +301,97 @@ mod.ok <- lm(cbind(pre.1, pre.2, pre.3, pre.4, pre.5,
 ## Signif. codes:  0 '***' 0.001 '**' 0.01 '*' 0.05 '.' 0.1 ' ' 1 
 
 summary(av.ok, multivariate=FALSE)
-## Univariate Type II Repeated-Measures ANOVA Assuming Compound Symmetry
+
+## Univariate Type II Repeated-Measures ANOVA Assuming Sphericity
 ## 
-##                                  SS num Df Error SS den Df       F    Pr(>F)    
-## treatment                   211.286      2  228.056     10  4.6323  0.037687 *  
-## gender                       58.286      1  228.056     10  2.5558  0.140974    
-## treatment:gender            130.241      2  228.056     10  2.8555  0.104469    
-## phase                       167.500      2   80.278     20 20.8651 1.274e-05 ***
-## treatment:phase              78.668      4   80.278     20  4.8997  0.006426 ** 
-## gender:phase                  1.668      2   80.278     20  0.2078  0.814130    
-## treatment:gender:phase       10.221      4   80.278     20  0.6366  0.642369    
-## hour                        106.292      4   62.500     40 17.0067 3.191e-08 ***
-## treatment:hour                1.161      8   62.500     40  0.0929  0.999257    
-## gender:hour                   2.559      4   62.500     40  0.4094  0.800772    
-## treatment:gender:hour         7.755      8   62.500     40  0.6204  0.755484    
-## phase:hour                   11.083      8   96.167     80  1.1525  0.338317    
-## treatment:phase:hour          6.262     16   96.167     80  0.3256  0.992814    
-## gender:phase:hour             6.636      8   96.167     80  0.6900  0.699124    
-## treatment:gender:phase:hour  14.155     16   96.167     80  0.7359  0.749562    
+##                                  SS num Df Error SS den Df       F    Pr(>F)
+## treatment                   211.286      2  228.056     10  4.6323  0.037687
+## gender                       58.286      1  228.056     10  2.5558  0.140974
+## treatment:gender            130.241      2  228.056     10  2.8555  0.104469
+## phase                       167.500      2   80.278     20 20.8651 1.274e-05
+## treatment:phase              78.668      4   80.278     20  4.8997  0.006426
+## gender:phase                  1.668      2   80.278     20  0.2078  0.814130
+## treatment:gender:phase       10.221      4   80.278     20  0.6366  0.642369
+## hour                        106.292      4   62.500     40 17.0067 3.191e-08
+## treatment:hour                1.161      8   62.500     40  0.0929  0.999257
+## gender:hour                   2.559      4   62.500     40  0.4094  0.800772
+## treatment:gender:hour         7.755      8   62.500     40  0.6204  0.755484
+## phase:hour                   11.083      8   96.167     80  1.1525  0.338317
+## treatment:phase:hour          6.262     16   96.167     80  0.3256  0.992814
+## gender:phase:hour             6.636      8   96.167     80  0.6900  0.699124
+## treatment:gender:phase:hour  14.155     16   96.167     80  0.7359  0.749562
+## 
+## treatment                   *
+## gender
+## treatment:gender
+## phase                       ***
+## treatment:phase             **
+## gender:phase
+## treatment:gender:phase
+## hour                        ***
+## treatment:hour
+## gender:hour
+## treatment:gender:hour
+## phase:hour
+## treatment:phase:hour
+## gender:phase:hour
+## treatment:gender:phase:hour
 ## ---
-## Signif. codes:  0 '***' 0.001 '**' 0.01 '*' 0.05 '.' 0.1 ' ' 1 
+## Signif. codes:  0 '***' 0.001 '**' 0.01 '*' 0.05 '.' 0.1 ' ' 1
+## 
+## 
+## Mauchly Tests for Sphericity
+## 
+##                             Test statistic p-value
+## phase                              0.74927 0.27282
+## treatment:phase                    0.74927 0.27282
+## gender:phase                       0.74927 0.27282
+## treatment:gender:phase             0.74927 0.27282
+## hour                               0.06607 0.00760
+## treatment:hour                     0.06607 0.00760
+## gender:hour                        0.06607 0.00760
+## treatment:gender:hour              0.06607 0.00760
+## phase:hour                         0.00478 0.44939
+## treatment:phase:hour               0.00478 0.44939
+## gender:phase:hour                  0.00478 0.44939
+## treatment:gender:phase:hour        0.00478 0.44939
 ## 
 ## 
 ## Greenhouse-Geisser and Huynh-Feldt Corrections
-##  for Departure from Compound Symmetry
+##  for Departure from Sphericity
 ## 
-##                              GG eps Pr(>F[GG])    
+##                              GG eps Pr(>F[GG])
 ## phase                       0.79953  7.323e-05 ***
-## treatment:phase             0.79953    0.01223 *  
-## gender:phase                0.79953    0.76616    
-## treatment:gender:phase      0.79953    0.61162    
+## treatment:phase             0.79953    0.01223 *
+## gender:phase                0.79953    0.76616
+## treatment:gender:phase      0.79953    0.61162
 ## hour                        0.46028  8.741e-05 ***
-## treatment:hour              0.46028    0.97879    
-## gender:hour                 0.46028    0.65346    
-## treatment:gender:hour       0.46028    0.64136    
-## phase:hour                  0.44950    0.34573    
-## treatment:phase:hour        0.44950    0.94019    
-## gender:phase:hour           0.44950    0.58903    
-## treatment:gender:phase:hour 0.44950    0.64634    
+## treatment:hour              0.46028    0.97879
+## gender:hour                 0.46028    0.65346
+## treatment:gender:hour       0.46028    0.64136
+## phase:hour                  0.44950    0.34573
+## treatment:phase:hour        0.44950    0.94019
+## gender:phase:hour           0.44950    0.58903
+## treatment:gender:phase:hour 0.44950    0.64634
 ## ---
-## Signif. codes:  0 '***' 0.001 '**' 0.01 '*' 0.05 '.' 0.1 ' ' 1 
+## Signif. codes:  0 '***' 0.001 '**' 0.01 '*' 0.05 '.' 0.1 ' ' 1
 ## 
-##                              HF eps Pr(>F[HF])    
+##                              HF eps Pr(>F[HF])
 ## phase                       0.92786  2.388e-05 ***
-## treatment:phase             0.92786    0.00809 ** 
-## gender:phase                0.92786    0.79845    
-## treatment:gender:phase      0.92786    0.63200    
+## treatment:phase             0.92786    0.00809 **
+## gender:phase                0.92786    0.79845
+## treatment:gender:phase      0.92786    0.63200
 ## hour                        0.55928  2.014e-05 ***
-## treatment:hour              0.55928    0.98877    
-## gender:hour                 0.55928    0.69115    
-## treatment:gender:hour       0.55928    0.66930    
-## phase:hour                  0.73306    0.34405    
-## treatment:phase:hour        0.73306    0.98047    
-## gender:phase:hour           0.73306    0.65524    
-## treatment:gender:phase:hour 0.73306    0.70801    
+## treatment:hour              0.55928    0.98877
+## gender:hour                 0.55928    0.69115
+## treatment:gender:hour       0.55928    0.66930
+## phase:hour                  0.73306    0.34405
+## treatment:phase:hour        0.73306    0.98047
+## gender:phase:hour           0.73306    0.65524
+## treatment:gender:phase:hour 0.73306    0.70801
 ## ---
-## Signif. codes:  0 '***' 0.001 '**' 0.01 '*' 0.05 '.' 0.1 ' ' 1                    
+## Signif. codes:  0 '***' 0.001 '**' 0.01 '*' 0.05 '.' 0.1 ' ' 1
+
 }
 \keyword{htest}
 \keyword{models}
