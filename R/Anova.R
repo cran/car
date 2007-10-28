@@ -1,6 +1,6 @@
 # Type II and III tests for linear, generalized linear, and other models (J. Fox)
 
-# last modified 26 October 2007
+# last modified 27 October 2007
 
 relatives<-function(term, names, factors){
     is.relative<-function(term1, term2) {
@@ -664,7 +664,8 @@ Anova.III.mlm <- function(mod, SSPE, error.df, idata, idesign, icontrasts, test,
             }
         names(df) <- names(SSP) <- names(SSPEH) <- hnames
         result <- list(SSP=SSP, SSPE=SSPEH, P=P, df=df, error.df=error.df,
-            terms=hnames, repeated=TRUE, type="III", test=test)       
+            terms=hnames, repeated=TRUE, type="III", test=test, 
+            idata=idata, idesign=idesign, icontrasts=icontrasts)       
         }
      class(result) <- "Anova.mlm"
      result
@@ -766,7 +767,8 @@ Anova.II.mlm <- function(mod, SSPE, error.df, idata, idesign, icontrasts, test, 
             }
         names(df) <- names(P) <- names(SSP) <- names(SSPEH) <- hnames
         result <- list(SSP=SSP, SSPE=SSPEH, P=P, df=df, error.df=error.df,
-            terms=hnames, repeated=TRUE, type="II", test=test)       
+            terms=hnames, repeated=TRUE, type="II", test=test,
+            idata=idata, idesign=idesign, icontrasts=icontrasts)       
         }
      class(result) <- "Anova.mlm"
      result
@@ -815,14 +817,28 @@ summary.Anova.mlm <- function(object, test.statistic, multivariate=TRUE, univari
     HF <- function(gg, error.df, p){ # Huynh-Feldt correction
         ((error.df + 1)*p*gg - 2)/(p*(error.df - p*gg))
         }
-##    mauchly <- function(SSPE, df){ # Mauchly sphericity test
-##        p <- nrow(SSPE)
-##        if (p < 2) return(c(NA, NA))
-##        SSPE <- list(SSD=SSPE, df=df, call=NULL)
-##        class(SSPE) <- "SSD"
-##        mt <- mauchly.test(SSPE)
-##        c(mauchley=mt$statistic, p=mt$p.value)
-##        }        
+    mauchly <- function (SSD, P, df) {
+        # most of this function borrowed from stats:::mauchly.test.SSD
+        if (nrow(SSD) < 2) return(c(NA, NA))
+        Tr <- function (X) sum(diag(X))
+        p <- nrow(P)
+        I <- diag(p)
+        Psi <- t(P) %*% I %*% P 
+        B <- SSD 
+        pp <- nrow(SSD) 
+        U <- solve(Psi, B)
+        n <- df 
+        logW <- log(det(U)) - pp * log(Tr(U/pp))
+        rho <- 1 - (2 * pp^2 + pp + 2)/(6 * pp * n)
+        w2 <- (pp + 2) * (pp - 1) * (pp - 2) * (2 * pp^3 + 6 * pp^2 + 
+            3 * p + 2)/(288 * (n * pp * rho)^2)
+        z <- -n * rho * logW
+        f <- pp * (pp + 1)/2 - 1
+        Pr1 <- pchisq(z, f, lower.tail = FALSE)
+        Pr2 <- pchisq(z, f + 4, lower.tail = FALSE)
+        pval <- Pr1 + w2 * (Pr2 - Pr1)
+        c(statistic = c(W = exp(logW)), p.value = pval)
+        }        
     if (missing(test.statistic)) test.statistic <- c("Pillai", "Wilks", "Hotelling-Lawley", "Roy")
     test.statistic <- match.arg(test.statistic, c("Pillai", "Wilks", "Hotelling-Lawley", "Roy"),
             several.ok=TRUE)
@@ -871,15 +887,15 @@ summary.Anova.mlm <- function(object, test.statistic, multivariate=TRUE, univari
             table[term, "Pr(>F)"] <- pf(table[term, "F"], table[term, "num Df"],
                 table[term, "den Df"], lower=FALSE)
             table2[term, "GG eps"] <- gg
-            table2[term, "HF eps"] <- HF(gg, error.df, p) 
-##            table3[term,] <- mauchly(SSPE, object$error.df)
+            table2[term, "HF eps"] <- HF(gg, error.df, p)
+            table3[term,] <- mauchly(SSPE, P, object$error.df)
             }
-##        cat("\nUnivariate Type", object$type, 
-##            "Repeated-Measures ANOVA Assuming Sphericity\n\n")
-##        print.anova(table)
-##        cat("\n\nMauchley Tests for Sphericity\n\n")
-##        table3 <- na.omit(table3)
-##        print.anova(table3)
+        cat("\nUnivariate Type", object$type, 
+            "Repeated-Measures ANOVA Assuming Sphericity\n\n")
+        print.anova(table)
+        cat("\n\nMauchly Tests for Sphericity\n\n")
+        table3 <- na.omit(table3)
+        print.anova(table3)
         cat("\n\nGreenhouse-Geisser and Huynh-Feldt Corrections\n",
             "for Departure from Sphericity\n\n")
         table2[,"Pr(>F[GG])"] <- pf(table[,"F"], table2[,"GG eps"]*table[,"num Df"],
