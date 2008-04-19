@@ -1,4 +1,4 @@
-# last modified 5 December 2006 by J. Fox
+# last modified 19 April 2008 by J. Fox
 
 export(Anova,
     Ask,
@@ -91,7 +91,10 @@ S3method(durbin.watson, lm)
 S3method(has.intercept, default)     
 S3method(hccm, default)              
 S3method(hccm, lm)   
-S3method(influencePlot, lm)         
+S3method(influencePlot, lm)
+S3method(levene.test, formula)
+S3method(levene.test, lm)
+S3method(levene.test, default)         
 S3method(leverage.plot, glm)         
 S3method(leverage.plot, lm)     
 S3method(linear.hypothesis, default) 

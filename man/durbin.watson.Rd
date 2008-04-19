@@ -41,6 +41,10 @@ durbin.watson(model, ...)
     Returns an object of type \code{"durbin.watson"}.
 }
 
+\note{
+p-values are available only from the \code{lm} method.
+}
+
 \references{ 
   Fox, J. (1997)
   \emph{Applied Regression, Linear Models, and Related Methods.} Sage.

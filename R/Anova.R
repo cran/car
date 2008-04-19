@@ -1,6 +1,6 @@
 # Type II and III tests for linear, generalized linear, and other models (J. Fox)
 
-# last modified 27 October 2007
+# last modified 9 November 2007
 
 relatives<-function(term, names, factors){
     is.relative<-function(term1, term2) {
@@ -890,22 +890,27 @@ summary.Anova.mlm <- function(object, test.statistic, multivariate=TRUE, univari
             table2[term, "HF eps"] <- HF(gg, error.df, p)
             table3[term,] <- mauchly(SSPE, P, object$error.df)
             }
-        cat("\nUnivariate Type", object$type, 
-            "Repeated-Measures ANOVA Assuming Sphericity\n\n")
-        print.anova(table)
-        cat("\n\nMauchly Tests for Sphericity\n\n")
+            cat("\nUnivariate Type", object$type, 
+                "Repeated-Measures ANOVA Assuming Sphericity\n\n")
+            print.anova(table)
         table3 <- na.omit(table3)
-        print.anova(table3)
-        cat("\n\nGreenhouse-Geisser and Huynh-Feldt Corrections\n",
-            "for Departure from Sphericity\n\n")
-        table2[,"Pr(>F[GG])"] <- pf(table[,"F"], table2[,"GG eps"]*table[,"num Df"],
-                table2[,"GG eps"]*table[,"den Df"], lower=FALSE)
-        table2[,"Pr(>F[HF])"] <- pf(table[,"F"], table2[,"HF eps"]*table[,"num Df"],
-                table2[,"HF eps"]*table[,"den Df"], lower=FALSE)
-        table2 <- na.omit(table2)
-        print.anova(table2[,1:2, drop=FALSE])
-        cat("\n")
-        print.anova(table2[,3:4, drop=FALSE])
+        if (nrow(table3) > 0){
+            cat("\n\nMauchly Tests for Sphericity\n\n")
+            print.anova(table3)
+            cat("\n\nGreenhouse-Geisser and Huynh-Feldt Corrections\n",
+                "for Departure from Sphericity\n\n")
+            table2[,"Pr(>F[GG])"] <- pf(table[,"F"], table2[,"GG eps"]*table[,"num Df"],
+                    table2[,"GG eps"]*table[,"den Df"], lower=FALSE)
+            table2[,"Pr(>F[HF])"] <- pf(table[,"F"], 
+                    pmin(1, table2[,"HF eps"])*table[,"num Df"],
+                    pmin(1, table2[,"HF eps"])*table[,"den Df"], lower=FALSE)
+            table2 <- na.omit(table2)
+            print.anova(table2[,1:2, drop=FALSE])
+            cat("\n")
+            print.anova(table2[,3:4, drop=FALSE])
+            if (any(table2[,"HF eps"] > 1)) 
+                warning("HF eps > 1 treated as 1")
+            }
         }
     invisible(object)
     }
