@@ -104,8 +104,7 @@ Manova(mod, ...)
   \item{multivariate, univariate}{print multivariate and univariate tests for a repeated-measures
     ANOVA; the default is \code{TRUE} for both.}
   \item{digits}{minimum number of significant digits to print.}
-  \item{\dots}{arguments to be passed to \code{linear.hypothesis}; only use
-    \code{white.adjust} for a linear model.}
+  \item{\dots}{do not use.}
 }
 \details{
   The designations "type-II" and "type-III" are borrowed from SAS, but the

@@ -234,7 +234,17 @@ Changes to Version 1.2-5
     
     o  For models with only an intercept, Anova() with type="II" now substitutes equivalent type="III" tests (since the code for type="II" doesn't handle intercepts). This is especially useful for repeated-measures designs with only within-subjects factors (in response to a problem reported by Ralf Goertz).
     
-Changes to Version 1.2-6
+Changes to Version 1.2-7
 
     o  Added Mauchly tests for sphericity in repeated-measures designs to summary.Anova.mlm() (suggested by Ralf Goertz).
+    
+Changes to Version 1.2-8
+
+    o  HF eps > 1 is now set to 1 in adjusting df in summary.Anova.mlm(), consistent with the behaviour of anova.mlm() (suggested by Ralf Goertz).
+    
+    o  Fixed bug in summary.Anova.mlm() that surfaced when all univariate repeated-measures tests have 1 df and hence GG and HF corrections don't apply to any of the tests (reported by Ralf Goertz).
+    
+    o levene.test() is now generic, contributed by  Derek Ogle.
+    
+    o Small changes.
     
