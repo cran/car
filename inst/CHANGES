@@ -244,7 +244,17 @@ Changes to Version 1.2-8
     
     o  Fixed bug in summary.Anova.mlm() that surfaced when all univariate repeated-measures tests have 1 df and hence GG and HF corrections don't apply to any of the tests (reported by Ralf Goertz).
     
-    o levene.test() is now generic, contributed by  Derek Ogle.
+    o  levene.test() is now generic, contributed by  Derek Ogle.
     
-    o Small changes.
+    o  Small changes.
+    
+Changes to Version 1.2-9
+
+	o  Fixed bug in scatterplot() that left room for a legend even when legend.plot=FALSE (reported by David Carlson).
+	
+	o  Allowed colours in col argument to scatterplot() to recycle (suggested by David Carlson).
+	
+	o  verbose=TRUE in linear.hypothesis() now prints (in addition to previous output) the estimated value of the hypothesis (Oleksandr Perekhozhuk).
+	
+	
     
