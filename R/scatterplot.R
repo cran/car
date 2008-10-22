@@ -1,6 +1,6 @@
 # fancy scatterplots  (J. Fox)
 
-# last modified 27 October 2007
+# last modified 21 October 2008
 
 scatterplot<-function(x, ...){
     # last modified 28 Jan 2001 by J. Fox
@@ -54,9 +54,9 @@ scatterplot.default<-function(x, y, smooth=TRUE, span=.5, reg.line=lm, boxplots=
     cex.main=par("cex.main"), cex.sub=par("cex.sub"),
     groups=FALSE, by.groups=!(groups[1]==FALSE), legend.title=deparse(substitute(groups)), 
     ellipse=FALSE, levels=c(.5, .9), robust=FALSE,
-    col=palette(), pch=1:n.groups, 
+    col=rep(palette(), length.out=n.groups + 1), pch=1:n.groups, 
     legend.plot=length(levels(groups)) > 1, reset.par=TRUE, ...){
-    # last modified 27 Oct 2007 by J. Fox
+    # last modified 21 Oct 2008 by J. Fox
     lowess.line<-function(x, y, col) {
         x<-if (0==length(grep("x", log))) x else log(x)
         y<-if (0==length(grep("y", log))) y else log(y)
@@ -163,7 +163,8 @@ scatterplot.default<-function(x, y, smooth=TRUE, span=.5, reg.line=lm, boxplots=
             .x<-data[,2]
             .y<-data[,3]
             }
-        top <- 4 + length(levels(as.factor(groups)))
+			top <- if (legend.plot) 4 + length(levels(as.factor(groups)))
+				else mar[3]
         }
     else{
         .x<-x

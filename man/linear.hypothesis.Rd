@@ -88,9 +88,11 @@ lht(model, ...)
     (instead of using the argument \code{vcov}). Can be set either to a character
     specifying the \code{type} argument of \code{\link{hccm}} or \code{TRUE},
     in which case \code{"hc3"} is used implicitly. For backwards compatibility.}
-  \item{verbose}{If \code{TRUE}, the hypothesis matrix and right-hand-side
-    vector (or matrix) are printed to standard output; if \code{FALSE} (the default),
-    the hypothesis is only printed in symbolic form.}
+  \item{verbose}{If \code{TRUE}, the hypothesis matrix, right-hand-side
+    vector (or matrix), and estimated value of the hypothesis 
+    are printed to standard output; if \code{FALSE} (the default),
+    the hypothesis is only printed in symbolic form and the value of the hypothesis
+    is not printed.}
   \item{x}{an object produced by \code{linear.hypothesis.mlm}.}
   \item{SSP}{if \code{TRUE} (the default), print the sum-of-squares and 
     cross-products matrix for the hypothesis and the response-transformation matrix.}

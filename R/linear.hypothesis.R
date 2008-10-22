@@ -1,4 +1,4 @@
-# last modified 21 Oct 2007 by J. Fox
+# last modified 21 Oct 2008 by J. Fox
 
 has.intercept.matrix <- function (model, ...) {
     "(Intercept)" %in% colnames(model)
@@ -126,6 +126,8 @@ linear.hypothesis.default <- function(model, hypothesis.matrix, rhs=NULL,
         print(L)
         cat("\nRight-hand-side vector:\n")
         print(rhs)
+		cat("\nEstimated linear function (hypothesis.matrix %*% coef - rhs)\n")
+		print(drop(L %*% b - rhs))
         cat("\n")
         }
     SSH <- as.vector(t(L %*% b - rhs) %*% solve(L %*% V %*% t(L)) %*% (L %*% b - rhs))
@@ -187,86 +189,88 @@ linear.hypothesis.lm <- function(model, hypothesis.matrix, rhs=NULL,
     }
     
 linear.hypothesis.mlm <- function(model, hypothesis.matrix, rhs=NULL, SSPE, V,
-       test, idata, icontrasts=c("contr.sum", "contr.poly"), idesign, iterms, 
-       P=NULL, title="", verbose=FALSE, ...){
-    check <- function(X){ # check block orthogonality of model matrix
-        XX <- crossprod(X)
-        terms <- attr(X, "assign")
-        for (term in unique(terms)){
-            subs <- term == terms
-            XX[subs, subs] <- 0
-            }
-        !any(abs(XX) > sqrt(.Machine$double.eps))
-        }
-    if (missing(test)) test <- c("Pillai", "Wilks", "Hotelling-Lawley", "Roy")
-    test <- match.arg(test, c("Pillai", "Wilks", "Hotelling-Lawley", "Roy"),
-                several.ok=TRUE)              
-    df.residual <- df.residual(model)
-    if (missing (V)) V <- solve(crossprod(model.matrix(model)))
-    B <- coef(model)
-    if (is.character(hypothesis.matrix)) {    
-        L <- makeHypothesis(rownames(B), hypothesis.matrix, rhs)
-        if (is.null(dim(L))) L <- t(L)
-        L <- L[, -NCOL(L), drop = FALSE]
-        rownames(L) <- hypothesis.matrix
-        } 
-    else {
-        L <- if (is.null(dim(hypothesis.matrix))) t(hypothesis.matrix) 
-        else hypothesis.matrix
-        }
-    if (verbose){
-        cat("\nHypothesis matrix:\n")    
-        print(L)
-        cat("\nRight-hand-side matrix:\n")
-        print(rhs)
-        cat("\n")
-        }
-    if (missing(SSPE)) SSPE <- crossprod(residuals(model))
-    if (!missing(idata)){
-        for (i in 1:length(idata)){
-            if (is.null(attr(idata[,i], "contrasts"))){
-                contrasts(idata[,i]) <- if (is.ordered(idata[,i])) icontrasts[2]
-                    else icontrasts[1]
-                }
-            }
-        if (missing(idesign)) stop("idesign (intra-subject design) missing.")
-        X.design <- model.matrix(idesign, data=idata)
-        if (!check(X.design)) 
-            stop("Terms in the intra-subject model matrix are not orthogonal.")
-        intercept <- has.intercept(X.design)
-        term.names <- term.names(idesign)
-        if (intercept) term.names <- c("(Intercept)", term.names)
-        which.terms <- match(iterms, term.names)
-        if (any(nas <- is.na(which.terms))){
-            if (sum(nas) == 1) 
-            stop('The term "', iterms[nas],'" is not in the intrasubject design.')
-            else stop("The following terms are not in the intrasubject design: ",
-                paste(iterms[nas], collapse=", "), ".")
-            }
-        select <- apply(outer(which.terms, attr(X.design, "assign") + intercept, "=="),
-            2, any)
-        P <- X.design[, select, drop=FALSE]
-        }
-    if (!is.null(P)){
-        rownames(P) <- colnames(B)   
-        SSPE <- t(P) %*% SSPE %*% P
-        B <- B %*% P
-        }
-    rank <- sum(eigen(SSPE, only.values=TRUE)$values >= sqrt(.Machine$double.eps))
-    if (rank < ncol(SSPE)) 
-        stop("The error SSP matrix is apparently of deficient rank = ",
-            rank, " < ", ncol(SSPE))
-    r <- ncol(B)
-    if (is.null(rhs)) rhs <- matrix(0, nrow(L), r)
-    rownames(rhs) <- rownames(L)
-    colnames(rhs) <- colnames(B)
-    q <- NROW(L)
-    SSPH <- t(L %*% B - rhs) %*% solve(L %*% V %*% t(L)) %*% (L %*% B - rhs)
-    rval <- list(SSPH=SSPH, SSPE=SSPE, df=q, r=r, df.residual=df.residual, P=P,
-        title=title, test=test)
-    class(rval) <- "linear.hypothesis.mlm"
-    rval
-    }
+	test, idata, icontrasts=c("contr.sum", "contr.poly"), idesign, iterms, 
+	P=NULL, title="", verbose=FALSE, ...){
+	check <- function(X){ # check block orthogonality of model matrix
+		XX <- crossprod(X)
+		terms <- attr(X, "assign")
+		for (term in unique(terms)){
+			subs <- term == terms
+			XX[subs, subs] <- 0
+		}
+		!any(abs(XX) > sqrt(.Machine$double.eps))
+	}
+	if (missing(test)) test <- c("Pillai", "Wilks", "Hotelling-Lawley", "Roy")
+	test <- match.arg(test, c("Pillai", "Wilks", "Hotelling-Lawley", "Roy"),
+		several.ok=TRUE)              
+	df.residual <- df.residual(model)
+	if (missing (V)) V <- solve(crossprod(model.matrix(model)))
+	B <- coef(model)
+	if (is.character(hypothesis.matrix)) {    
+		L <- makeHypothesis(rownames(B), hypothesis.matrix, rhs)
+		if (is.null(dim(L))) L <- t(L)
+		L <- L[, -NCOL(L), drop = FALSE]
+		rownames(L) <- hypothesis.matrix
+	} 
+	else {
+		L <- if (is.null(dim(hypothesis.matrix))) t(hypothesis.matrix) 
+			else hypothesis.matrix
+	}
+	if (missing(SSPE)) SSPE <- crossprod(residuals(model))
+	if (!missing(idata)){
+		for (i in 1:length(idata)){
+			if (is.null(attr(idata[,i], "contrasts"))){
+				contrasts(idata[,i]) <- if (is.ordered(idata[,i])) icontrasts[2]
+					else icontrasts[1]
+			}
+		}
+		if (missing(idesign)) stop("idesign (intra-subject design) missing.")
+		X.design <- model.matrix(idesign, data=idata)
+		if (!check(X.design)) 
+			stop("Terms in the intra-subject model matrix are not orthogonal.")
+		intercept <- has.intercept(X.design)
+		term.names <- term.names(idesign)
+		if (intercept) term.names <- c("(Intercept)", term.names)
+		which.terms <- match(iterms, term.names)
+		if (any(nas <- is.na(which.terms))){
+			if (sum(nas) == 1) 
+				stop('The term "', iterms[nas],'" is not in the intrasubject design.')
+			else stop("The following terms are not in the intrasubject design: ",
+					paste(iterms[nas], collapse=", "), ".")
+		}
+		select <- apply(outer(which.terms, attr(X.design, "assign") + intercept, "=="),
+			2, any)
+		P <- X.design[, select, drop=FALSE]
+	}
+	if (!is.null(P)){
+		rownames(P) <- colnames(B)   
+		SSPE <- t(P) %*% SSPE %*% P
+		B <- B %*% P
+	}
+	rank <- sum(eigen(SSPE, only.values=TRUE)$values >= sqrt(.Machine$double.eps))
+	if (rank < ncol(SSPE)) 
+		stop("The error SSP matrix is apparently of deficient rank = ",
+			rank, " < ", ncol(SSPE))
+	r <- ncol(B)
+	if (is.null(rhs)) rhs <- matrix(0, nrow(L), r)
+	rownames(rhs) <- rownames(L)
+	colnames(rhs) <- colnames(B)
+	q <- NROW(L)
+	if (verbose){
+		cat("\nHypothesis matrix:\n")    
+		print(L)
+		cat("\nRight-hand-side matrix:\n")
+		print(rhs)
+		cat("\nEstimated linear function (hypothesis.matrix %*% coef - rhs):\n")
+		print(drop(L %*% B - rhs))
+		cat("\n")
+	}
+	SSPH <- t(L %*% B - rhs) %*% solve(L %*% V %*% t(L)) %*% (L %*% B - rhs)
+	rval <- list(SSPH=SSPH, SSPE=SSPE, df=q, r=r, df.residual=df.residual, P=P,
+		title=title, test=test)
+	class(rval) <- "linear.hypothesis.mlm"
+	rval
+}
     
 print.linear.hypothesis.mlm <- function(x, SSP=TRUE, SSPE=SSP, 
     digits=unlist(options("digits")), ...){

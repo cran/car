@@ -22,8 +22,8 @@ scatterplot(x, ...)
   cex.main=par("cex.main"), cex.sub=par("cex.sub"),
   groups=FALSE, by.groups=!(groups[1]==FALSE), legend.title=deparse(substitute(groups)),
   ellipse=FALSE, levels=c(.5, .9), robust=FALSE, 
-  col=palette(), pch=1:n.groups, legend.plot=length(levels(groups)) > 1, 
-  reset.par=TRUE, ...)
+  col=rep(palette(), length.out=n.groups + 1), pch=1:n.groups, 
+  legend.plot=length(levels(groups)) > 1, reset.par=TRUE, ...)
   
 sp(...)
 }
@@ -68,7 +68,8 @@ sp(...)
   \item{robust}{if \code{TRUE} use the \code{cov.trob} function in the \code{MASS} package
     to calculate the center and covariance matrix for the data ellipse.}
   \item{col}{colors for points and lines; the default is the
-    current color palette, starting at the \emph{second} entry
+    current color palette, starting at the \emph{second} entry and with the colors
+    repeated if necessary.
     (see \code{\link[grDevices]{palette}} and \code{\link[graphics]{par}}).}
   \item{pch}{plotting characters for points; default is the plotting characters in
     order (see \code{\link[graphics]{par}}).}
