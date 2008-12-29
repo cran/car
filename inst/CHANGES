@@ -256,5 +256,7 @@ Changes to Version 1.2-9
 	
 	o  verbose=TRUE in linear.hypothesis() now prints (in addition to previous output) the estimated value of the hypothesis (Oleksandr Perekhozhuk).
 	
+Changes to Version 1.2-10
+
+	o  Reworked Anova(), including adding default method and method for coxph objects.
 	
-    

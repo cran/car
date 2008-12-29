@@ -1,171 +1,233 @@
 # Type II and III tests for linear, generalized linear, and other models (J. Fox)
 
-# last modified 9 November 2007
+# last modified 29 December 2008
 
-relatives<-function(term, names, factors){
-    is.relative<-function(term1, term2) {
-        all(!(factors[,term1]&(!factors[,term2])))
-        }
-    if(length(names)==1) return(NULL)
-    which.term<-which(term==names)
-    (1:length(names))[-which.term][sapply(names[-which.term], function(term2) is.relative(term, term2))]
-    }
-    
+ConjComp <- function(X, Z = diag( nrow(X)), ip = diag(nrow(X))) {
+	# This function by Georges Monette
+	# finds the conjugate complement of the proj of X in span(Z) wrt
+	#    inner product ip
+	# - assumes Z is of full column rank
+	# - projects X conjugately wrt ip into span Z
+	xq <- qr(t(Z) %*% ip %*% X)
+	if (xq$rank == 0) return(Z)
+	Z %*% qr.Q(xq, complete = TRUE) [ ,-(1:xq$rank)] 
+}
 
-Anova<-function(mod, ...){
-    UseMethod("Anova", mod)
-    }
+relatives <- function(term, names, factors){
+	is.relative <- function(term1, term2) {
+		all(!(factors[,term1]&(!factors[,term2])))
+	}
+	if(length(names) == 1) return(NULL)
+	which.term <- which(term==names)
+	(1:length(names))[-which.term][sapply(names[-which.term], function(term2) is.relative(term, term2))]
+}
 
- # linear models
- 
-Anova.lm<-function(mod, error, type=c("II","III", 2, 3), ...){
-    type<-match.arg(type)
-    if (has.intercept(mod) && length(coef(mod)) == 1 
-            && (type == "2" || type == "II")) {
-        type <- "III"
-        warning("the model contains only an intercept: Type III test substituted")
-        }
-    switch(type,
-        II=Anova.II.lm(mod, error, ...),
-        III=Anova.III.lm(mod, error, ...),
-        "2"=Anova.II.lm(mod, error, ...),
-        "3"=Anova.III.lm(mod, error, ...))
-    }
+
+Anova <- function(mod, ...){
+	UseMethod("Anova", mod)
+}
+
+# linear models
+
+Anova.lm <- function(mod, error, type=c("II","III", 2, 3), 
+	white.adjust=c("hc3", "hc0", "hc1", "hc2", "hc4"), ...){
+	type <- as.character(type)
+	type <- match.arg(type)
+	if (has.intercept(mod) && length(coef(mod)) == 1 
+		&& (type == "2" || type == "II")) {
+		type <- "III"
+		warning("the model contains only an intercept: Type III test substituted")
+	}
+	if (!(missing(white.adjust))){
+		white.adjust <- if (white.adjust == TRUE) "hc3" else match.arg(white.adjust)
+		return(Anova.default(mod, type=type, vcov.=hccm(mod, type=white.adjust), test="F"))
+	}
+	switch(type,
+		II=Anova.II.lm(mod, error, ...),
+		III=Anova.III.lm(mod, error, ...),
+		"2"=Anova.II.lm(mod, error, ...),
+		"3"=Anova.III.lm(mod, error, ...))
+}
 
 Anova.aov <- function(mod, ...){
-    class(mod) <- "lm"
-    Anova.lm(mod, ...)
-    }
+	class(mod) <- "lm"
+	Anova.lm(mod, ...)
+}
 
         # type II
         
-Anova.II.lm<-function(mod, error, ...){
-    if (!missing(error)){
-        sumry<-summary(error, corr=FALSE)
-        s2<-sumry$sigma^2
-        error.df<-error$df.residual
-        error.SS<-s2*error.df
-        }
-    SS.term<-function(term){
-        which.term<-which(term==names)
-        subs.term<-which(assign==which.term)
-        relatives<-relatives(term, names, fac)
-        subs.relatives<-NULL
-        for (relative in relatives) subs.relatives<-c(subs.relatives, which(assign==relative))
-        hyp.matrix.1<-I.p[subs.relatives,]
-        hyp.matrix.2<-I.p[c(subs.relatives,subs.term),]
-        SS1<-if (length(subs.relatives)==0) 0 
-            else linear.hypothesis(mod, hyp.matrix.1, summary.model=sumry, ...)$"Sum of Sq"[2]
-        SS2<-linear.hypothesis(mod, hyp.matrix.2, summary.model=sumry, ...)$"Sum of Sq"[2]
-        SS1 - SS2
-        }
-    fac<-attr(mod$terms, "factors")
-    intercept<-has.intercept(mod)
-    p<-length(coefficients(mod))
-    I.p<-diag(p)
-    assign<-mod$assign
-    names<-term.names(mod)
-    if (intercept) names<-names[-1]
-    n.terms<-length(names)
-    SS<-rep(0, n.terms+1)
-    df<-rep(0, n.terms+1)
-    f<-rep(0, n.terms+1)
-    p<-rep(0, n.terms+1)
-    sumry<-summary(mod, corr = FALSE)
-    SS[n.terms+1]<-if (missing(error)) sumry$sigma^2*mod$df.residual else error.SS   
-    df[n.terms+1]<-if (missing(error)) mod$df.residual else error.df
-    f[n.terms+1]<-NA
-    p[n.terms+1]<-NA
-    for (i in 1:n.terms){
-        SS[i]<-SS.term(names[i])
-        df[i]<-df.terms(mod, names[i])
-        f[i]<-df[n.terms+1]*SS[i]/(df[i]*SS[n.terms+1])
-        p[i]<-1-pf(f[i],df[i],df[n.terms+1])
-        }    
-    result<-data.frame(SS, df, f, p)
-    row.names(result)<-c(names,"Residuals")
-    names(result)<-c("Sum Sq", "Df", "F value", "Pr(>F)")
-    class(result)<-c("anova","data.frame")
-    attr(result,"heading")<-c("Anova Table (Type II tests)\n", paste("Response:", responseName(mod)))
-    result
-    }
+#Anova.II.lm<-function(mod, error, ...){
+#    if (!missing(error)){
+#        sumry<-summary(error, corr=FALSE)
+#        s2<-sumry$sigma^2
+#        error.df<-error$df.residual
+#        error.SS<-s2*error.df
+#        }
+#    SS.term<-function(term){
+#        which.term<-which(term==names)
+#        subs.term<-which(assign==which.term)
+#        relatives<-relatives(term, names, fac)
+#        subs.relatives<-NULL
+#        for (relative in relatives) subs.relatives<-c(subs.relatives, which(assign==relative))
+#        hyp.matrix.1<-I.p[subs.relatives,]
+#        hyp.matrix.2<-I.p[c(subs.relatives,subs.term),]
+#        SS1<-if (length(subs.relatives)==0) 0 
+#            else linear.hypothesis(mod, hyp.matrix.1, summary.model=sumry, ...)$"Sum of Sq"[2]
+#        SS2<-linear.hypothesis(mod, hyp.matrix.2, summary.model=sumry, ...)$"Sum of Sq"[2]
+#        SS1 - SS2
+#        }
+#    fac<-attr(mod$terms, "factors")
+#    intercept<-has.intercept(mod)
+#    p<-length(coefficients(mod))
+#    I.p<-diag(p)
+#    assign<-mod$assign
+#    names<-term.names(mod)
+#    if (intercept) names<-names[-1]
+#    n.terms<-length(names)
+#    SS<-rep(0, n.terms+1)
+#    df<-rep(0, n.terms+1)
+#    f<-rep(0, n.terms+1)
+#    p<-rep(0, n.terms+1)
+#    sumry<-summary(mod, corr = FALSE)
+#    SS[n.terms+1]<-if (missing(error)) sumry$sigma^2*mod$df.residual else error.SS   
+#    df[n.terms+1]<-if (missing(error)) mod$df.residual else error.df
+#    f[n.terms+1]<-NA
+#    p[n.terms+1]<-NA
+#    for (i in 1:n.terms){
+#        SS[i]<-SS.term(names[i])
+#        df[i]<-df.terms(mod, names[i])
+#        f[i]<-df[n.terms+1]*SS[i]/(df[i]*SS[n.terms+1])
+#        p[i]<-1-pf(f[i],df[i],df[n.terms+1])
+#        }    
+#    result<-data.frame(SS, df, f, p)
+#    row.names(result)<-c(names,"Residuals")
+#    names(result)<-c("Sum Sq", "Df", "F value", "Pr(>F)")
+#    class(result)<-c("anova","data.frame")
+#    attr(result,"heading")<-c("Anova Table (Type II tests)\n", paste("Response:", responseName(mod)))
+#    result
+#    }
+	
+Anova.II.lm <- function(mod, error, ...){
+	if (!missing(error)){
+		sumry <- summary(error, corr=FALSE)
+		s2 <- sumry$sigma^2
+		error.df <- error$df.residual
+		error.SS <- s2*error.df
+	}
+	SS.term <- function(term){
+		which.term <- which(term == names)
+		subs.term <- which(assign == which.term)
+		relatives <- relatives(term, names, fac)
+		subs.relatives <- NULL
+		for (relative in relatives) 
+			subs.relatives <- c(subs.relatives, which(assign == relative))
+		hyp.matrix.1 <- I.p[subs.relatives,]
+		hyp.matrix.2 <- I.p[c(subs.relatives,subs.term),]
+		hyp.matrix.term <- if (nrow(hyp.matrix.1) == 0) hyp.matrix.2
+			else t(ConjComp(t(hyp.matrix.1), t(hyp.matrix.2), vcov(mod)))
+		abs(linear.hypothesis(mod, hyp.matrix.term, 
+				summary.model=sumry, ...)$"Sum of Sq"[2])
+	}
+	fac <- attr(mod$terms, "factors")
+	intercept <- has.intercept(mod)
+	I.p <- diag(length(coefficients(mod)))
+	assign <- mod$assign
+	names <- term.names(mod)
+	if (intercept) names <-names[-1]
+	n.terms <- length(names)
+	p <- df <- f <- SS <- rep(0, n.terms + 1)
+	sumry <- summary(mod, corr = FALSE)
+	SS[n.terms + 1] <- if (missing(error)) sumry$sigma^2*mod$df.residual 
+		else error.SS   
+	df[n.terms + 1] <- if (missing(error)) mod$df.residual else error.df
+	p[n.terms + 1] <- f[n.terms + 1] <- NA
+	for (i in 1:n.terms){
+		SS[i] <- SS.term(names[i])
+		df[i] <- df.terms(mod, names[i])
+		f[i] <- df[n.terms+1]*SS[i]/(df[i]*SS[n.terms + 1])
+		p[i] <- pf(f[i], df[i], df[n.terms + 1], lower.tail = FALSE)
+	}    
+	result <- data.frame(SS, df, f, p)
+	row.names(result) <- c(names,"Residuals")
+	names(result) <- c("Sum Sq", "Df", "F value", "Pr(>F)")
+	class(result) <- c("anova", "data.frame")
+	attr(result, "heading") <- c("Anova Table (Type II tests)\n", 
+		paste("Response:", responseName(mod)))
+	result
+}
 
         # type III
         
-Anova.III.lm<-function(mod, error, ...){
+Anova.III.lm <- function(mod, error, ...){
     if (!missing(error)){
-        sumry<-summary(error, corr=FALSE)
-        s2<-sumry$sigma^2
-        error.df<-error$df.residual
-        error.SS<-s2*error.df
+        sumry <- summary(error, corr=FALSE)
+        s2 <- sumry$sigma^2
+        error.df <- error$df.residual
+        error.SS <- s2*error.df
         }
-    intercept<-has.intercept(mod)
-    p<-length(coefficients(mod))
-    I.p<-diag(p)
-    Source<-term.names(mod)
-    n.terms<-length(Source)
-    SS<-rep(0, n.terms+1)
-    df<-rep(0, n.terms+1)
-    f<-rep(0, n.terms+1)
-    p<-rep(0, n.terms+1)
-    assign<-mod$assign
-    sumry<-summary(mod, corr = FALSE)
+    intercept <- has.intercept(mod)
+	I.p <- diag(length(coefficients(mod)))
+    Source <- term.names(mod)
+    n.terms <- length(Source)
+	p <- df <- f <- SS <- rep(0, n.terms + 1)
+    assign <- mod$assign
+    sumry <- summary(mod, corr = FALSE)
     for (term in 1:n.terms){
-        subs<-which(assign==term-intercept)
-        hyp.matrix<-I.p[subs,]
-        test<-if (missing(error)) linear.hypothesis(mod, hyp.matrix, summary.model=sumry, ...)
+        subs <- which(assign == term - intercept)
+        hyp.matrix <- I.p[subs,]
+        test <- if (missing(error)) linear.hypothesis(mod, hyp.matrix, summary.model=sumry, ...)
             else linear.hypothesis(mod, hyp.matrix, error.SS=error.SS, error.df=error.df, 
                 summary.model=sumry, ...)
-        SS[term]<- -test$"Sum of Sq"[2]
-        df[term]<- -test$"Df"[2]
-        f[term]<-test$"F"[2]
-        p[term]<-test$"Pr(>F)"[2]
+        SS[term] <- -test$"Sum of Sq"[2]
+        df[term] <- -test$"Df"[2]
+        f[term] <- test$"F"[2]
+        p[term] <- test$"Pr(>F)"[2]
         }
-     Source[n.terms+1]<-"Residuals"
-     df.res<-if (missing(error)) mod$df.residual
+     Source[n.terms + 1] <- "Residuals"
+     df.res <- if (missing(error)) mod$df.residual
         else error.df     
-     s2<-sumry$sigma^2
-     SS[n.terms+1]<-if (missing(error)) s2*df.res
+     s2 <- sumry$sigma^2
+     SS[n.terms + 1] <- if (missing(error)) s2*df.res
         else error.SS
-     df[n.terms+1]<-df.res
-     f[n.terms+1]<-NA
-     p[n.terms+1]<-NA
-     result<-data.frame(SS, df, f, p)
-     row.names(result)<-Source
-     names(result)<-c("Sum Sq", "Df", "F value", "Pr(>F)")
-     class(result)<-c("anova","data.frame")
-     attr(result,"heading")<-c("Anova Table (Type III tests)\n", paste("Response:", responseName(mod)))
+     df[n.terms + 1] <- df.res
+	 p[n.terms + 1] <- f[n.terms + 1] <- NA
+     result <- data.frame(SS, df, f, p)
+     row.names(result) <- Source
+     names(result) <- c("Sum Sq", "Df", "F value", "Pr(>F)")
+     class(result) <- c("anova", "data.frame")
+     attr(result, "heading") <- c("Anova Table (Type III tests)\n", paste("Response:", responseName(mod)))
      result
      }
 
     # generalized linear models
     
-Anova.glm<-function(mod, type=c("II","III", 2, 3), test.statistic=c("LR", "Wald", "F"), 
+Anova.glm <- function(mod, type=c("II","III", 2, 3), test.statistic=c("LR", "Wald", "F"), 
     error, error.estimate=c("pearson", "dispersion", "deviance"), ...){
-    type<-match.arg(type)
+	type <- as.character(type)
+    type <- match.arg(type)
     if (has.intercept(mod) && length(coef(mod)) == 1 
             && (type == "2" || type == "II")) {
         type <- "III"
         warning("the model contains only an intercept: Type III test substituted")
         }
-    test.statistic<-match.arg(test.statistic)
-    error.estimate<-match.arg(error.estimate)
+    test.statistic <- match.arg(test.statistic)
+    error.estimate <- match.arg(error.estimate)
     switch(type,
         II=switch(test.statistic,
             LR=Anova.II.LR.glm(mod),
-            Wald=Anova.II.Wald.glm(mod),
+            Wald=Anova.default(mod, type="II"),
             F=Anova.II.F.glm(mod, error, error.estimate)),
         III=switch(test.statistic,
             LR=Anova.III.LR.glm(mod),
-            Wald=Anova.III.Wald.glm(mod),
+            Wald=Anova.default(mod, type="III"),
             F=Anova.III.F.glm(mod, error, error.estimate)),
         "2"=switch(test.statistic,
             LR=Anova.II.LR.glm(mod),
-            Wald=Anova.II.Wald.glm(mod),
+            Wald=Anova.default(mod, type="II"),
             F=Anova.II.F.glm(mod, error, error.estimate)),
         "3"=switch(test.statistic,
             LR=Anova.III.LR.glm(mod),
-            Wald=Anova.III.Wald.glm(mod),
+            Wald=Anova.default(mod, type="III"),
             F=Anova.III.F.glm(mod, error, error.estimate)))
     }
 
@@ -174,93 +236,89 @@ Anova.glm<-function(mod, type=c("II","III", 2, 3), test.statistic=c("LR", "Wald"
         
             # Wald test
         
-Anova.III.Wald.glm<-function(mod, ...){
-    intercept<-has.intercept(mod)
-    p<-length(coefficients(mod))
-    I.p<-diag(p)
-    Source<-term.names(mod)
-    n.terms<-length(Source)
-    Wald<-rep(0, n.terms)
-    df<-rep(0, n.terms)
-    p<-rep(0, n.terms)
-    assign<-attr(model.matrix(mod),"assign")
-    sumry<-summary(mod, corr=FALSE)
-    for (term in 1:n.terms){
-        subs<-which(assign==term-intercept)
-        hyp.matrix<-I.p[subs,]
-        test<-linear.hypothesis(mod, hyp.matrix, summary.model=sumry)
-        Wald[term]<-test$Chisq[2]
-        df[term]<- -test$Df[2]
-        p[term]<- test$"Pr(>Chisq)"[2]
-        }
-     result<-data.frame(Wald, df, p)
-     row.names(result)<-Source
-     names(result)<-c("Wald Chisq","Df","Pr(>Chisq)")
-     class(result)<-c("anova","data.frame")
-     attr(result,"heading")<-c("Anova Table (Type III tests)\n", paste("Response:", responseName(mod)))
-     result
-     }
+#Anova.III.Wald.glm <- function(mod, ...){
+#    intercept <- has.intercept(mod)
+#    p<-length(coefficients(mod))
+#    I.p<-diag(p)
+#    Source<-term.names(mod)
+#    n.terms<-length(Source)
+#    Wald<-rep(0, n.terms)
+#    df<-rep(0, n.terms)
+#    p<-rep(0, n.terms)
+#    assign<-attr(model.matrix(mod),"assign")
+#    sumry<-summary(mod, corr=FALSE)
+#    for (term in 1:n.terms){
+#        subs<-which(assign==term-intercept)
+#        hyp.matrix<-I.p[subs,]
+#        test<-linear.hypothesis(mod, hyp.matrix, summary.model=sumry)
+#        Wald[term]<-test$Chisq[2]
+#        df[term]<- -test$Df[2]
+#        p[term]<- test$"Pr(>Chisq)"[2]
+#        }
+#     result<-data.frame(Wald, df, p)
+#     row.names(result)<-Source
+#     names(result)<-c("Wald Chisq","Df","Pr(>Chisq)")
+#     class(result)<-c("anova","data.frame")
+#     attr(result,"heading")<-c("Anova Table (Type III tests)\n", paste("Response:", responseName(mod)))
+#     result
+#     }
      
             # LR test
 
-Anova.III.LR.glm<-function(mod, ...){
-    Source<-if (has.intercept(mod)) term.names(mod)[-1]
+Anova.III.LR.glm <- function(mod, ...){
+    Source <- if (has.intercept(mod)) term.names(mod)[-1]
         else term.names(mod)
-    n.terms<-length(Source)
-    LR<-rep(0, n.terms)
-    df<-rep(0, n.terms)
-    p<-rep(0, n.terms)
-    dispersion<-summary(mod, corr = FALSE)$dispersion
-    deviance<-deviance(mod)/dispersion
+    n.terms <- length(Source)
+    p <- df <- LR <- rep(0, n.terms)
+    dispersion <- summary(mod, corr = FALSE)$dispersion
+    deviance <- deviance(mod)/dispersion
     for (term in 1:n.terms){
-        mod.1<-drop1(mod, scope=
-            eval(parse(text=paste("~",Source[term]))))
-        LR[term]<-(mod.1$Deviance[2]/dispersion)-deviance
-        df[term]<-mod.1$Df[2]
-        p[term]<-1-pchisq(LR[term], df[term])
+        mod.1 <- drop1(mod, scope=eval(parse(text=paste("~",Source[term]))))
+        LR[term] <- (mod.1$Deviance[2]/dispersion)-deviance
+        df[term] <- mod.1$Df[2]
+        p[term] <- pchisq(LR[term], df[term], lower.tail = FALSE)
         }
-     result<-data.frame(LR, df, p)
-     row.names(result)<-Source
-     names(result)<-c("LR Chisq","Df","Pr(>Chisq)")
-     class(result)<-c("anova","data.frame")
-     attr(result,"heading")<-c("Anova Table (Type III tests)\n", paste("Response:", responseName(mod)))
+     result <- data.frame(LR, df, p)
+     row.names(result) <- Source
+     names(result) <- c("LR Chisq", "Df", "Pr(>Chisq)")
+     class(result) <- c("anova","data.frame")
+     attr(result, "heading") <- c("Anova Table (Type III tests)\n", paste("Response:", responseName(mod)))
      result
      }
 
             # F test
 
-Anova.III.F.glm<-function(mod, error, error.estimate, ...){
+Anova.III.F.glm <- function(mod, error, error.estimate, ...){
     fam <- family(mod)$family
     if (fam == "binomial" || fam == "poisson") 
         warning("dispersion parameter estimated from the Pearson residuals, not taken as 1")
-    if (missing(error)) error<-mod
+    if (missing(error)) error <- mod
     df.res <- df.residual(error)
-    error.SS<-switch(error.estimate,
+    error.SS <- switch(error.estimate,
         pearson=sum(residuals(error, "pearson")^2),
         dispersion=df.res*summary(error, corr = FALSE)$dispersion,
         deviance=deviance(error))
-    Source<-if (has.intercept(mod)) term.names(mod)[-1]
+    Source <- if (has.intercept(mod)) term.names(mod)[-1]
         else term.names(mod)
-    n.terms<-length(Source)
+    n.terms <- length(Source)
     p <- df <- f <- SS <-rep(0, n.terms+1)
     f[n.terms+1] <- p[n.terms+1] <- NA
-    df[n.terms+1]<-df.res
-    SS[n.terms+1]<-error.SS
-    dispersion<-error.SS/df.res
-    deviance<-deviance(mod)
+    df[n.terms+1] <- df.res
+    SS[n.terms+1] <- error.SS
+    dispersion <- error.SS/df.res
+    deviance <- deviance(mod)
     for (term in 1:n.terms){
-        mod.1<-drop1(mod, scope=
-            eval(parse(text=paste("~",Source[term]))))
-        df[term]<-mod.1$Df[2]
-        SS[term]<-mod.1$Deviance[2] - deviance
-        f[term]<-(SS[term]/df[term])/dispersion
-        p[term]<-1-pf(f[term], df[term], df.res)
+        mod.1 <- drop1(mod, scope=eval(parse(text=paste("~",Source[term]))))
+        df[term] <- mod.1$Df[2]
+        SS[term] <- mod.1$Deviance[2] - deviance
+        f[term] <- (SS[term]/df[term])/dispersion
+        p[term] <- pf(f[term], df[term], df.res, lower.tail = FALSE)
         }
-     result<-data.frame(SS, df, f, p)
-     row.names(result)<-c(Source, "Residuals")
-     names(result)<-c("SS", "Df", "F", "Pr(>F)")
-     class(result)<-c("anova","data.frame")
-     attr(result,"heading")<-c("Anova Table (Type III tests)\n", paste("Response:", responseName(mod)))
+     result <- data.frame(SS, df, f, p)
+     row.names(result) <- c(Source, "Residuals")
+     names(result) <- c("SS", "Df", "F", "Pr(>F)")
+     class(result) <- c("anova","data.frame")
+     attr(result, "heading") <- c("Anova Table (Type III tests)\n", paste("Response:", responseName(mod)))
      result
      }
      
@@ -268,45 +326,46 @@ Anova.III.F.glm<-function(mod, error, error.estimate, ...){
         
             # Wald test
         
-Anova.II.Wald.glm<-function(mod, ...){
-    chisq.term<-function(term){
-        which.term<-which(term==names)
-        subs.term<-which(assign==which.term)
-        relatives<-relatives(term, names, fac)
-        subs.relatives<-NULL
-        for (relative in relatives) subs.relatives<-c(subs.relatives, which(assign==relative))
-        hyp.matrix.1<-I.p[subs.relatives,]
-        hyp.matrix.2<-I.p[c(subs.relatives,subs.term),]
-        sumry<-summary(mod, corr=FALSE)
-        chisq.1<-if (length(subs.relatives)==0) 0 
-            else linear.hypothesis(mod, hyp.matrix.1, summary.model=sumry)$Chisq[2]
-        chisq.2<-linear.hypothesis(mod, hyp.matrix.2, summary.model=sumry)$Chisq[2]
-        chisq.2-chisq.1
-        }
-    fac<-attr(mod$terms, "factors")
-    intercept<-has.intercept(mod)
-    p<-length(coefficients(mod))
-    I.p<-diag(p)
-    names<-term.names(mod)
-    if (intercept) names<-names[-1]
-    assign<-rep(1:length(names), df.terms(mod))
-    assign<-if (intercept) c(0,assign) else assign
-    n.terms<-length(names)
-    Wald<-rep(0, n.terms)
-    df<-rep(0, n.terms)
-    p<-rep(0, n.terms)
-    for (i in 1:n.terms){
-        Wald[i]<-chisq.term(names[i])
-        df[i]<-df.terms(mod, names[i])
-        p[i]<-1-pchisq(Wald[i],df[i])
-        }    
-    result<-data.frame(Wald, df, p)
-    row.names(result)<-names
-    names(result)<-c("Wald Chisq","Df","Pr(>Chisq)")
-    class(result)<-c("anova","data.frame")
-    attr(result,"heading")<-c("Anova Table (Type II tests)\n", paste("Response:", responseName(mod)))
-    result
-    }
+#Anova.II.Wald.glm<-function(mod, ...){
+#    chisq.term<-function(term){
+#        which.term<-which(term==names)
+#        subs.term<-which(assign==which.term)
+#        relatives<-relatives(term, names, fac)
+#        subs.relatives<-NULL
+#        for (relative in relatives) subs.relatives<-c(subs.relatives, which(assign==relative))
+#        hyp.matrix.1<-I.p[subs.relatives,]
+#        hyp.matrix.2<-I.p[c(subs.relatives,subs.term),]
+#        sumry<-summary(mod, corr=FALSE)
+#        chisq.1<-if (length(subs.relatives)==0) 0 
+#            else linear.hypothesis(mod, hyp.matrix.1, summary.model=sumry)$Chisq[2]
+#        chisq.2<-linear.hypothesis(mod, hyp.matrix.2, summary.model=sumry)$Chisq[2]
+#        chisq.2-chisq.1
+#        }
+#    fac<-attr(mod$terms, "factors")
+#    intercept<-has.intercept(mod)
+#    p<-length(coefficients(mod))
+#    I.p<-diag(p)
+#    names<-term.names(mod)
+#    if (intercept) names<-names[-1]
+#    assign<-rep(1:length(names), df.terms(mod))
+#    assign<-if (intercept) c(0,assign) else assign
+#    n.terms<-length(names)
+#    Wald<-rep(0, n.terms)
+#    df<-rep(0, n.terms)
+#    p<-rep(0, n.terms)
+#    for (i in 1:n.terms){
+#        Wald[i]<-chisq.term(names[i])
+#        df[i]<-df.terms(mod, names[i])
+#        p[i]<-1-pchisq(Wald[i],df[i])
+#        }    
+#    result<-data.frame(Wald, df, p)
+#    row.names(result)<-names
+#    names(result)<-c("Wald Chisq","Df","Pr(>Chisq)")
+#    class(result)<-c("anova","data.frame")
+#    attr(result,"heading")<-c("Anova Table (Type II tests)\n", paste("Response:", responseName(mod)))
+#    result
+#    }
+
 
             # LR test
             
@@ -323,9 +382,8 @@ Anova.II.LR.glm <- function(mod, ...){
     wt <- mod$prior.weights
     if (is.null(wt)) wt <- rep(1, length(y))
     asgn <- attr(X, 'assign')
-    LR <- rep(0, n.terms)
-    df <- df.terms(mod)
-    p <- rep(0, n.terms)
+	p <- LR <- rep(0, n.terms)
+    df <- df.terms(mod)   
     dispersion <- summary(mod, corr = FALSE)$dispersion
     for (term in 1:n.terms){
         rels <- names[relatives(names[term], names, fac)]
@@ -341,13 +399,13 @@ Anova.II.LR.glm <- function(mod, ...){
                 }
         dev.2 <- deviance(mod.2)
         LR[term] <- (dev.1 - dev.2)/dispersion
-        p[term] <- 1 - pchisq(LR[term], df[term])
+        p[term] <- pchisq(LR[term], df[term], lower.tail=FALSE)
         }
      result <- data.frame(LR, df, p)
      row.names(result) <- names
      names(result) <- c("LR Chisq", "Df", "Pr(>Chisq)")
      class(result) <- c("anova", "data.frame")
-     attr(result,"heading") <- 
+     attr(result, "heading") <- 
         c("Anova Table (Type II tests)\n", paste("Response:", responseName(mod)))
      result
      }
@@ -368,7 +426,7 @@ Anova.II.F.glm <- function(mod, error, error.estimate, ...){
         dispersion = df.res*summary(error, corr = FALSE)$dispersion,
         deviance = deviance(error))
     fac <- attr(mod$terms, "factors")
-    names<-if (has.intercept(mod)) term.names(mod)[-1]
+    names <- if (has.intercept(mod)) term.names(mod)[-1]
         else term.names(mod)
     n.terms <- length(names)
     X <- model.matrix(mod)
@@ -398,13 +456,13 @@ Anova.II.F.glm <- function(mod, error, error.estimate, ...){
         dev.2 <- deviance(mod.2)
         SS[term] <- dev.1 - dev.2
         f[term] <- SS[term]/(dispersion*df[term])
-        p[term] <- 1 - pf(f[term], df[term], df.res)
+        p[term] <- pf(f[term], df[term], df.res, lower.tail=FALSE)
         }
      result <- data.frame(SS, df, f, p)
      row.names(result) <- c(names, "Residuals")
-     names(result) <- c("SS","Df","F","Pr(>F)")
-     class(result) <- c("anova","data.frame")
-     attr(result,"heading") <- c("Anova Table (Type II tests)\n", 
+     names(result) <- c("SS", "Df", "F", "Pr(>F)")
+     class(result) <- c("anova", "data.frame")
+     attr(result, "heading") <- c("Anova Table (Type II tests)\n", 
         paste("Response:", responseName(mod)))
      result
      }
@@ -414,6 +472,7 @@ Anova.II.F.glm <- function(mod, error, error.estimate, ...){
 Anova.multinom <-
 function (mod, type = c("II", "III", 2, 3), ...)
 {
+	type <- as.character(type)
     type <- match.arg(type)
     if (has.intercept(mod) && length(coef(mod)) == 1 
             && (type == "2" || type == "II")) {
@@ -439,9 +498,8 @@ Anova.II.multinom <- function (mod, ...)
     y <- model.response(model.frame(mod))
     wt <- mod$weights
     asgn <- attr(X, "assign")
-    LR <- rep(0, n.terms)
+    p <- LR <- rep(0, n.terms)
     df <- df.terms(mod)
-    p <- rep(0, n.terms)
     for (term in 1:n.terms) {
         rels <- names[relatives(names[term], names, fac)]
         exclude.1 <- as.vector(unlist(sapply(c(names[term], rels),
@@ -456,7 +514,7 @@ Anova.II.multinom <- function (mod, ...)
         }
         dev.2 <- deviance(mod.2)
         LR[term] <- dev.1 - dev.2
-        p[term] <- 1 - pchisq(LR[term], df[term])
+        p[term] <- pchisq(LR[term], df[term], lower.tail=FALSE)
     }
     result <- data.frame(LR, df, p)
     row.names(result) <- names
@@ -476,14 +534,13 @@ Anova.III.multinom <- function (mod, ...)
     y <- model.response(model.frame(mod))
     wt <- mod$weights
     asgn <- attr(X, "assign")
-    LR <- rep(0, n.terms)
+    p <- LR <- rep(0, n.terms)
     df <- df.terms(mod)
-    p <- rep(0, n.terms)
     deviance <- deviance(mod)
     for (term in 1:n.terms) {
         mod.1 <- multinom(y ~ X[, term != asgn][, -1], weights=wt, trace=FALSE)
         LR[term] <- deviance(mod.1) - deviance
-        p[term] <- 1 - pchisq(LR[term], df[term])
+        p[term] <- pchisq(LR[term], df[term], lower.tail=FALSE)
     }
     result <- data.frame(LR, df, p)
     row.names(result) <- names
@@ -497,9 +554,9 @@ Anova.III.multinom <- function (mod, ...)
 
 # proportional-odds logit models (via polr in the MASS package)
 
- Anova.polr <-
-function (mod, type = c("II", "III", 2, 3), ...)
+ Anova.polr <- function (mod, type = c("II", "III", 2, 3), ...)
 {
+	type <- as.character(type)
     type <- match.arg(type)
     if (has.intercept(mod) && length(coef(mod)) == 1 
             && (type == "2" || type == "II")) {
@@ -524,9 +581,8 @@ Anova.II.polr <- function (mod, ...)
     y <- model.response(model.frame(mod))
     wt <- model.weights(model.frame(mod))
     asgn <- attr(X, "assign")
-    LR <- rep(0, n.terms)
+    p <- LR <- rep(0, n.terms)
     df <- df.terms(mod)
-    p <- rep(0, n.terms)
     for (term in 1:n.terms) {
         rels <- names[relatives(names[term], names, fac)]
         exclude.1 <- as.vector(unlist(sapply(c(names[term], rels),
@@ -541,7 +597,7 @@ Anova.II.polr <- function (mod, ...)
         }
         dev.2 <- deviance(mod.2)
         LR[term] <- dev.1 - dev.2
-        p[term] <- 1 - pchisq(LR[term], df[term])
+        p[term] <- pchisq(LR[term], df[term], lower.tail=FALSE)
     }
     result <- data.frame(LR, df, p)
     row.names(result) <- names
@@ -560,14 +616,13 @@ Anova.III.polr <- function (mod, ...)
     y <- model.response(model.frame(mod))
     wt <- model.weights(model.frame(mod))
     asgn <- attr(X, "assign")
-    LR <- rep(0, n.terms)
+    p <- LR <- rep(0, n.terms)
     df <- df.terms(mod)
-    p <- rep(0, n.terms)
     deviance <- deviance(mod)
     for (term in 1:n.terms) {
         mod.1 <- polr(y ~ X[, term != asgn][, -1], weights=wt)
         LR[term] <- deviance(mod.1) - deviance
-        p[term] <- 1 - pchisq(LR[term], df[term])
+        p[term] <- pchisq(LR[term], df[term], lower.tail=FALSE)
     }
     result <- data.frame(LR, df, p)
     row.names(result) <- names
@@ -586,6 +641,7 @@ has.intercept.mlm <- function (model, ...)
 Anova.mlm <- function(mod, type=c("II","III", 2, 3), SSPE, error.df, idata, 
     idesign, icontrasts=c("contr.sum", "contr.poly"),
     test.statistic=c("Pillai", "Wilks", "Hotelling-Lawley", "Roy"),...){
+	type <- as.character(type)
     type <- match.arg(type)
     if (has.intercept(mod) && nrow(coef(mod)) == 1 
             && (type == "2" || type == "II")) {
@@ -885,7 +941,7 @@ summary.Anova.mlm <- function(object, test.statistic, multivariate=TRUE, univari
             table[term, "F"] <-  (table[term, "SS"]/table[term, "num Df"])/
                 (table[term, "Error SS"]/table[term, "den Df"])
             table[term, "Pr(>F)"] <- pf(table[term, "F"], table[term, "num Df"],
-                table[term, "den Df"], lower=FALSE)
+                table[term, "den Df"], lower.tail=FALSE)
             table2[term, "GG eps"] <- gg
             table2[term, "HF eps"] <- HF(gg, error.df, p)
             table3[term,] <- mauchly(SSPE, P, object$error.df)
@@ -900,10 +956,10 @@ summary.Anova.mlm <- function(object, test.statistic, multivariate=TRUE, univari
             cat("\n\nGreenhouse-Geisser and Huynh-Feldt Corrections\n",
                 "for Departure from Sphericity\n\n")
             table2[,"Pr(>F[GG])"] <- pf(table[,"F"], table2[,"GG eps"]*table[,"num Df"],
-                    table2[,"GG eps"]*table[,"den Df"], lower=FALSE)
+                    table2[,"GG eps"]*table[,"den Df"], lower.tail=FALSE)
             table2[,"Pr(>F[HF])"] <- pf(table[,"F"], 
                     pmin(1, table2[,"HF eps"])*table[,"num Df"],
-                    pmin(1, table2[,"HF eps"])*table[,"den Df"], lower=FALSE)
+                    pmin(1, table2[,"HF eps"])*table[,"den Df"], lower.tail=FALSE)
             table2 <- na.omit(table2)
             print.anova(table2[,1:2, drop=FALSE])
             cat("\n")
@@ -927,3 +983,308 @@ Manova <- function(mod, ...){
 Manova.mlm <- function(mod, ...){
     Anova(mod, ...)
     }
+	
+# Cox regression models
+
+df.residual.coxph <- function(object, ...){    
+	object$n - sum(!is.na(coef(object)))
+}
+
+alias.coxph <- function(model){
+	if(any(which <- is.na(coef(model)))) return(list(Complete=which))
+	else list()
+}
+
+logLik.coxph <- function(object, ...) object$loglik[2]
+
+Anova.coxph <- function(mod, type=c("II","III", 2, 3), test.statistic=c("LR", "Wald"), ...){
+	type <- as.character(type)
+	type <- match.arg(type)
+	test.statistic <- match.arg(test.statistic)
+	if (length((mod$rscore) > 0) && (test.statistic == "LR")){ 
+		warning("LR tests unavailable with robust variances\nWald tests substituted")
+		test.statistic <- "Wald"
+	}
+	switch(type,
+		II=switch(test.statistic,
+			LR=Anova.II.LR.coxph(mod),
+			Wald=Anova.default(mod, type="II", test="Chisq", vcov.=vcov(mod))),
+		III=switch(test.statistic,
+			LR=Anova.III.LR.coxph(mod),
+			Wald=Anova.default(mod, type="III", test="Chisq", vcov.=vcov(mod))),
+		"2"=switch(test.statistic,
+			LR=Anova.II.LR.coxph(mod),
+			Wald=Anova.default(mod, type="II", test="Chisq", vcov.=vcov(mod))),
+		"3"=switch(test.statistic,
+			LR=Anova.III.LR.coxph(mod),
+			Wald=Anova.default(mod, type="III", test="Chisq", vcov.=vcov(mod))))
+}
+
+Anova.II.LR.coxph <- function(mod, ...){
+	which.nms <- function(name) which(asgn == which(names == name))
+	fac <-attr(terms(mod), "factors")
+	names <- term.names(mod)
+	n.terms <- length(names)
+	X <- model.matrix(mod)
+	asgn <- attr(X, 'assign')
+	asgn <- asgn[asgn != 0]
+	X <- X[, -which(colnames(X) == "(Intercept)")]
+	p <- LR <- rep(0, n.terms)
+	df <- df.terms(mod)
+	for (term in 1:n.terms){
+		rels <- names[relatives(names[term], names, fac)]
+		exclude.1 <- as.vector(unlist(sapply(c(names[term], rels), which.nms)))
+		mod.1 <- coxph(mod$y ~ X[, -exclude.1, drop = FALSE])
+		loglik.1 <- logLik(mod.1)
+		mod.2 <- if (length(rels) == 0) mod
+			else {
+				exclude.2 <- as.vector(unlist(sapply(rels, which.nms)))
+				coxph(mod$y ~ X[, -exclude.2, drop = FALSE])
+			}
+		loglik.2 <- logLik(mod.2)
+		LR[term] <- -2*(loglik.1 - loglik.2)
+		p[term] <- pchisq(LR[term], df[term], lower.tail=FALSE)
+	}
+	result <- data.frame(LR, df, p)
+	row.names(result) <- names
+	names(result) <- c("LR Chisq", "Df", "Pr(>Chisq)")
+	class(result) <- c("anova", "data.frame")
+	attr(result, "heading") <- "Anova Table (Type II tests)"
+	result
+}
+
+Anova.III.LR.coxph <- function(mod, ...){
+	which.nms <- function(name) which(asgn == which(names == name))
+	fac <-attr(terms(mod), "factors")
+	names <- term.names(mod)
+	n.terms <- length(names)
+	X <- model.matrix(mod)
+	asgn <- attr(X, 'assign')
+	asgn <- asgn[asgn != 0]
+	X <- X[, -which(colnames(X) == "(Intercept)")]
+	df <- df.terms(mod)
+	LR <- p <- rep(0, n.terms)
+	loglik1 <- logLik(mod)
+	for (term in 1:n.terms){
+		mod.0 <- coxph(mod$y ~ X[, -which.nms(names[term])])
+		LR[term] <- -2*(logLik(mod.0) - loglik1)
+		p[term] <- pchisq(LR[term], df[term], lower.tail=FALSE)
+	}
+	result <- data.frame(LR, df, p)
+	row.names(result) <- names
+	names(result) <- c("LR Chisq", "Df","Pr(>Chisq)")
+	class(result) <- c("anova", "data.frame")
+	attr(result,"heading") <- "Anova Table (Type III tests)"
+	result
+}
+
+# parametric survival regression models
+
+alias.survreg <- function(model){
+	if(any(which <- diag(vcov(model)) < 1e-10)) return(list(Complete=which))
+	else list()
+}
+
+logLik.survreg <- function(object, ...) object$loglik[2]
+
+Anova.survreg <- function(mod, type=c("II","III", 2, 3), test.statistic=c("LR", "Wald"), ...){
+	type <- as.character(type)
+	type <- match.arg(type)
+	test.statistic <- match.arg(test.statistic)
+	if (length((mod$rscore) > 0) && (test.statistic == "LR")){ 
+		warning("LR tests unavailable with robust variances\nWald tests substituted")
+		test.statistic <- "Wald"
+	}
+	switch(type,
+		II=switch(test.statistic,
+			LR=Anova.II.LR.survreg(mod),
+			Wald=Anova.II.Wald.survreg(mod)),
+		III=switch(test.statistic,
+			LR=Anova.III.LR.survreg(mod),
+			Wald=Anova.III.Wald.survreg(mod)),
+		"2"=switch(test.statistic,
+			LR=Anova.II.LR.survreg(mod),
+			Wald=Anova.II.Wald.survreg(mod)),
+		"3"=switch(test.statistic,
+			LR=Anova.III.LR.survreg(mod),
+			Wald=Anova.III.Wald.survreg(mod)))
+}
+
+Anova.II.LR.survreg <- function(mod, ...){
+	which.nms <- function(name) which(asgn == which(names == name))
+	fac <-attr(terms(mod), "factors")
+	names <- term.names(mod)
+	X <- model.matrix(mod)
+	asgn <- attr(X, 'assign')
+	asgn <- asgn[asgn != 0]
+	if (has.intercept(mod)){
+		int <- which(names == "(Intercept)")
+		X <- X[, -int]
+		names <- names[-int]
+	}
+	n.terms <- length(names)
+	p <- LR <- rep(0, n.terms)
+	df <- df.terms(mod)
+	y <- model.frame(mod)[,1]
+	for (term in 1:n.terms){
+		rels <- names[relatives(names[term], names, fac)]
+		exclude.1 <- as.vector(unlist(sapply(c(names[term], rels), which.nms)))
+		mod.1 <- survreg(y ~ X[, -exclude.1, drop = FALSE])
+		loglik.1 <- logLik(mod.1)
+		mod.2 <- if (length(rels) == 0) mod
+			else {
+				exclude.2 <- as.vector(unlist(sapply(rels, which.nms)))
+				survreg(y ~ X[, -exclude.2, drop = FALSE])
+			}
+		loglik.2 <- logLik(mod.2)
+		LR[term] <- -2*(loglik.1 - loglik.2)
+		p[term] <- pchisq(LR[term], df[term], lower.tail=FALSE)
+	}
+	result <- data.frame(LR, df, p)
+	row.names(result) <- names
+	names(result) <- c("LR Chisq", "Df", "Pr(>Chisq)")
+	class(result) <- c("anova", "data.frame")
+	attr(result, "heading") <- "Anova Table (Type II tests)"
+	result
+}
+
+Anova.III.LR.survreg <- function(mod, ...){
+	which.nms <- function(name) which(asgn == which(names == name))
+	fac <-attr(terms(mod), "factors")
+	names <- term.names(mod)
+	X <- model.matrix(mod)
+	asgn <- attr(X, 'assign')
+	asgn <- asgn[asgn != 0]
+	if (has.intercept(mod)){
+		int <- which(names == "(Intercept)")
+		X <- X[, -int]
+		names <- names[-int]
+	}
+	n.terms <- length(names)
+	p <- LR <- rep(0, n.terms)
+	df <- df.terms(mod)
+	y <- model.frame(mod)[,1]
+	loglik1 <- logLik(mod)
+	for (term in 1:n.terms){
+		mod.0 <- survreg(y ~ X[, -which.nms(names[term])])
+		LR[term] <- -2*(logLik(mod.0) - loglik1)
+		p[term] <- pchisq(LR[term], df[term], lower.tail=FALSE)
+	}
+	result <- data.frame(LR, df, p)
+	row.names(result) <- names
+	names(result) <- c("LR Chisq", "Df","Pr(>Chisq)")
+	class(result) <- c("anova", "data.frame")
+	attr(result,"heading") <- "Anova Table (Type III tests)"
+	result
+}
+
+Anova.II.Wald.survreg <- function(mod){
+	V <- vcov(mod)
+	p <- nrow(V)
+	V <- V[-p, -p]
+	Anova.II.default(mod, V, test="Chisq")
+}
+
+Anova.III.Wald.survreg <- function(mod){
+	V <- vcov(mod)
+	p <- nrow(V)
+	V <- V[-p, -p]
+	Anova.III.default(mod, V, test="Chisq")
+}
+
+# Default Anova() method: requires methods for vcov() (if vcov. argument not specified) and coef().
+
+Anova.default <- function(mod, type=c("II","III", 2, 3), test.statistic=c("Chisq", "F"), 
+	vcov.=vcov(mod), ...){
+	type <- as.character(type)
+	type <- match.arg(type)
+	test.statistic <- match.arg(test.statistic)
+	switch(type,
+		II=Anova.II.default(mod, vcov., test.statistic),
+		III=Anova.III.default(mod, vcov., test.statistic),
+		"2"=Anova.II.default(mod, vcov., test.statistic),
+		"3"=Anova.III.default(mod, vcov., test.statistic))
+}
+
+Anova.II.default <- function(mod, vcov., test, ...){
+	hyp.term <- function(term){
+		which.term <- which(term==names)
+		subs.term <- which(assign==which.term)
+		relatives <- relatives(term, names, fac)
+		subs.relatives <- NULL
+		for (relative in relatives) 
+			subs.relatives <- c(subs.relatives, which(assign==relative))
+		hyp.matrix.1 <- I.p[subs.relatives,, drop=FALSE]
+		hyp.matrix.2 <- I.p[c(subs.relatives,subs.term),, drop=FALSE]
+		hyp.matrix.term <- if (nrow(hyp.matrix.1) == 0) hyp.matrix.2
+			else t(ConjComp(t(hyp.matrix.1), t(hyp.matrix.2), vcov.))
+		hyp <- linear.hypothesis.default(mod, hyp.matrix.term, 
+			vcov.=vcov., test=test, ...)
+		if (test=="Chisq") hyp$Chisq[2] else hyp$F[2]
+	}
+	fac <- attr(mod$terms, "factors")
+	intercept <- has.intercept(mod)
+	p <- length(coefficients(mod))
+	I.p <- diag(p)
+	assign <- attr(model.matrix(mod), "assign")
+	if (inherits(mod, "coxph")){
+		if (intercept) names <- names[-1]
+		assign <- assign[assign != 0]
+	}
+	names <- term.names(mod)
+	if (intercept) names<-names[-1]
+	n.terms <- length(names)
+	df <- c(df.terms(mod), df.residual(mod))
+	p <- teststat <- rep(0, n.terms + 1)
+	teststat[n.terms+1] <- p[n.terms + 1] <- NA
+	for (i in 1:n.terms){
+		teststat[i] <- hyp.term(names[i])
+		p[i] <- if (test == "Chisq") 
+				pchisq(teststat[i], df[i], lower.tail=FALSE) 
+			else pf(teststat[i], df[i], df[n.terms + 1], lower.tail=FALSE)
+	}    
+	result <- data.frame(df, teststat, p)
+	row.names(result) <- c(names,"Residuals")
+	names(result) <- c ("Df", test, if (test == "Chisq") "Pr(>Chisq)" 
+			else "Pr(>F)")
+	class(result) <- c("anova", "data.frame")
+	attr(result, "heading") <- c("Anova Table (Type II tests)\n", 
+		paste("Response:", responseName(mod)))
+	result
+}
+
+Anova.III.default <- function(mod, vcov., test, ...){
+	intercept <- has.intercept(mod)
+	p <- length(coefficients(mod))
+	I.p <- diag(p)
+	names <- term.names(mod)
+	n.terms <- length(names)
+	df <- c(df.terms(mod), df.residual(mod))
+	if (intercept) df <- c(1, df)
+	teststat <- rep(0, n.terms + 1)
+	p <- rep(0, n.terms + 1)
+	teststat[n.terms+1] <- p[n.terms + 1] <- NA
+	assign <- attr(model.matrix(mod), "assign")
+	if (inherits(mod, "coxph")){
+		if (intercept) names <- names[-1]
+		assign <- assign[assign != 0]
+	}
+	for (term in 1:n.terms){
+		subs <- which(assign == term - intercept)
+		hyp.matrix <- I.p[subs,]
+		hyp <- linear.hypothesis.default(mod, hyp.matrix, 
+			vcov.=vcov., test=test, ...)
+		teststat[term] <- if (test=="Chisq") hyp$Chisq[2] else hyp$F[2]
+		p[term] <- if (test == "Chisq") 
+				pchisq(teststat[term], df[term], lower.tail=FALSE) 
+			else pf(teststat[term], df[term], df[n.terms + 1], lower.tail=FALSE)
+	}
+	result <- data.frame(df, teststat, p)
+	row.names(result) <- c(names, "Residuals")
+	names(result) <- c ("Df", test, if (test == "Chisq") "Pr(>Chisq)" 
+			else "Pr(>F)")
+	class(result) <- c("anova", "data.frame")
+	attr(result, "heading") <- c("Anova Table (Type III tests)\n", 
+		paste("Response:", responseName(mod)))
+	result
+}

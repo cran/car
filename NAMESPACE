@@ -1,4 +1,4 @@
-# last modified 19 April 2008 by J. Fox
+# last modified 27 December 2008 by J. Fox
 
 export(Anova,
     Ask,
@@ -66,7 +66,9 @@ export(Anova,
     Var,
     vif,
     which.names)    
-S3method(Anova, aov)                
+S3method(Anova, aov)
+S3method(Anova, coxph)
+S3method(Anova, default)                
 S3method(Anova, glm)  
 S3method(Anova, lm)
 S3method(Anova, manova)                  
