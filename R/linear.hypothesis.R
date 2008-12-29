@@ -1,4 +1,9 @@
-# last modified 21 Oct 2008 by J. Fox
+# last modified 27 Dec 2008 by J. Fox
+
+vcov.default <- function(object, ...){
+	stop(paste("there is no vcov() method for models of class", 
+			paste(class(object), collapse=", ")))
+}
 
 has.intercept.matrix <- function (model, ...) {
     "(Intercept)" %in% colnames(model)
@@ -108,6 +113,8 @@ linear.hypothesis.default <- function(model, hypothesis.matrix, rhs=NULL,
     V <- if (is.null(vcov.)) vcov(model)  
         else if (is.function(vcov.)) vcov.(model) else vcov.
     b <- coef(model)
+	if (is.null(b)) stop(paste("there is no coef() method for models of class", 
+				paste(class(model), collapse=", ")))
     if (is.character(hypothesis.matrix)) {    
         L <- makeHypothesis(names(b), hypothesis.matrix, rhs)
         if (is.null(dim(L))) L <- t(L)
@@ -316,4 +323,13 @@ print.linear.hypothesis.mlm <- function(x, SSP=TRUE, SSPE=SSP,
     print(tests, digits=digits)
     invisible(x)
     }
-    
+
+linear.hypothesis.survreg <- function(model, hypothesis.matrix, rhs=NULL, 
+	test=c("Chisq", "F"), vcov., verbose=FALSE, ...){
+	if (missing(vcov.)) {
+		vcov. <- vcov(model)
+		p <- nrow(vcov.)
+		vcov. <- vcov.[-p, -p]
+	}
+	linear.hypothesis.default(model, hypothesis.matrix, rhs, test, vcov.)
+}

@@ -2,45 +2,40 @@
 \alias{Anova}
 \alias{Anova.lm}
 \alias{Anova.aov}
-\alias{Anova.II.lm}
-\alias{Anova.III.lm}
 \alias{Anova.glm}
-\alias{Anova.II.F.glm}
-\alias{Anova.II.LR.glm}
-\alias{Anova.II.Wald.glm}
-\alias{Anova.III.F.glm}
-\alias{Anova.III.LR.glm}
-\alias{Anova.III.Wald.glm}
 \alias{Anova.multinom}
-\alias{Anova.II.multinom}
-\alias{Anova.III.multinom}
 \alias{Anova.polr}
-\alias{Anova.II.polr}
-\alias{Anova.III.polr}
 \alias{Anova.mlm}
 \alias{Anova.manova}
 \alias{Manova}
 \alias{Manova.mlm}
 \alias{print.Anova.mlm}
 \alias{summary.Anova.mlm}
+\alias{Anova.coxph}
+\alias{Anova.default}
 \title{Anova Tables for Various Statistical Models}
 \description{
   Calculates type-II or type-III analysis-of-variance tables for
   model objects produced by \code{lm}, \code{glm}, \code{multinom} 
-  (in the \code{nnet} package), and \code{polr} (in the \code{MASS}
-  package).  For linear
+  (in the \pkg{nnet} package), \code{polr} (in the \pkg{MASS}
+  package), \code{coxph} (in the \pkg{survival} package), and for any
+  model with a linear predictor and asymptotically normal coefficients that
+  responds to the \code{vcov} and \code{coef} functions.  For linear
   models, F-tests are calculated; for generalized linear models, 
   likelihood-ratio chisquare, Wald chisquare, or F-tests are calculated;
   for multinomial logit and proportional-odds logit models, likelihood-ratio
   tests are calculated.  Various test statistics are provided for multivariate
-  linear models produced by \code{lm} or \code{manova}.
+  linear models produced by \code{lm} or \code{manova}. Partial-ikelihood-ratio tests
+  or Wald tests are provided for Cox models. Wald chi-square or F tests are provided 
+  in the default case.
 }
 \usage{
 Anova(mod, ...)
 
 Manova(mod, ...)
 
-\method{Anova}{lm}(mod, error, type=c("II","III", 2, 3), ...)
+\method{Anova}{lm}(mod, error, type=c("II","III", 2, 3), 
+	white.adjust=c("hc3", "hc0", "hc1", "hc2", "hc4"), ...)
 
 \method{Anova}{aov}(mod, ...)
 
@@ -64,6 +59,10 @@ Manova(mod, ...)
 
 \method{summary}{Anova.mlm}(object, test.statistic, multivariate=TRUE, 
     univariate=TRUE, digits=unlist(options("digits")), ...)
+\method{Anova}{coxph}(mod, type=c("II","III", 2, 3), 
+	test.statistic=c("LR", "Wald"), ...)
+\method{Anova}{default}(mod, type=c("II","III", 2, 3), 
+	test.statistic=c("Chisq", "F"), vcov.=vcov(mod), ...)
 }
 
 \arguments{
@@ -75,7 +74,10 @@ Manova(mod, ...)
     dispersion is to be estimated. If not specified, \code{mod} is used.}
   \item{type}{type of test, \code{"II"}, \code{"III"}, \code{2}, or \code{3}.}
   \item{test.statistic}{for a generalized linear model, whether to calculate 
-    \code{"LR"} (likelihood-ratio), \code{"Wald"}, or \code{"F"} tests.
+    \code{"LR"} (likelihood-ratio), \code{"Wald"}, or \code{"F"} tests; for a Cox
+    model, whether to calculate \code{"LR"} (partial-likelihood ratio) or
+    \code{"Wald"} tests; in the default case, whether to calculate Wald \code{"Chisq"} or
+    \code{"F"} tests.
     For a multivariate linear model, the multivariate test statistic to compute --- one of
     \code{"Pillai"}, \code{"Wilks"}, \code{"Hotelling-Lawley"}, or \code{"Roy"}, 
     with \code{"Pillai"} as the default. The \code{summary} method for \code{Anova.mlm}
@@ -86,6 +88,11 @@ Manova(mod, ...)
     dispersion estimate in the model object (\code{dispersion}), which, e.g., is
     fixed to 1 for binomial and Poisson models; or base the dispersion estimate on
     the residual deviance (\code{deviance}).}
+  \item{white.adjust}{if specified, tests use a heteroscedasticity-corrected coefficient
+    covariance matrix; the various values of the argument specify different corrections.
+    See the documentation for \code{\link{hccm}} for details. If \code{white.adjust=TRUE}
+    then the \code{hc3} correction is selected. Note that this argument \emph{must} be
+    given explicitly; the default is not to use a correction.} 
   \item{SSPE}{The error sum-of-squares-and-products matrix; if missing, will be computed
     from the residuals of the model.}
   \item{error.df}{The degrees of freedom for error; if missing, will be taken from the model.}
@@ -104,6 +111,8 @@ Manova(mod, ...)
   \item{multivariate, univariate}{print multivariate and univariate tests for a repeated-measures
     ANOVA; the default is \code{TRUE} for both.}
   \item{digits}{minimum number of significant digits to print.}
+  \item{vcov.}{an optional coefficient-covariance matrix, computed by default by applying the 
+  	generic \code{vcov} function to the model object.}
   \item{\dots}{do not use.}
 }
 \details{
@@ -118,10 +127,11 @@ Manova(mod, ...)
   Be very careful in formulating the model for type-III tests, or the hypotheses tested
   will not make sense. 
   
-  As implemented here, type-II Wald tests for generalized linear models are actually
-  \emph{differences} of Wald statistics.
+  As implemented here, type-II Wald tests are a generalization of the linear hypotheses used to generate
+  these tests in linear models.
   
   For tests for linear models, multivariate linear models, and Wald tests for generalized linear models,
+  Cox models, and in the default case,
   \code{Anova} finds the test statistics without refitting the model.
   
   The standard R \code{anova} function calculates sequential ("type-I") tests.
@@ -168,7 +178,7 @@ Manova(mod, ...)
 
 \seealso{ \code{\link{linear.hypothesis}}, \code{\link[stats]{anova}}
 \code{\link[stats]{anova.lm}}, \code{\link[stats]{anova.glm}}, 
-\code{\link[stats]{anova.mlm}}}
+\code{\link[stats]{anova.mlm}}, \code{\link[survival]{anova.coxph}}.}
 
 \examples{
 
