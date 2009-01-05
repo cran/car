@@ -260,3 +260,8 @@ Changes to Version 1.2-10
 
 	o  Reworked Anova(), including adding default method and method for coxph objects.
 	
+Changes to Version 1.2-11
+
+	o  Bug fix to Anova().
+	
+	o  Small changes.

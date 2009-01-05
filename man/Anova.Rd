@@ -35,7 +35,7 @@ Anova(mod, ...)
 Manova(mod, ...)
 
 \method{Anova}{lm}(mod, error, type=c("II","III", 2, 3), 
-	white.adjust=c("hc3", "hc0", "hc1", "hc2", "hc4"), ...)
+	white.adjust=c(FALSE, TRUE, "hc3", "hc0", "hc1", "hc2", "hc4"), ...)
 
 \method{Anova}{aov}(mod, ...)
 
@@ -88,11 +88,11 @@ Manova(mod, ...)
     dispersion estimate in the model object (\code{dispersion}), which, e.g., is
     fixed to 1 for binomial and Poisson models; or base the dispersion estimate on
     the residual deviance (\code{deviance}).}
-  \item{white.adjust}{if specified, tests use a heteroscedasticity-corrected coefficient
+  \item{white.adjust}{if not \code{FALSE}, the default, 
+  	tests use a heteroscedasticity-corrected coefficient
     covariance matrix; the various values of the argument specify different corrections.
     See the documentation for \code{\link{hccm}} for details. If \code{white.adjust=TRUE}
-    then the \code{hc3} correction is selected. Note that this argument \emph{must} be
-    given explicitly; the default is not to use a correction.} 
+    then the \code{"hc3"} correction is selected.} 
   \item{SSPE}{The error sum-of-squares-and-products matrix; if missing, will be computed
     from the residuals of the model.}
   \item{error.df}{The degrees of freedom for error; if missing, will be taken from the model.}
