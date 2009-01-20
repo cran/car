@@ -1,4 +1,4 @@
-# last modified 27 December 2008 by J. Fox
+# last modified 16 January 2009 by J. Fox
 
 export(Anova,
     Ask,
@@ -74,7 +74,8 @@ S3method(Anova, lm)
 S3method(Anova, manova)                  
 S3method(Anova, multinom)
 S3method(Anova, mlm)            
-S3method(Anova, polr)    
+S3method(Anova, polr)
+S3method(Anova, survreg)    
 S3method(av.plot, glm)              
 S3method(av.plot, lm)       
 S3method(box.tidwell, default)       

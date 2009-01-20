@@ -1,6 +1,6 @@
 # score test of nonconstant variance (J. Fox)
 
-# last modified 5 June 05 by J. Fox
+# last modified 20 January 2009 by J. Fox
 
 ncv.test<-function(model, ...){
     # last modified 15 Dec 2000 by J. Fox
@@ -24,7 +24,7 @@ ncv.test.lm<-function (model, var.formula, data=NULL, subset, na.action, ...) {
     else {
         if (missing(na.action)){
             na.action <- if (is.null(model$na.action)) options()$na.action
-                else parse(text=paste('na.',class(mod$na.action), sep=''))
+                else parse(text=paste('na.',class(model$na.action), sep=''))
             }
         m <- match.call(expand.dots = FALSE)
         if (is.matrix(eval(m$data, sys.frame(sys.parent())))) 

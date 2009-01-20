@@ -265,3 +265,11 @@ Changes to Version 1.2-11
 	o  Bug fix to Anova().
 	
 	o  Small changes.
+	
+Changes to Version 1.2-12
+
+	o  Anova() now works properly with coxph objects with clusters.
+	
+	o  Fixed bug in ncv.test.lm() that could cause the function to fail.
+	
+	o  Small changes.

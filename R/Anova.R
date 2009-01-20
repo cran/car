@@ -1,6 +1,6 @@
 # Type II and III tests for linear, generalized linear, and other models (J. Fox)
 
-# last modified 5 January 2009
+# last modified 16 January 2009
 
 # Type II and III tests for linear, generalized linear, and other models (J. Fox)
 
@@ -741,7 +741,7 @@ print.Anova.mlm <- function(x, ...){
 }
 
 summary.Anova.mlm <- function(object, test.statistic, multivariate=TRUE, univariate=TRUE, 
-	digits=unlist(options("digits")), ...){
+	digits=getOption("digits"), ...){
 	GG <- function(SSPE, P){ # Greenhouse-Geisser correction
 		p <- nrow(SSPE)
 		if (p < 2) return(NA) 
@@ -904,6 +904,7 @@ Anova.II.LR.coxph <- function(mod, ...){
 	fac <-attr(terms(mod), "factors")
 	names <- term.names(mod)
 	n.terms <- length(names)
+	if (n.terms < 2) return(anova(mod, test="Chisq"))
 	X <- model.matrix(mod)
 	asgn <- attr(X, 'assign')
 	asgn <- asgn[asgn != 0]
@@ -937,6 +938,7 @@ Anova.III.LR.coxph <- function(mod, ...){
 	fac <-attr(terms(mod), "factors")
 	names <- term.names(mod)
 	n.terms <- length(names)
+	if (n.terms < 2) return(anova(mod, test="Chisq"))
 	X <- model.matrix(mod)
 	asgn <- attr(X, 'assign')
 	asgn <- asgn[asgn != 0]
@@ -1002,6 +1004,7 @@ Anova.II.LR.survreg <- function(mod, ...){
 		names <- names[-int]
 	}
 	n.terms <- length(names)
+	if (n.terms < 2) return(anova(mod))
 	p <- LR <- rep(0, n.terms)
 	df <- df.terms(mod)
 	y <- model.frame(mod)[,1]
@@ -1040,6 +1043,7 @@ Anova.III.LR.survreg <- function(mod, ...){
 		names <- names[-int]
 	}
 	n.terms <- length(names)
+	if (n.terms < 2) return(anova(mod))
 	p <- LR <- rep(0, n.terms)
 	df <- df.terms(mod)
 	y <- model.frame(mod)[,1]
@@ -1106,14 +1110,19 @@ Anova.II.default <- function(mod, vcov., test, ...){
 	p <- length(coefficients(mod))
 	I.p <- diag(p)
 	assign <- attr(model.matrix(mod), "assign")
-	if (inherits(mod, "coxph")){
-		if (intercept) names <- names[-1]
-		assign <- assign[assign != 0]
-	}
 	names <- term.names(mod)
-	if (intercept) names<-names[-1]
-	n.terms <- length(names)
+	assign <- attr(model.matrix(mod), "assign")
 	df <- c(df.terms(mod), df.residual(mod))
+	if (inherits(mod, "coxph")){
+		assign <- assign[assign != 0]
+		clusters <- grep("^cluster\\(", names)
+		if (length(clusters) > 0) {
+			names <- names[-clusters]
+			df <- df[-clusters]
+		}
+	}
+	if (intercept) names <- names[-1]
+	n.terms <- length(names)
 	p <- teststat <- rep(0, n.terms + 1)
 	teststat[n.terms+1] <- p[n.terms + 1] <- NA
 	for (i in 1:n.terms){
@@ -1137,17 +1146,22 @@ Anova.III.default <- function(mod, vcov., test, ...){
 	p <- length(coefficients(mod))
 	I.p <- diag(p)
 	names <- term.names(mod)
-	n.terms <- length(names)
-	df <- c(df.terms(mod), df.residual(mod))
-	if (intercept) df <- c(1, df)
-	teststat <- rep(0, n.terms + 1)
-	p <- rep(0, n.terms + 1)
-	teststat[n.terms+1] <- p[n.terms + 1] <- NA
 	assign <- attr(model.matrix(mod), "assign")
+	df <- c(df.terms(mod), df.residual(mod))
 	if (inherits(mod, "coxph")){
 		if (intercept) names <- names[-1]
 		assign <- assign[assign != 0]
+		clusters <- grep("^cluster\\(", names)
+		if (length(clusters) > 0) {
+			names <- names[-clusters]
+			df <- df[-clusters]
+		}
 	}
+	n.terms <- length(names)
+	if (intercept) df <- c(1, df)
+	teststat <- rep(0, n.terms + 1)
+	p <- rep(0, n.terms + 1)
+	teststat[n.terms + 1] <- p[n.terms + 1] <- NA
 	for (term in 1:n.terms){
 		subs <- which(assign == term - intercept)
 		hyp.matrix <- I.p[subs,,drop=FALSE]
