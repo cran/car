@@ -58,7 +58,7 @@ Manova(mod, ...)
 \method{print}{Anova.mlm}(x, ...)
 
 \method{summary}{Anova.mlm}(object, test.statistic, multivariate=TRUE, 
-    univariate=TRUE, digits=unlist(options("digits")), ...)
+    univariate=TRUE, digits=getOption("digits"), ...)
 \method{Anova}{coxph}(mod, type=c("II","III", 2, 3), 
 	test.statistic=c("LR", "Wald"), ...)
 \method{Anova}{default}(mod, type=c("II","III", 2, 3), 
