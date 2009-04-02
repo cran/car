@@ -1,22 +1,29 @@
 Package: car
-Version: 1.2-12
-Date: 2009/01/20
+Version: 1.2-13
+Date: 2009/04/02
 Title: Companion to Applied Regression
-Author: John Fox <jfox@mcmaster.ca>. I am grateful to Douglas Bates, David Firth, Michael Friendly, Gregor Gorjanc, Spencer Graves, Richard Heiberger, Georges Monette, Henric Nilsson, Derek Ogle, Brian Ripley, Sanford Weisberg, and Achim Zeleis for various suggestions and contributions.
+Author: John Fox <jfox@mcmaster.ca>. I am grateful to Douglas Bates,
+        David Firth, Michael Friendly, Gregor Gorjanc, Spencer Graves,
+        Richard Heiberger, Georges Monette, Henric Nilsson, Derek Ogle,
+        Brian Ripley, Sanford Weisberg, and Achim Zeileis for various
+        suggestions and contributions.
 Maintainer: John Fox <jfox@mcmaster.ca>
 Depends: R (>= 2.1.1), stats, graphics
 Suggests: MASS, nnet, leaps, survival
 LazyLoad: yes
 LazyData: yes
-Description: 
-  This package accompanies J. Fox, An R and S-PLUS Companion to Applied Regression,
-  Sage, 2002.
-  The package contains mostly functions for applied regression, linear models, and
-  generalized linear models, with an emphasis on regression diagnostics, particularly 
-  graphical diagnostic methods. There are also some utility functions. 
-  With some exceptions, I have tried not to duplicate capabilities in the basic distribution of R, 
-  nor in widely used packages. Where relevant, the functions in car are consistent with 
-  na.action = na.omit or na.exclude.
+Description: This package accompanies J. Fox, An R and S-PLUS Companion
+        to Applied Regression, Sage, 2002. The package contains mostly
+        functions for applied regression, linear models, and
+        generalized linear models, with an emphasis on regression
+        diagnostics, particularly graphical diagnostic methods. There
+        are also some utility functions. With some exceptions, I have
+        tried not to duplicate capabilities in the basic distribution
+        of R, nor in widely used packages. Where relevant, the
+        functions in car are consistent with na.action = na.omit or
+        na.exclude.
 License: GPL (>= 2)
 URL: http://www.r-project.org, http://socserv.socsci.mcmaster.ca/jfox/
-Packaged: Tue Jan 20 15:18:42 2009; John Fox
+Packaged: Thu Apr 2 08:44:46 2009; John Fox
+Repository: CRAN
+Date/Publication: 2009-04-03 09:41:58

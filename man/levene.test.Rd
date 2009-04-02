@@ -25,6 +25,12 @@ levene.test(y, ...)
   \code{formula} and \code{lm} methods.}
 }
 
+\details{
+  The version of Levene's test implemented here is based on absolute
+  deviations from the group medians. Other, less robust, versions, not implemented,
+  are based on absolute deviations from group means or trimmed means.
+}
+
 \value{
     returns an object meant to be printed showing the results of the test.
 }

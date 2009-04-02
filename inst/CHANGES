@@ -273,3 +273,11 @@ Changes to Version 1.2-12
 	o  Fixed bug in ncv.test.lm() that could cause the function to fail.
 	
 	o  Small changes.
+	
+Changes to Version 1.2-13
+
+	o  influencePlot() optionally automatically identifies points with large Cook's Ds (suggested by Michael Friendly).
+	
+	o  Fixed bug in recode() (reported by Andrew McFadden).
+
+    o  Small changes.
