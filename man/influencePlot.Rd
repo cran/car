@@ -19,17 +19,18 @@
 \usage{
 influencePlot(model, ...)
 
-\method{influencePlot}{lm}(model, scale = 10, col = c(1, 2), labels = names(rstud), 
-  identify.cex=par("cex"), identify.col=par("col"), ...)
+\method{influencePlot}{lm}(model, scale=10, col=c(1,2), identify=c(TRUE, FALSE, "auto"),
+		labels=names(rstud), cex.identify=par("cex"), col.identify=par("col"), ...)
 }
 
 \arguments{
   \item{model}{a linear or generalized-linear model.}
   \item{scale}{a factor to adjust the size of the circles.}
   \item{col}{colors for plotting points that do not and do have noteworthy Cook's distances.}
-  \item{labels}{if \code{FALSE} do not identify points interactively with the mouse; otherwise
-    a vector of observation labels.}
-  \item{identify.cex, identify.col}{aguments to be passed to \code{identify}.}
+  \item{identify}{identify points; if \code{TRUE}, the default, identify points interactively;
+  	if \code{"auto"} then points with large Cook's distances will automatically be identified.}
+  \item{labels}{a vector of observation labels.}
+  \item{cex.identify, col.identify}{for point labels.}
   \item{\dots}{arguments to pass to the \code{plot} function.}
 }
 
@@ -48,9 +49,8 @@ influencePlot(model, ...)
 \seealso{\code{\link[car]{cookd}}, \code{\link[stats]{rstudent}}, \code{\link[stats]{hatvalues}}}
 
 \examples{
-    \dontrun{
-    influencePlot(lm(prestige ~ income + education, data=Duncan))
-    }
+    influencePlot(lm(prestige ~ income + education, data=Duncan), 
+    	identify="auto")
 }
 
 \keyword{regression}
