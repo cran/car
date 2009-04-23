@@ -281,3 +281,8 @@ Changes to Version 1.2-13
 	o  Fixed bug in recode() (reported by Andrew McFadden).
 
     o  Small changes.
+    
+Changes to Version 1.2-14
+
+	o  Small correction to Chile data set.
+
