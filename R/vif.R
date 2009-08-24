@@ -1,13 +1,13 @@
 # Generalized Variance-Inflation Factors (Henric Nilsson and John Fox)
 
-vif<-function(mod){
-    #last modified 13 Dec 2000 by J. Fox
+vif<-function(mod, ...){
+    #last modified 24 August 2009 by J. Fox
     UseMethod("vif")
     }
 
 
-vif.lm <- function(mod) {
-  # version by H. Nilsson, last modified 22 Oct 06 by J. Fox
+vif.lm <- function(mod, ...) {
+  # version by H. Nilsson, last modified 24 August 2009 by J. Fox
   if (any(is.na(coef(mod)))) 
     stop ("there are aliased coefficients in the model")
   v <- vcov(mod)

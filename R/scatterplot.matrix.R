@@ -1,6 +1,6 @@
 # fancy scatterplot matrices (J. Fox)
 
-# last modified: 29 November 06 by J. Fox
+# last modified: 24 August 2009 by J. Fox
 
 scatterplot.matrix<-function(x, ...){
     UseMethod("scatterplot.matrix")
@@ -39,7 +39,7 @@ scatterplot.matrix.default<-function(x, labels=colnames(x),
     plot.points=TRUE, smooth=TRUE, span=.5, reg.line=lm, transform=FALSE,
     ellipse=FALSE, levels=c(.5, .9), robust=FALSE,
     groups=FALSE, by.groups=FALSE,
-    col=palette(), pch=1:n.groups, lwd=1,
+    col=palette(), pch=1:n.groups, lwd=1, lwd.smooth=lwd,
     cex=par("cex"), cex.axis=par("cex.axis"), cex.labels=NULL, 
     cex.main=par("cex.main"),
     legend.plot=length(levels(groups)) > 1, ...){
@@ -106,14 +106,14 @@ scatterplot.matrix.default<-function(x, labels=colnames(x),
             for (i in 1:n.groups){
                 subs<-groups==levels(groups)[i]
                 if (plot.points) points(x[subs], y[subs], pch=pch[i], col=col[i+1], cex=cex)
-                if (smooth & by.groups) lines(lowess(x[subs], y[subs]), col=col[i+1])
+                if (smooth & by.groups) lines(lowess(x[subs], y[subs]), col=col[i+1], lwd=lwd.smooth)
                 if (is.function(reg.line) & by.groups) reg(x[subs], y[subs], col=col[i+1])
                 if (ellipse  & by.groups) data.ellipse(x[subs], y[subs], plot.points=FALSE, 
                     levels=levels, col=col[i+1], robust=robust, lwd=1)
                 }
             if (!by.groups){
                 if (is.function(reg.line)) abline(reg.line(y~x),lty=2, lwd=lwd, col=col[1])
-                if (smooth) lines(lowess(x,y, f=span), lwd=lwd, col=col[1])
+                if (smooth) lines(lowess(x,y, f=span), lwd=lwd.smooth, col=col[1])
                 if (ellipse) data.ellipse(x, y, plot.points=FALSE, levels=levels, col=col[1],
                     robust=robust, lwd=1)
                 }
