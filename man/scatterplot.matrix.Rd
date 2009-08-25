@@ -20,7 +20,7 @@ scatterplot.matrix(x, ...)
     adjust=1, nclass, plot.points=TRUE, smooth=TRUE, span=0.5, reg.line=lm, 
     transform=FALSE, ellipse=FALSE, levels=c(.5, .9), robust=FALSE,
     groups=FALSE, by.groups=FALSE, col=palette(), 
-    pch=1:n.groups, lwd=1, 
+    pch=1:n.groups, lwd=1, lwd.smooth=lwd,
     cex=par("cex"), cex.axis=par("cex.axis"), cex.labels=NULL, 
     cex.main=par("cex.main"),
     legend.plot=length(levels(groups)) > 1, ...)
@@ -67,7 +67,8 @@ spm(x, ...)
   \item{col}{colors for points and lines; the default is the
     in the current color palette, starting at the \emph{second} entry
     (see \code{\link[grDevices]{palette}} and \code{\link[graphics]{par}}).}
-  \item{lwd}{width for lines.}
+  \item{lwd}{width of linear-regression lines (default \code{1}).}
+  \item{lwd.smooth}{width for smooth regression lines (default is the same as \code{lwd}).}
   \item{cex, cex.axis, cex.labels, cex.main}{set sizes of various graphical elements; 
     (see \code{\link[graphics]{par}}).}
   \item{legend.plot}{if \code{TRUE} then a legend for the groups is plotted

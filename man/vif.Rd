@@ -8,14 +8,15 @@
   for linear and generalized linear models.
 }
 \usage{
-vif(mod)
+vif(mod, ...)
 
-\method{vif}{lm}(mod)
+\method{vif}{lm}(mod, ...)
 }
  
 \arguments{
   \item{mod}{an object that inherits from class \code{lm}, such as an \code{lm}
   or \code{glm} object.}
+  \item{\dots}{not used.}
 }
 \details{
   If all terms in an unweighted linear model have 1 df, then the usual variance-inflation

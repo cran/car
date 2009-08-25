@@ -1,6 +1,6 @@
 # fancy scatterplots  (J. Fox)
 
-# last modified 21 October 2008
+# last modified 24 August 2009
 
 scatterplot<-function(x, ...){
     # last modified 28 Jan 2001 by J. Fox
@@ -49,7 +49,7 @@ scatterplot.formula<-function (formula, data, xlab, ylab, legend.title, subset, 
 
 scatterplot.default<-function(x, y, smooth=TRUE, span=.5, reg.line=lm, boxplots="xy",
     xlab=deparse(substitute(x)), ylab=deparse(substitute(y)), las=par("las"),
-    lwd=1, labels=FALSE, log="", jitter=list(), xlim=NULL, ylim=NULL,
+    lwd=1, lwd.smooth=lwd, labels=FALSE, log="", jitter=list(), xlim=NULL, ylim=NULL,
     cex=par("cex"), cex.axis=par("cex.axis"), cex.lab=par("cex.lab"), 
     cex.main=par("cex.main"), cex.sub=par("cex.sub"),
     groups=FALSE, by.groups=!(groups[1]==FALSE), legend.title=deparse(substitute(groups)), 
@@ -64,7 +64,7 @@ scatterplot.default<-function(x, y, smooth=TRUE, span=.5, reg.line=lm, boxplots=
         fit<-lowess(x[valid],y[valid],f=span)
         x<-if (0==length(grep("x", log))) fit$x else exp(fit$x)
         y<-if (0==length(grep("y", log))) fit$y else exp(fit$y)
-        lines(x, y, lwd=lwd, col=col)
+        lines(x, y, lwd=lwd.smooth, col=col)
         }
     reg<-function(x, y, col){
         x<-if (0==length(grep("x", log))) x else log(x)

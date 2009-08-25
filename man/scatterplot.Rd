@@ -17,7 +17,8 @@ scatterplot(x, ...)
 
 \method{scatterplot}{default}(x, y, smooth=TRUE, span=0.5, reg.line=lm, 
   boxplots="xy", xlab=deparse(substitute(x)), ylab=deparse(substitute(y)), 
-  las=par('las'), lwd=1, labels=FALSE, log="", jitter=list(), xlim=NULL, ylim=NULL,
+  las=par('las'), lwd=1, lwd.smooth=lwd, labels=FALSE, log="", 
+  jitter=list(), xlim=NULL, ylim=NULL,
   cex=par("cex"), cex.axis=par("cex.axis"), cex.lab=par("cex.lab"), 
   cex.main=par("cex.main"), cex.sub=par("cex.sub"),
   groups=FALSE, by.groups=!(groups[1]==FALSE), legend.title=deparse(substitute(groups)),
@@ -48,7 +49,8 @@ sp(...)
   \item{ylab}{label for vertical axis.}
   \item{las}{if \code{0}, ticks labels are drawn parallel to the
     axis; set to \code{1} for horizontal labels (see \code{\link[graphics]{par}}).}
-  \item{lwd}{width of plotted lines.}
+  \item{lwd}{width of linear-regression lines (default \code{1}).}
+  \item{lwd.smooth}{width for smooth regression lines (default is the same as \code{lwd}).}
   \item{labels}{if not \code{FALSE} a vector of point labels, to be used interactively
     to identify points on the plot.}
   \item{log}{same as the \code{log} argument to \code{plot}, to produce log axes.}
