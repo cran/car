@@ -250,44 +250,46 @@ Changes to Version 1.2-8
     
 Changes to Version 1.2-9
 
-	o  Fixed bug in scatterplot() that left room for a legend even when legend.plot=FALSE (reported by David Carlson).
-	
-	o  Allowed colours in col argument to scatterplot() to recycle (suggested by David Carlson).
-	
-	o  verbose=TRUE in linear.hypothesis() now prints (in addition to previous output) the estimated value of the hypothesis (Oleksandr Perekhozhuk).
-	
+    o  Fixed bug in scatterplot() that left room for a legend even when legend.plot=FALSE (reported by David Carlson).
+    
+    o  Allowed colours in col argument to scatterplot() to recycle (suggested by David Carlson).
+    
+    o  verbose=TRUE in linear.hypothesis() now prints (in addition to previous output) the estimated value of the hypothesis (Oleksandr Perekhozhuk).
+    
 Changes to Version 1.2-10
 
-	o  Reworked Anova(), including adding default method and method for coxph objects.
-	
+    o  Reworked Anova(), including adding default method and method for coxph objects.
+    
 Changes to Version 1.2-11
 
-	o  Bug fix to Anova().
-	
-	o  Small changes.
-	
+    o  Bug fix to Anova().
+    
+    o  Small changes.
+    
 Changes to Version 1.2-12
 
-	o  Anova() now works properly with coxph objects with clusters.
-	
-	o  Fixed bug in ncv.test.lm() that could cause the function to fail.
-	
-	o  Small changes.
-	
+    o  Anova() now works properly with coxph objects with clusters.
+    
+    o  Fixed bug in ncv.test.lm() that could cause the function to fail.
+    
+    o  Small changes.
+    
 Changes to Version 1.2-13
 
-	o  influencePlot() optionally automatically identifies points with large Cook's Ds (suggested by Michael Friendly).
-	
-	o  Fixed bug in recode() (reported by Andrew McFadden).
+    o  influencePlot() optionally automatically identifies points with large Cook's Ds (suggested by Michael Friendly).
+    
+    o  Fixed bug in recode() (reported by Andrew McFadden).
 
     o  Small changes.
     
 Changes to Version 1.2-14
 
-	o  Small correction to Chile data set.
-	
+    o  Small correction to Chile data set.
+    
 Changes to Version 1.2-15
 
     o  Small changes.
+    
+Changes to Version 1.2-16
 
-
+    o  Fixes to cross-references in .Rd files.

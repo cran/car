@@ -1,6 +1,6 @@
 Package: car
-Version: 1.2-15
-Date: 2009/08/24
+Version: 1.2-16
+Date: 2009/10/10
 Title: Companion to Applied Regression
 Author: John Fox <jfox@mcmaster.ca>. I am grateful to Douglas Bates,
         David Firth, Michael Friendly, Gregor Gorjanc, Spencer Graves,
@@ -24,6 +24,6 @@ Description: This package accompanies J. Fox, An R and S-PLUS Companion
         na.exclude.
 License: GPL (>= 2)
 URL: http://www.r-project.org, http://socserv.socsci.mcmaster.ca/jfox/
-Packaged: 2009-08-24 22:17:58 UTC; John Fox
 Repository: CRAN
-Date/Publication: 2009-08-25 08:04:56
+Date/Publication: 2009-10-11 14:38:21
+Packaged: 2009-10-10 22:50:01 UTC; John Fox
