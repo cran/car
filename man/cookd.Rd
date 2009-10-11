@@ -45,7 +45,7 @@ cookd(model, ...)
 
 \author{John Fox \email{jfox@mcmaster.ca}}
 
-\seealso{\code{\link[base:cooks.distance]{cooks.distance}}, \code{\link[base:influence]{influence}}}
+\seealso{\code{\link[stats:influence.measures]{cooks.distance}}, \code{\link[stats:lm.influence]{influence}}}
 
 \examples{
 plot(cookd(lm(prestige ~ income + education, data=Duncan)))

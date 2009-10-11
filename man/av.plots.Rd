@@ -42,13 +42,13 @@ av.plot(model, ...)
   \item{labels}{observation names.}
   \item{identify.points}{if \code{TRUE}, then identify points interactively.}
   \item{las}{if \code{0}, ticks labels are drawn parallel to the
-    axis; set to \code{1} for horizontal labels (see \code{\link[base]{par}}).}
+    axis; set to \code{1} for horizontal labels (see \code{\link[graphics]{par}}).}
   \item{col}{color for points and lines; the default is the \emph{second} entry
-    in the current color palette (see \code{\link[base]{palette}}
-    and \code{\link[base]{par}}).}
+    in the current color palette (see \code{\link[grDevices]{palette}}
+    and \code{\link[graphics]{par}}).}
   \item{pch}{plotting character for points; default is \code{1} 
-    (a circle, see \code{\link[base]{par}}).}
-  \item{lwd}{line width; default is \code{2} (see \code{\link[base]{par}}).}
+    (a circle, see \code{\link[graphics]{par}}).}
+  \item{lwd}{line width; default is \code{2} (see \code{\link[graphics]{par}}).}
   \item{main}{title for plot.}
   \item{type}{if \code{"Wang"} use the method of Wang (1985);
     if \code{"Weisberg"} use the method in the Arc software associated with
