@@ -3,9 +3,9 @@
 \alias{subsets.regsubsets}
 \title{Plot Output from regsubsets Function in leaps package}
 \description{
-  The \code{\link[leaps]{regsubsets}} function in the \code{leaps} package finds
+  The \code{\link[leaps]{regsubsets}} function in the \pkg{leaps} package finds
   optimal subsets of predictors. This function plots a measure of fit
-  (see the \code{statistic} argument below) against subset size).
+  (see the \code{statistic} argument below) against subset size.
 }
 \usage{
 subsets(object, ...)
@@ -19,19 +19,20 @@ subsets(object, ...)
 
 \arguments{
   \item{object}{a \code{regsubsets} object produced by the \code{regsubsets} function
-    in the \code{leaps} package.}
+    in the \pkg{leaps} package.}
   \item{names}{a vector of (short) names for the predictors, excluding the
     regression intercept, if one is present; if missing, these are
     derived from the predictor names in \code{object}.}
   \item{abbrev}{minimum number of characters to use in abbreviating predictor names.}
-  \item{min.size}{minimum size subset to plot; default is 1.}
+  \item{min.size}{minimum size subset to plot; default is \code{1}.}
   \item{max.size}{maximum size subset to plot; default is number of predictors.}
-  \item{legend}{TRUE to plot a legend of predictor names; defaults to TRUE if
+  \item{legend}{\code{TRUE} to plot a legend of predictor names; defaults to \code{TRUE} if
     abbreviations are computed for predictor names. The legend is placed on the
-    plot interactively with the mouse.}
+    plot interactively with the mouse. By expanding the left or right plot margin, you can place
+    the legend in the margin, if you wish (see \code{\link{par}}).}
   \item{statistic}{statistic to plot for each predictor subset; one of: 
     \code{"bic"}, Bayes Information Criterion; 
-    \code{"cp"}, Mallows\'s \eqn{C_{p}}{Cp};
+    \code{"cp"}, Mallows's \eqn{C_{p}}{Cp};
     \code{"adjr2"}, \eqn{R^{2}}{R^2} adjusted for degrees of freedom;
     \code{"rsq"}, unadjusted \eqn{R^{2}}{R^2};
     \code{"rss"}, residual sum of squares.}
@@ -44,17 +45,24 @@ subsets(object, ...)
 }
 
 \value{
-  \code{NULL}. This function is used for its side effect --
-  to create a plot.
+  \code{NULL} if the \code{legend} is \code{TRUE}; otherwise a data frame with the legend.
 }
  
 \author{John Fox}
+
+\references{
+  Fox, J. (2008)
+  \emph{Applied Regression Analysis and Generalized Linear Models},
+  Second Edition. Sage.  
+  
+  Fox, J. and Weisberg, S. (2011) 
+  \emph{An R Companion to Applied Regression}, Second Edition, Sage.
+}
 
 \seealso{\code{\link[leaps]{regsubsets}}}
 
 \examples{
     \dontrun{
-library(leaps)
 subsets(regsubsets(undercount ~ ., data=Ericksen))
     }
 }

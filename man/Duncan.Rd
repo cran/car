@@ -19,7 +19,7 @@
         \code{bc}, blue-collar.
       }
     \item{income}{
-      Percent of males in occupation earning \$3500 or more in 1950.
+      Percent of males in occupation earning $3500 or more in 1950.
       }
     \item{education}{
       Percent of males in occupation in 1950 who were high-school graduates.
@@ -39,9 +39,12 @@
   }
  
 \references{
-  Fox, J. (1997)
-  \emph{Applied Regression, Linear Models, and Related Methods.} Sage.
-
+  Fox, J. (2008)
+  \emph{Applied Regression Analysis and Generalized Linear Models},
+  Second Edition. Sage.  
+  
+  Fox, J. and Weisberg, S. (2011) 
+  \emph{An R Companion to Applied Regression}, Second Edition, Sage.
 }
 
 \usage{

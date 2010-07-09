@@ -17,36 +17,16 @@ Court of Appeal for leave to appeal the negative ruling of the Board.
     \item{judge}{
       Name of judge hearing case.
       A factor with levels:
-      \code{Desjardins}, 
-      \code{Heald}, 
-      \code{Hugessen}, 
-      \code{Iacobucci}, 
-      \code{MacGuigan}, 
-      \code{Mahoney},
-      \code{Marceau}, 
-      \code{Pratte},
-      \code{Stone},
-      \code{Urie}. 
+      \code{Desjardins}, \code{Heald}, \code{Hugessen}, \code{Iacobucci}, \code{MacGuigan}, 
+      \code{Mahoney}, \code{Marceau}, \code{Pratte}, \code{Stone}, \code{Urie}. 
       }
     \item{nation}{
       Nation of origin of claimant.
       A factor with levels:
-      \code{Argentina},
-      \code{Bulgaria},
-      \code{China},
-      \code{Czechoslovakia},
-      \code{El.Salvador},
-      \code{Fiji},
-      \code{Ghana},
-      \code{Guatemala},
-      \code{India},
-      \code{Iran},
-      \code{Lebanon},
-      \code{Nicaragua},
-      \code{Nigeria},
-      \code{Pakistan},
-      \code{Poland},
-      \code{Somalia},
+      \code{Argentina}, \code{Bulgaria}, \code{China}, \code{Czechoslovakia},
+      \code{El.Salvador}, \code{Fiji}, \code{Ghana}, \code{Guatemala}, 
+      \code{India}, \code{Iran}, \code{Lebanon}, \code{Nicaragua}, 
+      \code{Nigeria}, \code{Pakistan}, \code{Poland}, \code{Somalia}, 
       \code{Sri.Lanka}.
       }
     \item{rater}{
@@ -87,8 +67,9 @@ Court of Appeal for leave to appeal the negative ruling of the Board.
 }
 
 \references{
-  Fox, J. (1997)
-  \emph{Applied Regression, Linear Models, and Related Methods.} Sage.
+  Fox, J. (2008)
+  \emph{Applied Regression Analysis and Generalized Linear Models},
+  Second Edition. Sage.  
 }
 
 

@@ -43,8 +43,15 @@ are married women.
 }
 
 \references{
+  Fox, J. (2008)
+  \emph{Applied Regression Analysis and Generalized Linear Models},
+  Second Edition. Sage.  
+
   Fox, J. (2000)
   \emph{Multiple and Generalized Nonparametric Regression.} Sage.
+  
+  Fox, J. and Weisberg, S. (2011) 
+  \emph{An R Companion to Applied Regression}, Second Edition, Sage.
   
   Long. J. S. (1997)
   \emph{Regression Models for Categorical and Limited Dependent Variables.}

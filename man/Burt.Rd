@@ -6,7 +6,9 @@
 
 \description{
 The \code{Burt} data frame has 27 rows and 4 columns.
-The ``data'' were simply (and notoriously) manufactured.
+The ``data'' were simply (and notoriously) manufactured.  The
+same data are in the dataset ``twins" in the \code{alr3}
+package, but with different labels.
 }
 
 \format{

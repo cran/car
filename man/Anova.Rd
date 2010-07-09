@@ -1,3 +1,12 @@
+%-------------------------------------------------------------------------------
+% Revision history:
+% checked in 2008-12-29 by J. Fox (corresponds to version 1.2-10 of car)
+%	2009-01-16 updated doc to correspond to changes in linearHypothesis. J. Fox
+%   2009-09-16 updated to reflect new singular.ok argument
+%   2009-09-26 updated for removal from car. J. Fox
+%   2009-12-22 updated to reflect new imatrix argument to Anova.mlm(). J. Fox
+%-------------------------------------------------------------------------------
+
 \name{Anova}
 \alias{Anova}
 \alias{Anova.lm}
@@ -25,7 +34,7 @@
   likelihood-ratio chisquare, Wald chisquare, or F-tests are calculated;
   for multinomial logit and proportional-odds logit models, likelihood-ratio
   tests are calculated.  Various test statistics are provided for multivariate
-  linear models produced by \code{lm} or \code{manova}. Partial-ikelihood-ratio tests
+  linear models produced by \code{lm} or \code{manova}. Partial-likelihood-ratio tests
   or Wald tests are provided for Cox models. Wald chi-square or F tests are provided 
   in the default case.
 }
@@ -35,20 +44,22 @@ Anova(mod, ...)
 Manova(mod, ...)
 
 \method{Anova}{lm}(mod, error, type=c("II","III", 2, 3), 
-	white.adjust=c(FALSE, TRUE, "hc3", "hc0", "hc1", "hc2", "hc4"), ...)
+	white.adjust=c(FALSE, TRUE, "hc3", "hc0", "hc1", "hc2", "hc4"), 
+	singular.ok, ...)
 
 \method{Anova}{aov}(mod, ...)
 
 \method{Anova}{glm}(mod, type=c("II","III", 2, 3), 
     test.statistic=c("LR", "Wald", "F"), 
-    error, error.estimate=c("pearson", "dispersion", "deviance"), ...)
+    error, error.estimate=c("pearson", "dispersion", "deviance"), 
+    singular.ok, ...)
     
 \method{Anova}{multinom}(mod, type = c("II","III", 2, 3), ...)
 
 \method{Anova}{polr}(mod, type = c("II","III", 2, 3), ...)
 
 \method{Anova}{mlm}(mod, type=c("II","III", 2, 3), SSPE, error.df, 
-    idata, idesign, icontrasts=c("contr.sum", "contr.poly"),
+    idata, idesign, icontrasts=c("contr.sum", "contr.poly"), imatrix,
     test.statistic=c("Pillai", "Wilks", "Hotelling-Lawley", "Roy"),...)
     
 \method{Anova}{manova}(mod, ...)
@@ -59,20 +70,27 @@ Manova(mod, ...)
 
 \method{summary}{Anova.mlm}(object, test.statistic, multivariate=TRUE, 
     univariate=TRUE, digits=getOption("digits"), ...)
+    
 \method{Anova}{coxph}(mod, type=c("II","III", 2, 3), 
 	test.statistic=c("LR", "Wald"), ...)
+	
 \method{Anova}{default}(mod, type=c("II","III", 2, 3), 
-	test.statistic=c("Chisq", "F"), vcov.=vcov(mod), ...)
+	test.statistic=c("Chisq", "F"), vcov.=vcov(mod), 
+	singular.ok, ...)
 }
 
 \arguments{
   \item{mod}{\code{lm}, \code{aov}, \code{glm}, \code{multinom}, \code{polr}
-    or \code{mlm} model object.}
+    \code{mlm}, \code{coxph} or other suitable model object.}
   \item{error}{for a linear model, an \code{lm} model object from which the
     error sum of squares and degrees of freedom are to be calculated. For 
     F-tests for a generalized linear model, a \code{glm} object from which the
     dispersion is to be estimated. If not specified, \code{mod} is used.}
   \item{type}{type of test, \code{"II"}, \code{"III"}, \code{2}, or \code{3}.}
+  \item{singular.ok}{defaults to \code{TRUE} for type-II tests, and \code{FALSE}
+    for type-III tests (where the tests for models with aliased coefficients
+    will not be straightforwardly interpretable); 
+    if \code{FALSE}, a model with aliased coefficients produces an error.}
   \item{test.statistic}{for a generalized linear model, whether to calculate 
     \code{"LR"} (likelihood-ratio), \code{"Wald"}, or \code{"F"} tests; for a Cox
     model, whether to calculate \code{"LR"} (partial-likelihood ratio) or
@@ -84,10 +102,10 @@ Manova(mod, ...)
     objects permits the specification of more than one multivariate
     test statistic, and the default is to report all four.}
   \item{error.estimate}{for F-tests for a generalized linear model, base the
-    dispersion estimate on the Pearson residuals (\code{pearson}, the default); use the
-    dispersion estimate in the model object (\code{dispersion}), which, e.g., is
+    dispersion estimate on the Pearson residuals (\code{"pearson"}, the default); use the
+    dispersion estimate in the model object (\code{"dispersion"}), which, e.g., is
     fixed to 1 for binomial and Poisson models; or base the dispersion estimate on
-    the residual deviance (\code{deviance}).}
+    the residual deviance (\code{"deviance"}).}
   \item{white.adjust}{if not \code{FALSE}, the default, 
   	tests use a heteroscedasticity-corrected coefficient
     covariance matrix; the various values of the argument specify different corrections.
@@ -107,6 +125,12 @@ Manova(mod, ...)
     ``data''; the contrasts must produce an intra-subject model 
     matrix in which different terms are orthogonal. The default is
     \code{c("contr.sum", "contr.poly")}.}
+  \item{imatrix}{as an alternative to specifying \code{idata}, \code{idesign}, and
+  	(optionally) \code{icontrasts}, the model matrix for the within-subject design
+  	can be given directly in the form of list of named elements. Each element gives
+  	the columns of the within-subject model matrix for a term to be tested, and must
+  	have as many rows as there are responses; the columns of the within-subject model
+  	matrix for different terms must be mutually orthogonal.}
   \item{x, object}{object of class \code{"Anova.mlm"} to print or summarize.}
   \item{multivariate, univariate}{print multivariate and univariate tests for a repeated-measures
     ANOVA; the default is \code{TRUE} for both.}
@@ -135,7 +159,7 @@ Manova(mod, ...)
   \code{Anova} finds the test statistics without refitting the model.
   
   The standard R \code{anova} function calculates sequential ("type-I") tests.
-  These rarely test interesting hypotheses.
+  These rarely test interesting hypotheses in unbalanced designs.
   
   A MANOVA for a multivariate linear model (i.e., an object of
   class \code{"mlm"} or \code{"manova"}) can optionally include an 
@@ -150,7 +174,9 @@ Manova(mod, ...)
   corresponding to different terms in the intra-subject model must be orthogonal 
   (as is insured by the default contrasts). Note that the contrasts given in
   \code{icontrasts} can be overridden by assigning specific contrasts to the
-  factors in \code{idata}. \code{Manova} is essentially a synonym for \code{Anova}
+  factors in \code{idata}. As an alternative, the within-subjects model matrix
+  can be specified directly via the \code{imatrix} argument.
+  \code{Manova} is essentially a synonym for \code{Anova}
   for multivariate linear models.
 }
 \value{
@@ -161,8 +187,12 @@ Manova(mod, ...)
   corrections.
 }
 \references{ 
-  Fox, J. (1997)
-  \emph{Applied Regression, Linear Models, and Related Methods.} Sage.
+  Fox, J. (2008)
+  \emph{Applied Regression Analysis and Generalized Linear Models},
+  Second Edition. Sage.  
+  
+  Fox, J. and Weisberg, S. (2011) 
+  \emph{An R Companion to Applied Regression}, Second Edition, Sage.
   
   Hand, D. J., and Taylor, C. C. (1987)
   \emph{Multivariate Analysis of Variance and Repeated Measures: A Practical
@@ -176,7 +206,7 @@ Manova(mod, ...)
 
 \section{Warning}{Be careful of type-III tests.}
 
-\seealso{ \code{\link{linear.hypothesis}}, \code{\link[stats]{anova}}
+\seealso{ \code{\link{linearHypothesis}}, \code{\link[stats]{anova}}
 \code{\link[stats]{anova.lm}}, \code{\link[stats]{anova.glm}}, 
 \code{\link[stats]{anova.mlm}}, \code{\link[survival]{anova.coxph}}.}
 
@@ -400,6 +430,33 @@ summary(av.ok, multivariate=FALSE)
 ## treatment:gender:phase:hour 0.73306    0.70801
 ## ---
 ## Signif. codes:  0 '***' 0.001 '**' 0.01 '*' 0.05 '.' 0.1 ' ' 1
+
+## A "doubly multivariate" design with two  distinct repeated-measures variables
+## (example courtesy of Michael Friendly)
+## See ?WeightLoss for a description of the dataset.
+
+imatrix <- matrix(c(
+	1,0,-1, 1, 0, 0,
+	1,0, 0,-2, 0, 0,
+	1,0, 1, 1, 0, 0,
+	0,1, 0, 0,-1, 1,
+	0,1, 0, 0, 0,-2,
+	0,1, 0, 0, 1, 1), 6, 6, byrow=TRUE)
+colnames(imatrix) <- c("WL", "SE", "WL.L", "WL.Q", "SE.L", "SE.Q")
+rownames(imatrix) <- colnames(WeightLoss)[-1]
+(imatrix <- list(measure=imatrix[,1:2], month=imatrix[,3:6]))
+contrasts(WeightLoss$group) <- matrix(c(-2,1,1, 0,-1,1), ncol=2) 
+(wl.mod<-lm(cbind(wl1, wl2, wl3, se1, se2, se3)~group, data=WeightLoss))
+Anova(wl.mod, imatrix=imatrix, test="Roy")
+
+## Type II Repeated Measures MANOVA Tests: Roy test statistic
+##               Df test stat approx F num Df den Df    Pr(>F)    
+## measure        1    86.203  1293.04      2     30 < 2.2e-16 ***
+## group:measure  2     0.356     5.52      2     31  0.008906 ** 
+## month          1     9.407    65.85      4     28 7.807e-14 ***
+## group:month    2     1.772    12.84      4     29 3.909e-06 ***
+## ---
+## Signif. codes:  0 '***' 0.001 '**' 0.01 '*' 0.05 '.' 0.1 ' ' 1 
 
 }
 \keyword{htest}

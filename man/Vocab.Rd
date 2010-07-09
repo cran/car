@@ -5,13 +5,15 @@
 \title{Vocabulary and Education}
 
 \description{
-The \code{Vocab} data frame has 968 rows and 2 columns.
-The observations are respondents to the 1989 U. S. General Social Survey.
+The \code{Vocab} data frame has 21,638 rows and 5 columns.
+The observations are respondents to U.S. General Social Surveys, 1972-2004.
 }
 
 \format{
   This data frame contains the following columns:
   \describe{
+  	\item{year}{Year of the survey.}
+  	\item{sex}{Sex of the respondent, \code{Female} or \code{Male}.}
     \item{education}{
       Education, in years.
       }
@@ -22,15 +24,18 @@ The observations are respondents to the 1989 U. S. General Social Survey.
   }
 
 \source{
- National Opinion Research Center (1989)
- \emph{General Social Survey.}
- Distributed by the Inter-University Consortium for Political and Social
- Research.
+ National Opinion Research Center
+ \emph{General Social Survey.} 
+ GSS Cumulative Datafile 1972-2004, downloaded from \url{http://sda.berkeley.edu/archive.htm}.
 }
 
 \references{
-  Fox, J. (1997)
-  \emph{Applied Regression, Linear Models, and Related Methods.} Sage.
+  Fox, J. (2008)
+  \emph{Applied Regression Analysis and Generalized Linear Models},
+  Second Edition. Sage.  
+  
+  Fox, J. and Weisberg, S. (2011) 
+  \emph{An R Companion to Applied Regression}, Second Edition, Sage.
 }
 
 

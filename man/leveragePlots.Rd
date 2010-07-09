@@ -1,0 +1,116 @@
+\name{leveragePlots}
+\alias{leveragePlots}
+\alias{leveragePlot}
+\alias{leveragePlot.lm}
+\alias{leveragePlot.glm}
+
+\title{Regression Leverage Plots}
+\description{
+  These functions display a generalization, due to Sall (1990) and
+  Cook and Weisberg (1991), 
+  of added-variable plots to multiple-df terms in a linear model. 
+  When a term has just 1 df, the leverage plot is a rescaled version
+  of the usual added-variable (partial-regression) plot.
+}
+\usage{
+leveragePlots(model, terms = ~., layout = NULL, ask, 
+    main, ...)
+
+leveragePlot(model, ...)
+
+\method{leveragePlot}{lm}(model, term.name,
+    id.method = list(abs(residuals(model, type="pearson")), "x"),
+    labels, 
+    id.n = if(id.method[1]=="identify") Inf else 0,
+    id.cex=1, id.col=palette()[1], las=par("las"), 
+    col=palette()[2], pch=1, lwd=2, main="Leverage Plot", 
+    grid=TRUE, ...)
+
+\method{leveragePlot}{glm}(model, ...)
+}
+
+\arguments{
+  \item{model}{model object produced by \code{lm}
+}
+  \item{terms}{ A one-sided formula that specifies a subset of the predictors. 
+One added-variable plot is drawn for each term.  The default
+\code{~.} is to plot against all numeric predictors.  For example, the
+specification \code{terms = ~ . - X3} would plot against all predictors
+except for \code{X3}.  If this argument is a quoted name of one of the predictors, the 
+added-variable plot is drawn for that predictor only.
+}
+  \item{layout}{ If set to a value like \code{c(1,1)} or \code{c(4,3)}, the layout
+of the graph will have this many rows and columns.  If not set, the program will
+select an appropriate layout.  If the number of graphs exceed nine, you must 
+select the layout yourself, or you will get a maximum of nine per page.
+}
+    \item{ask}{if \code{TRUE}, a menu is provided in the R Console for the
+user to select the term(s) to plot.
+}   
+  \item{main}{title for plot; if missing, a title will be supplied.
+}
+  \item{\dots}{arguments passed down to method functions.}
+  \item{term.name}{Quoted name of term in the model to be plotted; this argument 
+is omitted for \code{leveragePlots}.}
+  \item{id.method,labels,id.n,id.cex,id.col}{Arguments for the labelling of
+    points.  The default is \code{id.n=0} for labeling no points.  See
+    \code{\link{showLabels}} for details of these arguments.
+}
+\item{las}{if \code{0}, ticks labels are drawn parallel to the
+    axis; set to \code{1} for horizontal labels (see \code{\link[graphics]{par}}).
+}
+\item{col}{color for points and lines; the default is the \emph{second} entry
+    in the current color palette (see \code{\link[grDevices]{palette}}
+    and \code{\link[graphics]{par}}).
+}
+\item{pch}{plotting character for points; default is \code{1} 
+    (a circle, see \code{\link[graphics]{par}}).
+}
+\item{lwd}{line width; default is \code{2} (see \code{\link[graphics]{par}}).
+}
+\item{grid}{If TRUE, the default, a light-gray background grid is put on the
+graph}
+}
+\details{
+  The function intended for direct use is \code{leveragePlots}. 
+  
+  The model can contain factors and interactions. A leverage plot can be
+  drawn for each term in the model, including the constant.
+  
+  \code{leveragePlot.glm} is a dummy function, which generates an error message.
+}
+
+\value{
+  \code{NULL}. These functions are used for their side effect: producing
+  plots.
+}
+
+\references{
+  Cook, R. D. and Weisberg, S. (1991).
+Added Variable Plots in Linear
+Regression. In Stahel, W. and Weisberg, S. (eds.),
+\emph{Directions in Robust Statistics and Diagnostics}.
+Springer, 47-60.
+
+  Fox, J. (2008)
+  \emph{Applied Regression Analysis and Generalized Linear Models},
+  Second Edition. Sage.  
+  
+  Fox, J. and Weisberg, S. (2011) 
+  \emph{An R Companion to Applied Regression}, Second Edition, Sage.
+  
+  Sall, J. (1990)
+  Leverage plots for general linear hypotheses.
+  \emph{American Statistician} \bold{44}, 308--315.
+}
+
+\author{John Fox \email{jfox@mcmaster.ca}}
+
+\seealso{\code{\link{avPlots}}}
+
+\examples{
+leveragePlots(lm(prestige~(income+education)*type, data=Duncan))
+}
+
+\keyword{hplot}
+\keyword{regression}

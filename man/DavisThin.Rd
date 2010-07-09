@@ -27,7 +27,12 @@ scale, to be formed by summing the items.
     Personality factors 
     predisposing to weight preoccupation: A continuum approach to the 
     association between eating disorders and personality disorders. 
-    \emph{Journal of Psychiatric Research} \bold{31}, 467--480.
+    \emph{Journal of Psychiatric Research} \bold{31}, 467--480. [personal communication from the authors.]
+}
+
+\references{
+  Fox, J. and Weisberg, S. (2011) 
+  \emph{An R Companion to Applied Regression}, Second Edition, Sage.
 }
 
 

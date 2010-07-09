@@ -1,3 +1,9 @@
+%-------------------------------------------------------------------------------
+% Revision history:
+% checked in 2008-12-29 by J. Fox (corresponds to version 1.2-10 of car)
+% 2009-09-16: added argument singular.ok to lm method. J. Fox
+%-------------------------------------------------------------------------------
+
 \name{hccm}
 \alias{hccm}
 \alias{hccm.lm}
@@ -6,13 +12,14 @@
 \title{Heteroscedasticity-Corrected Covariance Matrices}
 \description{
   Calculates heteroscedasticity-corrected covariance matrices for
-  unweighted linear models. These are also called ``White-corrected''
+  unweighted linear models. These are also called \dQuote{White-corrected} or \dQuote{White-Huber}
   covariance matrices.
 }
 \usage{
 hccm(model, ...)
 
-\method{hccm}{lm}(model, type=c("hc3", "hc0", "hc1", "hc2", "hc4"), ...)
+\method{hccm}{lm}(model, type=c("hc3", "hc0", "hc1", "hc2", "hc4"), 
+	singular.ok=TRUE, ...)
 
 \method{hccm}{default}(model, ...)
 }
@@ -22,6 +29,9 @@ hccm(model, ...)
   \item{type}{one of \code{"hc0"}, \code{"hc1"}, \code{"hc2"}, \code{"hc3"}, or \code{"hc4"}; the
     first of these gives the classic White correction. The \code{"hc1"}, \code{"hc2"}, and \code{"hc3"}
     corrections are described in Long and Ervin (2000); \code{"hc4"} is described in Cribari-Neto (2004).}
+  \item{singular.ok}{if \code{FALSE} (the default is \code{TRUE}), a model with aliased coefficients
+    produces an error; otherwise, the aliased coefficients are ignored in the coefficient covariance
+    matrix that's returned.}
   \item{...}{arguments to pass to \code{hccm.lm}.}
 }
 
@@ -37,26 +47,31 @@ hccm(model, ...)
   The heteroscedasticity-corrected covariance matrix for the model.
 }
 \references{
+  Fox, J. (2008)
+  \emph{Applied Regression Analysis and Generalized Linear Models},
+  Second Edition. Sage.  
+  
+  Fox, J. and Weisberg, S. (2011) 
+  \emph{An R Companion to Applied Regression}, Second Edition, Sage.
+
   Cribari-Neto, F. (2004)
   Asymptotic inference under heteroskedasticity of unknown form.
   \emph{Computational Statistics and Data Analysis} \bold{45}, 215--233.
   
-  Long, J. S. and Ervin, L. H. (2000) 
+  Long, J. S. and Ervin, L. H. (2000)
   Using heteroscedasity consistent standard errors in the linear regression model. 
   \emph{The American Statistician} \bold{54}, 217--224.
   
   White, H. (1980)
-  A heterskedastic consistent covariance matrix estimator and a direct test of heteroskedasticity.
+  A heteroskedastic consistent covariance matrix estimator and a direct test of heteroskedasticity.
   \emph{Econometrica} \bold{48}, 817--838.
   }
 \author{John Fox \email{jfox@mcmaster.ca}}
 
-\seealso{\code{\link{ncv.test}}, \code{\link{spread.level.plot}} }
-
 \examples{
 options(digits=4)
 mod<-lm(interlocks~assets+nation, data=Ornstein)
-Var(mod)
+vcov(mod)
 ##             (Intercept)     assets  nationOTH   nationUK   nationUS
 ## (Intercept)   1.079e+00 -1.588e-05 -1.037e+00 -1.057e+00 -1.032e+00
 ## assets       -1.588e-05  1.642e-09  1.155e-05  1.362e-05  1.109e-05

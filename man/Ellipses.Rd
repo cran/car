@@ -1,9 +1,9 @@
 \name{Ellipses}
 \alias{ellipse}
-\alias{data.ellipse}
-\alias{confidence.ellipse}
-\alias{confidence.ellipse.lm}
-\alias{confidence.ellipse.glm}
+\alias{dataEllipse}
+\alias{confidenceEllipse}
+\alias{confidenceEllipse.lm}
+\alias{confidenceEllipse.glm}
 
 \title{Ellipses, Data Ellipses, and Confidence Ellipses}
 \description{
@@ -11,23 +11,23 @@
   confidence ellipses for linear and generalized linear models.
 }
 \usage{
-ellipse(center, shape, radius, center.pch=19, center.cex=1.5, 
+ellipse(center, shape, radius, log="", center.pch=19, center.cex=1.5, 
   segments=51, add=TRUE, xlab="", ylab="", 
-   las=par('las'), col=palette()[2], lwd=2, lty=1, ...)
+   las=par('las'), col=palette()[2], lwd=2, lty=1, grid=TRUE, ...)
 
-data.ellipse(x, y, levels=c(0.5, 0.9), center.pch=19, center.cex=1.5, 
+dataEllipse(x, y, log="", levels=c(0.5, 0.95), center.pch=19, center.cex=1.5, 
   plot.points=TRUE, add=!plot.points, segments=51, robust=FALSE,
   xlab=deparse(substitute(x)), 
   ylab=deparse(substitute(y)), 
-  las=par('las'), col=palette()[2], pch=1, lwd=2, lty=1, ...)
+  las=par('las'), col=palette()[2], pch=1, lwd=2, lty=1, grid=TRUE, ...)
 
-confidence.ellipse(model, ...)
+confidenceEllipse(model, ...)
 
-\method{confidence.ellipse}{lm}(model, which.coef, levels=0.95, Scheffe=FALSE, 
+\method{confidenceEllipse}{lm}(model, which.coef, levels=0.95, Scheffe=FALSE, 
   center.pch=19, center.cex=1.5, segments=51, xlab, ylab, 
   las=par('las'), col=palette()[2], lwd=2, lty=1, ...)
 
-\method{confidence.ellipse}{glm}(model, which.coef, levels=0.95, Scheffe=FALSE, 
+\method{confidenceEllipse}{glm}(model, which.coef, levels=0.95, Scheffe=FALSE, 
   center.pch=19, center.cex=1.5, segments=51, xlab, ylab, 
   las=par('las'), col=palette()[2], lwd=2, lty=1, ...)
 }
@@ -36,6 +36,11 @@ confidence.ellipse(model, ...)
   \item{center}{2-element vector with coordinates of center of ellipse.}
   \item{shape}{\eqn{2\times 2}{2 * 2} shape (or covariance) matrix.}
   \item{radius}{radius of circle generating the ellipse.}
+  \item{log}{when an ellipse is to be added to an existing plot, indicates
+    whether computations were on logged values and to be plotted on logged
+    axes; \code{"x"} if the x-axis is logged, \code{"y"} if the y-axis is
+    logged, and \code{"xy"} or \code{"yx"} if both axes are logged. The
+    default is \code{""}, indicating that neither axis is logged.}
   \item{center.pch}{character for plotting ellipse center.}
   \item{center.cex}{relative size of character for plotting ellipse center.}
   \item{segments}{number of line-segments used to draw ellipse.}
@@ -47,7 +52,7 @@ confidence.ellipse(model, ...)
   \item{plot.points}{if \code{FALSE} data ellipses are added to the current scatterplot,
     but points are not plotted.}
   \item{levels}{draw elliptical contours at these (normal) probability or confidence levels.}
-  \item{robust}{if \code{TRUE} use the \code{cov.trob} function in the \code{MASS} package
+  \item{robust}{if \code{TRUE} use the \code{cov.trob} function in the \pkg{MASS} package
     to calculate the center and covariance matrix for the data ellipse.}
   \item{model}{a model object produced by \code{lm} or \code{glm}.}
   \item{which.coef}{2-element vector giving indices of coefficients to plot; 
@@ -57,20 +62,23 @@ confidence.ellipse(model, ...)
     axes give Scheffe confidence intervals for the coefficients.}
   \item{las}{if \code{0}, ticks labels are drawn parallel to the
     axis; set to \code{1} for horizontal labels (see \code{\link[graphics]{par}}).}
-  \item{col}{color for points and lines; the default is the \emph{second} entry
+  \item{col}{color for lines and ellipse center; the default is the \emph{second} entry
     in the current color palette (see \code{\link[grDevices]{palette}}
-    and \code{\link[graphics]{par}}).}
+    and \code{\link[graphics]{par}}). For \code{dataEllipse}, two colors can be given, in
+    which case the first is for plotted points and the second for lines and the ellipse center.}
   \item{pch}{plotting character for points; default is \code{1} 
     (a circle, see \code{\link[graphics]{par}}).}
   \item{lwd}{line width; default is \code{2} (see \code{\link[graphics]{par}}).}
   \item{lty}{line type; default is \code{1}, a solid line (see \code{\link[graphics]{par}}).}
   \item{\dots}{other plotting parameters to be passed to \code{plot} and
     \code{line}.}
+  \item{grid}{If TRUE, the default, a light-gray background grid is put on the
+graph}
 }
 \details{
   The ellipse is computed by suitably transforming a unit circle.
   
-  \code{data.ellipse} superimposes the normal-probability contours over a scatterplot
+  \code{dataEllipse} superimposes the normal-probability contours over a scatterplot
   of the data.
 }
 \value{
@@ -78,8 +86,12 @@ confidence.ellipse(model, ...)
   plots.
 }
 \references{ 
-  Fox, J. (1997)
-  \emph{Applied Regression, Linear Models, and Related Methods.} Sage.
+  Fox, J. (2008)
+  \emph{Applied Regression Analysis and Generalized Linear Models},
+  Second Edition. Sage.  
+  
+  Fox, J. and Weisberg, S. (2011) 
+  \emph{An R Companion to Applied Regression}, Second Edition, Sage.
   
   Monette, G. (1990)
   Geometry of multiple regression and 3D graphics.
@@ -93,8 +105,8 @@ confidence.ellipse(model, ...)
 \seealso{\code{\link[MASS]{cov.trob}}.}
   
 \examples{
-data.ellipse(Prestige$income, Prestige$education, levels=0.1*1:9, lty=2)
-confidence.ellipse(lm(prestige~income+education, data=Prestige), Scheffe=TRUE)
+dataEllipse(Prestige$income, Prestige$education, levels=0.1*1:9, lty=2)
+confidenceEllipse(lm(prestige~income+education, data=Prestige), Scheffe=TRUE)
 }
 
 \keyword{hplot}

@@ -49,7 +49,7 @@
       }
     \item{pay}{
        Average teacher's salary in the state, 
-      in \$1000s.
+      in $1000s.
       }
     }
   }
@@ -61,7 +61,7 @@
 
 \references{
  Moore, D. (1995)
- \emph{The Basic Practice of Statistics}. Freeman [Table 2.1].
+ \emph{The Basic Practice of Statistics}. Freeman, Table 2.1.
 }
 
 \usage{
