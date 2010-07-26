@@ -1,14 +1,14 @@
 \name{panel.car}
 \alias{panel.car}
 
-\title{Panel Function Coplots}
+\title{Panel Function for Coplots}
 \description{
   a panel function for use with \code{coplot} that plots points, a lowess line,
   and a regression line.
 }
 \usage{
 panel.car(x, y, col, pch, cex=1, span=0.5, lwd=2, 
-  regression.line=lm, lowess.line=TRUE, ...)
+  reg.line=lm, lowess.line=TRUE, ...)
 }
 
 \arguments{
@@ -19,11 +19,11 @@ panel.car(x, y, col, pch, cex=1, span=0.5, lwd=2,
   \item{cex}{character expansion factor for points.}
   \item{span}{span for lowess smoother.}
   \item{lwd}{line width, default is \code{2}.}
-  \item{regression.line}{function to compute coefficients of regression line,
+  \item{reg.line}{function to compute coefficients of regression line,
     or \code{FALSE} for no line.}
   \item{lowess.line}{if \code{TRUE} plot lowess smooth.}
   \item{\dots}{other arguments to pass to functions \code{lines}
-    and \code{reg.line}.}
+    and \code{regLine}.}
 }
 
 \value{
@@ -33,10 +33,10 @@ panel.car(x, y, col, pch, cex=1, span=0.5, lwd=2,
 
 \author{John Fox \email{jfox@mcmaster.ca}}
 
-\seealso{\code{\link[graphics]{coplot}}, \code{\link{reg.line}}}
+\seealso{\code{\link[graphics]{coplot}}, \code{\link{regLine}}}
 
 \examples{
-coplot(prestige~income|education, panel=panel.car, 
+coplot(prestige ~ income|education, panel=panel.car, 
   col="red", data=Prestige)
 }
 

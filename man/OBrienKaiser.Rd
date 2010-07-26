@@ -3,7 +3,7 @@
 \docType{data}
 \title{O'Brien and Kaiser's Repeated-Measures Data}
 \description{
-  These contrived repeate-measures data are taken from Table 7 of 
+  These contrived repeated-measures data are taken from 
   O'Brien and Kaiser (1985). The data are from an imaginary study in which
   16 female and male subjects, who are divided into three treatments, are measured
   at a pretest, postest, and a follow-up session; during each session, they are
@@ -43,7 +43,7 @@
 \source{
   O'Brien, R. G., and Kaiser, M. K. (1985)
   MANOVA method for analyzing repeated measures designs: An extensive primer.
-  \emph{Psychological Bulletin} \bold{97}, 316--333.
+  \emph{Psychological Bulletin} \bold{97}, 316--333, Table 7.
 }
 
 \examples{

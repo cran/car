@@ -15,7 +15,7 @@ This data frame contains the following columns:
 Infant morality rate, infant deaths per 1000 live births.
 }
 \item{gdp}{
-GDP per capita, in US dollars.
+GDP per capita, in U.S.~dollars.
 }
 }
 }
@@ -25,6 +25,16 @@ GDP per capita, in US dollars.
  Social indicators.  
  \url{http://www.un.org/Depts/unsd/social/main.htm}.
 }
+
+\references{
+  Fox, J. (2008)
+  \emph{Applied Regression Analysis and Generalized Linear Models},
+  Second Edition. Sage.  
+  
+  Fox, J. and Weisberg, S. (2011) 
+  \emph{An R Companion to Applied Regression}, Second Edition, Sage.
+}
+
 \usage{
 UN
 }

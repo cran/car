@@ -34,6 +34,11 @@ some(x, ...)
 
 \author{John Fox \email{jfox@mcmaster.ca}}
 
+\references{
+  Fox, J. and Weisberg, S. (2011) 
+  \emph{An R Companion to Applied Regression}, Second Edition, Sage.
+}
+
 \note{These functions are adapted from \code{head} and \code{tail} 
 in the \code{utils} package.
 }
@@ -42,7 +47,6 @@ in the \code{utils} package.
 \seealso{\code{\link[utils]{head}}, \code{\link[utils]{tail}}.}
 
 \examples{
-some(data.frame(z=rnorm(100), u=runif(100)))
+some(Duncan)
 }
-
 \keyword{utilities}

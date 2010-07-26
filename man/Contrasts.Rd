@@ -6,12 +6,12 @@
 
 \title{Functions to Construct Contrasts}
 \description{
-    These are substitutes for similarly named functions in the base package 
+    These are substitutes for similarly named functions in the \pkg{stats} package 
     (note the uppercase letter starting the second word in each function name).
-    The only difference is that the contrast functions from the car package
+    The only difference is that the contrast functions from the \pkg{car} package
     produce easier-to-read names for the contrasts when they are used in statistical models. 
     
-    The functions and this documentation are adapted from the base package.
+    The functions and this documentation are adapted from the \pkg{stats} package.
     }
 
 \usage{
@@ -39,7 +39,7 @@ contr.Helmert(n, contrasts = TRUE)
         \item{\code{decorate.contrasts}}{This option should be set to a 2-element character vector containing the prefix and suffix
             characters to surround contrast names. If the option is not set, then \code{c("[", "]")} is used. For example, setting
             \code{options(decorate.contrasts=c(".", ""))} produces contrast names that are separated from factor names by a period.
-            Setting \code{options(decorate.contrasts=c("", ""))} reproduces the behaviour of the R base contrast functions.} 
+            Setting \code{options( decorate.contrasts=c("", ""))} reproduces the behaviour of the R base contrast functions.} 
         \item{\code{decorate.contr.Treatment}}{A character string to be appended to contrast names to signify treatment contrasts;
             if the option is unset, then \code{"T."} is used.}
         \item{\code{decorate.contr.Sum}}{Similar to the above, with default \code{"S."}.}
@@ -56,6 +56,11 @@ contr.Helmert(n, contrasts = TRUE)
 \value{
     A matrix with \code{n} rows and \code{k} columns, with \code{k = n - 1} if \code{contrasts} is \code{TRUE} 
     and \code{k = n} if \code{contrasts} is \code{FALSE}.
+}
+
+\references{
+  Fox, J. and Weisberg, S. (2011) 
+  \emph{An R Companion to Applied Regression}, Second Edition, Sage.
 }
 
 \author{John Fox \email{jfox@mcmaster.ca}}

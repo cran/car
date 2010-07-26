@@ -4,9 +4,12 @@
 \title{Chemical Composition of Pottery}
 \description{
  The data give the chemical composition of ancient pottery found at four sites in Great Britain. They 
- appear in Hand, et al. (1994), and are used to illustrate MANOVA in the SAS Manual.
+ appear in Hand, et al. (1994), and are used to illustrate MANOVA in the SAS Manual. (Suggested by Michael
+ Friendly.)
 }
-\usage{data(Pottery)}
+\usage{
+Pottery
+}
 \format{
   A data frame with 26 observations on the following 6 variables.
   \describe{

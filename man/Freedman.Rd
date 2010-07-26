@@ -32,8 +32,11 @@ Crime rate per 100,000, 1969.
 }
 
 \references{
-Freedman, J. (1975)
-\emph{Crowding and Behavior.} Viking.
+  Fox, J. and Weisberg, S. (2011) 
+  \emph{An R Companion to Applied Regression}, Second Edition, Sage.
+  
+  Freedman, J. (1975)
+  \emph{Crowding and Behavior.} Viking.
 }
 
 \usage{

@@ -46,8 +46,12 @@ partner's judgment or stick with their own judgment.
 }
 
 \references{
-  Fox, J. (1997)
-  \emph{Applied Regression, Linear Models, and Related Methods.} Sage.
+  Fox, J. (2008)
+  \emph{Applied Regression Analysis and Generalized Linear Models},
+  Second Edition. Sage.  
+  
+  Fox, J. and Weisberg, S. (2011) 
+  \emph{An R Companion to Applied Regression}, Second Edition, Sage.
 }
 
 

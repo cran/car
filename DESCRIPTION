@@ -1,29 +1,27 @@
 Package: car
-Version: 1.2-16
-Date: 2009/10/10
+Version: 2.0-0
+Date: 2010/07/09
 Title: Companion to Applied Regression
-Author: John Fox <jfox@mcmaster.ca>. I am grateful to Douglas Bates,
-        David Firth, Michael Friendly, Gregor Gorjanc, Spencer Graves,
+Author: John Fox <jfox@mcmaster.ca> and Sanford Weisberg
+        <sandy@stat.umn.edu>. We are grateful to Douglas Bates, David
+        Firth, Michael Friendly, Gregor Gorjanc, Spencer Graves,
         Richard Heiberger, Georges Monette, Henric Nilsson, Derek Ogle,
-        Brian Ripley, Sanford Weisberg, and Achim Zeileis for various
-        suggestions and contributions.
+        Brian Ripley, and Achim Zeileis for various suggestions and
+        contributions.
 Maintainer: John Fox <jfox@mcmaster.ca>
-Depends: R (>= 2.1.1), stats, graphics
-Suggests: MASS, nnet, leaps, survival
+Depends: R (>= 2.1.1), stats, graphics, MASS, nnet, leaps, survival
+Suggests: alr3, lmtest, sandwich, mgcv, rgl
 LazyLoad: yes
 LazyData: yes
-Description: This package accompanies J. Fox, An R and S-PLUS Companion
-        to Applied Regression, Sage, 2002. The package contains mostly
-        functions for applied regression, linear models, and
-        generalized linear models, with an emphasis on regression
-        diagnostics, particularly graphical diagnostic methods. There
-        are also some utility functions. With some exceptions, I have
-        tried not to duplicate capabilities in the basic distribution
-        of R, nor in widely used packages. Where relevant, the
-        functions in car are consistent with na.action = na.omit or
-        na.exclude.
+Description: This package accompanies J. Fox and S. Weisberg, An R
+        Companion to Applied Regression, Second Edition, Sage,
+        forthcoming.
 License: GPL (>= 2)
-URL: http://www.r-project.org, http://socserv.socsci.mcmaster.ca/jfox/
+URL: https://r-forge.r-project.org/projects/car/,
+        http://cran.r-project.org/web/packages/car/index.html,
+        http://socserv.socsci.mcmaster.ca/jfox/Books/Companion/index.html
 Repository: CRAN
-Date/Publication: 2009-10-11 14:38:21
-Packaged: 2009-10-10 22:50:01 UTC; John Fox
+Repository/R-Forge/Project: car
+Repository/R-Forge/Revision: 149
+Date/Publication: 2010-07-26 15:32:13
+Packaged: 2010-07-10 20:44:00 UTC; rforge

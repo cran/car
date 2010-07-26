@@ -45,12 +45,13 @@ The value of \code{tfr} for 1973 is misrecorded as 2931; it should be 1931.
 \source{
    Fox, B. (1980) 
    \emph{Women's Domestic Labour and their Involvement 
-   in Wage Work.} Unpublished doctoral dissertation [p. 449].
+   in Wage Work.} Unpublished doctoral dissertation, p. 449.
 }
 
 \references{
-  Fox, J. (1997)
-  \emph{Applied Regression, Linear Models, and Related Methods.} Sage.
+  Fox, J. (2008)
+  \emph{Applied Regression Analysis and Generalized Linear Models},
+  Second Edition. Sage.  
 }
 
 \usage{

@@ -6,9 +6,9 @@
  Soil characteristics were measured on samples from three types of
  contours (Top, Slope, and Depression) and at four depths (0-10cm,
 10-30cm, 30-60cm, and 60-90cm).  The area was divided into 4 
-blocks, in a randomized block design.
+blocks, in a randomized block design. (Suggested by Michael Friendly.)
 }
-\usage{data(Soils)}
+\usage{Soils}
 \format{
   A data frame with 48 observations on the following 14 variables.  There are 3 factors and 9 response variables.
   \describe{
@@ -48,14 +48,12 @@ polynomial contrasts are useful).
   \emph{Multivariate Data Reduction and Discrimination with SAS Software.}
    SAS Institute.
   
-  Friendly, M. (in press)
+  Friendly, M. (2006)
   Data ellipses, HE plots and reduced-rank displays for
   multivariate linear models: SAS software and examples.
-  \emph{Journal of Statistical Software}.  
+  \emph{Journal of Statistical Software}, 17(6),
+  \url{http://www.jstatsoft.org/v17/i06}.  
 
-}
-\examples{
-Soils
 }
 
 \keyword{datasets}

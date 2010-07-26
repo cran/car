@@ -40,6 +40,16 @@ A factor with levels:
  Statistics Canada, and prepared by the Institute for Social Research,
  York University.
 }
+
+\references{
+  Fox, J. (2008)
+  \emph{Applied Regression Analysis and Generalized Linear Models},
+  Second Edition. Sage.  
+  
+  Fox, J. and Weisberg, S. (2011) 
+  \emph{An R Companion to Applied Regression}, Second Edition, Sage.
+}
+
 \usage{
 SLID
 }

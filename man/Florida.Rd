@@ -48,7 +48,7 @@ Total number of votes.
 \source{
 Adams, G. D. and Fastnow, C. F. (2000)
 A note on the voting irregularities in Palm Beach, FL.
-\url{http://madison.hss.cmu.edu/}.
+Formerly at \url{http://madison.hss.cmu.edu/}, but no longer available there.
 }
 \usage{
 Florida
