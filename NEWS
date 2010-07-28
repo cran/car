@@ -1,3 +1,7 @@
+Changes to Version 2.0-1
+
+    o  No longer export non-standard coef.multinom() (problem reported by Brian Ripley, Achim Zeileis).
+
 Changes to Version 2.0-0
 
 	o  Functions renamed to camel case.

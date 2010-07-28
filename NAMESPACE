@@ -1,4 +1,4 @@
-# last modified 9 July 2010 by J. Fox
+# last modified 27 July 2010 by J. Fox
 
 export(
     basicPowerAxis,
@@ -146,7 +146,7 @@ S3method(boxTidwell, default)
 S3method(boxTidwell, formula)
 S3method(ceresPlot, glm)            
 S3method(ceresPlot, lm)
-S3method(coef, multinom)
+# S3method(coef, multinom)
 S3method(crPlot, glm)               
 S3method(crPlot, lm)              
 S3method(deltaMethod, default)
