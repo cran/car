@@ -5,6 +5,7 @@
 %	2009-01-16 updated doc to correspond to changes in linearHypothesis. J. Fox
 %   2009-12-22 updated to reflect changes in linearHypothesis.mlm(). J. Fox
 %   2010-07-09 added linearHypothesis.polr() and coef.multinom(). J. Fox
+%   2010-07-27 coef.multinom() no longer exported. J. Fox
 %-------------------------------------------------------------------------------
 
 \name{linearHypothesis}
@@ -16,7 +17,7 @@
 \alias{linearHypothesis.polr}
 \alias{linearHypothesis.default}
 \alias{print.linearHypothesis.mlm}
-\alias{coef.multinom}
+%%\alias{coef.multinom}
 
 \title{Test Linear Hypothesis}
 
@@ -51,7 +52,7 @@ lht(model, ...)
 \method{print}{linearHypothesis.mlm}(x, SSP=TRUE, SSPE=SSP, 
     digits=getOption("digits"), ...) 
     
-\method{coef}{multinom}(object, ...)
+%%\method{coef}{multinom}(object, ...)
 }
 
 \arguments{
@@ -122,7 +123,7 @@ lht(model, ...)
   \item{SSP}{if \code{TRUE} (the default), print the sum-of-squares and 
     cross-products matrix for the hypothesis and the response-transformation matrix.}
   \item{digits}{minimum number of signficiant digits to print.}
-  \item{object}{a \code{multinom} model object.}
+%%  \item{object}{a \code{multinom} model object.}
   \item{...}{aruments to pass down.}
 }
 
