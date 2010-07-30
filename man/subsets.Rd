@@ -62,9 +62,9 @@ subsets(object, ...)
 \seealso{\code{\link[leaps]{regsubsets}}}
 
 \examples{
-    \dontrun{
-subsets(regsubsets(undercount ~ ., data=Ericksen))
-    }
+if (interactive() && require(leaps)){
+	subsets(regsubsets(undercount ~ ., data=Ericksen))
+}
 }
 
 \keyword{hplot}
