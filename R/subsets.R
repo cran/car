@@ -1,9 +1,10 @@
 # Plot optimal subsets regressions -- output from regsubsets
 # function in leaps package
 
-# last modified 1 June 2010 by J. Fox
+# last modified 30 July 2010 by J. Fox
 
 subsets <- function(object, ...){
+	if (!require(leaps)) stop("leaps package missing")
 	UseMethod("subsets")
 }
 

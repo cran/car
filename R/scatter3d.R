@@ -3,8 +3,10 @@
 # checked in 23 December 2009 by J. Fox
 # 5 January 2010: fixed axis labeling in scatter3d.formula. J. Fox
 # 13 May 2010: changed default id.n to conform to showLabels
+# 30 July 2010: checks for rgl
 
 scatter3d <- function(x, ...){
+	if (!require(rgl)) stop("rgl package missing")
 	UseMethod("scatter3d")
 }
 
