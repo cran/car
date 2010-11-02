@@ -20,16 +20,16 @@ dfbetaPlots(model, ...)
 dfbetasPlots(model, ...)
 
 \method{dfbetaPlots}{lm}(model, terms= ~ ., intercept=FALSE, layout=NULL, ask, 
-	      main, labels=rownames(dfbeta), 
+	    main, xlab, ylab, labels=rownames(dfbeta), 
         id.method="y",  
-        id.n=if(id.method[1]=="identify") Inf else 0, id.cex=1, 
-        id.col=palette()[1], grid=TRUE, ...)
+        id.n=if(id.method[1]=="identify") Inf else 0, id.cex=1,
+        id.col=palette()[1], col=palette()[1], grid=TRUE, ...)
 
 \method{dfbetasPlots}{lm}(model, terms=~., intercept=FALSE, layout=NULL, ask, 
-	      main, 
+	    main, xlab, ylab,
         labels=rownames(dfbeta), id.method="y",
         id.n=if(id.method[1]=="identify") Inf else 0, id.cex=1, 
-        id.col=palette()[1], grid=TRUE, ...)
+        id.col=palette()[1], col=palette()[1], grid=TRUE, ...)
 }
 	
 \arguments{
@@ -49,15 +49,17 @@ index plot is drawn for that term only.
   select the layout yourself, or you will get a maximum of nine per page.}
 \item{main}{The title of the graph; if missing, one will be supplied.
 }
+\item{xlab}{Horizontal axis label; defaults to \code{"Index"}.}
+\item{ylab}{Vertical axis label; defaults to coefficient name.}
 \item{ask}{If \code{TRUE}, ask the user before drawing the next plot; if \code{FALSE}, the default, don't ask.
 }
-\item{\dots}{optional additional arguments to be passed to \code{\link{showLabels}}, e.g., \code{id.col}. 
-}
+\item{\dots}{optional additional arguments to be passed to \code{\link{plot}}, \code{\link{points}}, and \code{\link{showLabels}}}. 
   \item{id.method,labels,id.n,id.cex,id.col}{Arguments for the labelling of
     points.  The default is \code{id.n=0} for labeling no points.  See
     \code{\link{showLabels}} for details of these arguments.
 }
-   \item{grid}{If TRUE, the default, a light-gray background grid is put on the
+\item{col}{color for points; defaults to the first entry in the color \code{\link{palette}}.}
+   \item{grid}{If \code{TRUE}, the default, a light-gray background grid is put on the
 graph}
 }
 

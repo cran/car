@@ -16,13 +16,14 @@ ceresPlots(model, terms = ~., layout = NULL, ask, main,
 ceresPlot(model, ...)
 
 \method{ceresPlot}{lm}(model, variable, 
-    id.method = list(abs(residuals(model, type = "pearson")), "x"), 
-    labels, 
-    id.n = if(id.method[1]=="identify") Inf else 0,
-    id.cex = 1, id.col=palette()[1], 
-    line = TRUE, smooth = TRUE, span = 0.5, iter, las = par("las"), 
-    col = palette()[2], pch = 1, lwd = 2, main = "Ceres Plot", 
-    grid=TRUE, ...)
+  id.method = list(abs(residuals(model, type="pearson")), "x"),
+  labels, 
+  id.n = if(id.method[1]=="identify") Inf else 0,
+  id.cex=1, id.col=palette()[1],
+  line=TRUE, smooth=TRUE, span=.5, iter,  
+	col=palette()[1], col.lines=palette()[-1],
+  xlab, ylab, pch=1, lwd=2,  
+  grid=TRUE, ...)
 
 \method{ceresPlot}{glm}(model, ...)
 }
@@ -43,8 +44,8 @@ select an appropriate layout.  If the number of graphs exceed nine, you must
 select the layout yourself, or you will get a maximum of nine per page.}
   \item{ask}{If \code{TRUE}, ask the user before drawing the next plot; if \code{FALSE}, the default, don't ask.
 This is relevant only if not all the graphs can be drawn in one window.}
-  \item{main}{The title of the plot; if missing, one will be supplied.
-}
+  \item{main}{Overall title for any array of cerers plots; if missing a default
+is provided.}
   \item{\dots}{\code{ceresPlots} passes these arguments to \code{ceresPlot}.  
 \code{ceresPlot} passes them to \code{plot}. 
 }  
@@ -63,20 +64,24 @@ axis}
   \item{iter}{number of robustness iterations for nonparametric-regression smooth;
     defaults to 3 for a linear model and to 0 for a non-Gaussian glm.
 }
-  \item{las}{if \code{0}, ticks labels are drawn parallel to the
-    axis; set to \code{1} for horizontal labels (see \code{\link[graphics]{par}}).
-}
-  \item{col}{color for points and lines; the default is the \emph{second} entry
+  \item{col}{color for points; the default is the first entry
     in the current color palette (see \code{\link[grDevices]{palette}}
     and \code{\link[graphics]{par}}).
 }
+  \item{col.lines}{a list of at least two colors.  The first color is used for the
+    ls line and the second color is used for the fitted lowess line.  To use
+    the same color for both, use, for example, \code{col.lines=c("red", "red")}
+}
+  \item{xlab,ylab}{labels for the x and y axes, respectively.  If not set 
+    appropriate labels are created by the function.}
   \item{pch}{plotting character for points; default is \code{1} 
     (a circle, see \code{\link[graphics]{par}}).
 }
   \item{lwd}{line width; default is \code{2} (see \code{\link[graphics]{par}}).
-  }
+}
   \item{grid}{If TRUE, the default, a light-gray background grid is put on the
-graph}
+graph
+}
 }
 \details{
   Ceres plots are a generalization of component+residual (partial

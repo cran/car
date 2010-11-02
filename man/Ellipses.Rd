@@ -13,23 +13,23 @@
 \usage{
 ellipse(center, shape, radius, log="", center.pch=19, center.cex=1.5, 
   segments=51, add=TRUE, xlab="", ylab="", 
-   las=par('las'), col=palette()[2], lwd=2, lty=1, grid=TRUE, ...)
+   col=palette()[2], lwd=2, grid=TRUE, ...)
 
 dataEllipse(x, y, log="", levels=c(0.5, 0.95), center.pch=19, center.cex=1.5, 
   plot.points=TRUE, add=!plot.points, segments=51, robust=FALSE,
   xlab=deparse(substitute(x)), 
   ylab=deparse(substitute(y)), 
-  las=par('las'), col=palette()[2], pch=1, lwd=2, lty=1, grid=TRUE, ...)
+  col=palette()[1:2], lwd=2, grid=TRUE, ...)
 
 confidenceEllipse(model, ...)
 
 \method{confidenceEllipse}{lm}(model, which.coef, levels=0.95, Scheffe=FALSE, 
   center.pch=19, center.cex=1.5, segments=51, xlab, ylab, 
-  las=par('las'), col=palette()[2], lwd=2, lty=1, ...)
+  col=palette()[2], lwd=2, add=FALSE, ...)
 
 \method{confidenceEllipse}{glm}(model, which.coef, levels=0.95, Scheffe=FALSE, 
   center.pch=19, center.cex=1.5, segments=51, xlab, ylab, 
-  las=par('las'), col=palette()[2], lwd=2, lty=1, ...)
+  col=palette()[2], lwd=2, add=FALSE, ...)
 }
 
 \arguments{
@@ -60,16 +60,11 @@ confidenceEllipse(model, ...)
     will be selected.}
   \item{Scheffe}{if \code{TRUE} scale the ellipse so that its projections onto the
     axes give Scheffe confidence intervals for the coefficients.}
-  \item{las}{if \code{0}, ticks labels are drawn parallel to the
-    axis; set to \code{1} for horizontal labels (see \code{\link[graphics]{par}}).}
   \item{col}{color for lines and ellipse center; the default is the \emph{second} entry
     in the current color palette (see \code{\link[grDevices]{palette}}
     and \code{\link[graphics]{par}}). For \code{dataEllipse}, two colors can be given, in
     which case the first is for plotted points and the second for lines and the ellipse center.}
-  \item{pch}{plotting character for points; default is \code{1} 
-    (a circle, see \code{\link[graphics]{par}}).}
   \item{lwd}{line width; default is \code{2} (see \code{\link[graphics]{par}}).}
-  \item{lty}{line type; default is \code{1}, a solid line (see \code{\link[graphics]{par}}).}
   \item{\dots}{other plotting parameters to be passed to \code{plot} and
     \code{line}.}
   \item{grid}{If TRUE, the default, a light-gray background grid is put on the

@@ -12,8 +12,8 @@ spreadLevelPlot <- function(x, ...) {
 spreadLevelPlot.default <- function(x, by, robust.line=TRUE, 
 	start=0, xlab="Median", ylab="Hinge-Spread", point.labels=TRUE, las=par("las"),
 	main=paste("Spread-Level Plot for", deparse(substitute(x)), 
-		"by", deparse(substitute(by))), col=palette()[2], pch=1, lwd=2, 
-  grid=TRUE, ...){
+		"by", deparse(substitute(by))), col=palette()[1], col.lines=palette()[2],
+    pch=1, lwd=2, grid=TRUE, ...){
 	good <- complete.cases(x, by)
 	if (sum(good) != length(x)) {
 		warning("NAs ignored")
@@ -53,7 +53,7 @@ spreadLevelPlot.default <- function(x, by, robust.line=TRUE,
 	first <- ord[1]
 	last <- ord[length(ord)]
 	lines(start + medians[c(first, last)], exp(fitted.values(mod)[c(first, last)]), 
-		col=col, lwd=lwd, ...)
+		col=col.lines, lwd=lwd, ...)
 	p <- 1 - (coefficients(mod))[2]
 	names(p) <- NULL
 	result <- list(Statistics=as.data.frame(result[ord,]), PowerTransformation=p)
@@ -95,7 +95,7 @@ spreadLevelPlot.lm <- function(x, robust.line=TRUE,
 	xlab="Fitted Values",
 	ylab="Absolute Studentized Residuals", las=par("las"),
 	main=paste("Spread-Level Plot for\n", deparse(substitute(x))),
-	pch=1, col=palette()[2], lwd=2, grid=TRUE, ...){
+	pch=1, col=palette()[1], col.lines=palette()[2], lwd=2, grid=TRUE, ...){
 	resid <- na.omit(abs(rstudent(x)))
 	fitval <- na.omit(fitted.values(x))
 	non.pos <- fitval <= 0
@@ -118,7 +118,7 @@ spreadLevelPlot.lm <- function(x, robust.line=TRUE,
 	first <- which.min(fitval) 
 	last <- which.max(fitval) 
 	lines((fitval)[c(first, last)], exp(fitted.values(mod)[c(first, last)]), 
-		lwd=lwd, col=col, ...)
+		lwd=lwd, col=col.lines, ...)
 	p <- 1 - (coefficients(mod))[2]
 	names(p) <- NULL
 	result <- list(PowerTransformation=p)

@@ -18,22 +18,23 @@ qqp(...)
 \method{qqPlot}{default}(x, distribution="norm", ylab=deparse(substitute(x)),
 	xlab=paste(distribution, "quantiles"), main=NULL, las=par("las"),
 	envelope=.95,  
-        col=palette()[2], lwd=2, pch=1, cex=par("cex"), 
+	col=palette()[1], col.lines=palette()[2], lwd=2, pch=1, cex=par("cex"), 
 	line=c("quartiles", "robust", "none"),  
-        labels = if(!is.null(names(x))) names(x) else seq(along=x),
-        id.method = "y", 
-        id.n =if(id.method[1]=="identify") Inf else 0,
-        id.cex=1, id.col=palette()[1], grid=TRUE, ...)
+	labels = if(!is.null(names(x))) names(x) else seq(along=x),
+	id.method = "y", 
+	id.n =if(id.method[1]=="identify") Inf else 0,
+	id.cex=1, id.col=palette()[1], grid=TRUE, ...)
 
 \method{qqPlot}{lm}(x, xlab=paste(distribution, "Quantiles"),
-        ylab=paste("Studentized Residuals(", deparse(substitute(x)), ")",
-sep=""), main=NULL,
-        distribution=c("t", "norm"), line=c("robust", "quartiles", "none"),
-        las=par("las"), simulate=TRUE, envelope=.95,  
-        reps=100, col=palette()[2], lwd=2, pch=1, cex=par("cex"),
-        labels, id.method = "y", 
-        id.n = if(id.method[1]=="identify") Inf else 0,
-        id.cex=1, id.col=palette()[1], grid=TRUE, ...)
+	ylab=paste("Studentized Residuals(", deparse(substitute(x)), ")",
+		sep=""), main=NULL,
+	distribution=c("t", "norm"), line=c("robust", "quartiles", "none"),
+	las=par("las"), simulate=TRUE, envelope=.95,  
+	reps=100, col=palette()[1], col.lines=palette()[2], lwd=2, 
+	pch=1, cex=par("cex"),
+	labels, id.method = "y", 
+	id.n = if(id.method[1]=="identify") Inf else 0,
+	id.cex=1, id.col=palette()[1], grid=TRUE, ...)
 }
 
 \arguments{
@@ -47,9 +48,11 @@ sep=""), main=NULL,
     \code{FALSE} for no envelope.}
   \item{las}{if \code{0}, ticks labels are drawn parallel to the
     axis; set to \code{1} for horizontal labels (see \code{\link[graphics]{par}}).}
-  \item{col}{color for points and lines; the default is the \emph{second} entry
+  \item{col}{color for points; the default is the \emph{first} entry
     in the current color palette (see \code{\link[grDevices]{palette}}
     and \code{\link[graphics]{par}}).}
+  \item{col.lines}{color for lines; the default is the \emph{second} entry
+    in the current color palette.}
   \item{pch}{plotting character for points; default is \code{1} 
     (a circle, see \code{\link[graphics]{par}}).}
   \item{cex}{factor for expanding the size of plotted symbols; the default is
@@ -92,7 +95,6 @@ graph}
 }
 \references{
   Fox, J. (2008)
-  \emph{Applied Regression Analysis and Generalized Linear Models, Second Edition.} Sage.  Fox, J. (2008)
   \emph{Applied Regression Analysis and Generalized Linear Models},
   Second Edition. Sage.  
   
@@ -113,7 +115,7 @@ qqPlot(x)
 qqPlot(x, dist="chisq", df=2)
 
 qqPlot(lm(prestige ~ income + education + type, data=Duncan), 
-	simulate=TRUE, envelope=.99)
+	envelope=.99)
 }
 
 \keyword{distribution}

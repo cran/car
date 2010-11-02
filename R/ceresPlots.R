@@ -8,8 +8,9 @@
 #   ceresPlots(longley)
 # 14 April 2010: set id.n = 0. J. Fox
 # new args for showLabels 15 April S. Weisberg
-
-# these functions to be rewritten; simply renamed for now
+# modified 2 Sept 2010 by S. Weisberg, made colors, axes lables, and
+# arguments more consistent with other functions; ... passes args to plot
+# and boxplot.
 
 ceresPlots<-function(model, terms= ~ ., layout=NULL, ask, main, ...){
   terms <- if(is.character(terms)) paste("~", terms) else terms
@@ -57,8 +58,9 @@ ceresPlot.lm<-function(model, variable,
   labels, 
   id.n = if(id.method[1]=="identify") Inf else 0,
   id.cex=1, id.col=palette()[1],
-  line=TRUE, smooth=TRUE, span=.5, iter, 
-	las=par("las"), col=palette()[2], pch=1, lwd=2, main="Ceres Plot", 
+  line=TRUE, smooth=TRUE, span=.5, iter,   
+	col=palette()[1], col.lines=palette()[-1],
+  xlab, ylab, pch=1, lwd=2,  
   grid=TRUE, ...){
 	# the lm method works with glm's too              
 	if(missing(labels)) labels <- names(residuals(model))	
@@ -135,9 +137,11 @@ ceresPlot.lm<-function(model, variable,
 	posn<-k:(k-n.x+1)
 	partial.res<-residuals.glm(aug.model, "partial")[,var] +
 		aug.mod.mat[,posn] %*% as.matrix(coef[posn])
-	plot(mod.mat[,var], partial.res, xlab=var, col=col, pch=pch,
-		ylab=paste("CERES Residual(",responseName(model),")", sep=""),
-		main=main, las=las, type="n")
+	xlab <- if(!missing(xlab)) xlab else var
+	ylab <- if(!missing(ylab)) ylab else
+	   paste("CERES Residual(",responseName(model),")", sep="")
+	plot(mod.mat[,var], partial.res, xlab=xlab, col=col, pch=pch,
+		ylab=ylab, type="n", ...)
 	if(grid){
     grid(lty=1, equilogs=FALSE)
     box()}
@@ -145,9 +149,11 @@ ceresPlot.lm<-function(model, variable,
 	showLabels(mod.mat[,var], partial.res, labels=labels, 
             id.method=id.method, id.n=id.n, id.cex=id.cex,
             id.col=id.col)
-	if (line) abline(lm(partial.res~mod.mat[,var]), lty=2, lwd=lwd, col=col)
+	if (line) abline(lm(partial.res~mod.mat[,var]), lty=2, lwd=lwd, 
+            col=col.lines[1])
 	if (smooth) {
-		lines(lowess(mod.mat[,var], partial.res, iter=iter, f=span), lwd=lwd, col=col)
+		lines(lowess(mod.mat[,var], partial.res, iter=iter, f=span), lwd=lwd, 
+           col=col.lines[2])
 	}
 }                    
 

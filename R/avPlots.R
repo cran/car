@@ -4,6 +4,7 @@
 # 14 April 2010: set id.n = 0. J. Fox
 # 22 April 2010: modified id.n S. Weisberg
 # 10 May 2010:  added gridlines
+# 25 May 2010:  changed default color scheme
 
 avPlots <- function(model, terms=~., intercept=FALSE, layout=NULL, ask, 
            main, ...){
@@ -46,7 +47,7 @@ function (model, variable,
     labels, 
     id.n = if(id.method[1]=="identify") Inf else 0,
     id.cex=1, id.col=palette()[1],
-    col = palette()[2], col.lines = col[1],
+    col = palette()[1], col.lines = palette()[2],
     xlab, ylab, pch = 1, lwd = 2, main="Added-variable Plot", grid=TRUE, ...)
 {
     variable <- if (is.character(variable) & 1 == length(variable))
@@ -84,7 +85,7 @@ avPlot.glm<-function(model, variable,
     labels,
     id.n = if(id.method[1]=="identify") Inf else 0,
     id.cex=1, id.col=palette()[1], 
-    col = palette()[2], col.lines = col[1],
+    col = palette()[1], col.lines = palette()[2],
     xlab, ylab, pch = 1, lwd = 2,  type=c("Wang", "Weisberg"), 
     main="Added-variable Plot", grid=TRUE, ...){
     #last modified 20 Feb 2002 by J. Fox

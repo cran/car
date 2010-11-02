@@ -14,6 +14,7 @@ influencePlot <- function(model, ...){
     }
 
 influencePlot.lm <- function(model, scale=10,  
+	xlab="Hat-Values", ylab="Studentized Residuals",
     labels, id.method = "noteworthy",
     id.n = if(id.method[1]=="identify") Inf else 0, 
     id.cex=1, id.col=palette()[1], ...){ 
@@ -25,13 +26,12 @@ influencePlot.lm <- function(model, scale=10,
 	p <- length(coef(model))
 	n <- sum(!is.na(rstud))
 #	cutoff <- sqrt(4/(n - p))
-	plot(hatval, rstud, xlab='Hat-Values',
-			ylab='Studentized Residuals', type='n', ...)
+	plot(hatval, rstud, xlab=xlab, ylab=ylab, type='n', ...)
 	abline(v=c(2, 3)*p/n, lty=2)
 	abline(h=c(-2, 0, 2), lty=2)
 #	points(hatval, rstud, cex=scale*cook, 
 #			col=ifelse(cooks <- cook > cutoff, col[2], col[1]))
-	points(hatval, rstud, cex=scale*cook)
+	points(hatval, rstud, cex=scale*cook, ...)
 	if(id.method != "identify"){
 	   which.rstud <- order(abs(rstud), decreasing=TRUE)[1:id.n]
 	   which.cook <- order(cook, decreasing=TRUE)[1:id.n]

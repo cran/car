@@ -20,11 +20,13 @@ crPlot(model, ...)
 
 \method{crPlot}{lm}(model, variable, 
   id.method = list(abs(residuals(model, type="pearson")), "x"),
-  labels, id.n = if(id.method[1]=="identify") Inf else 0,
+  labels, 
+  id.n = if(id.method[1]=="identify") Inf else 0,
   id.cex=1, id.col=palette()[1],
   order=1, line=TRUE, smooth=TRUE,
-	iter, span=.5, las=par("las"), col=palette()[2], pch=1, lwd=2,
-	grid=TRUE, ...)
+	iter, span=.5, 
+  col=palette()[1], col.lines=palette()[-1],
+  xlab, ylab, pch=1, lwd=2, grid=TRUE, ...)
 
 \method{crPlot}{glm}(model, ...)
 }
@@ -61,11 +63,14 @@ axis
   \item{iter}{number of robustness iterations for nonparametric-regression smooth;
     defaults to 3 for a linear model and to 0 for a non-Gaussian glm.}
   \item{span}{span for lowess smoother.}
-  \item{las}{if \code{0}, ticks labels are drawn parallel to the
-    axis; set to \code{1} for horizontal labels (see \code{\link[graphics]{par}}).}
-  \item{col}{color for points and lines; the default is the \emph{second} entry
+  \item{col}{color for points; the default is the first entry
     in the current color palette (see \code{\link[grDevices]{palette}}
     and \code{\link[graphics]{par}}).}
+  \item{col.lines}{a list of at least two colors.  The first color is used for the
+    ls line and the second color is used for the fitted lowess line.  To use
+    the same color for both, use, for example, \code{col.lines=c("red", "red")}}
+  \item{xlab,ylab}{labels for the x and y axes, respectively.  If not set 
+    appropriate labels are created by the function.}
   \item{pch}{plotting character for points; default is \code{1} 
     (a circle, see \code{\link[graphics]{par}}).}
   \item{lwd}{line width; default is \code{2} (see \code{\link[graphics]{par}}).}

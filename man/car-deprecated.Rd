@@ -95,6 +95,10 @@ functions.
 
 \code{linear.hypothesis} is now a synonym for the \code{\link{linearHypothesis}} function.
 
+\code{ncv.test} is now a synonym for \code{\link{ncvTest}}.
+
+\code{outlier.test} is now a synonym for \code{\link{outlierTest}}.
+
 \code{qq.plot} is now a synonym for \code{\link{qqPlot}}.
 
 \code{scatterplot.matrix} is now a synonym for \code{\link{scatterplotMatrix}}.

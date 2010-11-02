@@ -24,14 +24,14 @@ slp(...)
 \method{spreadLevelPlot}{default}(x, by, robust.line=TRUE, 
 	start=0, xlab="Median", ylab="Hinge-Spread", point.labels=TRUE, las=par("las"),
 	main=paste("Spread-Level Plot for", deparse(substitute(x)), 
-		"by", deparse(substitute(by))), col=palette()[2], pch=1, lwd=2, 
-    grid=TRUE, ...)
+		"by", deparse(substitute(by))), col=palette()[1], col.lines=palette()[2],
+    pch=1, lwd=2, grid=TRUE, ...)
 
 \method{spreadLevelPlot}{lm}(x, robust.line=TRUE, 
 	xlab="Fitted Values",
 	ylab="Absolute Studentized Residuals", las=par("las"),
 	main=paste("Spread-Level Plot for\n", deparse(substitute(x))),
-	pch=1, col=palette()[2], lwd=2, grid=TRUE, ...)
+	pch=1, col=palette()[1], col.lines=palette()[2], lwd=2, grid=TRUE, ...)
 	  
 \method{print}{spreadLevelPlot}(x, ...)
 }
@@ -55,9 +55,11 @@ slp(...)
   \item{point.labels}{if \code{TRUE} label the points in the plot with group names.}
   \item{las}{if \code{0}, ticks labels are drawn parallel to the
     axis; set to \code{1} for horizontal labels (see \code{\link[graphics]{par}}).}
-  \item{col}{color for points and lines; the default is the \emph{second} entry
+  \item{col}{color for points; the default is the first entry
     in the current color palette (see \code{\link[grDevices]{palette}}
     and \code{\link[graphics]{par}}).}
+  \item{col.lines}{color for lines; default is the second entry in the current
+    palette}
   \item{pch}{plotting character for points; default is \code{1} 
     (a circle, see \code{\link[graphics]{par}}).}
   \item{lwd}{line width; default is \code{2} (see \code{\link[graphics]{par}}).}

@@ -4,6 +4,7 @@
 # 5 January 2010: fixed axis labeling in scatter3d.formula. J. Fox
 # 13 May 2010: changed default id.n to conform to showLabels
 # 30 July 2010: checks for rgl
+# 23 October 2010: added surface.alpha and ellipsoid.alpha arguments
 
 scatter3d <- function(x, ...){
 	if (!require(rgl)) stop("rgl package missing")
@@ -41,6 +42,7 @@ scatter3d.default <- function(x, y, z,
 	axis.col=if (bg.col == "white") c("darkmagenta", "black", "darkcyan")
 		else c("darkmagenta", "white", "darkcyan"),
 	surface.col=c("blue", "green", "orange", "magenta", "cyan", "red", "yellow", "gray"),
+	surface.alpha=0.5,
 	neg.res.col="red", pos.res.col="green",
 	square.col=if (bg.col == "white") "black" else "gray", point.col="yellow",
 	text.col=axis.col, grid.col=if (bg.col == "white") "black" else "gray",
@@ -48,7 +50,7 @@ scatter3d.default <- function(x, y, z,
 	residuals=(length(fit) == 1), surface=TRUE, fill=TRUE, grid=TRUE, grid.lines=26,
 	df.smooth=NULL, df.additive=NULL,
 	sphere.size=1, threshold=0.01, speed=1, fov=60, 
-	fit="linear", groups=NULL, parallel=TRUE, ellipsoid=FALSE, level=0.5,
+	fit="linear", groups=NULL, parallel=TRUE, ellipsoid=FALSE, level=0.5, ellipsoid.alpha=0.1,
 	id.method=c("mahal", "xz", "y", "xyz", "identify", "none"), 
 	id.n=if (id.method == "identify") Inf else 0,
 	labels=as.character(seq(along=x)), offset = ((100/length(x))^(1/3)) * 0.02,
@@ -150,7 +152,7 @@ scatter3d.default <- function(x, y, z,
 			radius <- sqrt(dfn * qf(level, dfn, dfd))
 			ellips <- ellipsoid(center=c(mean(x), mean(y), mean(z)),
 				shape=cov(cbind(x,y,z)), radius=radius)
-			if (fill) shade3d(ellips, col=surface.col[1], alpha=0.1, lit=FALSE)
+			if (fill) shade3d(ellips, col=surface.col[1], alpha=ellipsoid.alpha, lit=FALSE)
 			if (grid) wire3d(ellips, col=surface.col[1], lit=FALSE)
 		}
 		else{
@@ -165,7 +167,7 @@ scatter3d.default <- function(x, y, z,
 				radius <- sqrt(dfn * qf(level, dfn, dfd))
 				ellips <- ellipsoid(center=c(mean(xx), mean(yy), mean(zz)),
 					shape=cov(cbind(xx,yy,zz)), radius=radius)
-				if (fill) shade3d(ellips, col=surface.col[j], alpha=0.1, lit=FALSE)
+				if (fill) shade3d(ellips, col=surface.col[j], alpha=ellipsoid.alpha, lit=FALSE)
 				if (grid) wire3d(ellips, col=surface.col[j], lit=FALSE)
 				coords <- ellips$vb[, which.max(ellips$vb[1,])]
 				if (!surface) rgl.texts(coords[1] + 0.05, coords[2], coords[3], group,
@@ -190,9 +192,9 @@ scatter3d.default <- function(x, y, z,
 				)
 				if (model.summary) summaries[[f]] <- summary(mod)
 				yhat <- matrix(predict(mod, newdata=dat), grid.lines, grid.lines)
-				if (fill) rgl.surface(vals, vals, yhat, color=surface.col[i], alpha=0.5, lit=FALSE)
+				if (fill) rgl.surface(vals, vals, yhat, color=surface.col[i], alpha=surface.alpha, lit=FALSE)
 				if(grid) rgl.surface(vals, vals, yhat, color=if (fill) grid.col
-							else surface.col[i], alpha=0.5, lit=FALSE, front="lines", back="lines")
+							else surface.col[i], alpha=surface.alpha, lit=FALSE, front="lines", back="lines")
 				if (residuals){
 					n <- length(y)
 					fitted <- fitted(mod)
@@ -204,7 +206,7 @@ scatter3d.default <- function(x, y, z,
 						xx <- as.vector(rbind(x, x, x + res, x + res))
 						yy <- as.vector(rbind(y, fitted, fitted, y))
 						zz <- as.vector(rbind(z, z, z, z))
-						rgl.quads(xx, yy, zz, color=square.col, alpha=0.5, lit=FALSE)
+						rgl.quads(xx, yy, zz, color=square.col, alpha=surface.alpha, lit=FALSE)
 						rgl.lines(xx, yy, zz, color=square.col)
 					}
 				}
@@ -226,9 +228,9 @@ scatter3d.default <- function(x, y, z,
 						group <- levs[j]
 						select.obs <- groups == group
 						yhat <- matrix(predict(mod, newdata=cbind(dat, groups=group)), grid.lines, grid.lines)
-						if (fill) rgl.surface(vals, vals, yhat, color=surface.col[j], alpha=0.5, lit=FALSE)
+						if (fill) rgl.surface(vals, vals, yhat, color=surface.col[j], alpha=surface.alpha, lit=FALSE)
 						if (grid) rgl.surface(vals, vals, yhat, color=if (fill) grid.col
-									else surface.col[j], alpha=0.5, lit=FALSE, front="lines", back="lines")
+									else surface.col[j], alpha=surface.alpha, lit=FALSE, front="lines", back="lines")
 						rgl.texts(1, predict(mod, newdata=data.frame(x=1, z=1, groups=group)), 1,
 							paste(group, " "), adj=1, color=surface.col[j])
 						if (residuals){
@@ -243,7 +245,7 @@ scatter3d.default <- function(x, y, z,
 								xxx <- as.vector(rbind(xx, xx, xx + res, xx + res))
 								yyy <- as.vector(rbind(yy, fitted, fitted, yy))
 								zzz <- as.vector(rbind(zz, zz, zz, zz))
-								rgl.quads(xxx, yyy, zzz, color=surface.col[j], alpha=0.5, lit=FALSE)
+								rgl.quads(xxx, yyy, zzz, color=surface.col[j], alpha=surface.alpha, lit=FALSE)
 								rgl.lines(xxx, yyy, zzz, color=surface.col[j])
 							}
 						}
@@ -265,9 +267,9 @@ scatter3d.default <- function(x, y, z,
 						)
 						if (model.summary) summaries[[paste(f, ".", group, sep="")]] <- summary(mod)
 						yhat <- matrix(predict(mod, newdata=dat), grid.lines, grid.lines)
-						if (fill) rgl.surface(vals, vals, yhat, color=surface.col[j], alpha=0.5, lit=FALSE)
+						if (fill) rgl.surface(vals, vals, yhat, color=surface.col[j], alpha=surface.alpha, lit=FALSE)
 						if (grid) rgl.surface(vals, vals, yhat, color=if (fill) grid.col
-									else surface.col[j], alpha=0.5, lit=FALSE, front="lines", back="lines")
+									else surface.col[j], alpha=surface.alpha, lit=FALSE, front="lines", back="lines")
 						rgl.texts(1, predict(mod, newdata=data.frame(x=1, z=1, groups=group)), 1,
 							paste(group, " "), adj=1, color=surface.col[j])
 						if (residuals){
@@ -282,7 +284,7 @@ scatter3d.default <- function(x, y, z,
 								xxx <- as.vector(rbind(xx, xx, xx + res, xx + res))
 								yyy <- as.vector(rbind(yy, fitted, fitted, yy))
 								zzz <- as.vector(rbind(zz, zz, zz, zz))
-								rgl.quads(xxx, yyy, zzz, color=surface.col[j], alpha=0.5, lit=FALSE)
+								rgl.quads(xxx, yyy, zzz, color=surface.col[j], alpha=surface.alpha, lit=FALSE)
 								rgl.lines(xxx, yyy, zzz, color=surface.col[j])
 							}
 						}

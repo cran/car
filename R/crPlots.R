@@ -7,6 +7,9 @@
 #   to set default id.n=0
 # changed showLabels args 15 April 2010 S. Weisberg
 # added grid, 10 May 2010
+# modified 2 Sept 2010 by S. Weisberg, made colors, axes lables, and
+# arguments more consistent with other functions; ... passes args to plot
+# and boxplot.
 
 # these functions to be rewritten; simply renamed for now
 
@@ -52,14 +55,18 @@ crPlot.lm<-function(model, variable,
   id.n = if(id.method[1]=="identify") Inf else 0,
   id.cex=1, id.col=palette()[1],
   order=1, line=TRUE, smooth=TRUE,
-	iter, span=.5, las=par("las"), col=palette()[2], pch=1, lwd=2,
-	grid=TRUE, ...) { 
+	iter, span=.5, 
+  col=palette()[1], col.lines=palette()[-1],
+  xlab, ylab, pch=1, lwd=2, grid=TRUE, ...) { 
 	# method also works for glm objects
 	if(missing(labels)) labels <- names(residuals(model))
 	if(!is.null(class(model$na.action)) && 
 		class(model$na.action) == 'exclude') class(model$na.action) <- 'omit'
 	var<-if (is.character(variable) & 1==length(variable)) variable
 		else deparse(substitute(variable))
+	xlab <- if(!missing(xlab)) xlab else var
+	ylab <- if(!missing(ylab)) ylab else
+	   paste("Component+Residual(", responseName(model),")", sep="")
 	terms<-predictor.names(model)
 	if (is.na(match(var, terms))) stop(paste(var,"is not in the model."))
 	if (any(attr(terms(model),"order")>1)) {
@@ -68,8 +75,8 @@ crPlot.lm<-function(model, variable,
 	if (!is.null(model$contrasts[[var]])){
 		partial.res<-residuals.glm(model,"partial")
 		.x<-model.frame(model)[,var]
-		boxplot(partial.res[,var]~.x, xlab=var,
-			ylab=paste("Component+Residual(", responseName(model),")", sep=""))
+		boxplot(partial.res[,var]~.x, xlab=xlab,
+			ylab=ylab, ...)
 		return(invisible())
 	}
 	if (missing(iter)){
@@ -82,15 +89,16 @@ crPlot.lm<-function(model, variable,
 		else model.matrix(model)[,var]
 	if (order==1){          # handle first-order separately for efficiency
 		partial.res<-residuals.glm(model,"partial")
-		plot(.x, partial.res[,var], type="n", las=las, xlab=var,
-      ylab=paste("Component+Residual(", responseName(model),")", sep=""))
+		plot(.x, partial.res[,var], type="n", xlab=xlab,
+      ylab=ylab, ...)
 	  if(grid){
       grid(lty=1, equilogs=FALSE)
       box()}
 		points(.x, partial.res[,var], col=col, pch=pch)
-		if (line) abline(lm(partial.res[,var]~.x), lty=2, lwd=lwd, col=col)
+		if (line) abline(lm(partial.res[,var]~.x), lty=2, lwd=lwd, col=col.lines[1])
 		if (smooth) {
-			lines(lowess(.x, partial.res[,var], iter=iter, f=span), lwd=lwd, col=col)
+			lines(lowess(.x, partial.res[,var], iter=iter, f=span), lwd=lwd, 
+            col=col.lines[2])
 		}
 		showLabels(.x, partial.res[,var], labels=labels, 
             id.method=id.method, id.n=id.n, id.cex=id.cex,
@@ -103,16 +111,16 @@ crPlot.lm<-function(model, variable,
 			as.formula(paste(".~.-",var,"+poly(",var,",",order,")")))
 		partial.res<-residuals.glm(aug.model, "partial")
 		last<-ncol(partial.res)
-		plot(.x, partial.res[,last], xlab=var, 
-			ylab=paste("Component+Residual(", responseName(model),")", sep=""),
-			las=las, type="n")
+		plot(.x, partial.res[,last], xlab=xlab, 
+			ylab=ylab, type="n", ...)
 	  if(grid){
       grid(lty=1, equilogs=FALSE)
       box()}
 		points(.x, partial.res[,last], col=col, pch=pch)
-		if (line) abline(lm(partial.res[,last]~.x), lty=2, lwd=lwd, col=col)
+		if (line) abline(lm(partial.res[,last]~.x), lty=2, lwd=lwd, col=col.lines[1])
 		if (smooth) {
-			lines(lowess(.x, partial.res[,last], iter=iter, f=span), lwd=lwd, col=col)
+			lines(lowess(.x, partial.res[,last], iter=iter, f=span), lwd=lwd, 
+         col=col.lines[2])
 		}
 		showLabels(.x, partial.res[,last], labels=labels, 
             id.method=id.method, id.n=id.n, id.cex=id.cex,

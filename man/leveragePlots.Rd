@@ -22,9 +22,9 @@ leveragePlot(model, ...)
     id.method = list(abs(residuals(model, type="pearson")), "x"),
     labels, 
     id.n = if(id.method[1]=="identify") Inf else 0,
-    id.cex=1, id.col=palette()[1], las=par("las"), 
-    col=palette()[2], pch=1, lwd=2, main="Leverage Plot", 
-    grid=TRUE, ...)
+    id.cex=1, id.col=palette()[1], 
+    col=palette()[1], col.lines=palette()[2], lwd=2, 
+    xlab, ylab, main="Leverage Plot", grid=TRUE, ...)
 
 \method{leveragePlot}{glm}(model, ...)
 }
@@ -47,6 +47,8 @@ select the layout yourself, or you will get a maximum of nine per page.
     \item{ask}{if \code{TRUE}, a menu is provided in the R Console for the
 user to select the term(s) to plot.
 }   
+  \item{xlab, ylab}{axis labels; if missing, labels will be supplied.
+}
   \item{main}{title for plot; if missing, a title will be supplied.
 }
   \item{\dots}{arguments passed down to method functions.}
@@ -56,15 +58,8 @@ is omitted for \code{leveragePlots}.}
     points.  The default is \code{id.n=0} for labeling no points.  See
     \code{\link{showLabels}} for details of these arguments.
 }
-\item{las}{if \code{0}, ticks labels are drawn parallel to the
-    axis; set to \code{1} for horizontal labels (see \code{\link[graphics]{par}}).
-}
-\item{col}{color for points and lines; the default is the \emph{second} entry
-    in the current color palette (see \code{\link[grDevices]{palette}}
-    and \code{\link[graphics]{par}}).
-}
-\item{pch}{plotting character for points; default is \code{1} 
-    (a circle, see \code{\link[graphics]{par}}).
+\item{col}{color(s) of points}
+\item{col.lines}{color of the fitted line
 }
 \item{lwd}{line width; default is \code{2} (see \code{\link[graphics]{par}}).
 }

@@ -23,7 +23,7 @@ scatterplotMatrix(x, ...)
     transform = FALSE, family = c("bcPower", "yjPower"), ellipse = FALSE, 
     levels = c(0.5, 0.95), robust = TRUE, groups = NULL, by.groups = FALSE, 
     labels, id.method="mahal", id.n=0, id.cex=1, id.col=palette()[1], 
-    col = if (n.groups == 1) palette()[1:2] else rep(palette(), 
+    col = if (n.groups == 1) palette()[2:1] else rep(palette(), 
         length = n.groups), 
     pch = 1:n.groups, lwd = 1, lwd.smooth = lwd, 
     lwd.spread = lwd, lty = 1, lty.smooth = lty, lty.spread = 2, 
@@ -84,8 +84,9 @@ spm(x, ...)
   \item{by.groups}{if \code{TRUE}, regression lines are fit by groups.}
   \item{pch}{plotting characters for points; default is the plotting characters in
     order (see \code{\link[graphics]{par}}).}
-  \item{col}{colors for points and lines; the default is taken from the color palette, 
-  	with \code{palette()[1]} for lines and \code{palette()[2]} for points if there are
+  \item{col}{colors for lines and points; the default is taken from the color palette, 
+  	with \code{palette()[2]} for nonparametric regression lines and \code{palette()[1]} for
+  	linear regression lines and points if there are
   	no groups, and successive colors for the groups if there are groups.}
   \item{lwd}{width of linear-regression lines (default \code{1}).}
   \item{lwd.smooth}{width for smooth regression lines (default is the same as \code{lwd}).}

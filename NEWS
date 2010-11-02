@@ -1,3 +1,35 @@
+Changes to Version 2.0-6
+
+    o  change influenceIndexPlots to used type="h" rather than type="l".
+    
+    o  added surface.alpha and ellipsoid.alpha arguments to scatter3d.
+
+Changes to Version 2.0-5
+
+    o  add xlab and ylab arguments to avPlots, crPlots, ceresPlots, etc.,
+to override default labeling if desired.
+
+    o  fix col and col.lines arguments in avPlots, crPlots, ceresPlots, etc., so
+graphical functions work the same way.
+
+	o  confidenceEllipse.lm and .glm now have add argument, courtesy of Rafael Laboissiere.
+
+    o  small fixes to docs.
+
+Changes to Version 2.0-4
+
+    o  fix col argument to work to set point colors with residualPlots, leveragePlots, invTranPlot, marginalModelPlots
+
+Changes to Version 2.0-3
+
+    o  coefTable() changed to compareCoefs() to avoid name clash with the miscTools package (reported Arne Henningsen).
+    
+    o  Small changes.
+
+Changes to Version 2.0-2
+
+    o leaps package demoted from Depends to Suggests to avoid problem for Debian (reported by Dirk Eddelbuettel).
+
 Changes to Version 2.0-1
 
     o  No longer export non-standard coef.multinom() (problem reported by Brian Ripley, Achim Zeileis).
