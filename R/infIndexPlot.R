@@ -30,7 +30,7 @@ infIndexPlot.lm <- function(model,
    on.exit(par(op))
    outlier.t.test <- pmin(outlierTest(model, order=FALSE, n.max=length(xaxis),
       cutoff=length(xaxis))$bonf.p, 1)
-   for (j in what){
+   for (j in what){ 
       y <- switch(j,cooks.distance(model),rstudent(model),
              outlier.t.test, hatvalues(model))
       xa <- if(j==4) "s" else "s"
@@ -38,7 +38,11 @@ infIndexPlot.lm <- function(model,
 	    if(grid){
         grid(lty=1, equilogs=FALSE)
         box()}
-      points(xaxis, y, type="b", ...)    
+      if(j==3) {
+        for (k in which(y < 1)) lines(c(xaxis[k], xaxis[k]), c(1, y[k]))}
+     else
+        points(xaxis, y, type="h", ...)  
+      points(xaxis, y, type="p", ...)  
       if (j == 2) abline(h=0, lty=2 )
       axis(1, labels= ifelse(j<length(what), FALSE, TRUE))
       showLabels(xaxis, y, labels=labels,

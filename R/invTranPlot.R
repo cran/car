@@ -1,5 +1,6 @@
 # Modified 25 Nov 2009 for point marking
 # 20 Jan 2010: changed line types. J. Fox
+# 15 August 2010: fixed colors of points
 
 invTranPlot <- function(x,...) UseMethod("invTranPlot")
 
@@ -27,7 +28,7 @@ invTranPlot.formula <- function(x, data, subset, na.action, ...) {
 invTranPlot.default<- function(x, y, lambda=c(-1, 0, 1), 
         lty.lines=rep(c("solid", "dashed", "dotdash", "longdash", "twodash"), 
         length=1 + length(lambda)), lwd.lines=2, 
-        col.lines=palette(),
+        col=palette()[1], col.lines=palette(), 
         xlab=deparse(substitute(x)), ylab=deparse(substitute(y)),
         family="bcPower", optimal=TRUE, key="auto",
         id.method = abs(residuals(lm(y~x))),
@@ -40,11 +41,11 @@ invTranPlot.default<- function(x, y, lambda=c(-1, 0, 1),
  if (optimal){opt <- invTranEstimate(x, y, family=family, confidence=FALSE)
               lam <- c(opt$lambda, lambda)} else lam <- lambda
  fam <- match.fun(family)
- plot(x, y, xlab=xlab, ylab=ylab, type="n", ...)
+ plot(x, y, xlab=xlab, ylab=ylab, type="n", col=col, ...)
  if(grid){
     grid(lty=1, equilogs=FALSE)
     box()}
- points(x, y, ...)
+ points(x, y, col=col, ...)
  rss <- NULL
  new <- seq(min(x, na.rm=TRUE), max(x,na.rm=TRUE), length=100)
  for (j in 1:length(lam)){

@@ -1,4 +1,4 @@
-# last modified 27 July 2010 by J. Fox
+# last modified 15 August 2010 by J. Fox
 
 export(
     basicPowerAxis,
@@ -66,7 +66,7 @@ export(
     avPlot, avPlots, showLabels, residualPlot, residualPlots,
     bootCase, nextBoot,
     subsets,
-    coefTable,
+    compareCoefs,
     # deprecated functions
     av.plot,
     av.plots,

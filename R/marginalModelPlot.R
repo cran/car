@@ -12,24 +12,24 @@
 #   changed line thickness of mean smooths
 #   excluded SD smooth from bernoulli models
 #   added grid lines
+# 15 August 2010 fixed colors of points to work properly
 #############################################
 marginalModelPlot <- function(...){mmp(...)}
 mmp <- function(model, ...){UseMethod("mmp")}
 
 mmp.lm <- 
 function (model, variable, mean = TRUE, sd = FALSE, 
-    xlab = deparse(substitute(variable)), degree = 1, span = 2/3, key=TRUE, 
-    col.line = palette()[c(4, 2)],  
+    xlab = deparse(substitute(variable)), degree = 1, span = 2/3, key=TRUE,   
     ...)
 {
     mmp.default(model, variable, mean, sd, xlab, degree, 
-        span, key, col.line, ...)
+        span, key, ...)
 }
 
 mmp.default <-
 function (model, variable, mean = TRUE, sd = FALSE, 
     xlab = deparse(substitute(variable)), degree = 1, span = 2/3, key=TRUE, 
-    col.line = palette()[c(4, 2)], 
+    col.line = palette()[c(4, 2)], col=palette()[1], 
     labels, id.method="y", 
     id.n=if(id.method[1]=="identify") Inf else 0,
     id.cex=1, id.col=palette()[1], grid=TRUE, ...)
@@ -51,7 +51,7 @@ function (model, variable, mean = TRUE, sd = FALSE,
 	  if(grid){
       grid(lty=1, equilogs=FALSE)
       box()}
-    points(u, model$model[ , 1], ...)
+    points(u, model$model[ , 1], col=col, ...)
     if(key){
        outerLegend(c("Data", "Model"), lty=1:2, col=col.line, 
           bty="n", cex=0.75, fill=col.line, border=col.line, horiz=TRUE, 
@@ -97,7 +97,7 @@ function (model, variable, mean = TRUE, sd = FALSE,
 
 mmp.glm <- function (model, variable, mean = TRUE, sd = FALSE, 
     xlab = deparse(substitute(variable)), degree = 1, span = 2/3, key=TRUE, 
-    col.line = palette()[c(4, 2)], 
+    col.line = palette()[c(4, 2)], col=palette()[1], 
     labels, id.method="y", 
     id.n=if(id.method[1]=="identify") Inf else 0,
     id.cex=1, id.col=palette()[1], grid=TRUE, ...)
@@ -135,7 +135,7 @@ mmp.glm <- function (model, variable, mean = TRUE, sd = FALSE,
 	  if(grid){
       grid(lty=1, equilogs=FALSE)
       box()}
-    points(u, response, ...)
+    points(u, response, col=col, ...)
     if(key){
     outerLegend(c("Data", "Model"), lty=1:2, col=col.line, 
           bty="n", cex=0.75, fill=col.line, border=col.line, 

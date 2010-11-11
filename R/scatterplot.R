@@ -1,6 +1,7 @@
 # fancy scatterplots  (J. Fox)
 
-# last modified 25 April 2010 by J. Fox
+# 2010-09-05: J. Fox: changed color choice
+# 2010-09-16: fixed point color when col is length 1
 
 scatterplot <- function(x, ...){
 	UseMethod("scatterplot", x)
@@ -47,14 +48,14 @@ scatterplot.default <- function(x, y, smooth=TRUE, spread=!by.groups, span=.5, l
 	xlab=deparse(substitute(x)), ylab=deparse(substitute(y)), las=par("las"),
 	lwd=1, lwd.smooth=lwd, lwd.spread=lwd, lty=1, lty.smooth=lty, lty.spread=2,
 	labels, id.method = "mahal", 
-  id.n = if(id.method[1]=="identify") length(x) else 0, 
-  id.cex = 1, id.col = palette()[1],
+	id.n = if(id.method[1]=="identify") length(x) else 0, 
+	id.cex = 1, id.col = palette()[1],
 	log="", jitter=list(), xlim=NULL, ylim=NULL,
 	cex=par("cex"), cex.axis=par("cex.axis"), cex.lab=par("cex.lab"), 
 	cex.main=par("cex.main"), cex.sub=par("cex.sub"), 
 	groups, by.groups=!missing(groups), legend.title=deparse(substitute(groups)), 
 	ellipse=FALSE, levels=c(.5, .95), robust=TRUE,
-	col=if (n.groups == 1) palette()[1:2] else rep(palette(), length=n.groups),
+	col=if (n.groups == 1) palette()[2:1] else rep(palette(), length=n.groups),
 	pch=1:n.groups, 
 	legend.plot=!missing(groups), reset.par=TRUE, grid=TRUE, ...){
 	logged <- function(axis=c("x", "y")){
@@ -149,7 +150,7 @@ scatterplot.default <- function(x, y, smooth=TRUE, spread=!by.groups, span=.5, l
 			.x <- x
 		}
 		plot(x, seq(0, 1, length=length(x)), type="n", axes=FALSE, xlab="", ylab="", log=log.x, xlim=xlim)
-    res <- boxplot.stats(.x, coef = 1.5, do.conf=FALSE)
+		res <- boxplot.stats(.x, coef = 1.5, do.conf=FALSE)
 		if (logged("x")){
 			res$stats <- exp(res$stats)
 			if (!is.null(res$out)) res$out <- exp(res$out)
@@ -175,7 +176,7 @@ scatterplot.default <- function(x, y, smooth=TRUE, spread=!by.groups, span=.5, l
 			.y <- y
 		}
 		plot(seq(0, 1, length=length(y)), y, type="n", axes=FALSE, xlab="", ylab="", log=log.y, ylim=ylim)
-    res <- boxplot.stats(.y, coef = 1.5, do.conf=FALSE)
+		res <- boxplot.stats(.y, coef = 1.5, do.conf=FALSE)
 		if (logged("y")){
 			res$stats <- exp(res$stats)
 			if (!is.null(res$out)) res$out <- exp(res$out)
@@ -201,26 +202,27 @@ scatterplot.default <- function(x, y, smooth=TRUE, spread=!by.groups, span=.5, l
 				seq(along=y)
 			else names(y)
 	}
+	if (length(labels) != length(y)) stop("labels argument is the wrong length")
 	mar <- par("mar")
 	mfcol <- par("mfcol")
 	if (reset.par) on.exit(par(mar=mar, mfcol=mfcol))
 	if( FALSE == boxplots) boxplots <- ""
 	if (!missing(groups)){
-			data <- na.omit(data.frame(groups, x, y, labels, stringsAsFactors=FALSE))
-			groups <- data[,1]
-			if (!is.factor(groups)) groups <- as.factor(groups)
-			.x <- data[,2]
-			.y <- data[,3]
-			labels <- data[,4]
-		  top <- if (legend.plot) 
-             # 4 + length(levels(as.factor(groups))) else mar[3]
-			4 + nlevels(groups) else mar[3]
-	    }
-	    else {
-		    .x <- x
-		    .y <- y
-		    top <- mar[3]
-			groups <- factor(rep(1, length(.x)))
+		data <- na.omit(data.frame(groups, x, y, labels, stringsAsFactors=FALSE))
+		groups <- data[,1]
+		if (!is.factor(groups)) groups <- as.factor(groups)
+		.x <- data[,2]
+		.y <- data[,3]
+		labels <- data[,4]
+		top <- if (legend.plot) 
+				# 4 + length(levels(as.factor(groups))) else mar[3]
+				4 + nlevels(groups) else mar[3]
+	}
+	else {
+		.x <- x
+		.y <- y
+		top <- mar[3]
+		groups <- factor(rep(1, length(.x)))
 	}
 	xbox <- length(grep("x", boxplots)) > 0
 	ybox <- length(grep("y", boxplots)) > 0
@@ -249,10 +251,11 @@ scatterplot.default <- function(x, y, smooth=TRUE, spread=!by.groups, span=.5, l
 	plot(.x, .y, xlab=xlab, ylab=ylab, las=las, log=log, cex=cex, cex.axis=cex.axis, cex.lab=cex.lab,
 		cex.main=cex.main, cex.sub=cex.sub, type="n", xlim=xlim, ylim=ylim, ...)
 	if(grid){
-    grid(lty=1, equilogs=FALSE)
-    box()}
-  n.groups <- length(levels(groups))
+		grid(lty=1, equilogs=FALSE)
+		box()}
+	n.groups <- length(levels(groups))
 	if (n.groups > length(col)) stop("number of groups exceeds number of available colors")
+	if (length(col) == 1) col <- rep(col, 2)
 	indices <- NULL
 	range.x <- if (logged("x")) range(log(.x), na.rm=TRUE) else range(.x, na.rm=TRUE)
 	for (i in 1:n.groups){
@@ -270,13 +273,13 @@ scatterplot.default <- function(x, y, smooth=TRUE, spread=!by.groups, span=.5, l
 				with(X, dataEllipse(x, y, plot.points=FALSE, lwd=1, log=log,
 						levels=levels, col=col[i], robust=robust))
 			}
-		if (id.method[1] != "identify") indices <- c(indices,
-     showLabels(.x[subs], .y[subs], labels=labels[subs], id.method=id.method,
-		   id.n=id.n, id.cex=id.cex, id.col=col[i]))
-  }}
+			if (id.method[1] != "identify") indices <- c(indices,
+					showLabels(.x[subs], .y[subs], labels=labels[subs], id.method=id.method,
+						id.n=id.n, id.cex=id.cex, id.col=col[i]))
+		}}
 	if (!by.groups){
 		if (smooth) lowess.line(.x, .y, col=col[1], span=span)
-		if (is.function(reg.line)) reg(.x, .y, col=col[1])
+		if (is.function(reg.line)) reg(.x, .y, col=col[2])
 		if (ellipse) {
 			X <- na.omit(data.frame(x=.x, y=.y))
 			if (logged("x")) X$x <- log(X$x)
@@ -295,12 +298,12 @@ scatterplot.default <- function(x, y, smooth=TRUE, spread=!by.groups, span=.5, l
 		legend.x <- if (logged("x")) 10^(usr[1]) else usr[1]
 		legend.y <- if (logged("y")) 10^(usr[4] + 1.2*top*strheight("x")) else usr[4] + 1.2*top*strheight("x")
 		legend(legend.x, legend.y, legend=levels(groups), 
-				pch=pch, col=col[1:n.groups], pt.cex=cex, cex=cex.lab, title=legend.title)
+			pch=pch, col=col[1:n.groups], pt.cex=cex, cex=cex.lab, title=legend.title)
 	}
 	if ("smooth" %in% err) warning("could not fit smooth")
 	if ("spread" %in% err) warning("could not smooth spread")
 	if (id.method[1] == "identify") indices <- showLabels(.x, .y, labels, 
-       id.method=id.method, id.n=length(.x), id.cex=id.cex, id.col=id.col)
+			id.method=id.method, id.n=length(.x), id.cex=id.cex, id.col=id.col)
 	if (is.null(indices)) invisible(indices) else if (is.numeric(indices)) sort(indices) else indices
 } 
 

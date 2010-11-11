@@ -12,16 +12,16 @@
 
 \usage{
 symbox(x, ...)
-\method{symbox}{formula}(formula, data=NULL, subset, na.action=NULL, ylab=NULL, ...)
+\method{symbox}{formula}(formula, data=NULL, subset, na.action=NULL, ylab,  ...)
 \method{symbox}{default}(x, powers = c(-1, -0.5, 0, 0.5, 1), start=0, 
-	trans=bcPower, ylab="", ...)
+	trans=bcPower, xlab="Powers", ylab, ...)
 }
 
 \arguments{
     \item{x}{a numeric vector.}
     \item{formula}{a one-sided formula specifying a single numeric variable.}
     \item{data, subset, na.action}{as for statistical modeling functions (see, e.g., \code{\link{lm}}).}
-    \item{ylab}{optional label for the vertical axis.}
+    \item{xlab, ylab}{axis labels; if \code{ylab} is missing, a label will be supplied.}
     \item{powers}{a vector of selected powers to which \code{x} is to be raised. 
         For meaningful comparison of powers,  \code{1} should be included
         in the vector of powers.}

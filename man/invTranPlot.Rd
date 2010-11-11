@@ -22,7 +22,7 @@ invTranPlot(x, ...)
 \S3method{invTranPlot}{default}(x, y, lambda=c(-1, 0, 1), 
         lty.lines=rep(c("solid", "dashed", "dotdash", "longdash", "twodash"), 
         length=1 + length(lambda)), lwd.lines=2, 
-        col.lines=palette(),
+        col=palette()[1], col.lines=palette(),
         xlab=deparse(substitute(x)), ylab=deparse(substitute(y)),
         family="bcPower", optimal=TRUE, key="auto",
         id.method = abs(residuals(lm(y~x))),
@@ -49,6 +49,9 @@ invTranEstimate(x, y, family="bcPower", confidence=0.95)
   \item{optimal}{Include the optimal value of lambda?}
   \item{lty.lines}{line types corresponding to the powers}
   \item{lwd.lines}{the width of the plotted lines, defaults to 2 times the standard}
+  \item{col}{color(s) of the points in the plot.  If you wish to distinguish points
+  according to the levels of a factor, we recommend using symbols, specified with
+  the \code{pch} argument, rather than colors.}
   \item{col.lines}{color of the fitted lines corresponding to the powers.  The
   default is to use the colors returned by  \code{\link{palette}}}
   \item{key}{The default is \code{"auto"}, in which case a legend is added to
@@ -61,7 +64,7 @@ Set to NULL to suppress the legend.}
     points.  The default is \code{id.n=0} for labeling no points.  See
     \code{\link{showLabels}} for details of these arguments.
 }
-  \item{...}{Additional arguments passed to the plot method.}
+  \item{...}{Additional arguments passed to the plot method, such as \code{pch}.}
 \item{grid}{If TRUE, the default, a light-gray background grid is put on the
 graph}
 }

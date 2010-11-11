@@ -1,5 +1,5 @@
-\name{coefTable}
-\alias{coefTable}
+\name{compareCoefs}
+\alias{compareCoefs}
 \title{
 Print estimated coefficients and their standard errors in a table
 for several regression models.
@@ -10,12 +10,12 @@ their standard errors from one or more models and prints them in a
 table.
 }
 \usage{
-coefTable(..., se = TRUE, digits = 3)
+compareCoefs(..., se = TRUE, digits = 3)
 }
-%- maybe also 'usage' for other objects documented here.
+
 \arguments{
   \item{\dots}{
-The names of one or more regression models.  These may be of class \code{lm}, \code{glm},
+One or more regression-model objects.  These may be of class \code{lm}, \code{glm},
 \code{nlm}, or any other regression method for which the functions \code{coef} and 
 \code{vcov} return appropriate values.
 }
@@ -42,12 +42,11 @@ Second Edition, Sage.
 mod1 <- lm(prestige ~ income + education, data=Duncan)
 mod2 <- update(mod1, subset=-c(6,16))
 mod3 <- update(mod1, . ~ . + type)
-coefTable(mod1)
-coefTable(mod1, mod2)
-coefTable(mod1, mod2, mod3)
-coefTable(mod1, mod2, se=FALSE)
+compareCoefs(mod1)
+compareCoefs(mod1, mod2)
+compareCoefs(mod1, mod2, mod3)
+compareCoefs(mod1, mod2, se=FALSE)
 }
-% Add one or more standard keywords, see file 'KEYWORDS' in the
-% R documentation directory.
+
 \keyword{print }
 

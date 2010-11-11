@@ -45,8 +45,8 @@ residualPlot(model, ...)
                  id.method = "xy",
                  id.n = if(id.method[1]=="identify") Inf else 0,
                  id.cex=1, id.col=palette()[1],
-                 col = palette()[2], col.lines = col[1], 
-                 xlab, ylab, pch = 1, lwd = 1, lty=1, grid=TRUE, ...)   
+                 col = palette()[1], col.lines = palette()[2], 
+                 xlab, ylab, lwd = 1, lty=1, grid=TRUE, ...)   
                  
 \S3method{residualPlot}{lm}(model, ...) 
   
@@ -138,9 +138,6 @@ the function.
   \item{ylab}{
 Y-axis label.  If not specified, a useful label is constructed by
 the function.
-}
-  \item{pch}{
-plotting character.
 }
   \item{lwd}{
 line width for lines.

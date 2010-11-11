@@ -24,20 +24,19 @@ mmps(model, terms= ~ ., fitted=TRUE, layout=NULL, ask,
 marginalModelPlot(...)
 
 \method{mmp}{lm}(model, variable, mean = TRUE, sd = FALSE,
-    xlab = deparse(substitute(variable)), degree = 1, span = 2/3, key=TRUE,
-    col.line = palette()[c(4, 2)], 
+    xlab = deparse(substitute(variable)), degree = 1, span = 2/3, key=TRUE, 
     ...)
     
 \method{mmp}{default}(model, variable, mean = TRUE, sd = FALSE, xlab =
                  deparse(substitute(variable)), degree = 1, span = 2/3,
-                 key = TRUE, col.line = palette()[c(4,2)],   
+                 key = TRUE, col.line = palette()[c(4,2)], col=palette()[1],   
                  labels, id.method = "y", 
                  id.n=if(id.method[1]=="identify") Inf else 0, 
                  id.cex = 1, id.col=palette()[1], grid=TRUE, ...)
    
 \method{mmp}{glm}(model, variable, mean = TRUE, sd = FALSE,
     xlab = deparse(substitute(variable)), degree = 1, span = 2/3, key=TRUE,
-    col.line = palette()[c(4, 2)],
+    col.line = palette()[c(4, 2)], col=palette()[1],
     labels, id.method="y", 
     id.n=if(id.method[1]=="identify") Inf else 0,
     id.cex=1, id.col=palette()[1], grid=TRUE, ...)
@@ -95,6 +94,7 @@ argument greater than zero will include labelling.  See
 \code{\link{showLabels}} for these arguments.}
 \item{col.line}{ colors for data and model smooth, respectively.  Using
 the default palette, these are blue and red. }
+\item{col}{color(s) for the plotted points.}
 \item{grid}{If TRUE, the default, a light-gray background grid is put on the
 graph}
 }   
@@ -132,9 +132,11 @@ mmps(c1)
 p1 <- lm(prestige ~ income + education, Prestige)
 mmps(p1, sd=TRUE)
 # logisitic regression example
+# smoothers return warning messages.
+\dontrun{
 m1 <- glm(lfp ~ ., family=binomial, data=Mroz)
 mmps(m1)
-
+}
 } 
 \keyword{hplot }% at least one, from doc/KEYWORDS
 \keyword{regression}

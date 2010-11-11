@@ -29,7 +29,7 @@ scatter3d(x, ...)
 	  axis.col=if (bg.col == "white") c("darkmagenta", "black", "darkcyan")
 		  else c("darkmagenta", "white", "darkcyan"),
 	  surface.col=c("blue", "green", "orange", "magenta", "cyan", "red", 
-      "yellow", "gray"),
+      "yellow", "gray"), surface.alpha=0.5,
 	  neg.res.col="red", pos.res.col="green",
 	  square.col=if (bg.col == "white") "black" else "gray", point.col="yellow",
 	  text.col=axis.col, grid.col=if (bg.col == "white") "black" else "gray",
@@ -38,7 +38,7 @@ scatter3d(x, ...)
       grid.lines=26, df.smooth=NULL, df.additive=NULL,
 	  sphere.size=1, threshold=0.01, speed=1, fov=60, 
 	  fit="linear", groups=NULL, parallel=TRUE, ellipsoid=FALSE, level=0.5,
-	  id.method=c("mahal", "xz", "y", "xyz", "identify", "none"), 
+	   ellipsoid.alpha=0.1, id.method=c("mahal", "xz", "y", "xyz", "identify", "none"), 
 	  id.n=if (id.method == "identify") Inf else 0,
 	  labels=as.character(seq(along=x)), offset = ((100/length(x))^(1/3)) * 0.02,
 	  model.summary=FALSE, ...)
@@ -71,6 +71,7 @@ You have to install the \code{rgl} package to produce 3D plots.
     the second colour is used for all three axes.}
   \item{surface.col}{vector of colours for regression planes, 
     used in the order specified by \code{fit}.}
+  \item{surface.alpha}{transparency of regression surfaces, from \code{0.0} (fully transparent) to \code{1.0} (opaque); default is \code{0.5}.}
   \item{neg.res.col, pos.res.col}{colours for lines representing negative 
     and positive residuals.}
   \item{square.col}{colour to use to plot squared residuals.}
@@ -113,6 +114,7 @@ You have to install the \code{rgl} package to produce 3D plots.
   \item{ellipsoid}{plot concentration ellipsoid(s) (\code{TRUE} or \code{FALSE}).}
   \item{level}{expected proportion of bivariate-normal observations included in the
     concentration ellipsoid(s); default is 0.5.}
+  \item{ellipsoid.alpha}{transparency of ellipsoids, from \code{0.0} (fully transparent) to \code{1.0} (opaque); default is \code{0.1}.}
    \item{id.method}{if \code{"mahal"} (the default), relatively extreme points are identified automatically
   	according to their Mahalanobis distances from the centroid (point of means);
   	if \code{"identify"}, points are identified interactively by right-clicking and dragging a box around them; right-click
