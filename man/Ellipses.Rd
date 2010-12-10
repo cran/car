@@ -13,23 +13,23 @@
 \usage{
 ellipse(center, shape, radius, log="", center.pch=19, center.cex=1.5, 
   segments=51, add=TRUE, xlab="", ylab="", 
-   col=palette()[2], lwd=2, grid=TRUE, ...)
+   col=palette()[2], lwd=2, fill=FALSE, fill.alpha=0.3, grid=TRUE, ...)
 
 dataEllipse(x, y, log="", levels=c(0.5, 0.95), center.pch=19, center.cex=1.5, 
   plot.points=TRUE, add=!plot.points, segments=51, robust=FALSE,
   xlab=deparse(substitute(x)), 
   ylab=deparse(substitute(y)), 
-  col=palette()[1:2], lwd=2, grid=TRUE, ...)
+  col=palette()[1:2], lwd=2, fill=FALSE, fill.alpha=0.3, grid=TRUE, ...)
 
 confidenceEllipse(model, ...)
 
 \method{confidenceEllipse}{lm}(model, which.coef, levels=0.95, Scheffe=FALSE, 
   center.pch=19, center.cex=1.5, segments=51, xlab, ylab, 
-  col=palette()[2], lwd=2, add=FALSE, ...)
+  col=palette()[2], lwd=2, fill=FALSE, fill.alpha=0.3, add=FALSE, ...)
 
 \method{confidenceEllipse}{glm}(model, which.coef, levels=0.95, Scheffe=FALSE, 
   center.pch=19, center.cex=1.5, segments=51, xlab, ylab, 
-  col=palette()[2], lwd=2, add=FALSE, ...)
+  col=palette()[2], lwd=2, fill=FALSE, fill.alpha=0.3, add=FALSE, ...)
 }
 
 \arguments{
@@ -65,6 +65,8 @@ confidenceEllipse(model, ...)
     and \code{\link[graphics]{par}}). For \code{dataEllipse}, two colors can be given, in
     which case the first is for plotted points and the second for lines and the ellipse center.}
   \item{lwd}{line width; default is \code{2} (see \code{\link[graphics]{par}}).}
+  \item{fill}{fill the ellipse with translucent color \code{col} (default, \code{FALSE})?}
+  \item{fill.alpha}{transparency of fill (default = \code{0.3}).}
   \item{\dots}{other plotting parameters to be passed to \code{plot} and
     \code{line}.}
   \item{grid}{If TRUE, the default, a light-gray background grid is put on the
@@ -100,7 +102,8 @@ graph}
 \seealso{\code{\link[MASS]{cov.trob}}.}
   
 \examples{
-dataEllipse(Prestige$income, Prestige$education, levels=0.1*1:9, lty=2)
+dataEllipse(Prestige$income, Prestige$education, levels=0.1*1:9, lty=2, 
+	fill=TRUE, fill.alpha=0.1)
 confidenceEllipse(lm(prestige~income+education, data=Prestige), Scheffe=TRUE)
 }
 

@@ -1,3 +1,11 @@
+Changes to Version 2.0-7
+
+	o  added fill and fill.alpha arguments to ellipse, etc., for translucent filled ellipses (suggested by Michael Friendly).
+	
+	o  fixed bug in recode, when a legitimate string includes the characters "else" (reported by Gustaf Rydevik).
+	
+	o  carWeb() now works with web site for the R Companion, Second Edition.
+
 Changes to Version 2.0-6
 
     o  change influenceIndexPlots to used type="h" rather than type="l".

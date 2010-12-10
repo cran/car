@@ -3,10 +3,24 @@
 # added grid lines, 25 May 2010 by S. Weisberg
 # arguments more consistent with other functions; ... passes args to plot, 5 Sept 2010 by J. Fox
 # confidenceEllipse.lm and .glm can add to current plot, applying patch from Rafael Laboissiere, 17 Oct 2010 by J. Fox
+# added fill and fill.alpha arguments for translucent fills (suggested by Michael Friendly), 14 Nov 2010 by J. Fox
 
 ellipse <- function(center, shape, radius, log="", center.pch=19, center.cex=1.5, segments=51, add=TRUE, 
-	xlab="", ylab="", col=palette()[2], lwd=2, 
+	xlab="", ylab="", col=palette()[2], lwd=2, fill=FALSE, fill.alpha=0.3,
   	grid=TRUE, ...) {
+	trans.colors <- function(col, alpha=0.5, names=NULL) {
+		# this function by Michael Friendly
+		nc <- length(col)
+		na <- length(alpha)
+		# make lengths conform, filling out to the longest
+		if (nc != na) {
+			col <- rep(col, length.out=max(nc,na))
+			alpha <- rep(alpha, length.out=max(nc,na))
+		}
+		clr <-rbind(col2rgb(col)/255, alpha=alpha)
+		col <- rgb(clr[1,], clr[2,], clr[3,], clr[4,], names=names)
+		col
+	}
 	logged <- function(axis=c("x", "y")){
 		axis <- match.arg(axis)
 		0 != length(grep(axis, log))
@@ -19,12 +33,19 @@ ellipse <- function(center, shape, radius, log="", center.pch=19, center.cex=1.5
 	colnames(ellipse) <- c("x", "y")
 	if (logged("x")) ellipse[, "x"] <- exp(ellipse[, "x"])
 	if (logged("y")) ellipse[, "y"] <- exp(ellipse[, "y"])
-	if (add) lines(ellipse, col=col, lwd=lwd, ...) 
-	else {plot(ellipse, type="n", xlab = xlab, ylab = ylab, ...) 
+	fill.col <- trans.colors(col, fill.alpha)
+	if (add) {
+		lines(ellipse, col=col, lwd=lwd, ...) 
+		if (fill) polygon(ellipse, col=fill.col, border=NA)
+	}
+	else {
+		plot(ellipse, type="n", xlab = xlab, ylab = ylab, ...) 
         if(grid){
              grid(lty=1, equilogs=FALSE)
              box()}
-        lines(ellipse, col=col, lwd=lwd, ... )} 	
+        lines(ellipse, col=col, lwd=lwd, ... )
+		if (fill) polygon(ellipse, col=fill.col, border=NA)
+	} 	
 	if (center.pch) points(center[1], center[2], pch=center.pch, cex=center.cex, col=col)
   }
 
@@ -32,7 +53,7 @@ dataEllipse <- function(x, y, log="", levels=c(0.5, 0.95), center.pch=19,
   center.cex=1.5,
 	plot.points=TRUE, add=!plot.points, segments=51, robust=FALSE, 
 	xlab=deparse(substitute(x)), ylab=deparse(substitute(y)), 
-	col=palette()[1:2], lwd=2,  grid=TRUE, ...) {
+	col=palette()[1:2], lwd=2, fill=FALSE, fill.alpha=0.3, grid=TRUE, ...) {
 	if (length(col) == 1) col <- rep(col, 2)
 	if(missing(y)){
 		if (is.matrix(x) && ncol(x) == 2) {
@@ -68,7 +89,7 @@ dataEllipse <- function(x, y, log="", levels=c(0.5, 0.95), center.pch=19,
 		radius <- sqrt(dfn * qf(level, dfn, dfd ))
 		ellipse(center, shape, radius, log=log,
 			center.pch=center.pch, center.cex=center.cex, segments=segments, 
-			col=col[2], lwd=lwd, ...)
+			col=col[2], lwd=lwd, fill=fill, fill.alpha=fill.alpha, ...)
 	}
 }
 
@@ -78,7 +99,7 @@ confidenceEllipse <- function (model, ...) {
 
 confidenceEllipse.lm <- function(model, which.coef, levels=0.95, Scheffe=FALSE, 
 	center.pch=19, center.cex=1.5, segments=51, xlab, ylab, 
-	col=palette()[2], lwd=2, add=FALSE, ...){
+	col=palette()[2], lwd=2, fill=FALSE, fill.alpha=0.3, add=FALSE, ...){
 	which.coef <- if(length(coefficients(model)) == 2) c(1, 2)
 		else{
 			if (missing(which.coef)){
@@ -96,14 +117,14 @@ confidenceEllipse.lm <- function(model, which.coef, levels=0.95, Scheffe=FALSE,
 		add.plot <- !level==max(levels) | add
 		ellipse(coef, shape, radius, add=add.plot, xlab=xlab, ylab=ylab,
 			center.pch=center.pch, center.cex=center.cex, segments=segments, 
-			col=col, lwd=lwd, ...)
+			col=col, lwd=lwd, fill=fill, fill.alpha=fill.alpha, ...)
 	}
 }
 
 
 confidenceEllipse.glm <- function(model, which.coef, levels=0.95, Scheffe=FALSE, 
 	center.pch=19, center.cex=1.5, segments=51, xlab, ylab,
-	col=palette()[2], lwd=2, add=FALSE, ...){
+	col=palette()[2], lwd=2, fill=FALSE, fill.alpha=0.3, add=FALSE, ...){
 	which.coef <- if(length(coefficients(model)) == 2) c(1, 2)
 		else{
 			if (missing(which.coef)){
@@ -121,6 +142,6 @@ confidenceEllipse.glm <- function(model, which.coef, levels=0.95, Scheffe=FALSE,
 		add.plot <- !level==max(levels) | add
 		ellipse(coef, shape, radius, add=add.plot, xlab=xlab, ylab=ylab,
 			center.pch=center.pch, center.cex=center.cex, segments=segments,
-			col=col, lwd=lwd, ...)
+			col=col, lwd=lwd, fill=fill, fill.alpha=fill.alpha, ...)
 	}
 }

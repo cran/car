@@ -1,6 +1,6 @@
 Package: car
-Version: 2.0-6
-Date: 2010/11/2
+Version: 2.0-7
+Date: 2010/12/10
 Title: Companion to Applied Regression
 Author: John Fox <jfox@mcmaster.ca> and Sanford Weisberg
         <sandy@stat.umn.edu>. We are grateful to Douglas Bates, David
@@ -21,6 +21,6 @@ URL: https://r-forge.r-project.org/projects/car/,
         http://socserv.socsci.mcmaster.ca/jfox/Books/Companion/index.html
 Repository: CRAN
 Repository/R-Forge/Project: car
-Repository/R-Forge/Revision: 175
-Date/Publication: 2010-11-11 12:40:11
-Packaged: 2010-11-04 21:51:16 UTC; rforge
+Repository/R-Forge/Revision: 180
+Date/Publication: 2010-12-18 09:20:58
+Packaged: 2010-12-11 21:47:43 UTC; rforge
