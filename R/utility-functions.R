@@ -3,6 +3,7 @@
 
 # 16 March 2010 changed 'vars' argument to 'terms'
 # 28 June 2010 added df.terms.surveg and model.matrix.survreg
+# 15 November 2010 added squeezeBlanks
 
 # function to find "nice" numbers
 
@@ -242,4 +243,9 @@ outerLegend <- function(..., margin=3, offset=0, adjust=FALSE){
    legend(x0, y0, ... , xpd=TRUE)
    }
    
+# added by J. Fox 18 Nov 2010
+
+squeezeBlanks <- function(text){
+	gsub(" *", "",  text)
+}
 

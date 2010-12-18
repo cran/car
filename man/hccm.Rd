@@ -60,7 +60,8 @@ hccm(model, ...)
   
   Long, J. S. and Ervin, L. H. (2000)
   Using heteroscedasity consistent standard errors in the linear regression model. 
-  \emph{The American Statistician} \bold{54}, 217--224.
+  \emph{The American Statistician} \bold{54}, 217--224.  
+  \url{http://www.jstor.org/stable/2685594}
   
   White, H. (1980)
   A heteroskedastic consistent covariance matrix estimator and a direct test of heteroskedasticity.

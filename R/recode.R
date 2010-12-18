@@ -1,5 +1,5 @@
 # recode function (J. Fox)
-# last modified 7 March 2010 by J. Fox
+# last modified 18 November 2010 by J. Fox
 
 recode <- function(var, recodes, as.factor.result, as.numeric.result=TRUE, levels){
 	recode.list <- rev(strsplit(recodes, ";")[[1]])
@@ -19,7 +19,7 @@ recode <- function(var, recodes, as.factor.result, as.numeric.result=TRUE, level
 			target <- eval(parse(text=strsplit(term, "=")[[1]][2]))
 			result[(var >= low) & (var <= high)] <- target
 		}
-		else if (0 < length(grep("else", term))) {
+		else if (0 < length(grep("^else=", squeezeBlanks(term)))) {
 			target <- eval(parse(text=strsplit(term, "=")[[1]][2]))
 			result[1:length(var)] <- target
 		}
