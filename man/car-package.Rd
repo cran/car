@@ -7,13 +7,13 @@ Companion to Applied Regression
 }
 \description{
 This package accompanies Fox, J. and Weisberg, S., \emph{An R Companion to Applied Regression},
-Second Edition, Sage, forthcoming.
+Second Edition, Sage, 2011.
 }
 \details{
 \tabular{ll}{
 Package: \tab car\cr
-Version: \tab 2.0-7\cr
-Date: \tab 2010/12/10\cr
+Version: \tab 2.0-8\cr
+Date: \tab 2010/12/31\cr
 Depends: \tab R (>= 2.1.1), stats, graphics, MASS, nnet, survival\cr
 Suggests: \tab alr3, leaps, lmtest, sandwich, mgcv, rgl\cr
 License: \tab GPL (>= 2)\cr

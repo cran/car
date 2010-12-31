@@ -13,8 +13,8 @@
 \usage{
 scatterplot(x, ...)
 
-\method{scatterplot}{formula}(x, data, subset, xlab, ylab, legend.title, labels, 
-    ...)
+\method{scatterplot}{formula}(x, data, subset, xlab, ylab, legend.title, legend.coords,
+	labels, ...)
 
 \method{scatterplot}{default}(x, y, smooth = TRUE, 
     spread = !by.groups, span = 0.5, 
@@ -30,7 +30,7 @@ scatterplot(x, ...)
     cex.axis = par("cex.axis"), 
     cex.lab = par("cex.lab"), cex.main = par("cex.main"), 
     cex.sub = par("cex.sub"), groups, by.groups = !missing(groups), 
-    legend.title = deparse(substitute(groups)), 
+    legend.title = deparse(substitute(groups)), legend.coords,
     ellipse = FALSE, levels = c(0.5, 0.95), robust = TRUE, 
     col = if (n.groups == 1) palette()[2:1] else rep(palette(), 
     length = n.groups), 
@@ -90,6 +90,9 @@ sp(...)
     plotted with different colors and plotting characters.}
   \item{by.groups}{if \code{TRUE}, regression lines are fit by groups.}
   \item{legend.title}{title for legend box; defaults to the name of the groups variable.}
+  \item{legend.coords}{coordinates for placing legend; an be a list with components x and y to
+  	specify the coordinates of the upper-left-hand corner of the legend; or a quoted keyword, such as \code{"topleft"},
+  	recognized by \code{\link{legend}}.}
   \item{ellipse}{if \code{TRUE} data-concentration ellipses are plotted.}
   \item{levels}{level or levels at which concentration ellipses are plotted;
     the default is \code{c(.5, .95)}.}
@@ -121,7 +124,7 @@ graph}
 
 
 \seealso{\code{\link[graphics]{boxplot}},
-  \code{\link[base]{jitter}},
+  \code{\link[base]{jitter}}, \code{\link{legend}},
   \code{\link{scatterplotMatrix}}, \code{\link{dataEllipse}},
   \code{\link[MASS]{cov.trob}},
   \code{\link{showLabels}}.}
@@ -130,6 +133,9 @@ graph}
 scatterplot(prestige ~ income, data=Prestige, ellipse=TRUE)
 
 scatterplot(prestige ~ income|type, data=Prestige, span=1)
+
+scatterplot(prestige ~ income|type, data=Prestige, span=1, 
+	legend.coords="topleft")
 
 scatterplot(vocabulary ~ education, jitter=list(x=1, y=1), 
 	data=Vocab, id.n=0, smooth=FALSE)

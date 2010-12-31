@@ -42,7 +42,7 @@ residualPlot(model, ...)
                  smooth = FALSE, span = 1/2, smooth.lwd=lwd, smooth.lty=lty,
                  smooth.col=col.lines, 
                  labels,
-                 id.method = "xy",
+                 id.method = "y",
                  id.n = if(id.method[1]=="identify") Inf else 0,
                  id.cex=1, id.col=palette()[1],
                  col = palette()[1], col.lines = palette()[2], 

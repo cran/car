@@ -67,7 +67,7 @@ the two observations corresponding to the largest absolute Pearson residuals.
 }
 
 With \code{showLabels}, the \code{id.method} argument can be list, so, for
-example \code{idmethod=list("x", "y")} would label according to the horizontal 
+example \code{id.method=list("x", "y")} would label according to the horizontal 
 and vertical axes variables.
 
 Finally, if the axes in the graph are logged, the function uses logged-variables
