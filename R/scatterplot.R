@@ -2,12 +2,13 @@
 
 # 2010-09-05: J. Fox: changed color choice
 # 2010-09-16: fixed point color when col is length 1
+# 2010-12-19: J. Fox: added argument legend.coords to place legend.
 
 scatterplot <- function(x, ...){
 	UseMethod("scatterplot", x)
 }
 
-scatterplot.formula <- function (x, data, subset, xlab, ylab, legend.title, labels, ...) {
+scatterplot.formula <- function (x, data, subset, xlab, ylab, legend.title, legend.coords, labels, ...) {
 	na.save <- options(na.action=na.omit)
 	on.exit(options(na.save))
 	na.pass <- function(dframe) dframe
@@ -15,7 +16,7 @@ scatterplot.formula <- function (x, data, subset, xlab, ylab, legend.title, labe
 	if (is.matrix(eval(m$data, sys.frame(sys.parent())))) 
 		m$data <- as.data.frame(data)
 	m$na.action <- na.pass
-	m$legend.title <- m$labels <- m$xlab <- m$ylab <- m$... <- NULL
+	m$legend.coords <- m$legend.title <- m$labels <- m$xlab <- m$ylab <- m$... <- NULL
 	m[[1]] <- as.name("model.frame")
 	if (!inherits(x, "formula") | length(x) != 3) 
 		stop("invalid formula")    
@@ -39,7 +40,7 @@ scatterplot.formula <- function (x, data, subset, xlab, ylab, legend.title, labe
 	else {
 		if (missing(legend.title)) legend.title <- names[3]
 		scatterplot(X[,2], X[,1], groups=X[,3], xlab=xlab, ylab=ylab,  
-			legend.title=legend.title, labels=labels, ...)
+			legend.title=legend.title, legend.coords=legend.coords, labels=labels, ...)
 	}
 }
 
@@ -53,7 +54,7 @@ scatterplot.default <- function(x, y, smooth=TRUE, spread=!by.groups, span=.5, l
 	log="", jitter=list(), xlim=NULL, ylim=NULL,
 	cex=par("cex"), cex.axis=par("cex.axis"), cex.lab=par("cex.lab"), 
 	cex.main=par("cex.main"), cex.sub=par("cex.sub"), 
-	groups, by.groups=!missing(groups), legend.title=deparse(substitute(groups)), 
+	groups, by.groups=!missing(groups), legend.title=deparse(substitute(groups)), legend.coords,
 	ellipse=FALSE, levels=c(.5, .95), robust=TRUE,
 	col=if (n.groups == 1) palette()[2:1] else rep(palette(), length=n.groups),
 	pch=1:n.groups, 
@@ -214,7 +215,7 @@ scatterplot.default <- function(x, y, smooth=TRUE, spread=!by.groups, span=.5, l
 		.x <- data[,2]
 		.y <- data[,3]
 		labels <- data[,4]
-		top <- if (legend.plot) 
+		top <- if (legend.plot && missing(legend.coords)) 
 				# 4 + length(levels(as.factor(groups))) else mar[3]
 				4 + nlevels(groups) else mar[3]
 	}
@@ -295,10 +296,13 @@ scatterplot.default <- function(x, y, smooth=TRUE, spread=!by.groups, span=.5, l
 		xpd <- par(xpd=TRUE)
 		on.exit(par(xpd=xpd), add=TRUE)
 		usr <- par("usr")
-		legend.x <- if (logged("x")) 10^(usr[1]) else usr[1]
-		legend.y <- if (logged("y")) 10^(usr[4] + 1.2*top*strheight("x")) else usr[4] + 1.2*top*strheight("x")
-		legend(legend.x, legend.y, legend=levels(groups), 
-			pch=pch, col=col[1:n.groups], pt.cex=cex, cex=cex.lab, title=legend.title)
+		if (missing(legend.coords)){
+			legend.x <- if (logged("x")) 10^(usr[1]) else usr[1]
+			legend.y <- if (logged("y")) 10^(usr[4] + 1.2*top*strheight("x")) else usr[4] + 1.2*top*strheight("x")
+			legend.coords <- list(x=legend.x, y=legend.y)
+		}
+		legend(legend.coords, legend=levels(groups), 
+			pch=pch, col=col[1:n.groups], pt.cex=cex, cex=cex.lab, title=legend.title, bg="white")
 	}
 	if ("smooth" %in% err) warning("could not fit smooth")
 	if ("spread" %in% err) warning("could not smooth spread")

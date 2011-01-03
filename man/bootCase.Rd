@@ -79,12 +79,9 @@ m1 <- lm(Fertility ~ ., swiss)
 betahat <- coef(m1)
 betahat.boot <- bootCase(m1,B=99) # 99 bootstrap samples--too small to be useful
 summary(betahat.boot)  # default summary
-# bootstrap standard errors 
-apply(betahat.boot,2,sd)
-# bootstrap 95% confidence intervals
-cl <- function(x) quantile(x,c(.025,.975))
-apply(betahat.boot,2,cl)
-
+colnames(betahat.boot) <- names(betahat)
+cbind("Bootstrap SD"=apply(betahat.boot, 2, sd),
+    t(apply(betahat.boot, 2, function(x) quantile(x, c(.025, .975)))))
 }
 \keyword{regression}% at least one, from doc/KEYWORDS
 \keyword{internal}% __ONLY ONE__ keyword per line

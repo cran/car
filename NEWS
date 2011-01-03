@@ -1,3 +1,9 @@
+Changes to Version 2.0-8
+
+	o  added optional argument legend.coords to scatterplot to place legend (after question by Blaine Maley).
+	
+	o  bug fixes to powerTransform and residualPlots.
+
 Changes to Version 2.0-7
 
 	o  added fill and fill.alpha arguments to ellipse, etc., for translucent filled ellipses (suggested by Michael Friendly).

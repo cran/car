@@ -28,9 +28,9 @@ bootCase.default <- function (object, f=coef, B = 999, rows)
     coefBoot <- matrix(0, nrow=B, ncol=length(f(object)))
     count.error <- 0
     i <- 0
-#    
     while (i < B) {
-        obj.boot <- try(update(object, subset=sample(rows, replace = TRUE)))
+		assign(".boot.sample", sample(rows, replace=TRUE), envir=.GlobalEnv)
+        obj.boot <- try(update(object, subset=.boot.sample))
         if (is.null(class(obj.boot))) {
             count.error <- 0
             i <- i + 1
@@ -50,5 +50,6 @@ bootCase.default <- function (object, f=coef, B = 999, rows)
             options(show.error.messages = TRUE)
             stop("25 consecutive bootstraps did not converge.  Bailing out.")}
     }
+	remove(".boot.sample", envir=.GlobalEnv)
     return(coefBoot)
 }
