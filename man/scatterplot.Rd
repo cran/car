@@ -43,7 +43,8 @@ sp(...)
 \arguments{
   \item{x}{vector of horizontal coordinates, or a ``model'' formula, of the form \code{y ~ x} or 
     (to plot by groups) \code{y ~ x | z}, where \code{z} evaluates to a factor 
-    or other variable dividing the data into groups.}
+    or other variable dividing the data into groups. If \code{x} is a factor, then parallel boxplots
+    are produced using the \code{\link{Boxplot}} function.}
   \item{y}{vector of vertical coordinates.}
   \item{data}{data frame within which to evaluate the formula.}
   \item{subset}{expression defining a subset of observations.}
@@ -125,7 +126,7 @@ graph}
 
 \seealso{\code{\link[graphics]{boxplot}},
   \code{\link[base]{jitter}}, \code{\link{legend}},
-  \code{\link{scatterplotMatrix}}, \code{\link{dataEllipse}},
+  \code{\link{scatterplotMatrix}}, \code{\link{dataEllipse}}, \code{\link{Boxplot}},
   \code{\link[MASS]{cov.trob}},
   \code{\link{showLabels}}.}
 
@@ -141,6 +142,8 @@ scatterplot(vocabulary ~ education, jitter=list(x=1, y=1),
 	data=Vocab, id.n=0, smooth=FALSE)
 
 scatterplot(infant.mortality ~ gdp, log="xy", data=UN, id.n=5)
+
+scatterplot(income ~ type, data=Prestige)
 
 	\dontrun{
 scatterplot(infant.mortality ~ gdp, id.method="identify", data=UN)

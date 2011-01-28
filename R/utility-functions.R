@@ -4,6 +4,7 @@
 # 16 March 2010 changed 'vars' argument to 'terms'
 # 28 June 2010 added df.terms.surveg and model.matrix.survreg
 # 15 November 2010 added squeezeBlanks
+# 21 January 2011 added functions to support mixed models
 
 # function to find "nice" numbers
 
@@ -249,3 +250,16 @@ squeezeBlanks <- function(text){
 	gsub(" *", "",  text)
 }
 
+# added by J. Fox 21 Jan 2011 to support mixed models
+
+df.residual.mer <- function(object, ...) NULL
+
+df.residual.lme <- function(object, ...) Inf
+
+has.intercept.mer <- function(model){
+	any(names(fixef(model))=="(Intercept)")
+}
+	
+model.matrix.lme <- function(object, ...){
+	model.matrix(as.formula(object$call$fixed), eval(object$call$data))
+}

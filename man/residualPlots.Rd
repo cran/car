@@ -60,10 +60,15 @@ A regression object.
   \item{terms}{
 A one-sided formula that specifies a subset of the predictors. One
 residual plot is drawn for each specified.  The default
-\code{~.} is to plot against all predictors.  For example, the
-specification \code{terms = ~.-X3} would plot against all predictors
-except for \code{X3}.  Some nonstandard predictors, such as B-splines, are 
-skipped.
+\code{~ .} is to plot against all predictors.  For example, the
+specification \code{terms = ~ . - X3} would plot against all predictors
+except for \code{X3}.  Interactions are skipped.  For polynomial terms, the
+plot is against the first-order variable (which may be centered and scaled
+depending on how the \code{poly} function is used).  Plots against factors
+are boxplots.  Plots against other matrix terms, like splines, use the
+result of \code{predict(model), type="terms")[, variable])} as the
+horizontal axis; if the \code{predict} method doesn't permit this type, 
+then matrix terms are skipped.
 }
   \item{layout}{ 
 If set to a value like \code{c(1, 1)} or \code{c(4, 3)}, the layout

@@ -13,6 +13,9 @@
 #   excluded SD smooth from bernoulli models
 #   added grid lines
 # 15 August 2010 fixed colors of points to work properly
+# 16 January 2011 improved handling of splines and polynomials in mmps to
+#    allow plots against base variables (e.g., bs(x, 3) could be
+#    replaced by just x in the 'terms' argument to mmps.
 #############################################
 marginalModelPlot <- function(...){mmp(...)}
 mmp <- function(model, ...){UseMethod("mmp")}
@@ -181,44 +184,56 @@ mmp.glm <- function (model, variable, mean = TRUE, sd = FALSE,
 
 marginalModelPlots <- function(...) mmps(...)
 
-mmps <- function(model, terms= ~ ., fitted=TRUE, layout=NULL, ask, 
-        main, AsIs=FALSE, ...){
-  mf <- attr(model.frame(model), "terms")
-  vform <- update(formula(model), terms)
-  if(any(is.na(match(all.vars(vform), all.vars(formula(model))))))
-     stop("Only predictors in the formula can be plotted. use mmp")
-  terms <- attr(mf, "term.labels") # this is a list
-  vterms <- attr(terms(vform), "term.labels")
-# drop interactions (order > 1)
-  vterms <- setdiff(vterms, terms[attr(mf, "order") > 1])
-# keep only terms that are numeric or integer or factors or poly
-  good <- NULL
-  for (term in vterms) if(
-      (AsIs == TRUE & inherits(model$model[[term]], "AsIs")) |
-      inherits(model$model[[term]], "numeric") |
-      inherits(model$model[[term]], "integer") |
-      inherits(model$model[[term]], "poly")) good <- c(good, term)
-  nt <- length(good) + fitted
-  if (missing(main)) main <- if (nt == 1) "Marginal Model Plot" else 
+mmps <- function(model, terms= ~ ., fitted=TRUE, layout=NULL, ask,
+        main, ...){
+  mf2 <- try(update(model, as.formula(terms), method="model.frame"),
+     silent=TRUE)
+# This second test is used for models like m1 <- lm(longley) which
+# fail the first test becasue update doesn't work
+  if(class(mf2) == "try-error")
+       mf2 <- try(update(model, as.formula(terms),
+               method="model.frame", data=model.frame(model)), silent=TRUE)
+  if(class(mf2) == "try-error") stop("argument 'terms' not interpretable.")
+  labels2 <- attr(attr(mf2, "terms"), "term.labels")
+  order2 <- attr(attr(mf2, "terms"), "order")
+  type2 <- rep("good", length(labels2))
+  if(length(labels2) > 0) {
+    for (j in 1:length(labels2)){
+      if(order2[j] > 1) type2[j] <- NA #exclude interatctions
+      if(inherits(mf2[[labels2[j]]], "factor")) type2[j] <- NA #no factors
+      if(inherits(mf2[[labels2[j]]], "matrix")) type2[j] <- "original"
+      }
+    if (any( type2=="original", na.rm=TRUE )){
+      p1 <- try(predict(model, type="terms"), silent=TRUE)
+      if(class(p1) == "try-error") {type2[type2=="original"] <- NA} else
+      warning("Splines and/or polynomials replaced by a fitted linear combination")
+      }
+  }
+  nt <- sum(!is.na(type2)) + fitted
+  if (missing(main)) main <- if (nt == 1) "Marginal Model Plot" else
      "Marginal Model Plots"
   if(is.null(layout)){
-   layout <- switch(min(nt, 9), 
-           c(1, 1), c(1, 2), c(2, 2), c(2, 2), c(3, 2), c(3, 2), 
+   layout <- switch(min(nt, 9),
+           c(1, 1), c(1, 2), c(2, 2), c(2, 2), c(3, 2), c(3, 2),
            c(3, 3), c(3, 3), c(3, 3))}
   ask <- if(missing(ask) || is.null(ask)) prod(layout) < nt else ask
   if( prod(layout) > 1) {
-    op <- par(mfrow=layout, ask=ask, no.readonly=TRUE, 
-            oma=c(0, 0, 2.5, 0), mar=c(5, 4, 1.5, 1.5) + .1)  
+    op <- par(mfrow=layout, ask=ask, no.readonly=TRUE,
+            oma=c(0, 0, 2.5, 0), mar=c(5, 4, 1.5, 1.5) + .1)
     on.exit(par(op))
   }
-  for (term in good){ 
-    if(inherits(model$model[[term]], "poly")){
-        horiz <- model.frame(model)[ , term][ , 1]
-        lab <- paste("Linear part of", term)} else {
-        horiz <- model.frame(model)[ , term]
-        lab <- term }
-    mmp(model, horiz, xlab=lab, ...)}
+  if (length(labels2) > 0) {
+    for (j in 1:length(labels2)) {
+      if(!is.na(type2[j])) {
+        horiz <- if(type2[j] == "original"){p1[, labels2[j]]} else {
+                 if(type2[j] == "good") mf2[ , labels2[j]] else NULL}
+        lab <- labels2[j]
+        mmp(model, horiz, xlab=lab, ...)}}
+    }
   if(fitted==TRUE) mmp(model, ...)
-  mtext(side=3, outer=TRUE, main, line=0.5, cex=1.2)
+  if(nt==1)
+     mtext(side=3, outer=FALSE, main, line=1.5, cex=1.2) else
+     mtext(side=3, outer=TRUE,  main, line=0.5, cex=1.2)
+  if(any(is.na(type2))) warning("Interactions and/or factors skipped")
   invisible()
   }

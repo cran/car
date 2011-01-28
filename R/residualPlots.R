@@ -6,6 +6,8 @@
 # 25 May 2010 added grid() to plots, S. Weisberg
 # 15 August 2010, fixed so col= works correctly with plot, but not Boxplot
 # 15 August 2010, deleted pch= argument, as it wasn't used
+# 17 January 2011, allow spline terms; plot against
+#   predict(model, type="terms")[[term.name]]
 
 residualPlots <- function(model, ...){UseMethod("residualPlots")}
 
@@ -27,6 +29,7 @@ residualPlots.default <- function(model, terms= ~ . ,
       inherits(model$model[[term]], "numeric") |
       inherits(model$model[[term]], "integer") |
       inherits(model$model[[term]], "factor") | 
+      inherits(model$model[[term]], "matrix") |
       inherits(model$model[[term]], "poly")) good <- c(good, term)
   nt <- length(good) + fitted
   if (nt == 0) stop("No plots specified")
@@ -123,6 +126,14 @@ residualPlot.default <- function(model, variable = "fitted", type = "pearson",
        horiz <- horiz[ , 1]
        lab <- paste("Linear part of", lab)
        c(NA, NA)}
+   else if (inherits(horiz, "matrix")) {
+       horiz <- try(predict(model, type="terms"), silent=TRUE)
+       if(class(horiz) == "try-error") 
+          stop("Could not plot spline terms") 
+       warning("Splines replaced by a fitted linear combination")
+       horiz <- horiz[ , variable]
+       c(NA, NA)
+       }
    else if (class(horiz) == "factor") c(NA, NA)
    else residCurvTest(model, variable)
 # ans <- if (class(horiz) != "factor")  else c(NA, NA)

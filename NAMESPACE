@@ -1,4 +1,4 @@
-# last modified 15 August 2010 by J. Fox
+# last modified 21 January 2011 by J. Fox
 
 export(
     basicPowerAxis,
@@ -67,6 +67,8 @@ export(
     bootCase, nextBoot,
     subsets,
     compareCoefs,
+    matchCoefs,
+    
     # deprecated functions
     av.plot,
     av.plots,
@@ -128,7 +130,9 @@ S3method(Anova, coxph)
 S3method(Anova, default)
 S3method(Anova, glm)
 S3method(Anova, lm)
+S3method(Anova, lme)
 S3method(Anova, manova)
+S3method(Anova, mer)
 S3method(Anova, multinom)
 S3method(Anova, mlm)
 S3method(Anova, polr)
@@ -178,9 +182,14 @@ S3method(leveragePlot, lm)
 S3method(linearHypothesis, default)
 S3method(linearHypothesis, glm)
 S3method(linearHypothesis, lm)
+S3method(linearHypothesis, lme)
+S3method(linearHypothesis, mer)
 S3method(linearHypothesis, mlm)
 S3method(linearHypothesis, polr)
 S3method(Manova, mlm)
+S3method(matchCoefs, default)
+S3method(matchCoefs, lme)
+S3method(matchCoefs, mer)
 S3method(mmp, default)
 S3method(mmp, lm)
 S3method(mmp, glm)
