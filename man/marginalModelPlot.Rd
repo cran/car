@@ -19,7 +19,7 @@ for \code{marginalModelPlots}, and \code{mmp} is an alias for \code{marginalMode
 marginalModelPlots(...)
 
 mmps(model, terms= ~ ., fitted=TRUE, layout=NULL, ask,
-        main, AsIs=FALSE, ...)
+        main, ...)
 
 marginalModelPlot(...)
 
@@ -60,10 +60,6 @@ marginalModelPlot(...)
 Main title for the array of plots.  Use \code{main=""} to suppress the title;
 if missing, a title will be supplied.
 }
-  \item{AsIs}{
-If \code{FALSE}, the default, terms that use the \dQuote{as-is} function \code{I}
-are skipped; if \code{TRUE} they are included.
-}
 \item{\dots}{
 Additional arguments passed from \code{mmps} to \code{mmp} and
 then to \code{plot}.  Users should generally use \code{mmps}, or equivalently 
@@ -103,8 +99,16 @@ graph}
 whatever is specified as the horizontal axis.  
 \code{mmps} and \code{marginalModelPlots} draws marginal model plots
 versus each of the terms in the \code{terms} argument and versus fitted values.  
-\code{mmps} skips factors, interactions, and spline terms.  For polynomial
-terms in one variable, plots are against the first-order term.
+\code{mmps} skips factors and  interactions if they are specified in the 
+\code{terms} argument.  Terms based on polynomials or on splines (or 
+potentially any term that is represented by a matrix of predictors) will
+be used to form a marginal model plot by returning a linear combination of the 
+terms.  For example, if you specify \code{terms ~ X1 + poly(X2, 3)} and
+\code{poly(X2, 3)} was part of the original model formula, the horizontal
+axis of the marginal model plot will be the value of
+\code{predict(model, type="terms")[, "poly(X2, 3)"])}.  If the \code{predict}
+method for the model you are using doesn't support \code{type="terms"}, 
+then the polynomial/spline term is skipped.
 }
 
 \value{
@@ -126,14 +130,19 @@ Linear Regression}, Third Edition, Wiley, Chapter 8.
 \author{Sanford Weisberg, \email{sandy@stat.umn.edu}}
 
 \examples{
+\dontrun{
 c1 <- lm(infant.mortality ~ gdp, UN)
 mmps(c1)
+c2 <- update(c1, ~ poly(gdp, 4), data=na.omit(UN))
+# plot against predict(c2, type="terms")[, "poly(gdp, 4)"] and
+# and against gdp
+mmps(c2, ~ poly(gdp,4) + gdp)
 # include SD lines
 p1 <- lm(prestige ~ income + education, Prestige)
 mmps(p1, sd=TRUE)
 # logisitic regression example
 # smoothers return warning messages.
-\dontrun{
+
 m1 <- glm(lfp ~ ., family=binomial, data=Mroz)
 mmps(m1)
 }

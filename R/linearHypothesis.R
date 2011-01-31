@@ -1,4 +1,4 @@
-#-------------------------------------------------------------------------------
+#---------------------------------------------------------------------------------------
 # Revision history:
 #   2009-01-16: replaced unlist(options("foo")) with getOption("foo")
 #   2009-09-16: optionally allow models with aliased coefficients. J. Fox
@@ -9,7 +9,8 @@
 #               in df, etc. will be postive.
 #   2010-06-12: linearHypothesis.mlm() changed to allow observation weights
 #	2010-06-22: fixed bug in linearHypothesis.lm caused by 2010-05-21 revision
-#-------------------------------------------------------------------------------
+#   2010-01-21: added methods for mixed models; added matchCoefs() and methods. J. Fox
+#---------------------------------------------------------------------------------------
 
 vcov.default <- function(object, ...){
 	stop(paste("there is no vcov() method for models of class",
@@ -468,3 +469,124 @@ coef.multinom <- function(object, ...){
 	names(b) <- as.vector(outer(cn, rn, function(c, r) paste(r, c, sep=":")))
 	b
 }
+
+## functions for mixed models
+
+linearHypothesis.mer <- function(model, hypothesis.matrix, rhs=NULL,
+		vcov.=NULL, singular.ok=FALSE, verbose=FALSE, ...){
+	V <- as.matrix(if (is.null(vcov.))vcov(model)
+					else if (is.function(vcov.)) vcov.(model) else vcov.)
+	b <- fixef(model)
+	if (any(aliased <- is.na(b)) && !singular.ok)
+		stop("there are aliased coefficients in the model")
+	b <- b[!aliased]
+	if (is.character(hypothesis.matrix)) {
+		L <- makeHypothesis(names(b), hypothesis.matrix, rhs)
+		if (is.null(dim(L))) L <- t(L)
+		rhs <- L[, NCOL(L)]
+		L <- L[, -NCOL(L), drop = FALSE]
+		rownames(L) <- hypothesis.matrix
+	}
+	else {
+		L <- if (is.null(dim(hypothesis.matrix))) t(hypothesis.matrix)
+				else hypothesis.matrix
+		if (is.null(rhs)) rhs <- rep(0, nrow(L))
+	}
+	q <- NROW(L)
+	if (verbose){
+		cat("\nHypothesis matrix:\n")
+		print(L)
+		cat("\nRight-hand-side vector:\n")
+		print(rhs)
+		cat("\nEstimated linear function (hypothesis.matrix %*% coef - rhs)\n")
+		print(drop(L %*% b - rhs))
+		cat("\n")
+	}
+	df <- Inf
+	SSH <- as.vector(t(L %*% b - rhs) %*% solve(L %*% V %*% t(L)) %*% (L %*% b - rhs))
+	name <- try(formula(model), silent = TRUE)
+	if (inherits(name, "try-error")) name <- substitute(model)
+	title <- "Linear hypothesis test\n\nHypothesis:"
+	topnote <- paste("Model 1: restricted model","\n", "Model 2: ", 
+			paste(deparse(name), collapse = "\n"), sep = "")
+	note <- if (is.null(vcov.)) ""
+			else "\nNote: Coefficient covariance matrix supplied.\n"
+	rval <- matrix(rep(NA, 8), ncol = 4)
+	colnames(rval) <- c("Res.Df", "Df", "Chisq",  paste("Pr(> Chisq)", sep = ""))
+	rownames(rval) <- 1:2
+	rval[,1] <- c(df+q, df)
+	p <- pchisq(SSH, q, lower.tail = FALSE)
+	rval[2, 2:4] <- c(q, SSH, p)
+	rval <- rval[,-1]
+	structure(as.data.frame(rval),
+			heading = c(title, printHypothesis(L, rhs, names(b)), "", topnote, note),
+			class = c("anova", "data.frame"))
+}
+
+linearHypothesis.lme <- function(model, hypothesis.matrix, rhs=NULL,
+		vcov.=NULL, singular.ok=FALSE, verbose=FALSE, ...){
+	V <- as.matrix(if (is.null(vcov.))vcov(model)
+					else if (is.function(vcov.)) vcov.(model) else vcov.)
+	b <- fixef(model)
+	if (any(aliased <- is.na(b)) && !singular.ok)
+		stop("there are aliased coefficients in the model")
+	b <- b[!aliased]
+	if (is.character(hypothesis.matrix)) {
+		L <- makeHypothesis(names(b), hypothesis.matrix, rhs)
+		if (is.null(dim(L))) L <- t(L)
+		rhs <- L[, NCOL(L)]
+		L <- L[, -NCOL(L), drop = FALSE]
+		rownames(L) <- hypothesis.matrix
+	}
+	else {
+		L <- if (is.null(dim(hypothesis.matrix))) t(hypothesis.matrix)
+				else hypothesis.matrix
+		if (is.null(rhs)) rhs <- rep(0, nrow(L))
+	}
+	q <- NROW(L)
+	if (verbose){
+		cat("\nHypothesis matrix:\n")
+		print(L)
+		cat("\nRight-hand-side vector:\n")
+		print(rhs)
+		cat("\nEstimated linear function (hypothesis.matrix %*% coef - rhs)\n")
+		print(drop(L %*% b - rhs))
+		cat("\n")
+	}
+	df <- Inf
+	SSH <- as.vector(t(L %*% b - rhs) %*% solve(L %*% V %*% t(L)) %*% (L %*% b - rhs))
+	name <- try(formula(model), silent = TRUE)
+	if (inherits(name, "try-error")) name <- substitute(model)
+	title <- "Linear hypothesis test\n\nHypothesis:"
+	topnote <- paste("Model 1: restricted model","\n", "Model 2: ", 
+			paste(deparse(name), collapse = "\n"), sep = "")
+	note <- if (is.null(vcov.)) ""
+			else "\nNote: Coefficient covariance matrix supplied.\n"
+	rval <- matrix(rep(NA, 8), ncol = 4)
+	colnames(rval) <- c("Res.Df", "Df", "Chisq",  paste("Pr(> Chisq)", sep = ""))
+	rownames(rval) <- 1:2
+	rval[,1] <- c(df+q, df)
+	p <- pchisq(SSH, q, lower.tail = FALSE)
+	rval[2, 2:4] <- c(q, SSH, p)
+	rval <- rval[,-1]
+	structure(as.data.frame(rval),
+			heading = c(title, printHypothesis(L, rhs, names(b)), "", topnote, note),
+			class = c("anova", "data.frame"))
+}
+
+
+
+## matchCoefs
+
+matchCoefs <- function(model, pattern, ...) UseMethod("matchCoefs")
+
+matchCoefs.default <- function(model, pattern, coef.=coef, ...){
+	names <- names(coef.(model))
+	grep(pattern, names, value=TRUE)
+}
+
+matchCoefs.mer <- function(model, pattern, ...) NextMethod(coef.=fixef)
+
+matchCoefs.lme <- function(model, pattern, ...) NextMethod(coef.=fixef)
+
+

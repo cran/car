@@ -10,10 +10,12 @@
 \name{Anova}
 \alias{Anova}
 \alias{Anova.lm}
+\alias{Anova.lme}
 \alias{Anova.aov}
 \alias{Anova.glm}
 \alias{Anova.multinom}
 \alias{Anova.polr}
+\alias{Anova.mer}
 \alias{Anova.mlm}
 \alias{Anova.manova}
 \alias{Manova}
@@ -27,7 +29,8 @@
   Calculates type-II or type-III analysis-of-variance tables for
   model objects produced by \code{lm}, \code{glm}, \code{multinom} 
   (in the \pkg{nnet} package), \code{polr} (in the \pkg{MASS}
-  package), \code{coxph} (in the \pkg{survival} package), and for any
+  package), \code{coxph} (in the \pkg{survival} package), \code{lmer} in the \pkg{lme4} package,
+  \code{lme} in the \pkg{nlme} package, and for any
   model with a linear predictor and asymptotically normal coefficients that
   responds to the \code{vcov} and \code{coef} functions.  For linear
   models, F-tests are calculated; for generalized linear models, 
@@ -35,7 +38,8 @@
   for multinomial logit and proportional-odds logit models, likelihood-ratio
   tests are calculated.  Various test statistics are provided for multivariate
   linear models produced by \code{lm} or \code{manova}. Partial-likelihood-ratio tests
-  or Wald tests are provided for Cox models. Wald chi-square or F tests are provided 
+  or Wald tests are provided for Cox models. Wald chi-square tests are provided for fixed effects in
+  linear and generalized linear mixed-effects models. Wald chi-square or F tests are provided 
   in the default case.
 }
 \usage{
@@ -73,6 +77,12 @@ Manova(mod, ...)
     
 \method{Anova}{coxph}(mod, type=c("II","III", 2, 3), 
 	test.statistic=c("LR", "Wald"), ...)
+	
+\method{Anova}{lme}(mod, type=c("II","III", 2, 3),
+		vcov.=vcov(mod), singular.ok, ...)
+
+\method{Anova}{mer}(mod, type=c("II","III", 2, 3),
+		vcov.=vcov(mod), singular.ok, ...)
 	
 \method{Anova}{default}(mod, type=c("II","III", 2, 3), 
 	test.statistic=c("Chisq", "F"), vcov.=vcov(mod), 
@@ -455,6 +465,39 @@ Anova(wl.mod, imatrix=imatrix, test="Roy")
 ## group:measure  2     0.356     5.52      2     31  0.008906 ** 
 ## month          1     9.407    65.85      4     28 7.807e-14 ***
 ## group:month    2     1.772    12.84      4     29 3.909e-06 ***
+## ---
+## Signif. codes:  0 '***' 0.001 '**' 0.01 '*' 0.05 '.' 0.1 ' ' 1 
+
+## mixed-effects models
+
+## mixed-effects models examples:
+
+\dontrun{
+	library(nlme)
+	example(lme)
+	Anova(fm2)
+}
+
+## Analysis of Deviance Table (Type II tests)
+## 
+## Response: distance
+##            Df    Chisq Pr(>Chisq)    
+## age         1 114.8383  < 2.2e-16 ***
+## Sex         1   9.2921   0.002301 ** 
+## ---
+## Signif. codes:  0 '***' 0.001 '**' 0.01 '*' 0.05 '.' 0.1 ' ' 1 
+
+\dontrun{
+	library(lme4)
+	example(lmer)
+	Anova(gm1)
+}
+
+## Analysis of Deviance Table (Type II tests)
+## 
+## Response: cbind(incidence, size - incidence)
+##           Df  Chisq Pr(>Chisq)    
+## period     3 25.326  1.319e-05 ***
 ## ---
 ## Signif. codes:  0 '***' 0.001 '**' 0.01 '*' 0.05 '.' 0.1 ' ' 1 
 

@@ -6,6 +6,8 @@
 %   2009-12-22 updated to reflect changes in linearHypothesis.mlm(). J. Fox
 %   2010-07-09 added linearHypothesis.polr() and coef.multinom(). J. Fox
 %   2010-07-27 coef.multinom() no longer exported. J. Fox
+%   2011-01-21 added linearHypothesis.mer(), linearHypothesis.lme,
+%              matchCoefs() and methods. J. Fox
 %-------------------------------------------------------------------------------
 
 \name{linearHypothesis}
@@ -16,7 +18,13 @@
 \alias{linearHypothesis.mlm}
 \alias{linearHypothesis.polr}
 \alias{linearHypothesis.default}
+\alias{linearHypothesis.mer}
+\alias{linearHypothesis.lme}
 \alias{print.linearHypothesis.mlm}
+\alias{matchCoefs}
+\alias{matchCoefs.default}
+\alias{matchCoefs.mer}
+\alias{matchCoefs.lme}
 %%\alias{coef.multinom}
 
 \title{Test Linear Hypothesis}
@@ -24,7 +32,8 @@
 \description{
 Generic function for testing a linear hypothesis, and methods
 for linear models, generalized linear models, multivariate linear
-models, and other models that have methods for \code{coef} and \code{vcov}. 
+models, linear and generalized linear mixed-effects models, and other models that have methods for \code{coef} and \code{vcov}. 
+For mixed-effects models, the tests are Wald chi-square tests for the fixed effects.
 }
 
 \usage{
@@ -52,11 +61,25 @@ lht(model, ...)
 \method{print}{linearHypothesis.mlm}(x, SSP=TRUE, SSPE=SSP, 
     digits=getOption("digits"), ...) 
     
+\method{linearHypothesis}{lme}(model, hypothesis.matrix, rhs=NULL,
+		vcov.=NULL, singular.ok=FALSE, verbose=FALSE, ...)
+    
+\method{linearHypothesis}{mer}(model, hypothesis.matrix, rhs=NULL,
+		vcov.=NULL, singular.ok=FALSE, verbose=FALSE, ...)
+    
 %%\method{coef}{multinom}(object, ...)
+
+matchCoefs(model, pattern, ...)
+
+\method{matchCoefs}{default}(model, pattern, coef.=coef, ...)
+
+\method{matchCoefs}{lme}(model, pattern, ...)
+
+\method{matchCoefs}{mer}(model, pattern, ...)
 }
 
 \arguments{
-  \item{model}{fitted model object. The default method works for models
+  \item{model}{fitted model object. The default method of \code{linearHypothesis} works for models
    for which the estimated parameters can be retrieved by \code{coef} and
    the corresponding estimated covariance matrix by \code{vcov}. See the
    \emph{Details} for more information.}
@@ -124,11 +147,13 @@ lht(model, ...)
     cross-products matrix for the hypothesis and the response-transformation matrix.}
   \item{digits}{minimum number of signficiant digits to print.}
 %%  \item{object}{a \code{multinom} model object.}
-  \item{...}{aruments to pass down.}
+  \item{pattern}{a \link[base:regex]{regular expression} to be matched against coefficient names.}
+  \item{coef.}{a function that returns a named vector of coefficients.}
+  \item{...}{arguments to pass down.}
 }
 
 \details{
-  Computes either a finite-sample F statistic or asymptotic Chi-squared
+  \code{linearHypothesis} computes either a finite-sample F statistic or asymptotic Chi-squared
   statistic for carrying out a Wald-test-based comparison between a model
   and a linearly restricted model. The default method will work with any
   model object for which the coefficient vector can be retrieved by 
@@ -189,9 +214,8 @@ lht(model, ...)
     \code{\link{Anova}} function.
   }
   
-  The \code{coef} method for \code{multinom} objects masks the standard method in the
-  \pkg{nnet} package to make \code{linearHypothesis} work properly for \code{multinom} 
-  models.
+  \code{matchCoefs} is a convenience function that can sometimes help in formulating hypotheses; for example
+  \code{matchCoefs(mod, ":")} will return the names of all interaction coefficients in the model \code{mod}.
 }
 
 \value{
@@ -278,6 +302,7 @@ linearHypothesis(mod.duncan.2, coefs[-1])
 
 ## test all interaction coefficients equal to 0
 linearHypothesis(mod.duncan.2, coefs[grep(":", coefs)], verbose=TRUE)
+linearHypothesis(mod.duncan.2, matchCoefs(mod.duncan.2, ":"), verbose=TRUE) # equivalent
 
 ## a multivariate linear model for repeated-measures data
 ## see ?OBrienKaiser for a description of the data set used in this example.
@@ -302,6 +327,21 @@ idata
 linearHypothesis(mod.ok, c("treatment1:gender1", "treatment2:gender1"),
     title="treatment:gender:phase:hour", idata=idata, idesign=~phase*hour, 
     iterms="phase:hour")
+
+## mixed-effects models examples:
+
+\dontrun{
+	library(nlme)
+	example(lme)
+	linearHypothesis(fm2, "age = 0")
+}
+
+\dontrun{
+	library(lme4)
+	example(lmer)
+	linearHypothesis(gm1, matchCoefs(gm1, "period"))
+}
+
 }
 
 \keyword{htest}

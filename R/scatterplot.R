@@ -3,6 +3,7 @@
 # 2010-09-05: J. Fox: changed color choice
 # 2010-09-16: fixed point color when col is length 1
 # 2010-12-19: J. Fox: added argument legend.coords to place legend.
+# 2011-01-15: J. Fox: If x is a factor, calls Boxplot()
 
 scatterplot <- function(x, ...){
 	UseMethod("scatterplot", x)
@@ -45,20 +46,20 @@ scatterplot.formula <- function (x, data, subset, xlab, ylab, legend.title, lege
 }
 
 scatterplot.default <- function(x, y, smooth=TRUE, spread=!by.groups, span=.5, loess.threshold=5, reg.line=lm, 
-	boxplots=if (by.groups) "" else "xy",
-	xlab=deparse(substitute(x)), ylab=deparse(substitute(y)), las=par("las"),
-	lwd=1, lwd.smooth=lwd, lwd.spread=lwd, lty=1, lty.smooth=lty, lty.spread=2,
-	labels, id.method = "mahal", 
-	id.n = if(id.method[1]=="identify") length(x) else 0, 
-	id.cex = 1, id.col = palette()[1],
-	log="", jitter=list(), xlim=NULL, ylim=NULL,
-	cex=par("cex"), cex.axis=par("cex.axis"), cex.lab=par("cex.lab"), 
-	cex.main=par("cex.main"), cex.sub=par("cex.sub"), 
-	groups, by.groups=!missing(groups), legend.title=deparse(substitute(groups)), legend.coords,
-	ellipse=FALSE, levels=c(.5, .95), robust=TRUE,
-	col=if (n.groups == 1) palette()[2:1] else rep(palette(), length=n.groups),
-	pch=1:n.groups, 
-	legend.plot=!missing(groups), reset.par=TRUE, grid=TRUE, ...){
+		boxplots=if (by.groups) "" else "xy",
+		xlab=deparse(substitute(x)), ylab=deparse(substitute(y)), las=par("las"),
+		lwd=1, lwd.smooth=lwd, lwd.spread=lwd, lty=1, lty.smooth=lty, lty.spread=2,
+		labels, id.method = "mahal", 
+		id.n = if(id.method[1]=="identify") length(x) else 0, 
+		id.cex = 1, id.col = palette()[1],
+		log="", jitter=list(), xlim=NULL, ylim=NULL,
+		cex=par("cex"), cex.axis=par("cex.axis"), cex.lab=par("cex.lab"), 
+		cex.main=par("cex.main"), cex.sub=par("cex.sub"), 
+		groups, by.groups=!missing(groups), legend.title=deparse(substitute(groups)), legend.coords,
+		ellipse=FALSE, levels=c(.5, .95), robust=TRUE,
+		col=if (n.groups == 1) palette()[2:1] else rep(palette(), length=n.groups),
+		pch=1:n.groups, 
+		legend.plot=!missing(groups), reset.par=TRUE, grid=TRUE, ...){
 	logged <- function(axis=c("x", "y")){
 		axis <- match.arg(axis)
 		0 != length(grep(axis, log))
@@ -107,10 +108,10 @@ scatterplot.default <- function(x, y, smooth=TRUE, spread=!by.groups, span=.5, l
 			y <- if (logged("y")) exp(fitted(fit)) else fitted(fit) 
 			lines(x, y, lwd=lwd.smooth, col=col, lty=lty.smooth)
 			y.pos <- if (logged("y")) exp(fitted(fit)[pos] + sqrt(fitted(pos.fit)))  
-				else fitted(fit)[pos] + sqrt(fitted(pos.fit))
+					else fitted(fit)[pos] + sqrt(fitted(pos.fit))
 			lines(x[pos], y.pos, lwd=lwd.spread, lty=lty.spread, col=col)
 			y.neg <- if (logged("y")) exp(fitted(fit)[!pos] - sqrt(fitted(neg.fit)))
-				else fitted(fit)[!pos] - sqrt(fitted(neg.fit))
+					else fitted(fit)[!pos] - sqrt(fitted(neg.fit))
 			lines(x[!pos], y.neg, lwd=lwd.spread, lty=lty.spread, col=col)
 		}
 		options(warn)
@@ -200,10 +201,14 @@ scatterplot.default <- function(x, y, smooth=TRUE, spread=!by.groups, span=.5, l
 	spread 
 	if (missing(labels)){
 		labels <- if (is.null(names(y)))
-				seq(along=y)
-			else names(y)
+					seq(along=y)
+				else names(y)
 	}
 	if (length(labels) != length(y)) stop("labels argument is the wrong length")
+	if (is.factor(x)) {
+		if (!(id.method %in% c("y", "identify", "none"))) id.method <- "y"
+		return(Boxplot(y, x, id.method="y", labels=labels, xlab=xlab, ylab=ylab))
+	}
 	mar <- par("mar")
 	mfcol <- par("mfcol")
 	if (reset.par) on.exit(par(mar=mar, mfcol=mfcol))
@@ -216,8 +221,8 @@ scatterplot.default <- function(x, y, smooth=TRUE, spread=!by.groups, span=.5, l
 		.y <- data[,3]
 		labels <- data[,4]
 		top <- if (legend.plot && missing(legend.coords)) 
-				# 4 + length(levels(as.factor(groups))) else mar[3]
-				4 + nlevels(groups) else mar[3]
+					# 4 + length(levels(as.factor(groups))) else mar[3]
+					4 + nlevels(groups) else mar[3]
 	}
 	else {
 		.x <- x
@@ -230,18 +235,18 @@ scatterplot.default <- function(x, y, smooth=TRUE, spread=!by.groups, span=.5, l
 	# groups <- as.factor(if(missing(groups)) rep(1, length(.x)) else as.character(groups))
 	if (xbox && ybox)
 		layout(matrix(c(1, 0, 3, 2), 2, 2),
-			widths = c(5, 95),
-			heights= c(95, 5))
+				widths = c(5, 95),
+				heights= c(95, 5))
 	else if (ybox)
 		layout(matrix(c(1, 2),1, 2),
-			widths = c(5, 95),
-			heights= 100)
+				widths = c(5, 95),
+				heights= 100)
 	else if (xbox)
 		layout(matrix(c(2, 1), 2, 1),
-			widths = 100,
-			heights= c(95, 5))
+				widths = 100,
+				heights= c(95, 5))
 	else layout (matrix(1, 1, 1),
-			widths=100, heights=100)
+				widths=100, heights=100)
 	par(mar=c(mar[1], 0, top, 0))
 	if (ybox > 0) vbox(.y) 
 #	else plot(0, 0, xlab="", ylab="", axes=FALSE, type="n", xlim=xlim, ylim=ylim)
@@ -250,7 +255,7 @@ scatterplot.default <- function(x, y, smooth=TRUE, spread=!by.groups, span=.5, l
 #	else plot(0, 0, xlab="", ylab="", axes=FALSE, type="n", xlim=xlim, ylim=ylim)
 	par(mar=c(mar[1:2], top, mar[4]))
 	plot(.x, .y, xlab=xlab, ylab=ylab, las=las, log=log, cex=cex, cex.axis=cex.axis, cex.lab=cex.lab,
-		cex.main=cex.main, cex.sub=cex.sub, type="n", xlim=xlim, ylim=ylim, ...)
+			cex.main=cex.main, cex.sub=cex.sub, type="n", xlim=xlim, ylim=ylim, ...)
 	if(grid){
 		grid(lty=1, equilogs=FALSE)
 		box()}
@@ -262,8 +267,8 @@ scatterplot.default <- function(x, y, smooth=TRUE, spread=!by.groups, span=.5, l
 	for (i in 1:n.groups){
 		subs <- groups == levels(groups)[i]
 		points(if (is.null(jitter$x) || jitter$x == 0) .x[subs] else jitter(.x[subs], factor=jitter$x), 
-			if (is.null(jitter$y) || jitter$y == 0) .y[subs] else jitter(.y[subs], factor=jitter$y), 
-			pch=pch[i], col=col[if (n.groups == 1) 2 else i], cex=cex)
+				if (is.null(jitter$y) || jitter$y == 0) .y[subs] else jitter(.y[subs], factor=jitter$y), 
+				pch=pch[i], col=col[if (n.groups == 1) 2 else i], cex=cex)
 		if (by.groups){
 			if (smooth) lowess.line(.x[subs], .y[subs], col=col[i], span=span)
 			if (is.function(reg.line)) reg(.x[subs], .y[subs], col=col[i])
@@ -272,11 +277,11 @@ scatterplot.default <- function(x, y, smooth=TRUE, spread=!by.groups, span=.5, l
 				if (logged("x")) X$x <- log(x)
 				if (logged("y")) X$y <- log(y)
 				with(X, dataEllipse(x, y, plot.points=FALSE, lwd=1, log=log,
-						levels=levels, col=col[i], robust=robust))
+								levels=levels, col=col[i], robust=robust))
 			}
 			if (id.method[1] != "identify") indices <- c(indices,
-					showLabels(.x[subs], .y[subs], labels=labels[subs], id.method=id.method,
-						id.n=id.n, id.cex=id.cex, id.col=col[i]))
+						showLabels(.x[subs], .y[subs], labels=labels[subs], id.method=id.method,
+								id.n=id.n, id.cex=id.cex, id.col=col[i]))
 		}}
 	if (!by.groups){
 		if (smooth) lowess.line(.x, .y, col=col[1], span=span)
@@ -286,11 +291,11 @@ scatterplot.default <- function(x, y, smooth=TRUE, spread=!by.groups, span=.5, l
 			if (logged("x")) X$x <- log(X$x)
 			if (logged("y")) X$y <- log(X$y)
 			with(X, dataEllipse(x, y, plot.points=FALSE, lwd=1, log=log, levels=levels, col=col[1],
-					robust=robust))
+							robust=robust))
 		}
 		if (id.method[1] != "identify") indices <- showLabels(
-				.x, .y, labels=labels, 
-				id.method=id.method, id.n=id.n, id.cex=id.cex, id.col=id.col)
+					.x, .y, labels=labels, 
+					id.method=id.method, id.n=id.n, id.cex=id.cex, id.col=id.col)
 	}
 	if (legend.plot) {
 		xpd <- par(xpd=TRUE)
@@ -302,12 +307,12 @@ scatterplot.default <- function(x, y, smooth=TRUE, spread=!by.groups, span=.5, l
 			legend.coords <- list(x=legend.x, y=legend.y)
 		}
 		legend(legend.coords, legend=levels(groups), 
-			pch=pch, col=col[1:n.groups], pt.cex=cex, cex=cex.lab, title=legend.title, bg="white")
+				pch=pch, col=col[1:n.groups], pt.cex=cex, cex=cex.lab, title=legend.title, bg="white")
 	}
 	if ("smooth" %in% err) warning("could not fit smooth")
 	if ("spread" %in% err) warning("could not smooth spread")
 	if (id.method[1] == "identify") indices <- showLabels(.x, .y, labels, 
-			id.method=id.method, id.n=length(.x), id.cex=id.cex, id.col=id.col)
+				id.method=id.method, id.n=length(.x), id.cex=id.cex, id.col=id.col)
 	if (is.null(indices)) invisible(indices) else if (is.numeric(indices)) sort(indices) else indices
 } 
 

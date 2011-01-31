@@ -62,7 +62,8 @@ recode(var, recodes, as.factor.result, as.numeric.result=TRUE, levels)
 x<-rep(1:3,3)
 x
 ## [1] 1 2 3 1 2 3 1 2 3
-recode(x, "c(1,2)='A'; else='B'")
+recode(x, "c(1,2)='A'; 
+	else='B'")
 ## [1] "A" "A" "B" "A" "A" "B" "A" "A" "B"
 recode(x, "1:2='A'; 3='B'")
 ## [1] "A" "A" "B" "A" "A" "B" "A" "A" "B"

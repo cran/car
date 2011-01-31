@@ -2,6 +2,7 @@
 
 # levene.test.default function slightly modified and generalized from Brian Ripley via R-help
 # the original generic version was contributed by Derek Ogle
+# last modified 28 January 2010 by J. Fox
 
 leveneTest <- function (y, ...) {
 	UseMethod("leveneTest") 
@@ -28,7 +29,7 @@ leveneTest.default <- function (y, group, center=median, ...) { # original leven
 
 leveneTest.formula <- function(y, data, ...) {
 	form <- y
-	mf <- model.frame(form, data)
+	mf <- if (missing(data)) model.frame(form) else model.frame(form, data)
 	if (any(sapply(2:dim(mf)[2], function(j) is.numeric(mf[[j]])))) 
 		stop("Levene's test is not appropriate with quantitative explanatory variables.")
 	y <- mf[,1]
