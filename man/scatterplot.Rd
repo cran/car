@@ -16,26 +16,25 @@ scatterplot(x, ...)
 \method{scatterplot}{formula}(x, data, subset, xlab, ylab, legend.title, legend.coords,
 	labels, ...)
 
-\method{scatterplot}{default}(x, y, smooth = TRUE, 
-    spread = !by.groups, span = 0.5, 
-    loess.threshold = 5, reg.line = lm, 
-    boxplots = if (by.groups) "" else "xy", 
-    xlab = deparse(substitute(x)), ylab = deparse(substitute(y)), 
-    las = par("las"), lwd = 1, lwd.smooth = lwd, lwd.spread = lwd, 
-    lty = 1, lty.smooth = lty, lty.spread = 2, labels, 
-    id.method = "mahal", 
-    id.n = if(id.method[1]=="identify") length(x) else 0, 
-    id.cex = 1, id.col = palette()[1], log = "", jitter = list(), 
-    xlim = NULL, ylim = NULL, cex = par("cex"), 
-    cex.axis = par("cex.axis"), 
-    cex.lab = par("cex.lab"), cex.main = par("cex.main"), 
-    cex.sub = par("cex.sub"), groups, by.groups = !missing(groups), 
-    legend.title = deparse(substitute(groups)), legend.coords,
-    ellipse = FALSE, levels = c(0.5, 0.95), robust = TRUE, 
-    col = if (n.groups == 1) palette()[2:1] else rep(palette(), 
-    length = n.groups), 
-    pch = 1:n.groups, legend.plot = !missing(groups), reset.par = TRUE, 
-    grid=TRUE, ...)
+\method{scatterplot}{default}(x, y, smooth=TRUE, spread=!by.groups, 
+	span=.5, loess.threshold=5, reg.line=lm, 
+	boxplots=if (by.groups) "" else "xy",
+	xlab=deparse(substitute(x)), ylab=deparse(substitute(y)), 
+	las=par("las"), lwd=1, lwd.smooth=lwd, lwd.spread=lwd, lty=1, 
+	lty.smooth=lty, lty.spread=2,
+	labels, id.method = "mahal", 
+	id.n = if(id.method[1]=="identify") length(x) else 0, 
+	id.cex = 1, id.col = palette()[1],
+	log="", jitter=list(), xlim=NULL, ylim=NULL,
+	cex=par("cex"), cex.axis=par("cex.axis"), cex.lab=par("cex.lab"), 
+	cex.main=par("cex.main"), cex.sub=par("cex.sub"), 
+	groups, by.groups=!missing(groups), 
+	legend.title=deparse(substitute(groups)), legend.coords,
+	ellipse=FALSE, levels=c(.5, .95), robust=TRUE,
+	col=if (n.groups == 1) palette()[3:1] else rep(palette(), 
+		length=n.groups),
+	pch=1:n.groups, 
+	legend.plot=!missing(groups), reset.par=TRUE, grid=TRUE, ...)
   
 sp(...)
 }
@@ -100,8 +99,8 @@ sp(...)
   \item{robust}{if \code{TRUE} (the default) use the \code{cov.trob} function in the \code{MASS} package
     to calculate the center and covariance matrix for the data ellipses.}
   \item{col}{colors for lines and points; the default is taken from the color palette, 
-  	with \code{palette()[2]} for nonparametric regression lines and \code{palette()[1]} 
-  	for linear regression line and points if there are
+  	with \code{palette()[3]} for linear regression lines, \code{palette()[2]} for nonparametric regression lines, and \code{palette()[1]} 
+  	for points if there are
   	no groups, and successive colors for the groups if there are groups.}
   \item{pch}{plotting characters for points; default is the plotting characters in
     order (see \code{\link[graphics]{par}}).}
