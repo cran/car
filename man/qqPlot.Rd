@@ -15,15 +15,16 @@ qqPlot(x, ...)
 
 qqp(...)
 
-\method{qqPlot}{default}(x, distribution="norm", ylab=deparse(substitute(x)),
-	xlab=paste(distribution, "quantiles"), main=NULL, las=par("las"),
+\method{qqPlot}{default}(x, distribution="norm", ...,
+	ylab=deparse(substitute(x)), xlab=paste(distribution, "quantiles"), 
+	main=NULL, las=par("las"),
 	envelope=.95,  
 	col=palette()[1], col.lines=palette()[2], lwd=2, pch=1, cex=par("cex"), 
 	line=c("quartiles", "robust", "none"),  
 	labels = if(!is.null(names(x))) names(x) else seq(along=x),
 	id.method = "y", 
 	id.n =if(id.method[1]=="identify") Inf else 0,
-	id.cex=1, id.col=palette()[1], grid=TRUE, ...)
+	id.cex=1, id.col=palette()[1], grid=TRUE)
 
 \method{qqPlot}{lm}(x, xlab=paste(distribution, "Quantiles"),
 	ylab=paste("Studentized Residuals(", deparse(substitute(x)), ")",

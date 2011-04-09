@@ -1,3 +1,22 @@
+Changes to Version 2.0-10
+
+    o  changed tukeyNonaddTest to be sure the test exists.
+
+    o  changed the default in residualPlots for AsIs from FALSE to TRUE.
+    
+    o  improved color choice in scatterplot and scatterplotMatrix (at suggestion of Dan Putler).
+    
+    o  moved up ... argument in qqPlot.default (suggestion of Peter Ehlers).
+    
+    o  changed label on marginal model plot for generalized linear models verses fitted values to 'fitted values' rather than the incorrect 'Linear predictor"
+
+    o  mmp now passes graphical parameters to par
+
+    o  mmps now works correctly with 'gam' models (mgcv package)
+    
+    o  modified bootCase to work with multivariate lm objects
+    
+    
 Changes to Version 2.0-9
 
 	o  added Anova and linearHypothesis methods for mixed-effects model objects created by lmer in lme4 and lme in nlme.

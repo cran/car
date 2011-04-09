@@ -5,6 +5,7 @@
 # 14 April 2010: set id.n = 0. J. Fox
 # 1 June 2010: set reps=100 in qqPlot.lm. J. Fox
 # 28 June 2010: fixed labeling bug S. Weisberg
+# 11 March 2011: moved up ... argument. J. Fox
 
 qqp <- function(...) qqPlot(...)
 
@@ -12,16 +13,16 @@ qqPlot<-function(x, ...) {
 	UseMethod("qqPlot")
 }
 
-qqPlot.default <- function(x, distribution="norm", ylab=deparse(substitute(x)),
-	xlab=paste(distribution, "quantiles"), main=NULL, las=par("las"),
-	envelope=.95,  
-        col=palette()[1], col.lines=palette()[2], lwd=2, pch=1, cex=par("cex"), 
-	line=c("quartiles", "robust", "none"), 
-        labels = if(!is.null(names(x))) names(x) else seq(along=x),
-        id.method = "y", 
-        id.n = if(id.method[1]=="identify") Inf else 0,
-        id.cex=1, id.col=palette()[1], grid=TRUE, ...)
-  {
+qqPlot.default <- function(x, distribution="norm", ..., ylab=deparse(substitute(x)),
+		xlab=paste(distribution, "quantiles"), main=NULL, las=par("las"),
+		envelope=.95,  
+		col=palette()[1], col.lines=palette()[2], lwd=2, pch=1, cex=par("cex"), 
+		line=c("quartiles", "robust", "none"), 
+		labels = if(!is.null(names(x))) names(x) else seq(along=x),
+		id.method = "y", 
+		id.n = if(id.method[1]=="identify") Inf else 0,
+		id.cex=1, id.col=palette()[1], grid=TRUE)
+{
 	line <- match.arg(line)
 	good <- !is.na(x)
 	ord <- order(x[good])
@@ -34,8 +35,8 @@ qqPlot.default <- function(x, distribution="norm", ylab=deparse(substitute(x)),
 	z <- q.function(P, ...)
 	plot(z, ord.x, type="n", xlab=xlab, ylab=ylab, main=main, las=las)
 	if(grid){
-    grid(lty=1, equilogs=FALSE)
-    box()}
+		grid(lty=1, equilogs=FALSE)
+		box()}
 	points(z, ord.x, col=col, pch=pch, cex=cex)
 	if (line == "quartiles" || line == "none"){
 		Q.x <- quantile(ord.x, c(.25,.75))
@@ -61,17 +62,17 @@ qqPlot.default <- function(x, distribution="norm", ylab=deparse(substitute(x)),
 		lines(z, lower, lty=2, lwd=lwd, col=col.lines)
 	}
 	showLabels(z, ord.x, labels=ord.lab,
-     id.method = id.method, id.n = id.n, id.cex=id.cex, id.col=id.col)
+			id.method = id.method, id.n = id.n, id.cex=id.cex, id.col=id.col)
 }
 
 qqPlot.lm <- function(x, xlab=paste(distribution, "Quantiles"),
-	ylab=paste("Studentized Residuals(", deparse(substitute(x)), ")", sep=""), main=NULL,
-	distribution=c("t", "norm"), line=c("robust", "quartiles", "none"), las=par("las"),
-	simulate=TRUE, envelope=.95,  reps=100, 
-	col=palette()[1], col.lines=palette()[2], lwd=2, pch=1, cex=par("cex"),
-        labels, id.method = "y", 
-        id.n = if(id.method[1]=="identify") Inf else 0, id.cex=1, 
-        id.col=palette()[1], grid=TRUE, ...){
+		ylab=paste("Studentized Residuals(", deparse(substitute(x)), ")", sep=""), main=NULL,
+		distribution=c("t", "norm"), line=c("robust", "quartiles", "none"), las=par("las"),
+		simulate=TRUE, envelope=.95,  reps=100, 
+		col=palette()[1], col.lines=palette()[2], lwd=2, pch=1, cex=par("cex"),
+		labels, id.method = "y", 
+		id.n = if(id.method[1]=="identify") Inf else 0, id.cex=1, 
+		id.col=palette()[1], grid=TRUE, ...){
 	result <- NULL
 	distribution <- match.arg(distribution)
 	line <- match.arg(line)
@@ -84,10 +85,10 @@ qqPlot.lm <- function(x, xlab=paste(distribution, "Quantiles"),
 	res.df <- sumry$df[2]
 	if(!simulate)
 		result <- qqPlot(rstudent, distribution=if (distribution == "t") "t" else "norm", df=res.df-1, line=line,
-			main=main, xlab=xlab, ylab=ylab, las=las, envelope=envelope, 
-      col=col, col.lines=col.lines, lwd=lwd, pch=pch, cex=cex,
-      labels=labels, id.method=id.method, id.n=id.n, id.cex=id.cex,
-	    id.col=id.col, ...)
+				main=main, xlab=xlab, ylab=ylab, las=las, envelope=envelope, 
+				col=col, col.lines=col.lines, lwd=lwd, pch=pch, cex=cex,
+				labels=labels, id.method=id.method, id.n=id.n, id.cex=id.cex,
+				id.col=id.col, ...)
 	else {
 		n <- length(rstudent)        
 		ord <- order(rstudent)
@@ -98,7 +99,7 @@ qqPlot.lm <- function(x, xlab=paste(distribution, "Quantiles"),
 		plot(z, ord.x, type="n", xlab=xlab, ylab=ylab, main=main, las=las)
 		if(grid) grid(lty=1, equilogs=FALSE)
 		points(z, ord.x, pch=pch, col=col, cex=cex)
-    yhat <- na.omit(fitted.values(x))
+		yhat <- na.omit(fitted.values(x))
 		S <- sumry$sigma
 		Y <- matrix(yhat, n, reps) + matrix(rnorm(n*reps, sd=S), n, reps)
 		X <- model.matrix(x)
@@ -120,8 +121,8 @@ qqPlot.lm <- function(x, xlab=paste(distribution, "Quantiles"),
 			b <- coef[2]
 			abline(a, b, col=col.lines, lwd=lwd)
 		}                   
-    result <- showLabels(z, ord.x,labels=ord.lab,  
-       id.method = id.method, id.n = id.n, id.cex=id.cex, id.col=id.col)
+		result <- showLabels(z, ord.x,labels=ord.lab,  
+				id.method = id.method, id.n = id.n, id.cex=id.cex, id.col=id.col)
 	}
 	if (length(result) == 0) invisible(result) else if (is.numeric(result)) sort(result) else result
 }

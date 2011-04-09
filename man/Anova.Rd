@@ -193,7 +193,7 @@ Manova(mod, ...)
   An object of class \code{"anova"}, or \code{"Anova.mlm"}, which usually is printed.
   For objects of class \code{"Anova.mlm"}, there is also a \code{summary} method, 
   which provides much more detail than the \code{print} method about the MANOVA, including
-  traditional mixed-model univariate F-tests with Greenhouse-Geisser and Hunyh-Feldt
+  traditional mixed-model univariate F-tests with Greenhouse-Geisser and Huynh-Feldt
   corrections.
 }
 \references{ 

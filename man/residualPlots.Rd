@@ -24,7 +24,7 @@ is Tukey's test for nonadditivity when plotting against fitted values.
 residualPlots (model, ...)
 
 \S3method{residualPlots}{default}(model, terms = ~., layout = NULL, ask, 
-                 main = "", fitted = TRUE, AsIs=FALSE, plot = TRUE, 
+                 main = "", fitted = TRUE, AsIs=TRUE, plot = TRUE, 
                  tests = TRUE, ...)
 
 \S3method{residualPlots}{lm}(model, ...)
@@ -87,8 +87,8 @@ Main title for the graphs.  The default is \code{main=""} for no title.
 If \code{TRUE}, the default, include the plot against fitted values.
 }
   \item{AsIs}{
-If \code{FALSE}, the default, terms that use the \dQuote{as-is} function \code{I}
-are skipped; if \code{TRUE}, they are included.
+If \code{FALSE}, terms that use the \dQuote{as-is} function \code{I}
+are skipped; if \code{TRUE}, the default, they are included.
 }
   \item{plot}{
 If \code{TRUE}, draw the plot(s).

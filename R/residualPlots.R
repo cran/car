@@ -8,12 +8,16 @@
 # 15 August 2010, deleted pch= argument, as it wasn't used
 # 17 January 2011, allow spline terms; plot against
 #   predict(model, type="terms")[[term.name]]
+# 1 February 2011 default for AsIs changed to TRUE
+# 31 March 2011 tukeyNonaddTest updated to check that yhat^2 is not 
+#   a linear combination of other predictors (as in 1-way anova).
+# 6 April 2011 omit printing lack-of-fit if no lack-of-fit test is possible
 
 residualPlots <- function(model, ...){UseMethod("residualPlots")}
 
 residualPlots.default <- function(model, terms= ~ . , 
      layout=NULL, ask, main="", 
-     fitted=TRUE, AsIs=FALSE, plot=TRUE, tests=TRUE, ...){
+     fitted=TRUE, AsIs=TRUE, plot=TRUE, tests=TRUE, ...){
   mf <- attr(model.frame(model), "terms")
   vform <- update(formula(model), terms)
   if(any(is.na(match(all.vars(vform), all.vars(formula(model))))))
@@ -61,7 +65,9 @@ residualPlots.default <- function(model, terms= ~ . ,
   if(plot == TRUE) mtext(side=3, outer=TRUE, main, cex=1.2)
   if(!is.null(ans)) {
      dimnames(ans)[[2]] <- c("Test stat", "Pr(>|t|)")
-     return(if(tests == FALSE) invisible(ans) else round(ans, 3)) } else
+     return(if(tests == FALSE) invisible(ans) else 
+        if(all(is.na(ans))) warning("No possible lack-of-fit tests") else 
+        round(ans, 3)) } else
   invisible(NULL)
   }
   
@@ -121,6 +127,7 @@ residualPlot.default <- function(model, variable = "fitted", type = "pearson",
     if(inherits(model, "glm")) 
        "Linear Predictor" else "Fitted values"} else variable
  lab <- if(!missing(xlab)) xlab else lab
+ if(class(horiz)[1] == "ordered") horiz <- factor(horiz, ordered=FALSE)
  ans <-
    if(inherits(horiz, "poly")) {
        horiz <- horiz[ , 1]
@@ -134,7 +141,7 @@ residualPlot.default <- function(model, variable = "fitted", type = "pearson",
        horiz <- horiz[ , variable]
        c(NA, NA)
        }
-   else if (class(horiz) == "factor") c(NA, NA)
+   else if (inherits(horiz, "factor")) c(NA, NA)
    else residCurvTest(model, variable)
 # ans <- if (class(horiz) != "factor")  else c(NA, NA)
  if(plot==TRUE){
@@ -188,14 +195,22 @@ residCurvTest.glm <- function(model, variable) {
 }}}
      
 tukeyNonaddTest <- function(model){
+ tol <- model$qr$tol
  qr <- model$qr
- fitsq <- qr.resid(qr, predict(model, type="response")^2)
- r <- residuals(model, type="pearson")
- m1 <- lm(r~fitsq, weights=weights(model))
- df.correction <- sqrt((df.residual(model) - 1)/df.residual(m1))
- tukey <- summary(m1)$coef[2, 3] * df.correction
- c(Test=tukey, Pvalue=2*pnorm(-abs(tukey)))
+ fitsq <- predict(model, type="response")^2
+ fitsq <- qr.resid(qr, fitsq/sqrt(sum(fitsq^2)))
+ if(sum(fitsq^2) < tol){
+    return(c(Test=NA, Pvalue=NA))
+ } else {
+    r <- residuals(model, type="pearson")
+    m1 <- lm(r ~ fitsq, weights=weights(model))
+    df.correction <- sqrt((df.residual(model) - 1)/df.residual(m1))
+    tukey <- summary(m1)$coef[2, 3] * df.correction
+    c(Test=tukey, Pvalue=2*pnorm(-abs(tukey)))
+    }
  }
+ 
+
  
 residualPlot.lm <- function(model, ...) {
   residualPlot.default(model, ...)

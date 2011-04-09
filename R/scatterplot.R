@@ -4,6 +4,7 @@
 # 2010-09-16: fixed point color when col is length 1
 # 2010-12-19: J. Fox: added argument legend.coords to place legend.
 # 2011-01-15: J. Fox: If x is a factor, calls Boxplot()
+# 2011-03-08: J. Fox: changed col argument
 
 scatterplot <- function(x, ...){
 	UseMethod("scatterplot", x)
@@ -57,7 +58,7 @@ scatterplot.default <- function(x, y, smooth=TRUE, spread=!by.groups, span=.5, l
 		cex.main=par("cex.main"), cex.sub=par("cex.sub"), 
 		groups, by.groups=!missing(groups), legend.title=deparse(substitute(groups)), legend.coords,
 		ellipse=FALSE, levels=c(.5, .95), robust=TRUE,
-		col=if (n.groups == 1) palette()[2:1] else rep(palette(), length=n.groups),
+		col=if (n.groups == 1) palette()[3:1] else rep(palette(), length=n.groups),
 		pch=1:n.groups, 
 		legend.plot=!missing(groups), reset.par=TRUE, grid=TRUE, ...){
 	logged <- function(axis=c("x", "y")){
@@ -261,14 +262,14 @@ scatterplot.default <- function(x, y, smooth=TRUE, spread=!by.groups, span=.5, l
 		box()}
 	n.groups <- length(levels(groups))
 	if (n.groups > length(col)) stop("number of groups exceeds number of available colors")
-	if (length(col) == 1) col <- rep(col, 2)
+	if (length(col) == 1) col <- rep(col, 3)
 	indices <- NULL
 	range.x <- if (logged("x")) range(log(.x), na.rm=TRUE) else range(.x, na.rm=TRUE)
 	for (i in 1:n.groups){
 		subs <- groups == levels(groups)[i]
 		points(if (is.null(jitter$x) || jitter$x == 0) .x[subs] else jitter(.x[subs], factor=jitter$x), 
 				if (is.null(jitter$y) || jitter$y == 0) .y[subs] else jitter(.y[subs], factor=jitter$y), 
-				pch=pch[i], col=col[if (n.groups == 1) 2 else i], cex=cex)
+				pch=pch[i], col=col[if (n.groups == 1) 3 else i], cex=cex)
 		if (by.groups){
 			if (smooth) lowess.line(.x[subs], .y[subs], col=col[i], span=span)
 			if (is.function(reg.line)) reg(.x[subs], .y[subs], col=col[i])
@@ -284,8 +285,8 @@ scatterplot.default <- function(x, y, smooth=TRUE, spread=!by.groups, span=.5, l
 								id.n=id.n, id.cex=id.cex, id.col=col[i]))
 		}}
 	if (!by.groups){
-		if (smooth) lowess.line(.x, .y, col=col[1], span=span)
-		if (is.function(reg.line)) reg(.x, .y, col=col[2])
+		if (smooth) lowess.line(.x, .y, col=col[2], span=span)
+		if (is.function(reg.line)) reg(.x, .y, col=col[1])
 		if (ellipse) {
 			X <- na.omit(data.frame(x=.x, y=.y))
 			if (logged("x")) X$x <- log(X$x)
