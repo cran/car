@@ -8,6 +8,7 @@
 %   2010-07-27 coef.multinom() no longer exported. J. Fox
 %   2011-01-21 added linearHypothesis.mer(), linearHypothesis.lme,
 %              matchCoefs() and methods. J. Fox
+%   2011-06-09 added matchCoefs.mlm(). J. Fox
 %-------------------------------------------------------------------------------
 
 \name{linearHypothesis}
@@ -25,6 +26,7 @@
 \alias{matchCoefs.default}
 \alias{matchCoefs.mer}
 \alias{matchCoefs.lme}
+\alias{matchCoefs.mlm}
 %%\alias{coef.multinom}
 
 \title{Test Linear Hypothesis}
@@ -76,6 +78,8 @@ matchCoefs(model, pattern, ...)
 \method{matchCoefs}{lme}(model, pattern, ...)
 
 \method{matchCoefs}{mer}(model, pattern, ...)
+
+\method{matchCoefs}{mlm}(model, pattern, ...)
 }
 
 \arguments{

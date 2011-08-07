@@ -39,10 +39,14 @@ specification \code{terms = ~ . - X3} would plot against all predictors
 except for \code{X3}.  If this argument is a quoted name of one of the predictors, the 
 added-variable plot is drawn for that predictor only.
 }
-  \item{layout}{ If set to a value like \code{c(1,1)} or \code{c(4,3)}, the layout
-of the graph will have this many rows and columns.  If not set, the program will
-select an appropriate layout.  If the number of graphs exceed nine, you must 
-select the layout yourself, or you will get a maximum of nine per page.
+  \item{layout}{ 
+If set to a value like \code{c(1, 1)} or \code{c(4, 3)}, the layout
+of the graph will have this many rows and columns.  If not set, the program
+will select an appropriate layout.  If the number of graphs exceed nine, you 
+must select the layout yourself, or you will get a maximum of nine per page.
+If \code{layout=NA}, the function does not set the layout and the user can
+use the \code{par} function to control the layout, for example to have 
+plots from two models in the same graphics window.
 }
     \item{ask}{if \code{TRUE}, a menu is provided in the R Console for the
 user to select the term(s) to plot.

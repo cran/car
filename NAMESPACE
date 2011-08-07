@@ -1,4 +1,4 @@
-# last modified 21 January 2011 by J. Fox
+# last modified 6 June 2011 by J. Fox
 
 export(
     basicPowerAxis,
@@ -160,6 +160,9 @@ S3method(deltaMethod,polr)
 S3method(deltaMethod, nls)
 S3method(deltaMethod, survreg)
 S3method(deltaMethod, coxph)
+S3method(deltaMethod, mer)
+S3method(deltaMethod, lme)
+S3method(deltaMethod, lmList)
 S3method(dfbetaPlots, lm)
 S3method(dfbetasPlots, lm)
 S3method(durbinWatsonTest, default)
@@ -190,6 +193,7 @@ S3method(Manova, mlm)
 S3method(matchCoefs, default)
 S3method(matchCoefs, lme)
 S3method(matchCoefs, mer)
+S3method(matchCoefs, mlm)
 S3method(mmp, default)
 S3method(mmp, lm)
 S3method(mmp, glm)

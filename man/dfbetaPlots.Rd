@@ -43,10 +43,15 @@ except for \code{X3}.  If this argument is a quoted name of one of the terms, th
 index plot is drawn for that term only.
 }
 \item{intercept}{Include the intercept in the plots; default is \code{FALSE}.}
-\item{layout}{ If set to a value like \code{c(1,1)} or \code{c(4,3)}, the layout
-  of the graph will have this many rows and columns.  If not set, the program will
-  select an appropriate layout.  If the number of graphs exceed nine, you must 
-  select the layout yourself, or you will get a maximum of nine per page.}
+  \item{layout}{ 
+If set to a value like \code{c(1, 1)} or \code{c(4, 3)}, the layout
+of the graph will have this many rows and columns.  If not set, the program
+will select an appropriate layout.  If the number of graphs exceed nine, you 
+must select the layout yourself, or you will get a maximum of nine per page.
+If \code{layout=NA}, the function does not set the layout and the user can
+use the \code{par} function to control the layout, for example to have 
+plots from two models in the same graphics window.
+}
 \item{main}{The title of the graph; if missing, one will be supplied.
 }
 \item{xlab}{Horizontal axis label; defaults to \code{"Index"}.}

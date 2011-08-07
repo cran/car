@@ -12,11 +12,11 @@
 }
 \usage{
 ellipse(center, shape, radius, log="", center.pch=19, center.cex=1.5, 
-  segments=51, add=TRUE, xlab="", ylab="", 
+  segments=51, draw=TRUE, add=draw, xlab="", ylab="", 
    col=palette()[2], lwd=2, fill=FALSE, fill.alpha=0.3, grid=TRUE, ...)
 
 dataEllipse(x, y, log="", levels=c(0.5, 0.95), center.pch=19, center.cex=1.5, 
-  plot.points=TRUE, add=!plot.points, segments=51, robust=FALSE,
+  draw=TRUE, plot.points=draw, add=!plot.points, segments=51, robust=FALSE,
   xlab=deparse(substitute(x)), 
   ylab=deparse(substitute(y)), 
   col=palette()[1:2], lwd=2, fill=FALSE, fill.alpha=0.3, grid=TRUE, ...)
@@ -25,11 +25,11 @@ confidenceEllipse(model, ...)
 
 \method{confidenceEllipse}{lm}(model, which.coef, levels=0.95, Scheffe=FALSE, 
   center.pch=19, center.cex=1.5, segments=51, xlab, ylab, 
-  col=palette()[2], lwd=2, fill=FALSE, fill.alpha=0.3, add=FALSE, ...)
+  col=palette()[2], lwd=2, fill=FALSE, fill.alpha=0.3, draw=TRUE, add=!draw, ...)
 
 \method{confidenceEllipse}{glm}(model, which.coef, levels=0.95, Scheffe=FALSE, 
   center.pch=19, center.cex=1.5, segments=51, xlab, ylab, 
-  col=palette()[2], lwd=2, fill=FALSE, fill.alpha=0.3, add=FALSE, ...)
+  col=palette()[2], lwd=2, fill=FALSE, fill.alpha=0.3, draw=TRUE, add=!draw, ...)
 }
 
 \arguments{
@@ -44,12 +44,13 @@ confidenceEllipse(model, ...)
   \item{center.pch}{character for plotting ellipse center.}
   \item{center.cex}{relative size of character for plotting ellipse center.}
   \item{segments}{number of line-segments used to draw ellipse.}
-  \item{add}{if \code{TRUE} add ellipse to current plot.}
+  \item{draw}{if \code{TRUE} produce graphical output; if \code{FALSE}, only invisibly return coordinates of ellipse(s).}
+  \item{add}{if \code{TRUE} add ellipse(s) to current plot.}
   \item{xlab}{label for horizontal axis.}
   \item{ylab}{label for vertical axis.}
   \item{x}{a numeric vector, or (if \code{y} is missing) a 2-column numeric matrix.}
   \item{y}{a numeric vector, of the same length as \code{x}.}
-  \item{plot.points}{if \code{FALSE} data ellipses are added to the current scatterplot,
+  \item{plot.points}{if \code{FALSE} data ellipses are drawn,
     but points are not plotted.}
   \item{levels}{draw elliptical contours at these (normal) probability or confidence levels.}
   \item{robust}{if \code{TRUE} use the \code{cov.trob} function in the \pkg{MASS} package
@@ -79,9 +80,12 @@ graph}
   of the data.
 }
 \value{
-  \code{NULL}. These functions are used for their side effect: producing
-  plots.
+   These functions are mainly used for their side effect of producing plots.  For
+   greater flexibility (e.g., adding plot annotations), however, \code{ellipse} returns invisibly the (x, y) coordinates of the calculated ellipse.
+   \code{dataEllipse} and \code{confidenceEllipse} return invisibly the  coordinates of one or more ellipses, in the latter instance a list named by
+   \code{levels}.
 }
+
 \references{ 
   Fox, J. (2008)
   \emph{Applied Regression Analysis and Generalized Linear Models},

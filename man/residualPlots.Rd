@@ -62,7 +62,9 @@ A one-sided formula that specifies a subset of the predictors. One
 residual plot is drawn for each specified.  The default
 \code{~ .} is to plot against all predictors.  For example, the
 specification \code{terms = ~ . - X3} would plot against all predictors
-except for \code{X3}.  Interactions are skipped.  For polynomial terms, the
+except for \code{X3}.  To get a plot against fitted values only, use the
+arguments \code{terms = ~ 1, fitted=TRUE},  Interactions are skipped.  
+For polynomial terms, the
 plot is against the first-order variable (which may be centered and scaled
 depending on how the \code{poly} function is used).  Plots against factors
 are boxplots.  Plots against other matrix terms, like splines, use the
@@ -75,6 +77,9 @@ If set to a value like \code{c(1, 1)} or \code{c(4, 3)}, the layout
 of the graph will have this many rows and columns.  If not set, the program
 will select an appropriate layout.  If the number of graphs exceed nine, you 
 must select the layout yourself, or you will get a maximum of nine per page.
+If \code{layout=NA}, the function does not set the layout and the user can
+use the \code{par} function to control the layout, for example to have 
+plots from two models in the same graphics window.
 }
   \item{ask}{
 If \code{TRUE}, ask the user before drawing the next plot; if \code{FALSE}, don't

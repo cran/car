@@ -12,6 +12,8 @@
 # 31 March 2011 tukeyNonaddTest updated to check that yhat^2 is not 
 #   a linear combination of other predictors (as in 1-way anova).
 # 6 April 2011 omit printing lack-of-fit if no lack-of-fit test is possible
+# 16 June 2011 allow layout=NA, in which case the layout is not set in this
+#  function, so it is the responsibility of the user
 
 residualPlots <- function(model, ...){UseMethod("residualPlots")}
 
@@ -36,16 +38,18 @@ residualPlots.default <- function(model, terms= ~ . ,
       inherits(model$model[[term]], "matrix") |
       inherits(model$model[[term]], "poly")) good <- c(good, term)
   nt <- length(good) + fitted
+  nr <- 0  
   if (nt == 0) stop("No plots specified")
-  if(is.null(layout)){
-   layout <- switch(min(nt, 9), c(1, 1), c(1, 2), c(2, 2), c(2, 2), 
-                               c(3, 2), c(3, 2), c(3, 3), c(3, 3), c(3, 3))}
-  nr <- 0
-  ask <- if(missing(ask) || is.null(ask)) prod(layout)<nt else ask
-  if(nt > 1 & plot == TRUE) {
+  if (nt > 1 & plot == TRUE & (is.null(layout) || is.numeric(layout))) {
+    if(is.null(layout)){
+         layout <- switch(min(nt, 9), c(1, 1), c(1, 2), c(2, 2), c(2, 2), 
+                             c(3, 2), c(3, 2), c(3, 3), c(3, 3), c(3, 3))
+    }
+    ask <- if(missing(ask) || is.null(ask)) prod(layout)<nt else ask
     op <- par(mfrow=layout, ask=ask, no.readonly=TRUE, 
             oma=c(0, 0, 1.5, 0), mar=c(5, 4, 1, 2) + .1)
-    on.exit(par(op))}
+    on.exit(par(op))
+    }
   ans <- NULL       
   if(!is.null(good)){
     for (term in good){
