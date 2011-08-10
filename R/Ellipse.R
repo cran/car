@@ -1,13 +1,23 @@
-# Ellipses (J. Fox and G. Monette)
+# Ellipses (orignally by J. Fox and G. Monette)
 
 # added grid lines, 25 May 2010 by S. Weisberg
 # arguments more consistent with other functions; ... passes args to plot, 5 Sept 2010 by J. Fox
 # confidenceEllipse.lm and .glm can add to current plot, applying patch from Rafael Laboissiere, 17 Oct 2010 by J. Fox
 # added fill and fill.alpha arguments for translucent fills (suggested by Michael Friendly), 14 Nov 2010 by J. Fox
+# modified 2 May 2011 by Michael Friendly
+#   - allow pivot=TRUE (with warning)
+#   - barf on non-symmetric shape
+#   - return coordinates of ellipse invisibly
+# dataEllipse() and confidenceEllipse() invisibly return coordinates,  3 May 2011 by J. Fox
+# Modified 5 May 2011 by Michael Friendly
+#   - dataEllipse now honors add=FALSE, plot.points=FALSE
+# Modified 16 May 2011 by Michaell Friendly
+#   - corrected bug introduced in dataEllipse via allowing pivot=TRUE 
+# Modified 7 Aug 2011 by J. Fox: added draw argument
 
-ellipse <- function(center, shape, radius, log="", center.pch=19, center.cex=1.5, segments=51, add=TRUE, 
-	xlab="", ylab="", col=palette()[2], lwd=2, fill=FALSE, fill.alpha=0.3,
-  	grid=TRUE, ...) {
+ellipse <- function(center, shape, radius, log="", center.pch=19, center.cex=1.5, segments=51, draw=TRUE, add=draw, 
+		xlab="", ylab="", col=palette()[2], lwd=2, fill=FALSE, fill.alpha=0.3,
+		grid=TRUE, ...) {
 	trans.colors <- function(col, alpha=0.5, names=NULL) {
 		# this function by Michael Friendly
 		nc <- length(col)
@@ -27,33 +37,40 @@ ellipse <- function(center, shape, radius, log="", center.pch=19, center.cex=1.5
 	}
 	if (! (is.vector(center) && 2==length(center))) stop("center must be a vector of length 2")
 	if (! (is.matrix(shape) && all(2==dim(shape)))) stop("shape must be a 2 by 2 matrix")
+	if (max(abs(shape - t(shape)))/max(abs(shape)) > 1e-10) stop("shape must be a symmetric matrix")
 	angles <- (0:segments)*2*pi/segments 
 	unit.circle <- cbind(cos(angles), sin(angles)) 
-	ellipse <- t(center + radius*t(unit.circle %*% chol(shape))) 
+#	ellipse <- t(center + radius*t(unit.circle %*% chol(shape,pivot=TRUE))) 
+	Q <- chol(shape, pivot=TRUE)
+	order <- order(attr(Q, "pivot"))
+	ellipse <- t( center + radius*t( unit.circle %*% Q[,order]))
 	colnames(ellipse) <- c("x", "y")
 	if (logged("x")) ellipse[, "x"] <- exp(ellipse[, "x"])
 	if (logged("y")) ellipse[, "y"] <- exp(ellipse[, "y"])
 	fill.col <- trans.colors(col, fill.alpha)
-	if (add) {
-		lines(ellipse, col=col, lwd=lwd, ...) 
-		if (fill) polygon(ellipse, col=fill.col, border=NA)
+	if (draw) {
+		if (add) {
+			lines(ellipse, col=col, lwd=lwd, ...) 
+			if (fill) polygon(ellipse, col=fill.col, border=NA)
+		}
+		else {
+			plot(ellipse, type="n", xlab = xlab, ylab = ylab, ...) 
+			if(grid){
+				grid(lty=1, equilogs=FALSE)
+				box()}
+			lines(ellipse, col=col, lwd=lwd, ... )
+			if (fill) polygon(ellipse, col=fill.col, border=NA)
+		} 	
+		if (center.pch) points(center[1], center[2], pch=center.pch, cex=center.cex, col=col)
 	}
-	else {
-		plot(ellipse, type="n", xlab = xlab, ylab = ylab, ...) 
-        if(grid){
-             grid(lty=1, equilogs=FALSE)
-             box()}
-        lines(ellipse, col=col, lwd=lwd, ... )
-		if (fill) polygon(ellipse, col=fill.col, border=NA)
-	} 	
-	if (center.pch) points(center[1], center[2], pch=center.pch, cex=center.cex, col=col)
-  }
+	invisible(ellipse)
+}
 
 dataEllipse <- function(x, y, log="", levels=c(0.5, 0.95), center.pch=19, 
-  center.cex=1.5,
-	plot.points=TRUE, add=!plot.points, segments=51, robust=FALSE, 
-	xlab=deparse(substitute(x)), ylab=deparse(substitute(y)), 
-	col=palette()[1:2], lwd=2, fill=FALSE, fill.alpha=0.3, grid=TRUE, ...) {
+		center.cex=1.5, draw=TRUE,
+		plot.points=draw, add=!plot.points, segments=51, robust=FALSE, 
+		xlab=deparse(substitute(x)), ylab=deparse(substitute(y)), 
+		col=palette()[1:2], lwd=2, fill=FALSE, fill.alpha=0.3, grid=TRUE, ...) {
 	if (length(col) == 1) col <- rep(col, 2)
 	if(missing(y)){
 		if (is.matrix(x) && ncol(x) == 2) {
@@ -66,14 +83,15 @@ dataEllipse <- function(x, y, log="", levels=c(0.5, 0.95), center.pch=19,
 	}
 	else if(!(is.vector(x) && is.vector(y) && length(x) == length(y)))
 		stop("x and y must be vectors of the same length")
-	if (plot.points && !add) {
-      plot(x, y, type="n", xlab=xlab, ylab=ylab,  ...) 
-	    if(grid){
-        grid(lty=1, equilogs=FALSE)
-        box()}
-      points(x, y, col=col[1],  ...)}
-	if (plot.points && add)  points(x, y, col=col[1], ...)
-	
+	if(draw) {
+		if (!add) {
+			plot(x, y, type="n", xlab=xlab, ylab=ylab,  ...) 
+			if(grid){
+				grid(lty=1, equilogs=FALSE)
+				box()}
+		}
+		if (plot.points)  points(x, y, col=col[1], ...)
+	}
 	dfn <- 2
 	dfd <- length(x) - 1
 	if (robust) {
@@ -85,63 +103,78 @@ dataEllipse <- function(x, y, log="", levels=c(0.5, 0.95), center.pch=19,
 		shape <- var(cbind(x, y))
 		center <- c(mean(x), mean(y))
 	}
-	for (level in levels) {
+	result <- vector("list", length=length(levels))
+	names(result) <- levels
+	for (i in seq(along=levels)) {
+		level <- levels[i]
 		radius <- sqrt(dfn * qf(level, dfn, dfd ))
-		ellipse(center, shape, radius, log=log,
-			center.pch=center.pch, center.cex=center.cex, segments=segments, 
-			col=col[2], lwd=lwd, fill=fill, fill.alpha=fill.alpha, ...)
+		result[[i]] <- ellipse(center, shape, radius, log=log,
+				center.pch=center.pch, center.cex=center.cex, segments=segments, 
+				col=col[2], lwd=lwd, fill=fill, fill.alpha=fill.alpha, draw=draw, ...)
 	}
+	invisible(if (length(levels) == 1) result[[1]] else result)
 }
+
 
 confidenceEllipse <- function (model, ...) {
 	UseMethod("confidenceEllipse")
 }
 
 confidenceEllipse.lm <- function(model, which.coef, levels=0.95, Scheffe=FALSE, 
-	center.pch=19, center.cex=1.5, segments=51, xlab, ylab, 
-	col=palette()[2], lwd=2, fill=FALSE, fill.alpha=0.3, add=FALSE, ...){
+		center.pch=19, center.cex=1.5, segments=51, xlab, ylab, 
+		col=palette()[2], lwd=2, fill=FALSE, fill.alpha=0.3, draw=TRUE, add=!draw, ...){
 	which.coef <- if(length(coefficients(model)) == 2) c(1, 2)
-		else{
-			if (missing(which.coef)){
-				if (has.intercept(model)) c(2,3) else c(1, 2)
-			} else which.coef
-		}
+			else{
+				if (missing(which.coef)){
+					if (has.intercept(model)) c(2,3) else c(1, 2)
+				} else which.coef
+			}
 	coef <- coefficients(model)[which.coef]
 	xlab <- if (missing(xlab)) paste(names(coef)[1], "coefficient")
 	ylab <- if (missing(ylab)) paste(names(coef)[2], "coefficient")
 	dfn <- if (Scheffe) sum(df.terms(model)) else 2
 	dfd <- df.residual(model)
 	shape <- vcov(model)[which.coef, which.coef]
-	for (level in rev(sort(levels))){
+	levels <- rev(sort(levels))
+	result <- vector("list", length=length(levels))
+	names(result) <- levels
+	for (i in seq(along=levels)){
+		level <- levels[i]
 		radius <- sqrt(dfn*qf(level, dfn, dfd))
 		add.plot <- !level==max(levels) | add
-		ellipse(coef, shape, radius, add=add.plot, xlab=xlab, ylab=ylab,
-			center.pch=center.pch, center.cex=center.cex, segments=segments, 
-			col=col, lwd=lwd, fill=fill, fill.alpha=fill.alpha, ...)
+		result[[i]] <- ellipse(coef, shape, radius, add=add.plot, xlab=xlab, ylab=ylab,
+				center.pch=center.pch, center.cex=center.cex, segments=segments, 
+				col=col, lwd=lwd, fill=fill, fill.alpha=fill.alpha, draw=draw, ...)
 	}
+	invisible(if (length(levels) == 1) result[[1]] else result)
 }
 
 
 confidenceEllipse.glm <- function(model, which.coef, levels=0.95, Scheffe=FALSE, 
-	center.pch=19, center.cex=1.5, segments=51, xlab, ylab,
-	col=palette()[2], lwd=2, fill=FALSE, fill.alpha=0.3, add=FALSE, ...){
+		center.pch=19, center.cex=1.5, segments=51, xlab, ylab,
+		col=palette()[2], lwd=2, fill=FALSE, fill.alpha=0.3, draw=TRUE, add=!draw, ...){
 	which.coef <- if(length(coefficients(model)) == 2) c(1, 2)
-		else{
-			if (missing(which.coef)){
-				if (has.intercept(model)) c(2, 3) else c(1, 2)
-			} else which.coef
-		}
+			else{
+				if (missing(which.coef)){
+					if (has.intercept(model)) c(2, 3) else c(1, 2)
+				} else which.coef
+			}
 	coef <- coefficients(model)[which.coef]
 	xlab <- if (missing(xlab)) paste(names(coef)[1], "coefficient")
 	ylab <- if (missing(ylab)) paste(names(coef)[2], "coefficient")
 	df <- if (Scheffe) sum(df.terms(model)) else 2
 	sumry <- summary(model, corr = FALSE)
 	shape <- vcov(model)[which.coef, which.coef]
-	for (level in rev(sort(levels))){
+	levels <- rev(sort(levels))
+	result <- vector("list", length=length(levels))
+	names(result) <- levels
+	for (i in seq(along=levels)){
+		level <- levels[i]
 		radius <- sqrt(qchisq(level, df))
 		add.plot <- !level==max(levels) | add
-		ellipse(coef, shape, radius, add=add.plot, xlab=xlab, ylab=ylab,
-			center.pch=center.pch, center.cex=center.cex, segments=segments,
-			col=col, lwd=lwd, fill=fill, fill.alpha=fill.alpha, ...)
+		result[[i]] <- ellipse(coef, shape, radius, add=add.plot, xlab=xlab, ylab=ylab,
+				center.pch=center.pch, center.cex=center.cex, segments=segments,
+				col=col, lwd=lwd, fill=fill, fill.alpha=fill.alpha, draw=draw, ...)
 	}
+	invisible(if (length(levels) == 1) result[[1]] else result)
 }

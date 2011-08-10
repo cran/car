@@ -10,6 +10,8 @@
 # modified 2 Sept 2010 by S. Weisberg, made colors, axes lables, and
 # arguments more consistent with other functions; ... passes args to plot
 # and boxplot.
+# 16 June 2011 allow layout=NA, in which case the layout is not set in this
+#  function, so it is the responsibility of the user
 
 # these functions to be rewritten; simply renamed for now
 
@@ -28,14 +30,16 @@ crPlots<-function(model, terms= ~ ., layout=NULL, ask, main, ...){
   nt <- length(vterms)
   if (nt == 0) stop("No plots specified")
   if (missing(main)) main <- if (nt == 1) "Component + Residual Plot" else "Component + Residual Plots" 
-  if(is.null(layout)){
-   layout <- switch(min(nt,9), c(1,1), c(1,2), c(2,2), c(2,2),
-                               c(3,2), c(3,2), c(3,3), c(3,3), c(3,3))}
-  ask <- if(missing(ask) || is.null(ask)) prod(layout)<nt else ask
-  if(nt > 1){
-     op <- par(mfrow=layout, ask=ask, no.readonly=TRUE, 
+  if (nt > 1 & (is.null(layout) || is.numeric(layout))) {
+    if(is.null(layout)){
+         layout <- switch(min(nt, 9), c(1, 1), c(1, 2), c(2, 2), c(2, 2), 
+                             c(3, 2), c(3, 2), c(3, 3), c(3, 3), c(3, 3))
+    }
+    ask <- if(missing(ask) || is.null(ask)) prod(layout)<nt else ask
+    op <- par(mfrow=layout, ask=ask, no.readonly=TRUE, 
             oma=c(0, 0, 1.5, 0), mar=c(5, 4, 1, 2) + .1)
-     on.exit(par(op))}
+    on.exit(par(op))
+    }
 	if(!is.null(class(model$na.action)) && 
 		class(model$na.action) == 'exclude') class(model$na.action) <- 'omit'
   for(term in vterms) 

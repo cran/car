@@ -16,6 +16,8 @@
 # 16 January 2011 improved handling of splines and polynomials in mmps to
 #    allow plots against base variables (e.g., bs(x, 3) could be
 #    replaced by just x in the 'terms' argument to mmps.
+# 16 June 2011 allow layout=NA, in which case the layout is not set in this
+#  function, so it is the responsibility of the user
 #############################################
 marginalModelPlot <- function(...){mmp(...)}
 mmp <- function(model, ...){UseMethod("mmp")}
@@ -212,16 +214,17 @@ mmps <- function(model, terms= ~ ., fitted=TRUE, layout=NULL, ask,
   nt <- sum(!is.na(type2)) + fitted
   if (missing(main)) main <- if (nt == 1) "Marginal Model Plot" else
      "Marginal Model Plots"
-  if(is.null(layout)){
-   layout <- switch(min(nt, 9),
-           c(1, 1), c(1, 2), c(2, 2), c(2, 2), c(3, 2), c(3, 2),
-           c(3, 3), c(3, 3), c(3, 3))}
-  ask <- if(missing(ask) || is.null(ask)) prod(layout) < nt else ask
-  if( prod(layout) > 1) {
-    op <- par(mfrow=layout, ask=ask, no.readonly=TRUE,
-            oma=c(0, 0, 2.5, 0), mar=c(5, 4, 1.5, 1.5) + .1)
+  if (nt == 0) stop("No plots specified")
+  if (nt > 1 & (is.null(layout) || is.numeric(layout))) {
+    if(is.null(layout)){
+         layout <- switch(min(nt, 9), c(1, 1), c(1, 2), c(2, 2), c(2, 2), 
+                             c(3, 2), c(3, 2), c(3, 3), c(3, 3), c(3, 3))
+    }
+    ask <- if(missing(ask) || is.null(ask)) prod(layout)<nt else ask
+    op <- par(mfrow=layout, ask=ask, no.readonly=TRUE, 
+            oma=c(0, 0, 1.5, 0), mar=c(5, 4, 1, 2) + .1)
     on.exit(par(op))
-  }
+    }
   if (length(labels2) > 0) {
     for (j in 1:length(labels2)) {
       if(!is.na(type2[j])) {

@@ -28,14 +28,16 @@ dfbetasPlots.lm <- function(model, terms= ~ ., intercept=FALSE, layout=NULL, ask
 	if (missing(main)) main <- if (nt == 1) "dfbetas Plot" else "dfbetas Plots"
 	if (missing(xlab)) xlab <- "Index"
 	autolabel <- missing(ylab)
-	if(is.null(layout)){
-		layout <- switch(min(nt,9), c(1,1), c(1,2), c(2,2), c(2,2),
-				c(3,2), c(3,2), c(3,3), c(3,3), c(3,3))}
-	nr <- 0
-	ask <- if(missing(ask) || is.null(ask)) prod(layout)<nt else ask
-	op<-par(no.readonly=TRUE, oma=c(0, 0, 1.5, 0), 
-			mar=c(5, 4, 1, 2) + .1, mfrow=layout, ask=ask)
-	on.exit(par(op))
+  if (nt > 1 & (is.null(layout) || is.numeric(layout))) {
+    if(is.null(layout)){
+         layout <- switch(min(nt, 9), c(1, 1), c(1, 2), c(2, 2), c(2, 2), 
+                             c(3, 2), c(3, 2), c(3, 3), c(3, 3), c(3, 3))
+    }
+    ask <- if(missing(ask) || is.null(ask)) prod(layout)<nt else ask
+    op <- par(mfrow=layout, ask=ask, no.readonly=TRUE, 
+            oma=c(0, 0, 1.5, 0), mar=c(5, 4, 1, 2) + .1)
+    on.exit(par(op))
+    }
 	dfbetas <- dfbetas(model)
 	for (term in good) {
 		dfbs <- dfbetas[, term]
@@ -80,14 +82,16 @@ dfbetaPlots.lm <- function(model, terms=~., intercept=FALSE, layout=NULL, ask,
 	if (missing(main)) main <- if (nt == 1) "dfbeta Plot" else "dfbeta Plots"
 	if (missing(xlab)) xlab <- "Index"
 	autolabel <- missing(ylab)
-	if(is.null(layout)){
-		layout <- switch(min(nt,9), c(1,1), c(1,2), c(2,2), c(2,2),
-				c(3,2), c(3,2), c(3,3), c(3,3), c(3,3))}
-	nr <- 0
-	ask <- if(missing(ask) || is.null(ask)) prod(layout)<nt else ask
-	op<-par(no.readonly=TRUE, oma=c(0, 0, 1.5, 0), 
-			mar=c(5, 4, 1, 2) + .1, mfrow=layout, ask=ask)
-	on.exit(par(op))
+  if (nt > 1 &  (is.null(layout) || is.numeric(layout))) {
+    if(is.null(layout)){
+         layout <- switch(min(nt, 9), c(1, 1), c(1, 2), c(2, 2), c(2, 2), 
+                             c(3, 2), c(3, 2), c(3, 3), c(3, 3), c(3, 3))
+    }
+    ask <- if(missing(ask) || is.null(ask)) prod(layout)<nt else ask
+    op <- par(mfrow=layout, ask=ask, no.readonly=TRUE, 
+            oma=c(0, 0, 1.5, 0), mar=c(5, 4, 1, 2) + .1)
+    on.exit(par(op))
+    }
 	dfbeta <- dfbeta(model)
 	seb <- sqrt(diag(vcov(model)))
 	for (term in good) {

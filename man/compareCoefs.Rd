@@ -17,7 +17,8 @@ compareCoefs(..., se = TRUE, digits = 3)
   \item{\dots}{
 One or more regression-model objects.  These may be of class \code{lm}, \code{glm},
 \code{nlm}, or any other regression method for which the functions \code{coef} and 
-\code{vcov} return appropriate values.
+\code{vcov} return appropriate values, or if the object inherits from the \code{mer}
+class created by the \code{lme4} package.
 }
   \item{se}{
 If \code{TRUE}, the default, show standard errors as well as estimates, if \code{FALSE},

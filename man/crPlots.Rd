@@ -40,10 +40,15 @@ specification \code{terms = ~ . - X3} would plot against all predictors
 except for \code{X3}.  If this argument is a quoted name of one of the predictors, the 
 component-plus-residual plot is drawn for that predictor only.
 }
-  \item{layout}{ If set to a value like \code{c(1,1)} or \code{c(4,3)}, the layout
-of the graph will have this many rows and columns.  If not set, the program will
-select an appropriate layout.  If the number of graphs exceed nine, you must 
-select the layout yourself, or you will get a maximum of nine per page.}
+  \item{layout}{ 
+If set to a value like \code{c(1, 1)} or \code{c(4, 3)}, the layout
+of the graph will have this many rows and columns.  If not set, the program
+will select an appropriate layout.  If the number of graphs exceed nine, you 
+must select the layout yourself, or you will get a maximum of nine per page.
+If \code{layout=NA}, the function does not set the layout and the user can
+use the \code{par} function to control the layout, for example to have 
+plots from two models in the same graphics window.
+}
   \item{ask}{If \code{TRUE}, ask the user before drawing the next plot; if \code{FALSE}, the default,  don't ask.
 This is relevant only if not all the graphs can be drawn in one window.}
   \item{main}{The title of the plot; if missing, one will be supplied.}

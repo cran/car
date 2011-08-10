@@ -52,9 +52,15 @@ marginalModelPlot(...)
 \item{fitted}{If the default \code{TRUE}, then a marginal model plot in the direction
   of the fitted values or linear predictor of a generalized linear model will
   be drawn.}
-\item{layout}{A reasonable layout for the plots in the window is
-  determined by the program.  If you don't like the default you can set your
-  own layout:  \code{c(2, 3)} means two rows and three columns.}
+  \item{layout}{ 
+If set to a value like \code{c(1, 1)} or \code{c(4, 3)}, the layout
+of the graph will have this many rows and columns.  If not set, the program
+will select an appropriate layout.  If the number of graphs exceed nine, you 
+must select the layout yourself, or you will get a maximum of nine per page.
+If \code{layout=NA}, the function does not set the layout and the user can
+use the \code{par} function to control the layout, for example to have 
+plots from two models in the same graphics window.
+}
 \item{ask}{If \code{TRUE}, ask before clearing the graph window to draw more plots.}
         \item{main}{
 Main title for the array of plots.  Use \code{main=""} to suppress the title;

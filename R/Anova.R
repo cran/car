@@ -14,6 +14,8 @@
 #             (failed because of changes in survival package.
 # 2011-01-21: Added functions for mixed models. J. Fox
 # 2011-01-25: Fixed Anova.polr() and Anova.multinom() to work with models with only one term. J. Fox
+# 2011-05-19: local fixef() to avoid nlme/lme4 issues. J. Fox
+# 2011-05-11: changed order of columns in ANOVA tables for mixed models. J. Fox
 #-------------------------------------------------------------------------------
 
 # Type II and III tests for linear, generalized linear, and other models (J. Fox)
@@ -1442,6 +1444,12 @@ Anova.III.default <- function(mod, vcov., test, singular.ok=FALSE, ...){
 
 ## functions for mixed models
 
+# the following function, not exported, to make nlme play better with lme4
+
+fixef <- function (object){
+	if (isS4(object)) object@fixef else object$coefficients$fixed
+}
+
 Anova.mer <- function(mod, type=c("II","III", 2, 3),
 		vcov.=vcov(mod), singular.ok, ...){
 	type <- as.character(type)
@@ -1496,9 +1504,9 @@ Anova.II.mer <- function(mod, vcov., singular.ok=TRUE, ...){
 		df[i] <- abs(hyp["df"])
 		p[i] <- pchisq(teststat[i], df[i], lower.tail=FALSE) 
 	}    
-	result <- data.frame(df, teststat, p)
+	result <- data.frame(teststat, df, p)
 	row.names(result) <- names
-	names(result) <- c ("Df", "Chisq", "Pr(>Chisq)")
+	names(result) <- c ("Chisq", "Df", "Pr(>Chisq)")
 	class(result) <- c("anova", "data.frame")
 	attr(result, "heading") <- c("Analysis of Deviance Table (Type II tests)\n", 
 			paste("Response:", responseName(mod)))
@@ -1536,9 +1544,9 @@ Anova.III.mer <- function(mod, vcov., singular.ok=FALSE, ...){
 			p[term] <- pchisq(teststat[term], df[term], lower.tail=FALSE) 
 		}
 	}
-	result <- data.frame(df, teststat, p)
+	result <- data.frame(teststat, df, p)
 	row.names(result) <- names
-	names(result) <- c ("Df", "Chisq",  "Pr(>Chisq)")
+	names(result) <- c ("Chisq", "Df", "Pr(>Chisq)")
 	class(result) <- c("anova", "data.frame")
 	attr(result, "heading") <- c("Analysis of Deviance Table (Type III tests)\n", 
 			paste("Response:", responseName(mod)))
@@ -1599,9 +1607,9 @@ Anova.II.lme <- function(mod, vcov., singular.ok=TRUE, ...){
 		df[i] <- abs(hyp["df"])
 		p[i] <- pchisq(teststat[i], df[i], lower.tail=FALSE) 
 	}    
-	result <- data.frame(df, teststat, p)
+	result <- data.frame(teststat, df, p)
 	row.names(result) <- names
-	names(result) <- c ("Df", "Chisq", "Pr(>Chisq)")
+	names(result) <- c("Chisq", "Df", "Pr(>Chisq)")
 	class(result) <- c("anova", "data.frame")
 	attr(result, "heading") <- c("Analysis of Deviance Table (Type II tests)\n", 
 			paste("Response:", responseName(mod)))
@@ -1639,9 +1647,9 @@ Anova.III.lme <- function(mod, vcov., singular.ok=FALSE, ...){
 			p[term] <- pchisq(teststat[term], df[term], lower.tail=FALSE) 
 		}
 	}
-	result <- data.frame(df, teststat, p)
+	result <- data.frame(teststat, df, p)
 	row.names(result) <- names
-	names(result) <- c ("Df", "Chisq",  "Pr(>Chisq)")
+	names(result) <- c ("Chisq",  "Df", "Pr(>Chisq)")
 	class(result) <- c("anova", "data.frame")
 	attr(result, "heading") <- c("Analysis of Deviance Table (Type III tests)\n", 
 			paste("Response:", responseName(mod)))
