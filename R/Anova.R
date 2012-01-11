@@ -16,6 +16,8 @@
 # 2011-01-25: Fixed Anova.polr() and Anova.multinom() to work with models with only one term. J. Fox
 # 2011-05-19: local fixef() to avoid nlme/lme4 issues. J. Fox
 # 2011-05-11: changed order of columns in ANOVA tables for mixed models. J. Fox
+# 2011-11-27: added Anova.svyglm(). J. Fox
+# 2011-12-31: fixed bug in Anova.II(and III).F.glm() when na.exclude used. J. Fox
 #-------------------------------------------------------------------------------
 
 # Type II and III tests for linear, generalized linear, and other models (J. Fox)
@@ -269,7 +271,7 @@ Anova.III.F.glm <- function(mod, error, error.estimate, singular.ok=FALSE, ...){
 	if (missing(error)) error <- mod
 	df.res <- df.residual(error)
 	error.SS <- switch(error.estimate,
-			pearson=sum(residuals(error, "pearson")^2),
+			pearson=sum(residuals(error, "pearson")^2, na.rm=TRUE),
 			dispersion=df.res*summary(error, corr = FALSE)$dispersion,
 			deviance=deviance(error))
 	Source <- if (has.intercept(mod)) term.names(mod)[-1]
@@ -360,7 +362,7 @@ Anova.II.F.glm <- function(mod, error, error.estimate, singular.ok=TRUE, ...){
 	if (missing(error)) error <- mod
 	df.res <- df.residual(error)
 	error.SS <- switch(error.estimate,
-			pearson = sum(residuals(error, "pearson")^2),
+			pearson = sum(residuals(error, "pearson")^2, na.rm=TRUE),
 			dispersion = df.res*summary(error, corr = FALSE)$dispersion,
 			deviance = deviance(error))
 	fac <- attr(mod$terms, "factors")
@@ -1655,3 +1657,5 @@ Anova.III.lme <- function(mod, vcov., singular.ok=FALSE, ...){
 			paste("Response:", responseName(mod)))
 	result
 }
+
+Anova.svyglm <- function(mod, ...) Anova.default(mod, ...)

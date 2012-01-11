@@ -112,7 +112,7 @@ function that computes numerical derivatives, and for this case you can replace
 the names of the estimates with the \code{parameterNames} argument.  For
 example, the ratio of the
 \code{X2} main effect to the interaction term could be computed using
-\code{deltaMethod(m2, "b1*b3", parameterNames=c("b0", "b1", "b2", "b3"))}.
+\code{deltaMethod(m2, "b1/b3", parameterNames=c("b0", "b1", "b2", "b3"))}.
 The name \dQuote{\code{(Intercept)}} used for the intercept in linear and generalized
 linear models is an exception, and it will be correctly interpreted by
 \code{deltaMethod}.

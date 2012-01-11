@@ -1,20 +1,28 @@
 # 21 May 2010: small changes to output when there is just one model. J. Fox 
 # 15 Aug 2010: changed name of function to compareCoefs to avoid name clash. J. Fox
-# 18 May 2011: check for 'mer' objects, and handle them correctly.
+# 18 May 2011: check for 'mer' objects, and handle them correctly. S. Weisberg
+#  8 Sep 2011: check for 'lme' objects, and handle them correctly. S. Weisberg
+# 11 Jan 2012: fix to work with any 'S4' object with a coef() method. 
+#   suggested by David Hugh-Jones  University of Warwick http://davidhughjones.googlepages.com 
 
-compareCoefs <- function(..., se=TRUE, digits=3){
+compareCoefs <- function(..., se=TRUE, print=TRUE, digits=3){
+    fixefmer <- function(m) {
+      if(inherits(m, "mer")) m@fixef else fixef(m)
+    }
     models <- list(...)
     n.models <- length(models)
     if (n.models < 1) return(NULL)
     getnames <- function(model) {
-      if(inherits(model, "mer")) names(fixef(model)) else
+      if(inherits(model, "mer") | inherits(model, "lme")) names(fixef(model)) else
          names(coef(model))
          }
     getcoef <- function(model) {
-       if(inherits(model, "mer")) fixef(model) else coef(model)
+      if(inherits(model, "mer") | inherits(model, "lme")) fixef(model) else 
+          coef(model)
        }
     getcall <- function(model) {
-       if(inherits(model, "mer")) model@call else model$call
+      deparse(if (isS4(model)) model@call else model$call, 
+               width.cutoff =  getOption("width") - 9)
        }
     getvar <- function(model) {
        if(inherits(model, "mer")) as.matrix(vcov(model)) else vcov(model)
@@ -24,19 +32,23 @@ compareCoefs <- function(..., se=TRUE, digits=3){
     rownames(table) <- coef.names
     colnames(table) <- if (se) if (n.models > 1) paste(rep(c("Est.", "SE"), n.models),
                            rep(1:n.models, each=2)) else c("Estimate", "Std. Error")
-        else if (n.models > 1) paste(rep("Est.", n.models), 1:n.models) else "Estimate"
-    cat("\nCall:")
+        else if (n.models > 1) paste(rep("Est.", n.models), 1:n.models) else "Estimate" 
+    if(print == TRUE) cat("\nCall:")
     for (i in 1:n.models){
         model <- models[[i]]
         fout <- deparse(getcall(model), width.cutoff=getOption("width") - 9)
 		mod <- if (n.models > 1) paste(i, ":", sep="") else ""
-        cat(paste("\n", mod, fout[1], sep=""))
+        if(print == TRUE) cat(paste("\n", mod, fout[1], sep=""))
         if(length(fout) > 1) for (f in fout[-1]) cat("\n",f)
         if (se) {
           table[getnames(model), 2*(i - 1) + c(1, 2)] <-
                 cbind(getcoef(model), sqrt(diag(getvar(model)))) }
         else table[getnames(model), i] <- getcoef(model)
     }
-    cat("\n")
-    printCoefmat(table, na.print="", digits=digits, tst.ind=NULL)
+    if(print == TRUE){ 
+      cat("\n")
+      printCoefmat(table, na.print="", digits=digits, tst.ind=NULL)} else
+    table
 }
+
+

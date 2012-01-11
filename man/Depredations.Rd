@@ -15,7 +15,7 @@ Wolf depredations of livestock on Minnesota farms, 1976-1998.
     \item{\code{latitude}}{latitude of the farm}
     \item{\code{number}}{number of depredations 1976-1998}
     \item{\code{early}}{number of depredations 1991 or before}
-    \item{\code{late}}{number of depredatoins 1992 or later}
+    \item{\code{late}}{number of depredations 1992 or later}
   }
 }
 

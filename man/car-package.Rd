@@ -12,10 +12,10 @@ Second Edition, Sage, 2011.
 \details{
 \tabular{ll}{
 Package: \tab car\cr
-Version: \tab 2.0-11\cr
-Date: \tab 2011/08/07\cr
-Depends: \tab R (>= 2.1.1), stats, graphics, MASS, nnet, survival\cr
-Suggests: \tab alr3, leaps, lme4, lmtest, sandwich, mgcv, nlme, rgl\cr
+Version: \tab 2.0-12\cr
+Date: \tab 2012/01/10\cr
+Depends: \tab R (>= 2.1.1), stats, graphics, MASS, nnet\cr
+Suggests: \tab alr3, leaps, lme4, lmtest, sandwich, mgcv, nlme, rgl, survival, survey\cr
 License: \tab GPL (>= 2)\cr
 URL: \tab \url{http://CRAN.R-project.org/package=car}, 
 	\url{http://socserv.socsci.mcmaster.ca/jfox/Books/Companion},

@@ -10,7 +10,7 @@ their standard errors from one or more models and prints them in a
 table.
 }
 \usage{
-compareCoefs(..., se = TRUE, digits = 3)
+compareCoefs(..., se = TRUE, print=TRUE, digits = 3)
 }
 
 \arguments{
@@ -18,11 +18,17 @@ compareCoefs(..., se = TRUE, digits = 3)
 One or more regression-model objects.  These may be of class \code{lm}, \code{glm},
 \code{nlm}, or any other regression method for which the functions \code{coef} and 
 \code{vcov} return appropriate values, or if the object inherits from the \code{mer}
-class created by the \code{lme4} package.
+class created by the \code{lme4} package or \code{lme} in the \code{nlme}
+package.
 }
   \item{se}{
 If \code{TRUE}, the default, show standard errors as well as estimates, if \code{FALSE},
 show only estimates.
+}
+\item{print}{
+If \code{TRUE}, the defualt, the results are printed in a nice format
+using \code{\link{printCoefmat}}.  If
+\code{FALSE}, the results are returned as a matrix
 }
   \item{digits}{
 Passed to the \code{\link{printCoefmat}} function for printing the result.

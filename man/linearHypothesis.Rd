@@ -9,6 +9,7 @@
 %   2011-01-21 added linearHypothesis.mer(), linearHypothesis.lme,
 %              matchCoefs() and methods. J. Fox
 %   2011-06-09 added matchCoefs.mlm(). J. Fox
+%   2011-11-13 clarification of test argument in linearHypothesis.mlm(). J. Fox
 %-------------------------------------------------------------------------------
 
 \name{linearHypothesis}
@@ -21,6 +22,7 @@
 \alias{linearHypothesis.default}
 \alias{linearHypothesis.mer}
 \alias{linearHypothesis.lme}
+\alias{linearHypothesis.svyglm}
 \alias{print.linearHypothesis.mlm}
 \alias{matchCoefs}
 \alias{matchCoefs.default}
@@ -68,6 +70,8 @@ lht(model, ...)
     
 \method{linearHypothesis}{mer}(model, hypothesis.matrix, rhs=NULL,
 		vcov.=NULL, singular.ok=FALSE, verbose=FALSE, ...)
+		
+\method{linearHypothesis}{svyglm}(model, ...)
     
 %%\method{coef}{multinom}(object, ...)
 
@@ -128,7 +132,7 @@ matchCoefs(model, pattern, ...)
     specifying whether to compute the finite-sample
     F statistic (with approximate F distribution) or the large-sample
     Chi-squared statistic (with asymptotic Chi-squared distribution). For a
-    multivariate linear model, the multivariate test statistic to report --- one of
+    multivariate linear model, the multivariate test statistic to report --- one or more of
     \code{"Pillai"}, \code{"Wilks"}, \code{"Hotelling-Lawley"}, or \code{"Roy"}, 
     with \code{"Pillai"} as the default.}
   \item{title}{an optional character string to label the output.}
@@ -171,7 +175,8 @@ matchCoefs(model, pattern, ...)
   changes the default test to \code{"F"}, supports the convenience argument
   \code{white.adjust} (for backwards compatibility), and enhances the output
   by the residual sums of squares. For \code{"glm"} objects just the default
-  method is called (bypassing the \code{"lm"} method).
+  method is called (bypassing the \code{"lm"} method). The \code{svyglm} method
+  also calls the default method.
 
   The function \code{lht} also dispatches to \code{linearHypothesis}.
 

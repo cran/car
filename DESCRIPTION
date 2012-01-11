@@ -1,16 +1,23 @@
 Package: car
-Version: 2.0-11
-Date: 2011/08/07
+Version: 2.0-12
+Date: 2012/01/11
 Title: Companion to Applied Regression
-Author: John Fox <jfox@mcmaster.ca> and Sanford Weisberg
-        <sandy@stat.umn.edu>. We are grateful to Douglas Bates, David
-        Firth, Michael Friendly, Gregor Gorjanc, Spencer Graves,
-        Richard Heiberger, Rafael Laboissiere, Georges Monette, Henric
-        Nilsson, Derek Ogle, Brian Ripley, and Achim Zeileis for
-        various suggestions and contributions.
-Maintainer: John Fox <jfox@mcmaster.ca>
-Depends: R (>= 2.10), stats, graphics, MASS, nnet, survival
-Suggests: alr3, leaps, lme4, lmtest, nlme, sandwich, mgcv, rgl
+Authors@R: c(person("John", "Fox", role = c("aut", "cre"), email =
+        "jfox@mcmaster.ca"), person("Sanford", "Weisberg", role =
+        "aut", email = "sandy@stat.umn.edu"), person("Douglas",
+        "Bates", role = "ctb"), person("David", "Firth", role = "ctb"),
+        person("Michael", "Friendly", role = "ctb"), person("Gregor",
+        "Gorjanc", role = "ctb"), person("Spencer", "Graves", role =
+        "ctb"), person("Richard", "Heiberger", role = "ctb"),
+        person("Rafael", "Laboissiere", role = "ctb"),
+        person("Georges", "Monette", role = "ctb"), person("Henric",
+        "Nilsson", role = "ctb"), person("Derek", "Ogle", role =
+        "ctb"), person("Brian", "Ripley", role = "ctb"),
+        person("Achim", "Zeileis", role = "ctb"))
+Depends: R (>= 2.14.0), stats, graphics, MASS, nnet
+Suggests: alr3, leaps, lme4, lmtest, nlme, sandwich, mgcv, rgl,
+        survival, survey
+ByteCompile: yes
 LazyLoad: yes
 LazyData: yes
 Description: This package accompanies J. Fox and S. Weisberg, An R
@@ -21,6 +28,13 @@ URL: https://r-forge.r-project.org/projects/car/,
         http://socserv.socsci.mcmaster.ca/jfox/Books/Companion/index.html
 Repository: CRAN
 Repository/R-Forge/Project: car
-Repository/R-Forge/Revision: 222
-Date/Publication: 2011-08-10 05:49:32
-Packaged: 2011-08-07 20:46:39 UTC; rforge
+Repository/R-Forge/Revision: 240
+Date/Publication: 2012-01-17 18:27:35
+Packaged: 2012-01-11 22:07:22 UTC; rforge
+Author: John Fox [aut, cre], Sanford Weisberg [aut], Douglas Bates
+        [ctb], David Firth [ctb], Michael Friendly [ctb], Gregor
+        Gorjanc [ctb], Spencer Graves [ctb], Richard Heiberger [ctb],
+        Rafael Laboissiere [ctb], Georges Monette [ctb], Henric Nilsson
+        [ctb], Derek Ogle [ctb], Brian Ripley [ctb], Achim Zeileis
+        [ctb]
+Maintainer: John Fox <jfox@mcmaster.ca>
