@@ -3,7 +3,7 @@ citHeader("To cite the car package in publications use:")
 citEntry(entry = "Book",
   title        = "An {R} Companion to Applied Regression",
   edition	   = "Second",
-  author       = personList(as.person("John Fox"), as.person("Sandford Weisberg")),
+  author       = personList(as.person("John Fox"), as.person("Sanford Weisberg")),
   year         = "2011",
   publisher    = "Sage",
   address      = "Thousand Oaks {CA}",

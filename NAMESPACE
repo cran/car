@@ -1,4 +1,4 @@
-# last modified 6 June 2011 by J. Fox
+# last modified 2011-11-27 by J. Fox
 
 export(
     basicPowerAxis,
@@ -137,6 +137,7 @@ S3method(Anova, multinom)
 S3method(Anova, mlm)
 S3method(Anova, polr)
 S3method(Anova, survreg)
+S3method(Anova, svyglm)
 S3method(avPlot, lm)
 S3method(avPlot, glm)
 S3method(bootCase, lm)
@@ -189,6 +190,7 @@ S3method(linearHypothesis, lme)
 S3method(linearHypothesis, mer)
 S3method(linearHypothesis, mlm)
 S3method(linearHypothesis, polr)
+S3method(linearHypothesis, svyglm)
 S3method(Manova, mlm)
 S3method(matchCoefs, default)
 S3method(matchCoefs, lme)

@@ -23,6 +23,7 @@
 \alias{print.Anova.mlm}
 \alias{summary.Anova.mlm}
 \alias{Anova.coxph}
+\alias{Anova.svyglm}
 \alias{Anova.default}
 \title{Anova Tables for Various Statistical Models}
 \description{
@@ -83,6 +84,8 @@ Manova(mod, ...)
 
 \method{Anova}{mer}(mod, type=c("II","III", 2, 3),
 		vcov.=vcov(mod), singular.ok, ...)
+		
+\method{Anova}{svyglm}(mod, ...)
 	
 \method{Anova}{default}(mod, type=c("II","III", 2, 3), 
 	test.statistic=c("Chisq", "F"), vcov.=vcov(mod), 
@@ -91,7 +94,7 @@ Manova(mod, ...)
 
 \arguments{
   \item{mod}{\code{lm}, \code{aov}, \code{glm}, \code{multinom}, \code{polr}
-    \code{mlm}, \code{coxph} or other suitable model object.}
+    \code{mlm}, \code{coxph}, \code{lme}, \code{mer}, \code{svyglm} or other suitable model object.}
   \item{error}{for a linear model, an \code{lm} model object from which the
     error sum of squares and degrees of freedom are to be calculated. For 
     F-tests for a generalized linear model, a \code{glm} object from which the
@@ -165,8 +168,9 @@ Manova(mod, ...)
   these tests in linear models.
   
   For tests for linear models, multivariate linear models, and Wald tests for generalized linear models,
-  Cox models, and in the default case,
-  \code{Anova} finds the test statistics without refitting the model.
+  Cox models, mixed-effects models, generalized linear models fit to survey data, and in the default case,
+  \code{Anova} finds the test statistics without refitting the model. The \code{svyglm} method simply
+  calls the \code{default} method and therefore can take the same arguments.
   
   The standard R \code{anova} function calculates sequential ("type-I") tests.
   These rarely test interesting hypotheses in unbalanced designs.
@@ -218,7 +222,7 @@ Manova(mod, ...)
 
 \seealso{ \code{\link{linearHypothesis}}, \code{\link[stats]{anova}}
 \code{\link[stats]{anova.lm}}, \code{\link[stats]{anova.glm}}, 
-\code{\link[stats]{anova.mlm}}, \code{\link[survival]{anova.coxph}}.}
+\code{\link[stats]{anova.mlm}}, \code{\link[survival]{anova.coxph}}, \code{link[survey]{svyglm}}.}
 
 \examples{
 
