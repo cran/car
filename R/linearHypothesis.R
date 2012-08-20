@@ -14,6 +14,9 @@
 #   2011-06-09: added matchCoefs.mlm(). J. Fox
 #   2011-11-27: added linearHypothesis.svyglm(). John
 #   2011-12-27: fixed printing bug in linearHypothesis(). John
+#   2012-02-28: added F-test to linearHypothesis.mer(). John
+#   2012-03-07: singular.ok argument added to linearHypothesis.mlm(). J. Fox
+#   2012-08-20: Fixed p-value bug for chisq test in .mer method. John
 #---------------------------------------------------------------------------------------
 
 vcov.default <- function(object, ...){
@@ -258,7 +261,7 @@ check.imatrix <- function(X, terms){
 
 linearHypothesis.mlm <- function(model, hypothesis.matrix, rhs=NULL, SSPE, V,
 		test, idata, icontrasts=c("contr.sum", "contr.poly"), idesign, iterms,
-		check.imatrix=TRUE, P=NULL, title="", verbose=FALSE, ...){
+		check.imatrix=TRUE, P=NULL, title="", singular.ok=FALSE, verbose=FALSE, ...){
 	if (missing(test)) test <- c("Pillai", "Wilks", "Hotelling-Lawley", "Roy")
 	test <- match.arg(test, c("Pillai", "Wilks", "Hotelling-Lawley", "Roy"),
 			several.ok=TRUE)
@@ -311,7 +314,7 @@ linearHypothesis.mlm <- function(model, hypothesis.matrix, rhs=NULL, SSPE, V,
 		B <- B %*% P
 	}
 	rank <- sum(eigen(SSPE, only.values=TRUE)$values >= sqrt(.Machine$double.eps))
-	if (rank < ncol(SSPE))
+	if (!singular.ok && rank < ncol(SSPE))
 		stop("The error SSP matrix is apparently of deficient rank = ",
 				rank, " < ", ncol(SSPE))
 	r <- ncol(B)
@@ -330,11 +333,10 @@ linearHypothesis.mlm <- function(model, hypothesis.matrix, rhs=NULL, SSPE, V,
 	}
 	SSPH <- t(L %*% B - rhs) %*% solve(L %*% V %*% t(L)) %*% (L %*% B - rhs)
 	rval <- list(SSPH=SSPH, SSPE=SSPE, df=q, r=r, df.residual=df.residual, P=P,
-			title=title, test=test)
+			title=title, test=test, singular=rank < ncol(SSPE))
 	class(rval) <- "linearHypothesis.mlm"
 	rval
 }
-
 
 #linearHypothesis.mlm <- function(model, hypothesis.matrix, rhs=NULL, SSPE, V,
 #   test, idata, icontrasts=c("contr.sum", "contr.poly"), idesign, iterms,
@@ -430,6 +432,10 @@ print.linearHypothesis.mlm <- function(x, SSP=TRUE, SSPE=SSP,
 		cat("\nSum of squares and products for error:\n")
 		print(x$SSPE, digits=digits)
 	}
+	if ((!is.null(x$singular)) && x$singular){
+		warning("the error SSP matrix is singular; multivariate tests are unavailable")
+		return(invisible(x))
+	}
 	SSPE.qr <- qr(x$SSPE)
 	# the following code is adapted from summary.manova
 	eigs <- Re(eigen(qr.coef(SSPE.qr, x$SSPH), symmetric = FALSE)$values)
@@ -485,7 +491,8 @@ coef.multinom <- function(object, ...){
 ## functions for mixed models
 
 linearHypothesis.mer <- function(model, hypothesis.matrix, rhs=NULL,
-		vcov.=NULL, singular.ok=FALSE, verbose=FALSE, ...){
+		vcov.=NULL, test=c("chisq", "F"), singular.ok=FALSE, verbose=FALSE, ...){
+	test <- match.arg(test)
 	V <- as.matrix(if (is.null(vcov.))vcov(model)
 					else if (is.function(vcov.)) vcov.(model) else vcov.)
 	b <- fixef(model)
@@ -514,8 +521,19 @@ linearHypothesis.mer <- function(model, hypothesis.matrix, rhs=NULL,
 		print(drop(L %*% b - rhs))
 		cat("\n")
 	}
-	df <- Inf
-	SSH <- as.vector(t(L %*% b - rhs) %*% solve(L %*% V %*% t(L)) %*% (L %*% b - rhs))
+	if (test == "chisq"){
+		df <- Inf
+		SSH <- as.vector(t(L %*% b - rhs) %*% solve(L %*% V %*% t(L)) %*% (L %*% b - rhs))
+	}
+	else {
+		if (!require(pbkrtest)) stop("pbkrtest package required for F-test on linear mixed model")
+		if (model@dims["REML"] != 1) 
+			stop("F test available only for linear mixed model fit by REML")
+		res <- KRmodcomp(model, L)$stats
+		df <- res[["df2"]]
+		F <- res[["Fstat"]]
+		p <- res[["p.value"]]
+	}
 	name <- try(formula(model), silent = TRUE)
 	if (inherits(name, "try-error")) name <- substitute(model)
 	title <- "Linear hypothesis test\n\nHypothesis:"
@@ -524,12 +542,20 @@ linearHypothesis.mer <- function(model, hypothesis.matrix, rhs=NULL,
 	note <- if (is.null(vcov.)) ""
 			else "\nNote: Coefficient covariance matrix supplied.\n"
 	rval <- matrix(rep(NA, 8), ncol = 4)
-	colnames(rval) <- c("Res.Df", "Df", "Chisq",  paste("Pr(> Chisq)", sep = ""))
-	rownames(rval) <- 1:2
-	rval[,1] <- c(df+q, df)
-	p <- pchisq(SSH, q, lower.tail = FALSE)
-	rval[2, 2:4] <- c(q, SSH, p)
-	rval <- rval[,-1]
+	if (test == "chisq"){
+		colnames(rval) <- c("Res.Df", "Df", "Chisq",  paste("Pr(> Chisq)", sep = ""))
+		rownames(rval) <- 1:2
+		rval[,1] <- c(df+q, df)
+		p <- pchisq(SSH, q, lower.tail = FALSE)
+		rval[2, 2:4] <- c(q, SSH, p)
+		rval <- rval[,-1]
+	}
+	else{
+		colnames(rval) <- c("Res.Df", "Df", "F",  paste("Pr(> F)", sep = ""))
+		rownames(rval) <- 1:2
+		rval[,1] <- c(df+q, df)
+		rval[2, 2:4] <- c(q, F, p)
+	}
 	structure(as.data.frame(rval),
 			heading = c(title, printHypothesis(L, rhs, names(b)), "", topnote, note),
 			class = c("anova", "data.frame"))

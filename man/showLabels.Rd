@@ -74,9 +74,11 @@ Finally, if the axes in the graph are logged, the function uses logged-variables
 where appropriate.
 }
 \value{
-A utility function used for its side-effect of drawing labels on a plot. 
-Although intended for use with other functions in the \code{car} package, 
-this function can be used directly.
+A utility function primarily used for its side-effect of drawing
+labels on a plot.
+Returns invisibly the labels of the selected points, or NULL if no
+points are selected. Although intended for use with other functions in
+the car package, this function can be used directly.
 }
 \references{
   Fox, J. and Weisberg, S. (2011) \emph{An R Companion to Applied Regression},

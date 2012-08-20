@@ -18,6 +18,7 @@
 #   - corrected bug in xlab, ylab in confidenceEllipse()
 #   - added dfn argument to .lm and .glm methods for confidenceEllipse()
 # Modified 14&16 Dec 2011 by J. Fox (suggested by Michael Friendly) to add weights argument to dataEllipse().
+# Modified 2 Feb 2012 by J. Fox: Improved handling of center.pch argument to ellipse() (suggestion of Rob Kushler).
 
 ellipse <- function(center, shape, radius, log="", center.pch=19, center.cex=1.5, segments=51, draw=TRUE, add=draw, 
 		xlab="", ylab="", col=palette()[2], lwd=2, fill=FALSE, fill.alpha=0.3,
@@ -65,7 +66,7 @@ ellipse <- function(center, shape, radius, log="", center.pch=19, center.cex=1.5
 			lines(ellipse, col=col, lwd=lwd, ... )
 			if (fill) polygon(ellipse, col=fill.col, border=NA)
 		} 	
-		if (center.pch) points(center[1], center[2], pch=center.pch, cex=center.cex, col=col)
+		if ((center.pch != FALSE) && (!is.null(center.pch))) points(center[1], center[2], pch=center.pch, cex=center.cex, col=col)
 	}
 	invisible(ellipse)
 }
@@ -127,21 +128,31 @@ confidenceEllipse <- function (model, ...) {
 	UseMethod("confidenceEllipse")
 }
 
-confidenceEllipse.lm <- function(model, which.coef, levels=0.95, Scheffe=FALSE, dfn,
+
+confidenceEllipse.lm <- function(model, which.coef, L, levels=0.95, Scheffe=FALSE, dfn,
 		center.pch=19, center.cex=1.5, segments=51, xlab, ylab, 
 		col=palette()[2], lwd=2, fill=FALSE, fill.alpha=0.3, draw=TRUE, add=!draw, ...){
-	which.coef <- if(length(coefficients(model)) == 2) c(1, 2)
-			else{
-				if (missing(which.coef)){
-					if (has.intercept(model)) c(2,3) else c(1, 2)
-				} else which.coef
-			}
-	coef <- coefficients(model)[which.coef]
-	if (missing(xlab)) xlab <- paste(names(coef)[1], "coefficient")
-	if (missing(ylab)) ylab <-  paste(names(coef)[2], "coefficient")
 	if (missing(dfn)) dfn <- if (Scheffe) sum(df.terms(model)) else 2
 	dfd <- df.residual(model)
-	shape <- vcov(model)[which.coef, which.coef]
+	if (missing(L)){
+		which.coef <- if(length(coefficients(model)) == 2) c(1, 2)
+				else{
+					if (missing(which.coef)){
+						if (has.intercept(model)) c(2,3) else c(1, 2)
+					} else which.coef
+				}
+		coef <- coefficients(model)[which.coef]
+		if (missing(xlab)) xlab <- paste(names(coef)[1], "coefficient")
+		if (missing(ylab)) ylab <-  paste(names(coef)[2], "coefficient")
+		shape <- vcov(model)[which.coef, which.coef]
+	}
+	else {
+		res <- makeLinearCombinations(L, coef(model), vcov(model))
+		coef <- res$coef
+		xlab <- res$xlab
+		ylab <- res$ylab
+		shape <- res$shape
+	}
 	levels <- rev(sort(levels))
 	result <- vector("list", length=length(levels))
 	names(result) <- levels
@@ -157,22 +168,30 @@ confidenceEllipse.lm <- function(model, which.coef, levels=0.95, Scheffe=FALSE, 
 }
 
 
-confidenceEllipse.glm <- function(model, which.coef, levels=0.95, Scheffe=FALSE, dfn,
+confidenceEllipse.default <- function(model, which.coef, L, levels=0.95, Scheffe=FALSE, dfn,
 		center.pch=19, center.cex=1.5, segments=51, xlab, ylab,
 		col=palette()[2], lwd=2, fill=FALSE, fill.alpha=0.3, draw=TRUE, add=!draw, ...){
-	which.coef <- if(length(coefficients(model)) == 2) c(1, 2)
-			else{
-				if (missing(which.coef)){
-					if (has.intercept(model)) c(2, 3) else c(1, 2)
-				} else which.coef
-			}
-	coef <- coefficients(model)[which.coef]
-	xlab <- if (missing(xlab)) paste(names(coef)[1], "coefficient")
-	ylab <- if (missing(ylab)) paste(names(coef)[2], "coefficient")
+	if (missing(L)){
+		which.coef <- if(length(coefficients(model)) == 2) c(1, 2)
+				else{
+					if (missing(which.coef)){
+						if (has.intercept(model)) c(2, 3) else c(1, 2)
+					} else which.coef
+				}
+		coef <- coefficients(model)[which.coef]
+		shape <- vcov(model)[which.coef, which.coef]
+		xlab <- if (missing(xlab)) paste(names(coef)[1], "coefficient")
+		ylab <- if (missing(ylab)) paste(names(coef)[2], "coefficient")
+	}
+	else {
+		res <- makeLinearCombinations(L, coef(model), vcov(model))
+		coef <- res$coef
+		xlab <- res$xlab
+		ylab <- res$ylab
+		shape <- res$shape
+	}
 	df <- if (!missing(dfn)) dfn
 			else if (Scheffe) sum(df.terms(model)) else 2
-	sumry <- summary(model, corr = FALSE)
-	shape <- vcov(model)[which.coef, which.coef]
 	levels <- rev(sort(levels))
 	result <- vector("list", length=length(levels))
 	names(result) <- levels
@@ -185,4 +204,28 @@ confidenceEllipse.glm <- function(model, which.coef, levels=0.95, Scheffe=FALSE,
 				col=col, lwd=lwd, fill=fill, fill.alpha=fill.alpha, draw=draw, ...)
 	}
 	invisible(if (length(levels) == 1) result[[1]] else result)
+}
+
+confidenceEllipse.glm <- function (model, chisq, ...) {
+	sumry <- summary(model)
+	if (missing(chisq)) chisq <- is.null(sumry$dispersion)
+	if (chisq) confidenceEllipse.default(model, ...)
+	else confidenceEllipse.lm(model, ...)
+}
+
+makeLinearCombinations <- function(L, coef, V){
+	nms <- names(coef)
+	if (is.character(L)){
+		L <- makeHypothesis(nms, L)
+		L <- L[, -ncol(L)]
+	}
+	if (nrow(L) != 2 || ncol(L) != length(coef))
+		stop("the hypothesis matrix is the wrong size")
+	coef <- as.vector(L %*% coef)
+	shape <- L %*% V %*% t(L)
+	L.nms <- printHypothesis(L, c(0, 0), nms)
+	names(coef) <- sub(" =.*", "", L.nms)
+	xlab <- names(coef)[1]
+	ylab <- names(coef)[2]
+	list(coef=coef, shape=shape, xlab=xlab, ylab=ylab)
 }

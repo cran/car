@@ -3,16 +3,22 @@
 # 2010-09-04: J. Fox: changed color choice
 # 2010-09-16: fixed point color when col is length 1
 # 2011-03-08: J. Fox: changed col argument
+# 2012-04018: J. Fox: fixed labels argument in scatterplotMatrix.formula()
 
 scatterplotMatrix <- function(x, ...){
 	UseMethod("scatterplotMatrix")
 }
 
 scatterplotMatrix.formula <- function (x, data=NULL, subset, labels, ...) {
+	na.save <- options(na.action=na.omit)
+	on.exit(options(na.save))
+	na.pass <- function(dframe) dframe
 	m <- match.call(expand.dots = FALSE)
 	if (is.matrix(eval(m$data, sys.frame(sys.parent())))) 
 		m$data <- as.data.frame(data)
+	m$na.action <- na.pass
 	m$labels <- m$formula <- m$... <- NULL
+	m$na.action <- na.pass
 	m[[1]] <- as.name("model.frame")
 	if (!inherits(x, "formula") | length(x) != 2) 
 		stop("invalid formula")
@@ -31,9 +37,7 @@ scatterplotMatrix.formula <- function (x, data=NULL, subset, labels, ...) {
 		if (missing(labels)) labels <- gsub("X", "", row.names(X))
 	}
 	else{
-		if (!missing(labels)) row.names(data) <- labels
 		X <- eval(m, parent.frame())
-		labels <- row.names(X)
 	}
 	if (!groups) scatterplotMatrix(X, labels=labels, ...)
 	else{

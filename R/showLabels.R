@@ -13,7 +13,7 @@ showLabels <- function(x, y, labels=NULL, id.method="identify",
   }   
 
 showLabels1 <- function(x, y, labels=NULL, id.method="identify",
-	id.n = length(x), id.cex=1, id.col=palette()[1],  ...) {       
+	id.n = length(x), id.cex=1, id.col=palette()[1],  ...) {
 # If labels are NULL, try to get the labels from x:
   if (is.null(labels)) 
     labels <- names(x)
@@ -90,8 +90,12 @@ showLabels1 <- function(x, y, labels=NULL, id.method="identify",
 	labpos <- c(4,2)[1+as.numeric(x > mid)]
 	for (i in ind) {
 		text(x[i], y[i], labels[i], cex = id.cex, xpd = TRUE,
-			col = id.col, pos = labpos[i], offset = 0.25, ...)} 
-	result <- labels[ind]
+			col = id.col, pos = labpos[i], offset = 0.25, ...)}
+# new
+  names(ind) <- labels[ind]
+  result <- ind
+# end
+#	result <- labels[ind]
 	if (length(result) == 0) return(NULL) else return(result)
 }
 

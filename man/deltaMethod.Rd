@@ -42,11 +42,14 @@ deltaMethod(object, ...)
 
 }
 \arguments{
-  \item{object}{For the default method, \code{object} is a vector of \code{p} 
+  \item{object}{For the default method, \code{object} is either (1) a vector of \code{p} 
   named elements, so \code{names(object)} returns a list
   of \code{p} character strings that are the names of the elements of
-  \code{object}.  For the other methods, \code{object} is a 
-  regression object for which \code{coef(object)} returns a vector of parameter
+  \code{object}; or (2) a model object for which there are \code{\link[stats]{coef}} and \code{\link[stats]{vcov}} methods,
+  and for which the named coefficient vector returned by \code{coef} is asymptotically normally distributed with asymptotic
+  covariance matrix returned by \code{vcov}.
+  For the other methods, \code{object} is a 
+  regression object for which \code{coef(object)} or \code{fixef(object)} returns a vector of parameter
   estimates.}
   \item{g}{A quoted string that is the function of the parameter estimates to be
   evaluated; see the details below. }

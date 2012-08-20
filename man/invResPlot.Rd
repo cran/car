@@ -15,10 +15,10 @@ Adds the fitted curve to the plot.
 }
 
 \usage{
-inverseResponsePlot(model, lambda=c(-1,0,1), xlab=NULL, ...)
+inverseResponsePlot(model, lambda=c(-1,0,1), robust=FALSE, xlab=NULL, ...)
 
-\S3method{inverseResponsePlot}{lm}(model, lambda=c(-1,0,1), xlab=NULL,
-   labels=names(residuals(model)), ...)
+\S3method{inverseResponsePlot}{lm}(model, lambda=c(-1,0,1), robust=FALSE, 
+   xlab=NULL, labels=names(residuals(model)), ...)
 
 invResPlot(model, ...)
 }
@@ -31,6 +31,8 @@ invResPlot(model, ...)
   \item{xlab}{The horizontal axis label.  If \code{NULL}, it is constructed by the function.}
   \item{labels}{Case labels if labeling is turned on; see
 \code{\link{invTranPlot}} and \code{\link{showLabels}} for arguments.}
+  \item{robust}{If TRUE, then estimation uses Huber M-estimates with the median
+absolute deviation to estimate scale and k= 1.345.  The default is FALSE.} 
   \item{\dots}{Other arguments passed to \code{invTranPlot} and then to
 \code{plot}.}
 }
@@ -45,7 +47,8 @@ interpreting \eqn{\lambda}{lambda} = 0 to be natural logarithms.
 
 Numeric output is a list with elements
   \item{lambda}{Estimate of transformation parameter for the response}
-  \item{RSS}{The residual sum of squares at the minimum}
+  \item{RSS}{The residual sum of squares at the minimum if robust=FALSE.
+If robust = TRUE, the value of Huber objective function is returned.}
 }
 \seealso{\code{\link{invTranPlot}}, \code{\link{powerTransform}}, 
 \code{\link{showLabels}}}
@@ -53,6 +56,10 @@ Numeric output is a list with elements
 \references{
   Fox, J. and Weisberg, S. (2011) 
   \emph{An R Companion to Applied Regression}, Second Edition, Sage.
+  
+  Pendergast, L, and Sheather, S. (in press).  On sensitivity of response plot
+estimation of a robust estimation approach.  \emph{Scandinavian Journal of
+Statistics}.
 
   Weisberg, S. (2005) \emph{Applied Linear Regression}, Third Edition, Wiley, Chapter 7.
 }

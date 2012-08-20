@@ -1,4 +1,4 @@
-# last modified 2011-11-27 by J. Fox
+# last modified 2012-05-31 by J. Fox
 
 export(
     basicPowerAxis,
@@ -68,6 +68,7 @@ export(
     subsets,
     compareCoefs,
     matchCoefs,
+    Boot,
     
     # deprecated functions
     av.plot,
@@ -98,7 +99,8 @@ export(
 )    
 
 # methods
-    
+
+S3method(confidenceEllipse, default)    
 S3method(confidenceEllipse, glm)    
 S3method(confidenceEllipse, lm)     
 S3method(print, spreadLevelPlot)   
@@ -229,3 +231,13 @@ S3method(vcov, powerTransform)
 S3method(vif, lm)
 S3method(symbox, formula)
 S3method(symbox, default)
+
+# methods related to Boot
+S3method(Boot, default)
+S3method(Boot, lm)
+S3method(Boot, glm)
+S3method(hist, boot)
+S3method(confint, boot)
+S3method(summary, boot)
+S3method(print, summary.boot)
+S3method(print, confint.boot)
