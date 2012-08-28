@@ -1,6 +1,45 @@
+Changes to Version 2.0-13
+
+    o Changed the default for id.method with the invTranPlot to "x".
+    
+    o The ncvTest has been rewritten for stability, and unneeded 'data', 'subset' and 'na.action' argument have been removed
+
+    o Added new function 'Boot' that is a simple front-end to boot::boot that will be useful when bootstrapping regression models.  Implemented for lm and glm, but this is likely to work for many other S3 regression models with and 'update' method, 'subset' argument.
+    
+    o Fixed bug in 'compareCoefs' with non-full rank models
+    
+    o Modified 'bootCase' to return a matrix of class c("bootCase", "matrix") so generic functions can be written to summarize these objects.
+
+    o Minor changes to the returned value of showLabels to give both the label and the corresponding row number.  showLabels documentation tweaked.
+
+    o Improved handling of center.pch argument to ellipse() (suggestion of Rob Kushler).
+    
+    o New test argument for linearHypothesis.mer()  and test.statistic argument for Anova.mer() for F-tests with Kenward/Roger df, provided by pbkrtest package.
+    
+    o Anova.mlm() now will do univariate repeated-measures ANOVA even if the error SSP matrix is singular.
+    
+    o hccm() will now accept a weighted linear models (suggestion of Stefan Holst Bache).
+    
+    o deltaMethod.default() now applies coef() and vcov() to a model for which these are supported (generalizing a suggestion by Scott Kostyshak).
+    
+    o Fixed handling of labels argument in scatterplot.formula() and scatterplotMatrix.formula().
+    
+    o Fixed qqPlot.default() so that it honors line="none" (bug reported by Rob Kushler).
+    
+    o Added new default method for confidenceEllipse(), which now can construct confidence ellipses for linear functions of coefficients.
+    
+    o globalVariables() called for R 2.15.1 or later.
+    
+    o Fixed bug in logit() when percents=TRUE and largest percent is 1 (reported by Eric Goodwin).
+    
+    o Added radius argument to scatter3d() (suggestion of Antonino Messina).
+    
+    o Fixed spurious errors message in scatter3d() when groups present but surface=FALSE (reported by David L. Carlson).
+    
+
 Changes to Version 2.0-12
 
-  o modified compareCoefs to support any S4 object with that responds to the 'coefs' and 'vcov' methods
+    o modified compareCoefs to support any S4 object with that responds to the 'coefs' and 'vcov' methods (suggestion of David Hugh-Jones).
 
     o fixed bug in deltaMethod.surveg and deltaMethod.coxph to all use of the 'parameterNames' argument.
 

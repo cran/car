@@ -10,6 +10,8 @@
 %              matchCoefs() and methods. J. Fox
 %   2011-06-09 added matchCoefs.mlm(). J. Fox
 %   2011-11-13 clarification of test argument in linearHypothesis.mlm(). J. Fox
+%   2012-02-28 added test argument to linearHypothesis.mer(). J. Fox
+%   2012-03-07 singular.ok argument added to linearHypothesis.mlm(). J. Fox
 %-------------------------------------------------------------------------------
 
 \name{linearHypothesis}
@@ -57,7 +59,7 @@ lht(model, ...)
 
 \method{linearHypothesis}{mlm}(model, hypothesis.matrix, rhs=NULL, SSPE, V,
     test, idata, icontrasts=c("contr.sum", "contr.poly"), idesign, iterms, 
-    check.imatrix=TRUE, P=NULL, title="", verbose=FALSE, ...)
+    check.imatrix=TRUE, P=NULL, title="", singular.ok=FALSE, verbose=FALSE, ...)
     
 \method{linearHypothesis}{polr}(model, hypothesis.matrix, rhs=NULL, vcov., 
 	verbose=FALSE, ...)
@@ -69,7 +71,7 @@ lht(model, ...)
 		vcov.=NULL, singular.ok=FALSE, verbose=FALSE, ...)
     
 \method{linearHypothesis}{mer}(model, hypothesis.matrix, rhs=NULL,
-		vcov.=NULL, singular.ok=FALSE, verbose=FALSE, ...)
+		vcov.=NULL, test=c("chisq", "F"), singular.ok=FALSE, verbose=FALSE, ...)
 		
 \method{linearHypothesis}{svyglm}(model, ...)
     
@@ -100,7 +102,11 @@ matchCoefs(model, pattern, ...)
     matrix, defaulting to 0.}
   \item{singular.ok}{if \code{FALSE} (the default), a model with aliased
     coefficients produces an error; if \code{TRUE}, the aliased coefficients
-    are ignored, and the hypothesis matrix should not have columns for them.}
+    are ignored, and the hypothesis matrix should not have columns for them.
+    For a multivariate linear model: will return the hypothesis and error SSP
+    matrices even if the latter is singular; useful for computing univariate
+    repeated-measures ANOVAs where there are fewer subjects than df for within-subject
+    effects.}
   \item{idata}{an optional data frame giving a factor or factors defining the
     intra-subject model for multivariate repeated-measures data. See 
     \emph{Details} for an explanation of the intra-subject design and for

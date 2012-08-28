@@ -4,6 +4,7 @@
 #  8 Sep 2011: check for 'lme' objects, and handle them correctly. S. Weisberg
 # 11 Jan 2012: fix to work with any 'S4' object with a coef() method. 
 #   suggested by David Hugh-Jones  University of Warwick http://davidhughjones.googlepages.com 
+# 3 May 2012:  fixed bug if models are less than full rank.
 
 compareCoefs <- function(..., se=TRUE, print=TRUE, digits=3){
     fixefmer <- function(m) {
@@ -41,8 +42,11 @@ compareCoefs <- function(..., se=TRUE, print=TRUE, digits=3){
         if(print == TRUE) cat(paste("\n", mod, fout[1], sep=""))
         if(length(fout) > 1) for (f in fout[-1]) cat("\n",f)
         if (se) {
-          table[getnames(model), 2*(i - 1) + c(1, 2)] <-
-                cbind(getcoef(model), sqrt(diag(getvar(model)))) }
+          ests <- getcoef(model)
+          new <- cbind(ests, rep(NA, length(ests)))
+          new[!is.na(ests), 2] <- sqrt(diag(getvar(model)))
+          table[getnames(model), 2*(i - 1) + c(1, 2)] <- new}
+#                cbind(getcoef(model), sqrt(diag(getvar(model)))) }
         else table[getnames(model), i] <- getcoef(model)
     }
     if(print == TRUE){ 

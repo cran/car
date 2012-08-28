@@ -19,18 +19,18 @@ invTranPlot(x, ...)
 
 \S3method{invTranPlot}{formula}(x, data, subset, na.action, ...)
 
-\S3method{invTranPlot}{default}(x, y, lambda=c(-1, 0, 1), 
+\S3method{invTranPlot}{default}(x, y, lambda=c(-1, 0, 1), robust=FALSE,
         lty.lines=rep(c("solid", "dashed", "dotdash", "longdash", "twodash"), 
         length=1 + length(lambda)), lwd.lines=2, 
         col=palette()[1], col.lines=palette(),
         xlab=deparse(substitute(x)), ylab=deparse(substitute(y)),
         family="bcPower", optimal=TRUE, key="auto",
-        id.method = abs(residuals(lm(y~x))),
+        id.method = "x",
         labels, 
         id.n = if(id.method[1]=="identify") Inf else 0,
         id.cex=1, id.col=palette()[1], grid=TRUE, ...)
 
-invTranEstimate(x, y, family="bcPower", confidence=0.95)
+invTranEstimate(x, y, family="bcPower", confidence=0.95, robust=FALSE)
 }
 
 \arguments{
@@ -42,10 +42,14 @@ invTranEstimate(x, y, family="bcPower", confidence=0.95)
   \item{na.action}{Optional, as in \code{lm}, the action for missing data}
   \item{lambda}{The powers used in the plot.  The optimal power than minimizes
   the residual sum of squares is always added unless optimal is \code{FALSE}. }
+  \item{robust}{If TRUE, then the estimated transformation is computed using
+Huber M-estimation with the MAD used to estimate scale and k=1.345.  The
+default is FALSE.} 
   \item{family}{The transformation family to use, \code{"bcPower"}, 
   \code{"yjPower"}, or a user-defined family.}
   \item{confidence}{returns a profile likelihood confidence interval for the optimal 
-	transformation with this confidence level.  If \code{FALSE}, no interval is returned.}
+	transformation with this confidence level.  If \code{FALSE}, or if \code{robust=TRUE},
+no interval is returned.}
   \item{optimal}{Include the optimal value of lambda?}
   \item{lty.lines}{line types corresponding to the powers}
   \item{lwd.lines}{the width of the plotted lines, defaults to 2 times the standard}
@@ -83,6 +87,10 @@ graph}
 \references{
 Fox, J. and Weisberg, S. (2011) 
 \emph{An R Companion to Applied Regression}, Second Edition, Sage.
+
+Pendergast, L, and Sheather, S. (in press).  On sensitivity of response plot
+estimation of a robust estimation approach.  \emph{Scandinavian Journal of
+Statistics}.
 
 Weisberg, S. (2005)  \emph{Applied Linear Regression}, Third Edition.
   Wiley. 

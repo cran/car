@@ -13,7 +13,7 @@
 \usage{
 ncvTest(model, ...)
 
-\method{ncvTest}{lm}(model, var.formula, data=NULL, subset, na.action, ...)
+\method{ncvTest}{lm}(model, var.formula, ...)
 
 \method{ncvTest}{glm}(model, ...) # to report an error
 }
@@ -22,19 +22,11 @@ ncvTest(model, ...)
   \item{model}{a weighted or unweighted linear model, produced by \code{lm}.}
   \item{var.formula}{a one-sided formula for the error variance; if omitted,
     the error variance depends on the fitted values.}
-  \item{data}{an optional data frame containing the variables in the model. 
-    By default the variables are taken from the environment from which 
-    \code{ncvTest} is called. The \code{data} argument may therefore need to be specified even when
-    the \code{data} argument was specified in the call to \code{lm} when the model was fit 
-    (see the second example below).}
-  \item{subset}{an optional vector specifying a subset of observations to be used.}
-  \item{na.action}{a function that indicates what should happen when the data contain \code{NA}s. 
-    The default is set by the \code{na.action} setting of \code{options}.}
-  \item{\dots}{arguments passed down to methods functions.}
+  \item{\dots}{arguments passed down to methods functions; not currently used.}
 }
 \details{
   This test is often called the Breusch-Pagan test; it was independently
-  suggested by Cook and Weisberg (1983).
+  suggested with some extension by Cook and Weisberg (1983).
   
   \code{ncvTest.glm} is a dummy function to generate an error when a \code{glm}
   model is used.
@@ -61,7 +53,7 @@ ncvTest(model, ...)
   Weisberg, S. (2005) \emph{Applied Linear Regression}, Third Edition, Wiley.
 }
 
-\author{John Fox \email{jfox@mcmaster.ca}}
+\author{John Fox \email{jfox@mcmaster.ca}, Sandy Weisberg \email{sandy@umn.edu}}
 
 \seealso{\code{\link{hccm}}, \code{\link[car]{spreadLevelPlot}} }
 

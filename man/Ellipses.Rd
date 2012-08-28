@@ -2,13 +2,14 @@
 \alias{ellipse}
 \alias{dataEllipse}
 \alias{confidenceEllipse}
+\alias{confidenceEllipse.default}
 \alias{confidenceEllipse.lm}
 \alias{confidenceEllipse.glm}
 
 \title{Ellipses, Data Ellipses, and Confidence Ellipses}
 \description{
   These functions draw ellipses, including data ellipses, and
-  confidence ellipses for linear and generalized linear models.
+  confidence ellipses for linear, generalized linear, and possibly other models.
 }
 \usage{
 ellipse(center, shape, radius, log="", center.pch=19, center.cex=1.5, 
@@ -23,11 +24,13 @@ dataEllipse(x, y, weights, log="", levels=c(0.5, 0.95), center.pch=19, center.ce
 
 confidenceEllipse(model, ...)
 
-\method{confidenceEllipse}{lm}(model, which.coef, levels=0.95, Scheffe=FALSE, dfn,
+\method{confidenceEllipse}{lm}(model, which.coef, L, levels=0.95, Scheffe=FALSE, dfn,
   center.pch=19, center.cex=1.5, segments=51, xlab, ylab, 
   col=palette()[2], lwd=2, fill=FALSE, fill.alpha=0.3, draw=TRUE, add=!draw, ...)
+  
+\method{confidenceEllipse}{glm}(model, chisq, ...)
 
-\method{confidenceEllipse}{glm}(model, which.coef, levels=0.95, Scheffe=FALSE,  dfn,
+\method{confidenceEllipse}{default}(model, which.coef, L, levels=0.95, Scheffe=FALSE,  dfn,
   center.pch=19, center.cex=1.5, segments=51, xlab, ylab, 
   col=palette()[2], lwd=2, fill=FALSE, fill.alpha=0.3, draw=TRUE, add=!draw, ...)
 }
@@ -41,7 +44,7 @@ confidenceEllipse(model, ...)
     axes; \code{"x"} if the x-axis is logged, \code{"y"} if the y-axis is
     logged, and \code{"xy"} or \code{"yx"} if both axes are logged. The
     default is \code{""}, indicating that neither axis is logged.}
-  \item{center.pch}{character for plotting ellipse center.}
+  \item{center.pch}{character for plotting ellipse center; if \code{FALSE} or \code{NULL} the center point isn't plotted.}
   \item{center.cex}{relative size of character for plotting ellipse center.}
   \item{segments}{number of line-segments used to draw ellipse.}
   \item{draw}{if \code{TRUE} produce graphical output; if \code{FALSE}, only invisibly return coordinates of ellipse(s).}
@@ -61,6 +64,11 @@ confidenceEllipse(model, ...)
   \item{which.coef}{2-element vector giving indices of coefficients to plot; 
     if missing, the first two coefficients (disregarding the regression constant)
     will be selected.}
+  \item{L}{As an alternative to selecting coefficients to plot, a transformation matrix can be specified to compute two
+    linear combinations of the coefficients; if the \code{L} matrix is given, it takes precedence over the \code{which.coef}
+    argument. \code{L} should have two rows and as many columns as there are coefficients. It can be given directly as a
+    numeric matrix, or specified by a pair of character-valued expressions, in the same manner as for the 
+    \code{link{linearHypothesis}} function, but with no right-hand side.}
   \item{Scheffe}{if \code{TRUE} scale the ellipse so that its projections onto the
     axes give Scheffe confidence intervals for the coefficients.}
   \item{dfn}{``numerator'' degrees of freedom (or just degrees of freedom for a GLM) for
@@ -68,6 +76,9 @@ confidenceEllipse(model, ...)
   	\code{Scheffe} is \code{TRUE}, or to \code{2} otherwise; selecting \code{dfn = 1} will 
   	draw the ``confidence-interval generating'' ellipse, with projections on the axes
   	corresponding to individual confidence intervals with the stated level of coverage.}
+  \item{chisq}{if \code{TRUE}, the confidence ellipse for the coefficients in a generalized linear model are
+    based on the chisquare statistic, if \code{FALSE} on the $F$-statistic. This corresponds to using the default
+    and linear-model methods respectively.}
   \item{col}{color for lines and ellipse center; the default is the \emph{second} entry
     in the current color palette (see \code{\link[grDevices]{palette}}
     and \code{\link[graphics]{par}}). For \code{dataEllipse}, two colors can be given, in
@@ -109,12 +120,14 @@ graph}
  
 \author{Georges Monette, John Fox \email{jfox@mcmaster.ca}, and Michael Friendly.}
 
-\seealso{\code{\link[MASS]{cov.trob}}, \code{\link[stats]{cov.wt}}.}
+\seealso{\code{\link[MASS]{cov.trob}}, \code{\link[stats]{cov.wt}}, \code{\link{linearHypothesis}}.}
   
 \examples{
-dataEllipse(Prestige$income, Prestige$education, levels=0.1*1:9, lty=2, 
+dataEllipse(Duncan$income, Duncan$education, levels=0.1*1:9, lty=2, 
 	fill=TRUE, fill.alpha=0.1)
-confidenceEllipse(lm(prestige~income+education, data=Prestige), Scheffe=TRUE)
+confidenceEllipse(lm(prestige~income+education, data=Duncan), Scheffe=TRUE)
+confidenceEllipse(lm(prestige~income+education, data=Duncan), 
+	L=c("income + education", "income - education"))
 
 wts <- rep(1, nrow(Duncan))
 wts[c(6, 16)] <- 0 # delete Minister, Conductor

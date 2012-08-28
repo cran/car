@@ -5,13 +5,14 @@
 # 13 May 2010: changed default id.n to conform to showLabels
 # 30 July 2010: checks for rgl
 # 23 October 2010: added surface.alpha and ellipsoid.alpha arguments
+# 2012-03-02: fixed some argument abbreviations. J. Fox
 
 scatter3d <- function(x, ...){
 	if (!require(rgl)) stop("rgl package missing")
 	UseMethod("scatter3d")
 }
 
-scatter3d.formula <- function(formula, data, subset, xlab, ylab, zlab, labels, ...){
+scatter3d.formula <- function(formula, data, subset, radius, xlab, ylab, zlab, labels, ...){
 	na.save <- options(na.action=na.omit)
 	on.exit(options(na.save))
 	m <- match.call(expand.dots=FALSE)
@@ -24,37 +25,42 @@ scatter3d.formula <- function(formula, data, subset, xlab, ylab, zlab, labels, .
 	formula <- as.formula(sub("\\|", "+", formula))
 	m$formula <- formula
 	X <- eval(m, parent.frame())
+	if ("(radius)" %in% names(X)){
+		radius <- X[, "(radius)"]
+		X <- X[, names(X) != "(radius)"]
+	}
+	else radius <- 1
 	names <- names(X)
 	if (missing(xlab)) xlab <- names[2]
 	if (missing(ylab)) ylab <- names[1]
 	if (missing(zlab)) zlab <- names[3]
 	if (missing(labels)) labels <- rownames(X)
 	if (ncol(X) == 3) 
-		scatter3d(X[,2], X[,1], X[,3], xlab=xlab, ylab=ylab, zlab=zlab, labels=labels, ...)
+		scatter3d(X[,2], X[,1], X[,3], xlab=xlab, ylab=ylab, zlab=zlab, labels=labels, radius=radius, ...)
 	else if (ncol(X) == 4) 
-		scatter3d(X[,2], X[,1], X[,3], groups=X[,4], xlab=xlab, ylab=ylab, zlab=zlab, labels=labels, ...)
+		scatter3d(X[,2], X[,1], X[,3], groups=X[,4], xlab=xlab, ylab=ylab, zlab=zlab, labels=labels, radius=radius, ...)
 	else stop("incorrect scatter3d formula")
 }
 
 scatter3d.default <- function(x, y, z,
-	xlab=deparse(substitute(x)), ylab=deparse(substitute(y)),
-	zlab=deparse(substitute(z)), axis.scales=TRUE, revolutions=0, bg.col=c("white", "black"),
-	axis.col=if (bg.col == "white") c("darkmagenta", "black", "darkcyan")
-		else c("darkmagenta", "white", "darkcyan"),
-	surface.col=c("blue", "green", "orange", "magenta", "cyan", "red", "yellow", "gray"),
-	surface.alpha=0.5,
-	neg.res.col="red", pos.res.col="green",
-	square.col=if (bg.col == "white") "black" else "gray", point.col="yellow",
-	text.col=axis.col, grid.col=if (bg.col == "white") "black" else "gray",
-	fogtype=c("exp2", "linear", "exp", "none"),
-	residuals=(length(fit) == 1), surface=TRUE, fill=TRUE, grid=TRUE, grid.lines=26,
-	df.smooth=NULL, df.additive=NULL,
-	sphere.size=1, threshold=0.01, speed=1, fov=60, 
-	fit="linear", groups=NULL, parallel=TRUE, ellipsoid=FALSE, level=0.5, ellipsoid.alpha=0.1,
-	id.method=c("mahal", "xz", "y", "xyz", "identify", "none"), 
-	id.n=if (id.method == "identify") Inf else 0,
-	labels=as.character(seq(along=x)), offset = ((100/length(x))^(1/3)) * 0.02,
-	model.summary=FALSE, ...){
+		xlab=deparse(substitute(x)), ylab=deparse(substitute(y)),
+		zlab=deparse(substitute(z)), axis.scales=TRUE, revolutions=0, bg.col=c("white", "black"),
+		axis.col=if (bg.col == "white") c("darkmagenta", "black", "darkcyan")
+				else c("darkmagenta", "white", "darkcyan"),
+		surface.col=c("blue", "green", "orange", "magenta", "cyan", "red", "yellow", "gray"),
+		surface.alpha=0.5,
+		neg.res.col="red", pos.res.col="green",
+		square.col=if (bg.col == "white") "black" else "gray", point.col="yellow",
+		text.col=axis.col, grid.col=if (bg.col == "white") "black" else "gray",
+		fogtype=c("exp2", "linear", "exp", "none"),
+		residuals=(length(fit) == 1), surface=TRUE, fill=TRUE, grid=TRUE, grid.lines=26,
+		df.smooth=NULL, df.additive=NULL,
+		sphere.size=1, radius=1, threshold=0.01, speed=1, fov=60, 
+		fit="linear", groups=NULL, parallel=TRUE, ellipsoid=FALSE, level=0.5, ellipsoid.alpha=0.1,
+		id.method=c("mahal", "xz", "y", "xyz", "identify", "none"), 
+		id.n=if (id.method == "identify") Inf else 0,
+		labels=as.character(seq(along=x)), offset = ((100/length(x))^(1/3)) * 0.02,
+		model.summary=FALSE, ...){
 	if (!require(rgl)) stop("rgl package missing")
 	if (!require(mgcv)) stop("mgcv package missing")
 	id.method <- match.arg(id.method)
@@ -77,7 +83,7 @@ scatter3d.default <- function(x, y, z,
 	zlab
 	rgl.clear()
 	rgl.viewpoint(fov=fov)
-	rgl.bg(col=bg.col, fogtype=fogtype)
+	rgl.bg(color=bg.col, fogtype=fogtype)
 	if (id.method == "identify"){
 		xg <- x
 		yg <- y
@@ -86,7 +92,7 @@ scatter3d.default <- function(x, y, z,
 		glabels <- labels
 	}
 	valid <- if (is.null(groups)) complete.cases(x, y, z)
-		else complete.cases(x, y, z, groups)
+			else complete.cases(x, y, z, groups)
 	x <- x[valid]
 	y <- y[valid]
 	z <- z[valid]
@@ -122,12 +128,13 @@ scatter3d.default <- function(x, y, z,
 	y <- (y - miny)/(maxy - miny)
 	z <- (z - minz)/(maxz - minz)
 	size <- sphere.size*((100/length(x))^(1/3))*0.015
+	radius <- radius/median(radius)
 	if (is.null(groups)){
-		if (size > threshold) rgl.spheres(x, y, z, color=point.col, radius=size)
+		if (size > threshold) rgl.spheres(x, y, z, color=point.col, radius=size*radius)
 		else rgl.points(x, y, z, color=point.col)
 	}
 	else {
-		if (size > threshold) rgl.spheres(x, y, z, color=surface.col[as.numeric(groups)], radius=size)
+		if (size > threshold) rgl.spheres(x, y, z, color=surface.col[as.numeric(groups)], radius=size*radius)
 		else rgl.points(x, y, z, color=surface.col[as.numeric(groups)])
 	}
 	if (!axis.scales) axis.col[1] <- axis.col[3] <- axis.col[2]
@@ -149,9 +156,9 @@ scatter3d.default <- function(x, y, z,
 		dfn <- 3
 		if (is.null(groups)){
 			dfd <- length(x) - 1
-			radius <- sqrt(dfn * qf(level, dfn, dfd))
+			ell.radius <- sqrt(dfn * qf(level, dfn, dfd))
 			ellips <- ellipsoid(center=c(mean(x), mean(y), mean(z)),
-				shape=cov(cbind(x,y,z)), radius=radius)
+					shape=cov(cbind(x,y,z)), radius=ell.radius)
 			if (fill) shade3d(ellips, col=surface.col[1], alpha=ellipsoid.alpha, lit=FALSE)
 			if (grid) wire3d(ellips, col=surface.col[1], lit=FALSE)
 		}
@@ -164,14 +171,14 @@ scatter3d.default <- function(x, y, z,
 				yy <- y[select.obs]
 				zz <- z[select.obs]
 				dfd <- length(xx) - 1
-				radius <- sqrt(dfn * qf(level, dfn, dfd))
+				ell.radius <- sqrt(dfn * qf(level, dfn, dfd))
 				ellips <- ellipsoid(center=c(mean(xx), mean(yy), mean(zz)),
-					shape=cov(cbind(xx,yy,zz)), radius=radius)
+						shape=cov(cbind(xx,yy,zz)), radius=ell.radius)
 				if (fill) shade3d(ellips, col=surface.col[j], alpha=ellipsoid.alpha, lit=FALSE)
 				if (grid) wire3d(ellips, col=surface.col[j], lit=FALSE)
 				coords <- ellips$vb[, which.max(ellips$vb[1,])]
 				if (!surface) rgl.texts(coords[1] + 0.05, coords[2], coords[3], group,
-						col=surface.col[j])
+							col=surface.col[j])
 			}
 		}
 	}
@@ -182,25 +189,25 @@ scatter3d.default <- function(x, y, z,
 			f <- match.arg(fit[i], c("linear", "quadratic", "smooth", "additive"))
 			if (is.null(groups)){
 				mod <- switch(f,
-					linear = lm(y ~ x + z),
-					quadratic = lm(y ~ (x + z)^2 + I(x^2) + I(z^2)),
-					smooth = if (is.null(df.smooth)) gam(y ~ s(x, z))
-						else gam(y ~ s(x, z, fx=TRUE, k=df.smooth)),
-					additive = if (is.null(df.additive)) gam(y ~ s(x) + s(z))
-						else gam(y ~ s(x, fx=TRUE, k=df.additive[1]+1) +
-									s(z, fx=TRUE, k=(rev(df.additive+1)[1]+1)))
+						linear = lm(y ~ x + z),
+						quadratic = lm(y ~ (x + z)^2 + I(x^2) + I(z^2)),
+						smooth = if (is.null(df.smooth)) gam(y ~ s(x, z))
+								else gam(y ~ s(x, z, fx=TRUE, k=df.smooth)),
+						additive = if (is.null(df.additive)) gam(y ~ s(x) + s(z))
+								else gam(y ~ s(x, fx=TRUE, k=df.additive[1]+1) +
+													s(z, fx=TRUE, k=(rev(df.additive+1)[1]+1)))
 				)
 				if (model.summary) summaries[[f]] <- summary(mod)
 				yhat <- matrix(predict(mod, newdata=dat), grid.lines, grid.lines)
 				if (fill) rgl.surface(vals, vals, yhat, color=surface.col[i], alpha=surface.alpha, lit=FALSE)
 				if(grid) rgl.surface(vals, vals, yhat, color=if (fill) grid.col
-							else surface.col[i], alpha=surface.alpha, lit=FALSE, front="lines", back="lines")
+									else surface.col[i], alpha=surface.alpha, lit=FALSE, front="lines", back="lines")
 				if (residuals){
 					n <- length(y)
 					fitted <- fitted(mod)
 					colors <- ifelse(residuals(mod) > 0, pos.res.col, neg.res.col)
 					rgl.lines(as.vector(rbind(x,x)), as.vector(rbind(y,fitted)), as.vector(rbind(z,z)),
-						color=as.vector(rbind(colors,colors)))
+							color=as.vector(rbind(colors,colors)))
 					if (squares){
 						res <- y - fitted
 						xx <- as.vector(rbind(x, x, x + res, x + res))
@@ -214,13 +221,13 @@ scatter3d.default <- function(x, y, z,
 			else{
 				if (parallel){
 					mod <- switch(f,
-						linear = lm(y ~ x + z + groups),
-						quadratic = lm(y ~ (x + z)^2 + I(x^2) + I(z^2) + groups),
-						smooth = if (is.null(df.smooth)) gam(y ~ s(x, z) + groups)
-							else gam(y ~ s(x, z, fx=TRUE, k=df.smooth) + groups),
-						additive = if (is.null(df.additive)) gam(y ~ s(x) + s(z) + groups)
-							else gam(y ~ s(x, fx=TRUE, k=df.additive[1]+1) +
-										s(z, fx=TRUE, k=(rev(df.additive+1)[1]+1)) + groups)
+							linear = lm(y ~ x + z + groups),
+							quadratic = lm(y ~ (x + z)^2 + I(x^2) + I(z^2) + groups),
+							smooth = if (is.null(df.smooth)) gam(y ~ s(x, z) + groups)
+									else gam(y ~ s(x, z, fx=TRUE, k=df.smooth) + groups),
+							additive = if (is.null(df.additive)) gam(y ~ s(x) + s(z) + groups)
+									else gam(y ~ s(x, fx=TRUE, k=df.additive[1]+1) +
+														s(z, fx=TRUE, k=(rev(df.additive+1)[1]+1)) + groups)
 					)
 					if (model.summary) summaries[[f]] <- summary(mod)
 					levs <- levels(groups)
@@ -230,9 +237,9 @@ scatter3d.default <- function(x, y, z,
 						yhat <- matrix(predict(mod, newdata=cbind(dat, groups=group)), grid.lines, grid.lines)
 						if (fill) rgl.surface(vals, vals, yhat, color=surface.col[j], alpha=surface.alpha, lit=FALSE)
 						if (grid) rgl.surface(vals, vals, yhat, color=if (fill) grid.col
-									else surface.col[j], alpha=surface.alpha, lit=FALSE, front="lines", back="lines")
+											else surface.col[j], alpha=surface.alpha, lit=FALSE, front="lines", back="lines")
 						rgl.texts(1, predict(mod, newdata=data.frame(x=1, z=1, groups=group)), 1,
-							paste(group, " "), adj=1, color=surface.col[j])
+								paste(group, " "), adj=1, color=surface.col[j])
 						if (residuals){
 							yy <- y[select.obs]
 							xx <- x[select.obs]
@@ -240,7 +247,7 @@ scatter3d.default <- function(x, y, z,
 							fitted <- fitted(mod)[select.obs]
 							res <- yy - fitted
 							rgl.lines(as.vector(rbind(xx,xx)), as.vector(rbind(yy,fitted)), as.vector(rbind(zz,zz)),
-								col=surface.col[j])
+									col=surface.col[j])
 							if (squares) {
 								xxx <- as.vector(rbind(xx, xx, xx + res, xx + res))
 								yyy <- as.vector(rbind(yy, fitted, fitted, yy))
@@ -257,21 +264,21 @@ scatter3d.default <- function(x, y, z,
 						group <- levs[j]
 						select.obs <- groups == group
 						mod <- switch(f,
-							linear = lm(y ~ x + z, subset=select.obs),
-							quadratic = lm(y ~ (x + z)^2 + I(x^2) + I(z^2), subset=select.obs),
-							smooth = if (is.null(df.smooth)) gam(y ~ s(x, z), subset=select.obs)
-								else gam(y ~ s(x, z, fx=TRUE, k=df.smooth), subset=select.obs),
-							additive = if (is.null(df.additive)) gam(y ~ s(x) + s(z), subset=select.obs)
-								else gam(y ~ s(x, fx=TRUE, k=df.additive[1]+1) +
-											s(z, fx=TRUE, k=(rev(df.additive+1)[1]+1)), subset=select.obs)
+								linear = lm(y ~ x + z, subset=select.obs),
+								quadratic = lm(y ~ (x + z)^2 + I(x^2) + I(z^2), subset=select.obs),
+								smooth = if (is.null(df.smooth)) gam(y ~ s(x, z), subset=select.obs)
+										else gam(y ~ s(x, z, fx=TRUE, k=df.smooth), subset=select.obs),
+								additive = if (is.null(df.additive)) gam(y ~ s(x) + s(z), subset=select.obs)
+										else gam(y ~ s(x, fx=TRUE, k=df.additive[1]+1) +
+															s(z, fx=TRUE, k=(rev(df.additive+1)[1]+1)), subset=select.obs)
 						)
 						if (model.summary) summaries[[paste(f, ".", group, sep="")]] <- summary(mod)
 						yhat <- matrix(predict(mod, newdata=dat), grid.lines, grid.lines)
 						if (fill) rgl.surface(vals, vals, yhat, color=surface.col[j], alpha=surface.alpha, lit=FALSE)
 						if (grid) rgl.surface(vals, vals, yhat, color=if (fill) grid.col
-									else surface.col[j], alpha=surface.alpha, lit=FALSE, front="lines", back="lines")
+											else surface.col[j], alpha=surface.alpha, lit=FALSE, front="lines", back="lines")
 						rgl.texts(1, predict(mod, newdata=data.frame(x=1, z=1, groups=group)), 1,
-							paste(group, " "), adj=1, color=surface.col[j])
+								paste(group, " "), adj=1, color=surface.col[j])
 						if (residuals){
 							yy <- y[select.obs]
 							xx <- x[select.obs]
@@ -279,7 +286,7 @@ scatter3d.default <- function(x, y, z,
 							fitted <- fitted(mod)
 							res <- yy - fitted
 							rgl.lines(as.vector(rbind(xx,xx)), as.vector(rbind(yy,fitted)), as.vector(rbind(zz,zz)),
-								col=surface.col[j])
+									col=surface.col[j])
 							if (squares) {
 								xxx <- as.vector(rbind(xx, xx, xx + res, xx + res))
 								yyy <- as.vector(rbind(yy, fitted, fitted, yy))
@@ -293,9 +300,10 @@ scatter3d.default <- function(x, y, z,
 			}
 		}
 	}
+	else levs <- levels(groups)
 	if (id.method == "identify"){
 		identify3d(xg, yg, zg, axis.scales=axis.scales, groups=ggroups, labels=glabels, 
-			col=surface.col, offset=offset)
+				col=surface.col, offset=offset)
 	}
 	else if (id.method != "none"){
 		if (is.null(groups)) 
@@ -305,7 +313,7 @@ scatter3d.default <- function(x, y, z,
 				group <- levs[j]
 				select.obs <- groups == group
 				showLabels3d(x[select.obs], y[select.obs], z[select.obs], labels[select.obs], 
-					id.method=id.method, id.n=id.n, col=surface.col[j])
+						id.method=id.method, id.n=id.n, col=surface.col[j])
 			}
 		}
 	}
@@ -339,19 +347,19 @@ car.select3d <- function (...) {
 	}
 	proj <- rgl:::rgl.projection()
 	function(x, y, z) {
-		pixel <- rgl.user2window(x, y, z, proj = proj)
+		pixel <- rgl.user2window(x, y, z, projection = proj)
 		apply(pixel, 1, function(p) (llx <= p[1]) && (p[1] <=
-						urx) && (lly <= p[2]) && (p[2] <= ury) && (0 <= p[3]) &&
-					(p[3] <= 1))
+								urx) && (lly <= p[2]) && (p[2] <= ury) && (0 <= p[3]) &&
+							(p[3] <= 1))
 	}
 }
 
 identify3d  <- function (x, y, z, axis.scales=TRUE, groups = NULL, labels = 1:length(x),
-	col = c("blue", "green", "orange", "magenta", "cyan", "red", "yellow", "gray"),
-	offset = ((100/length(x))^(1/3)) * 0.02){
+		col = c("blue", "green", "orange", "magenta", "cyan", "red", "yellow", "gray"),
+		offset = ((100/length(x))^(1/3)) * 0.02){
 	valid <- if (is.null(groups))
-			complete.cases(x, y, z)
-		else complete.cases(x, y, z, groups)
+				complete.cases(x, y, z)
+			else complete.cases(x, y, z, groups)
 	labels <- labels[valid]
 	x <- x[valid]
 	y <- y[valid]
@@ -389,24 +397,24 @@ identify3d  <- function (x, y, z, axis.scales=TRUE, groups = NULL, labels = 1:le
 	rgl.bringtotop()
 	identified <- character(0)
 	groups <- if (!is.null(groups))
-			as.numeric(groups[valid])
-		else rep(1, length(x))
+				as.numeric(groups[valid])
+			else rep(1, length(x))
 	repeat {
 		f <- car.select3d(button="right")
 		which <- f(x, y, z)
 		if (!any(which))
 			break
 		rgl.texts(x[which], y[which] + offset, z[which], labels[which],
-			color = col[groups][which])
+				color = col[groups][which])
 		identified <- c(identified, labels[which])
 	}
 	unique(identified)
 }
 
 showLabels3d <- function(x, y, z, labels,
-	id.method = "identify", id.n=length(x), col=c("blue"), 
-	res=y - mean(y), range.x=range(x), range.z=range(z), 
-	offset = ((100/length(x))^(1/3)) * 0.02) {
+		id.method = "identify", id.n=length(x), col=c("blue"), 
+		res=y - mean(y), range.x=range(x), range.z=range(z), 
+		offset = ((100/length(x))^(1/3)) * 0.02) {
 	if (id.method == "none") return(NULL)
 	if(id.n > 0L) {
 		if (missing(labels))
@@ -418,19 +426,19 @@ showLabels3d <- function(x, y, z, labels,
 			match(names(ws), labels)
 		}
 		ind <-  switch(id.method,
-			xz = getPoints(rowSums(qr.Q(qr(cbind(1, x, z))) ^ 2)),
-			y = getPoints(abs(res)),
-			xyz = union(getPoints(abs(x - mean(x))), union(abs(z - mean(z)),
-					getPoints(abs(res)))),
-			mahal= getPoints(rowSums(qr.Q(qr(cbind(1, x, y, z))) ^ 2)))
+				xz = getPoints(rowSums(qr.Q(qr(cbind(1, x, z))) ^ 2)),
+				y = getPoints(abs(res)),
+				xyz = union(getPoints(abs(x - mean(x))), union(abs(z - mean(z)),
+								getPoints(abs(res)))),
+				mahal= getPoints(rowSums(qr.Q(qr(cbind(1, x, y, z))) ^ 2)))
 		rgl.texts(x[ind], y[ind] + offset, z[ind], labels[ind],
-			color = col)
+				color = col)
 		return(labels[ind])
 	} 
 }
 
 ellipsoid <- function(center=c(0, 0, 0), radius=1, shape=diag(3), n=30){
-# adapted from the shapes3d demo in the rgl package
+	# adapted from the shapes3d demo in the rgl package
 	degvec <- seq(0, 2*pi, length.out=n)
 	ecoord2 <- function(p) c(cos(p[1])*sin(p[2]), sin(p[1])*sin(p[2]), cos(p[2]))
 	v <- t(apply(expand.grid(degvec,degvec), 1, ecoord2))
@@ -444,4 +452,3 @@ ellipsoid <- function(center=c(0, 0, 0), radius=1, shape=diag(3), n=30){
 	i <- rbind(i1, i2, i4, i3)
 	qmesh3d(v, i)
 }
-

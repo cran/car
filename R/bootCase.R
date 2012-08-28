@@ -1,3 +1,7 @@
+# March 9, 2012 modified by SW as suggested by Derek Ogle to return an object
+# of class c("bootCase", "matrix").  
+# May 2012 added methods for 'bootCase'
+
 nextBoot <- function(object, sample){UseMethod("nextBoot")}
 nextBoot.default <- function(object, sample){
    update(object, subset=sample)
@@ -25,7 +29,10 @@ bootCase.default <- function (object, f=coef, B = 999, rows)
     n <- length(resid(object))
     opt<-options(show.error.messages = FALSE)
     on.exit(options(opt))
+    pointEstimate <- f(object)
     coefBoot <- matrix(0, nrow=B, ncol=length(f(object)))
+    colnames(coefBoot) <- names(pointEstimate)  # adds names if they exist
+    class(coefBoot) <- c("bootCase", "matrix")
     count.error <- 0
     i <- 0
     while (i < B) {
@@ -51,5 +58,7 @@ bootCase.default <- function (object, f=coef, B = 999, rows)
             stop("25 consecutive bootstraps did not converge.  Bailing out.")}
     }
 	remove(".boot.sample", envir=.GlobalEnv)
+	attr(coefBoot, "pointEstimate") <- pointEstimate
     return(coefBoot)
 }
+

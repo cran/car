@@ -20,7 +20,7 @@
 \usage{
 scatter3d(x, ...)
 
-\method{scatter3d}{formula}(formula, data, subset, xlab, ylab, zlab, labels, ...)
+\method{scatter3d}{formula}(formula, data, subset, radius, xlab, ylab, zlab, labels, ...)
 
 \method{scatter3d}{default}(x, y, z,
 	  xlab=deparse(substitute(x)), ylab=deparse(substitute(y)),
@@ -36,7 +36,7 @@ scatter3d(x, ...)
 	  fogtype=c("exp2", "linear", "exp", "none"),
 	  residuals=(length(fit) == 1), surface=TRUE, fill=TRUE, grid=TRUE, 
       grid.lines=26, df.smooth=NULL, df.additive=NULL,
-	  sphere.size=1, threshold=0.01, speed=1, fov=60, 
+	  sphere.size=1, radius=1, threshold=0.01, speed=1, fov=60, 
 	  fit="linear", groups=NULL, parallel=TRUE, ellipsoid=FALSE, level=0.5,
 	   ellipsoid.alpha=0.1, id.method=c("mahal", "xz", "y", "xyz", "identify", "none"), 
 	  id.n=if (id.method == "identify") Inf else 0,
@@ -96,8 +96,11 @@ You have to install the \code{rgl} package to produce 3D plots.
     for the smoothing splines by generalized cross-validation; if a positive number
     or a vector of two positive numbers, fixed
     regression splines will be fit with the specified degrees of freedom for each term.}
-  \item{sphere.size}{relative sizes of spheres representing points; 
+  \item{sphere.size}{general size of spheres representing points; 
     the actual size is dependent on the number of observations.}
+  \item{radius}{relative radii of the spheres representing the points. This is normally a vector of the
+    same length as the variables giving the coordinates of the points; the default, \code{1}, produces spheres
+    all of the same size. The radii are scaled so that their median is 1.}
   \item{threshold}{if the actual size of the spheres is less than the threshold, 
     points are plotted instead.}
   \item{speed}{relative speed of revolution of the plot.}
@@ -162,6 +165,8 @@ scatter3d(prestige ~ income + education | type, surface=FALSE,
 	ellipsoid=TRUE, revolutions=3, data=Duncan)
 scatter3d(prestige ~ income + education, fit=c("linear", "additive"),
 	data=Prestige)
+Sys.sleep(5)
+scatter3d(prestige ~ income + education | type, radius=women, data=Prestige)
 	}
 	\dontrun{
 # drag right mouse button to identify points, click right button in open area to exit

@@ -2,6 +2,7 @@
 % Revision history:
 % checked in 2008-12-29 by J. Fox (corresponds to version 1.2-10 of car)
 % 2009-09-16: added argument singular.ok to lm method. J. Fox
+% 2012-04-04: weighted lm now allowed. John
 %-------------------------------------------------------------------------------
 
 \name{hccm}
@@ -11,8 +12,9 @@
 
 \title{Heteroscedasticity-Corrected Covariance Matrices}
 \description{
-  Calculates heteroscedasticity-corrected covariance matrices for
-  unweighted linear models. These are also called \dQuote{White-corrected} or \dQuote{White-Huber}
+  Calculates heteroscedasticity-corrected covariance matrices 
+  linear models fit by least squares or weighted least squares. 
+  These are also called \dQuote{White-corrected} or \dQuote{White-Huber}
   covariance matrices.
 }
 \usage{
@@ -25,7 +27,7 @@ hccm(model, ...)
 }
 
 \arguments{
-  \item{model}{an unweighted linear model, produced by \code{lm}.}
+  \item{model}{a unweighted or weighted linear model, produced by \code{lm}.}
   \item{type}{one of \code{"hc0"}, \code{"hc1"}, \code{"hc2"}, \code{"hc3"}, or \code{"hc4"}; the
     first of these gives the classic White correction. The \code{"hc1"}, \code{"hc2"}, and \code{"hc3"}
     corrections are described in Long and Ervin (2000); \code{"hc4"} is described in Cribari-Neto (2004).}
@@ -36,10 +38,11 @@ hccm(model, ...)
 }
 
 \details{
-  The classical White-corrected coefficient covariance matrix (\code{"hc0"}) is
+  The classical White-corrected coefficient covariance matrix (\code{"hc0"}) (for an unweighted model) is
   \deqn{V(b)=(X^{\prime }X)^{-1}X^{\prime }diag(e_{i}^{2})X(X^{\prime }X)^{-1}}{V(b) = inv(X'X) X' diag(e^2) X inv(X'X)}
   where \eqn{e_{i}^{2}}{e^2} are the squared residuals, and \eqn{X} is the model
-  matrix. The other methods represent adjustments to this formula.
+  matrix. The other methods represent adjustments to this formula. If there are weights, these are incorporated in the
+  corrected covariance amtrix.
   
   The function \code{hccm.default} simply catches non-\code{lm} objects.
 }

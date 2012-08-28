@@ -6,6 +6,7 @@
 # 1 June 2010: set reps=100 in qqPlot.lm. J. Fox
 # 28 June 2010: fixed labeling bug S. Weisberg
 # 11 March 2011: moved up ... argument. J. Fox
+# 23 May 2012: line="none" now honored in qqPlot.default. J. Fox
 
 qqp <- function(...) qqPlot(...)
 
@@ -43,13 +44,13 @@ qqPlot.default <- function(x, distribution="norm", ..., ylab=deparse(substitute(
 		Q.z <- q.function(c(.25,.75), ...)
 		b <- (Q.x[2] - Q.x[1])/(Q.z[2] - Q.z[1])
 		a <- Q.x[1] - b*Q.z[1]
-		abline(a, b, col=col.lines, lwd=lwd)
+		if (line == "quartiles") abline(a, b, col=col.lines, lwd=lwd)
 	}
 	if (line=="robust") {
 		coef <- coef(rlm(ord.x ~ z))
 		a <- coef[1]
 		b <- coef[2]
-		abline(a, b)
+		abline(a, b, col=col.lines, lwd=lwd)
 	}
 	conf <- if (envelope == FALSE) .95 else envelope
 	zz <- qnorm(1 - (1 - conf)/2)

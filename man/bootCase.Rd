@@ -16,7 +16,7 @@ samples.
 \usage{
 \S3method{bootCase}{lm}(object, f=coef, B=999)
 
-\S3method{bootCase}{lm}(object, f=coef, B=999)
+\S3method{bootCase}{glm}(object, f=coef, B=999)
 
 \S3method{bootCase}{nls}(object, f=coef, B=999)
 
@@ -46,19 +46,21 @@ on the class of the model object.
 
 This simple routine should return a result with any S3 regression object that
 can be updated using the \code{update} function and has a \code{subset}
-argument.  In addition this method of resampling will not be
-appropriate when the original data are grouped, so it is OK in general for
+argument.  It is OK in general for
 linear regression, logistic regression in which the response is either zero or
 one.  With bionomial responses, one would generally want to resample one
-observation, not all the observations in m trials, so this function will give
-wrong answer.  The function can be used with Poisson regression with Poisson
+observation, not all the observations in m trials, so this function will
+incorrect results.  The function can be used with Poisson regression with Poisson
 sampling, but it is probably wrong for contingency tables with multinomial
 sampling.  It is OK proportional odds models without Frequencies set, but
 inappropriate with Frequencies.
 }
 \value{
-A matrix with B rows and rank(object) columns giving the bootstrap estimates. 
-These can be summarized as needed using standard R tools.
+A matrix (with class \code{c("bootCase", "matrix")}) with B rows and rank(object)
+columns giving the bootstrap estimates.
+These can be summarized as needed using standard R tools.  The returned object
+has an attribute \code{"pointEstimate"} that contains the value of the function
+\code{f} applied to the argument \code{object}.
 }
 \references{
 Fox, J. and Weisberg, S. (2011) \emph{Companion to Applied Regression}, Second Edition.
@@ -79,7 +81,6 @@ m1 <- lm(Fertility ~ ., swiss)
 betahat <- coef(m1)
 betahat.boot <- bootCase(m1,B=99) # 99 bootstrap samples--too small to be useful
 summary(betahat.boot)  # default summary
-colnames(betahat.boot) <- names(betahat)
 cbind("Bootstrap SD"=apply(betahat.boot, 2, sd),
     t(apply(betahat.boot, 2, function(x) quantile(x, c(.025, .975)))))
 }
