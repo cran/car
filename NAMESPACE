@@ -1,4 +1,4 @@
-# last modified 2012-05-31 by J. Fox
+# last modified 2012-09-11 by J. Fox
 
 export(
     basicPowerAxis,
@@ -69,6 +69,9 @@ export(
     compareCoefs,
     matchCoefs,
     Boot,
+    gamLine,
+    loessLine,
+    quantregLine,
     
     # deprecated functions
     av.plot,

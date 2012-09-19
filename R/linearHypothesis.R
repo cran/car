@@ -17,6 +17,7 @@
 #   2012-02-28: added F-test to linearHypothesis.mer(). John
 #   2012-03-07: singular.ok argument added to linearHypothesis.mlm(). J. Fox
 #   2012-08-20: Fixed p-value bug for chisq test in .mer method. John
+#   2012-09-17: updated linearHypothesis.mer for pkrtest 0.3-2. John
 #---------------------------------------------------------------------------------------
 
 vcov.default <- function(object, ...){
@@ -491,74 +492,74 @@ coef.multinom <- function(object, ...){
 ## functions for mixed models
 
 linearHypothesis.mer <- function(model, hypothesis.matrix, rhs=NULL,
-		vcov.=NULL, test=c("chisq", "F"), singular.ok=FALSE, verbose=FALSE, ...){
-	test <- match.arg(test)
-	V <- as.matrix(if (is.null(vcov.))vcov(model)
-					else if (is.function(vcov.)) vcov.(model) else vcov.)
-	b <- fixef(model)
-	if (any(aliased <- is.na(b)) && !singular.ok)
-		stop("there are aliased coefficients in the model")
-	b <- b[!aliased]
-	if (is.character(hypothesis.matrix)) {
-		L <- makeHypothesis(names(b), hypothesis.matrix, rhs)
-		if (is.null(dim(L))) L <- t(L)
-		rhs <- L[, NCOL(L)]
-		L <- L[, -NCOL(L), drop = FALSE]
-		rownames(L) <- hypothesis.matrix
-	}
-	else {
-		L <- if (is.null(dim(hypothesis.matrix))) t(hypothesis.matrix)
-				else hypothesis.matrix
-		if (is.null(rhs)) rhs <- rep(0, nrow(L))
-	}
-	q <- NROW(L)
-	if (verbose){
-		cat("\nHypothesis matrix:\n")
-		print(L)
-		cat("\nRight-hand-side vector:\n")
-		print(rhs)
-		cat("\nEstimated linear function (hypothesis.matrix %*% coef - rhs)\n")
-		print(drop(L %*% b - rhs))
-		cat("\n")
-	}
-	if (test == "chisq"){
-		df <- Inf
-		SSH <- as.vector(t(L %*% b - rhs) %*% solve(L %*% V %*% t(L)) %*% (L %*% b - rhs))
-	}
-	else {
-		if (!require(pbkrtest)) stop("pbkrtest package required for F-test on linear mixed model")
-		if (model@dims["REML"] != 1) 
-			stop("F test available only for linear mixed model fit by REML")
-		res <- KRmodcomp(model, L)$stats
-		df <- res[["df2"]]
-		F <- res[["Fstat"]]
-		p <- res[["p.value"]]
-	}
-	name <- try(formula(model), silent = TRUE)
-	if (inherits(name, "try-error")) name <- substitute(model)
-	title <- "Linear hypothesis test\n\nHypothesis:"
-	topnote <- paste("Model 1: restricted model","\n", "Model 2: ", 
-			paste(deparse(name), collapse = "\n"), sep = "")
-	note <- if (is.null(vcov.)) ""
-			else "\nNote: Coefficient covariance matrix supplied.\n"
-	rval <- matrix(rep(NA, 8), ncol = 4)
-	if (test == "chisq"){
-		colnames(rval) <- c("Res.Df", "Df", "Chisq",  paste("Pr(> Chisq)", sep = ""))
-		rownames(rval) <- 1:2
-		rval[,1] <- c(df+q, df)
-		p <- pchisq(SSH, q, lower.tail = FALSE)
-		rval[2, 2:4] <- c(q, SSH, p)
-		rval <- rval[,-1]
-	}
-	else{
-		colnames(rval) <- c("Res.Df", "Df", "F",  paste("Pr(> F)", sep = ""))
-		rownames(rval) <- 1:2
-		rval[,1] <- c(df+q, df)
-		rval[2, 2:4] <- c(q, F, p)
-	}
-	structure(as.data.frame(rval),
-			heading = c(title, printHypothesis(L, rhs, names(b)), "", topnote, note),
-			class = c("anova", "data.frame"))
+                                 vcov.=NULL, test=c("chisq", "F"), singular.ok=FALSE, verbose=FALSE, ...){
+    test <- match.arg(test)
+    V <- as.matrix(if (is.null(vcov.))vcov(model)
+                   else if (is.function(vcov.)) vcov.(model) else vcov.)
+    b <- fixef(model)
+    if (any(aliased <- is.na(b)) && !singular.ok)
+        stop("there are aliased coefficients in the model")
+    b <- b[!aliased]
+    if (is.character(hypothesis.matrix)) {
+        L <- makeHypothesis(names(b), hypothesis.matrix, rhs)
+        if (is.null(dim(L))) L <- t(L)
+        rhs <- L[, NCOL(L)]
+        L <- L[, -NCOL(L), drop = FALSE]
+        rownames(L) <- hypothesis.matrix
+    }
+    else {
+        L <- if (is.null(dim(hypothesis.matrix))) t(hypothesis.matrix)
+        else hypothesis.matrix
+        if (is.null(rhs)) rhs <- rep(0, nrow(L))
+    }
+    q <- NROW(L)
+    if (verbose){
+        cat("\nHypothesis matrix:\n")
+        print(L)
+        cat("\nRight-hand-side vector:\n")
+        print(rhs)
+        cat("\nEstimated linear function (hypothesis.matrix %*% coef - rhs)\n")
+        print(drop(L %*% b - rhs))
+        cat("\n")
+    }
+    if (test == "chisq"){
+        df <- Inf
+        SSH <- as.vector(t(L %*% b - rhs) %*% solve(L %*% V %*% t(L)) %*% (L %*% b - rhs))
+    }
+    else {
+        if (!require(pbkrtest) || packageVersion("pbkrtest") < "0.3.2") stop("pbkrtest package version >= 0.3.2 required for F-test on linear mixed model")
+        if (model@dims["REML"] != 1) 
+            stop("F test available only for linear mixed model fit by REML")
+        res <- KRmodcomp(model, L)$test
+        df <- res["Ftest", "ddf"]
+        F <- res["Ftest", "stat"]
+        p <- res["Ftest", "p.value"]
+    }
+    name <- try(formula(model), silent = TRUE)
+    if (inherits(name, "try-error")) name <- substitute(model)
+    title <- "Linear hypothesis test\n\nHypothesis:"
+    topnote <- paste("Model 1: restricted model","\n", "Model 2: ", 
+                     paste(deparse(name), collapse = "\n"), sep = "")
+    note <- if (is.null(vcov.)) ""
+    else "\nNote: Coefficient covariance matrix supplied.\n"
+    rval <- matrix(rep(NA, 8), ncol = 4)
+    if (test == "chisq"){
+        colnames(rval) <- c("Res.Df", "Df", "Chisq",  paste("Pr(> Chisq)", sep = ""))
+        rownames(rval) <- 1:2
+        rval[,1] <- c(df+q, df)
+        p <- pchisq(SSH, q, lower.tail = FALSE)
+        rval[2, 2:4] <- c(q, SSH, p)
+        rval <- rval[,-1]
+    }
+    else{
+        colnames(rval) <- c("Res.Df", "Df", "F",  paste("Pr(> F)", sep = ""))
+        rownames(rval) <- 1:2
+        rval[,1] <- c(df+q, df)
+        rval[2, 2:4] <- c(q, F, p)
+    }
+    structure(as.data.frame(rval),
+              heading = c(title, printHypothesis(L, rhs, names(b)), "", topnote, note),
+              class = c("anova", "data.frame"))
 }
 
 linearHypothesis.lme <- function(model, hypothesis.matrix, rhs=NULL,

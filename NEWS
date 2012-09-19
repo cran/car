@@ -1,4 +1,14 @@
+Changes to Version 2.0-14
+
+    o Smoothers now given as arguments to scatterplot(), scatterplotMatrix(), residualPlots() and other functions; gamLine(), loessLine() (default), and quantregLine() smoothers provided.
+
+    o linearHypothesis.mer() and Anova.mer() now consistent with pbkrtest version 0.3-2.
+
+    o Small changes and fixes.
+
 Changes to Version 2.0-13
+
+    o Added point marking (id.n, etc.) to dataEllipse
 
     o Changed the default for id.method with the invTranPlot to "x".
     
@@ -380,7 +390,7 @@ Changes to Version 1.1-2
     
 Changes to Version 1.2-0
 
-    o  vif now reports a more understandable error message when a coefficient in the model is aliased (thanks to a question posed by Ulrike Grömping).
+    o  vif now reports a more understandable error message when a coefficient in the model is aliased (thanks to a question posed by Ulrike Gr?mping).
     
     o  recode now takes a levels argument (as suggested by Adrian Dusa).
     
@@ -408,7 +418,7 @@ Changes to Version 1.2-3
     
 Changes to Version 1.2-4
 
-    o  Avoid warnings in linear.hypothesis() produced by unnecessary use of extended = FALSE argument to strsplit() (problem reported by Alejandro Collantes Chávez-Costa).
+    o  Avoid warnings in linear.hypothesis() produced by unnecessary use of extended = FALSE argument to strsplit() (problem reported by Alejandro Collantes Ch?vez-Costa).
     
 Changes to Version 1.2-5
 

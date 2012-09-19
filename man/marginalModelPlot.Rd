@@ -23,20 +23,23 @@ mmps(model, terms= ~ ., fitted=TRUE, layout=NULL, ask,
 
 marginalModelPlot(...)
 
-\method{mmp}{lm}(model, variable, mean = TRUE, sd = FALSE,
-    xlab = deparse(substitute(variable)), degree = 1, span = 2/3, key=TRUE, 
-    ...)
+\method{mmp}{lm}(model, variable, sd = FALSE,
+    xlab = deparse(substitute(variable)),
+    smoother = loessLine, smoother.args=list(degree=1, span=2/3),
+    key=TRUE, ...)
     
-\method{mmp}{default}(model, variable, mean = TRUE, sd = FALSE, xlab =
-                 deparse(substitute(variable)), degree = 1, span = 2/3,
-                 key = TRUE, col.line = palette()[c(4,2)], col=palette()[1],   
-                 labels, id.method = "y", 
-                 id.n=if(id.method[1]=="identify") Inf else 0, 
-                 id.cex = 1, id.col=palette()[1], grid=TRUE, ...)
+\method{mmp}{default}(model, variable, sd = FALSE,
+    xlab = deparse(substitute(variable)), smoother=loessLine,
+    smoother.args, key=TRUE,
+    col.line = palette()[c(4, 2)], col=palette()[1], 
+    labels, id.method="y", 
+    id.n=if(id.method[1]=="identify") Inf else 0,
+    id.cex=1, id.col=palette()[1], grid=TRUE, ...)
    
-\method{mmp}{glm}(model, variable, mean = TRUE, sd = FALSE,
-    xlab = deparse(substitute(variable)), degree = 1, span = 2/3, key=TRUE,
-    col.line = palette()[c(4, 2)], col=palette()[1],
+\method{mmp}{glm}(model, variable, sd = FALSE, 
+    xlab = deparse(substitute(variable)), smoother=gamLine,
+    smoother.args=list(k=3), key=TRUE, 
+    col.line = palette()[c(4, 2)], col=palette()[1], 
     labels, id.method="y", 
     id.n=if(id.method[1]=="identify") Inf else 0,
     id.cex=1, id.col=palette()[1], grid=TRUE, ...)
@@ -52,8 +55,8 @@ marginalModelPlot(...)
 \item{fitted}{If the default \code{TRUE}, then a marginal model plot in the direction
   of the fitted values or linear predictor of a generalized linear model will
   be drawn.}
-  \item{layout}{ 
-If set to a value like \code{c(1, 1)} or \code{c(4, 3)}, the layout
+\item{layout}{ 
+  If set to a value like \code{c(1, 1)} or \code{c(4, 3)}, the layout
 of the graph will have this many rows and columns.  If not set, the program
 will select an appropriate layout.  If the number of graphs exceed nine, you 
 must select the layout yourself, or you will get a maximum of nine per page.
@@ -80,14 +83,20 @@ then to \code{plot}.  Users should generally use \code{mmps}, or equivalently
   particular, terms defined by a spline basis are skipped by \code{mmps}, but
   you can use \code{mmp} to get the plot for the variable used to define
   the splines.}
-\item{mean}{ If \code{TRUE}, compare mean smooths}
 \item{sd}{ If \code{TRUE}, compare sd smooths.  For a binomial regression with all
 sample sizes equal to one, this argument is ignored as the SD bounds don't
 make any sense. }
 \item{xlab}{ label for horizontal axis }
-\item{degree}{Degree of the local polynomial, passed to \code{loess}.  The
-  usual default for \code{loess} is 2, but the default here is 1.}
-\item{span}{Span, the smoothing parameter for \code{loess}.  }
+\item{smoother}{the name of the smoother to use, selected from the choices 
+descripbed at \code{\link{ScatterplotSmoothers}}.  For linear models and
+the default method, the default smoother is the function
+is the function \code{loessLine}.  For generalized linear models the default
+is \code{gamLine}, using the \code{gam} package and using splines.
+}
+\item{smoother.args}{arguments passed to the smoother.  For linear models the
+  defaults match the smoother used before September 2012, and may be changed
+  later.  See \code{\link{ScatterplotSmoothers}}.
+}
 \item{key}{If \code{TRUE}, include a key at the top of the plot, if \code{FALSE} omit the
 key}
   \item{id.method,labels,id.n,id.cex,id.col}{Arguments for labelling
@@ -115,13 +124,25 @@ axis of the marginal model plot will be the value of
 \code{predict(model, type="terms")[, "poly(X2, 3)"])}.  If the \code{predict}
 method for the model you are using doesn't support \code{type="terms"}, 
 then the polynomial/spline term is skipped.
+
+The smoothers used were changed in September 2012.  For linear models, the 
+default smoother is still loess with the same smoothing parameters as were
+used in the past, but these can be changed with the argument \code{smoother.args}.
+For generalized linear models, the default smoother uses \code{gamLine}, fitting
+a generalized additive model with the same family, link and weights as the fit of the
+model.  SD smooths are not computed for for generalized linear models.
+
+For generalized linear models the default number of elements in the spline basis is
+\code{k=3}; this is done to allow fitting for predictors with just a few support
+points.  If you have many support points you may wish to set \code{k} to a higher
+number, or \code{k=-1} for the default used by \code{\link{gam}}.
 }
 
 \value{
 Used for its side effect of producing plots. 
 }
 
-\seealso{\code{\link{loess}}, \code{\link{plot}} }
+\seealso{\code{\link{ScatterplotSmoothers}}, \code{\link{plot}} }
 
 \references{ 
 

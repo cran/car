@@ -19,6 +19,7 @@
 #   - added dfn argument to .lm and .glm methods for confidenceEllipse()
 # Modified 14&16 Dec 2011 by J. Fox (suggested by Michael Friendly) to add weights argument to dataEllipse().
 # Modified 2 Feb 2012 by J. Fox: Improved handling of center.pch argument to ellipse() (suggestion of Rob Kushler).
+# 16 July 2012 added showLabels to dataEllipse
 
 ellipse <- function(center, shape, radius, log="", center.pch=19, center.cex=1.5, segments=51, draw=TRUE, add=draw, 
 		xlab="", ylab="", col=palette()[2], lwd=2, fill=FALSE, fill.alpha=0.3,
@@ -75,7 +76,9 @@ dataEllipse <- function(x, y, weights, log="", levels=c(0.5, 0.95), center.pch=1
 		center.cex=1.5, draw=TRUE,
 		plot.points=draw, add=!plot.points, segments=51, robust=FALSE, 
 		xlab=deparse(substitute(x)), ylab=deparse(substitute(y)), 
-		col=palette()[1:2], lwd=2, fill=FALSE, fill.alpha=0.3, grid=TRUE, ...) {
+		col=palette()[1:2], lwd=2, fill=FALSE, fill.alpha=0.3, grid=TRUE,
+    labels, id.method = "mahal", id.n = if(id.method[1]=="identify") Inf else 0,
+    id.cex=1, id.col=palette()[1],...) {
 	if (length(col) == 1) col <- rep(col, 2)
 	if(missing(y)){
 		if (is.matrix(x) && ncol(x) == 2) {
@@ -121,6 +124,10 @@ dataEllipse <- function(x, y, weights, log="", levels=c(0.5, 0.95), center.pch=1
 				center.pch=center.pch, center.cex=center.cex, segments=segments, 
 				col=col[2], lwd=lwd, fill=fill, fill.alpha=fill.alpha, draw=draw, ...)
 	}
+	if(missing(labels)) labels <- seq(length(x))
+  showLabels(x, y, labels=labels,
+            id.method=id.method, id.n=id.n, id.cex=id.cex,
+            id.col=id.col)
 	invisible(if (length(levels) == 1) result[[1]] else result)
 }
 

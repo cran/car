@@ -13,6 +13,8 @@
 # and boxplot.
 # 16 June 2011 allow layout=NA, in which case the layout is not set in this
 #  function, so it is the responsibility of the user
+# 14 Sept 2012 use the ScatterplotSmoothers in car
+# 18 Sept 2012 restore smooth and span args
 
 ceresPlots<-function(model, terms= ~ ., layout=NULL, ask, main, ...){
   terms <- if(is.character(terms)) paste("~", terms) else terms
@@ -63,12 +65,17 @@ ceresPlot.lm<-function(model, variable,
   labels, 
   id.n = if(id.method[1]=="identify") Inf else 0,
   id.cex=1, id.col=palette()[1],
-  line=TRUE, smooth=TRUE, span=.5, iter,   
+  line=TRUE, smoother=loessLine, smoother.args=list(), smooth, span,
 	col=palette()[1], col.lines=palette()[-1],
   xlab, ylab, pch=1, lwd=2,  
   grid=TRUE, ...){
 	# the lm method works with glm's too              
-	if(missing(labels)) labels <- names(residuals(model))	
+	if(missing(labels)) labels <- names(residuals(model))
+    # smooth and span for backwards compatibility
+    if (!missing(smooth)) {
+        smoother <- if (isTRUE(smooth)) loessLine else FALSE
+    }
+    if (!missing(span)) smoother.args$span <- span
 	expand.model.frame <- function (model, extras, envir = environment(formula(model)),
 		na.expand = FALSE){  # modified version of R base function
 		f <- formula(model)
@@ -102,12 +109,12 @@ ceresPlot.lm<-function(model, variable,
 	}
 	if(!is.null(class(model$na.action)) && 
 		class(model$na.action) == 'exclude') class(model$na.action) <- 'omit'
-	if (missing(iter)){
-		iter<-if(("glm"==class(model)[1]) &&
-				("gaussian"!=as.character(family(model))[1]))
-				0
-			else 3
-	}    # use nonrobust smooth for non-gaussian glm
+#	if (missing(iter)){
+#		iter<-if(("glm"==class(model)[1]) &&
+#				("gaussian"!=as.character(family(model))[1]))
+#				0
+#			else 3
+#	}    # use nonrobust smooth for non-gaussian glm
 	var<-if (is.character(variable) & 1==length(variable)) variable
 		else deparse(substitute(variable))
 	mod.mat<-model.matrix(model)
@@ -156,9 +163,11 @@ ceresPlot.lm<-function(model, variable,
             id.col=id.col)
 	if (line) abline(lm(partial.res~mod.mat[,var]), lty=2, lwd=lwd, 
             col=col.lines[1])
-	if (smooth) {
-		lines(lowess(mod.mat[,var], partial.res, iter=iter, f=span), lwd=lwd, 
-           col=col.lines[2])
+	if (is.function(smoother)) {
+    smoother(mod.mat[, var], partial.res, col=col.lines[2], log.x=FALSE,
+       log.y=FALSE, spread=FALSE, smoother.args=smoother.args)
+#		lines(lowess(mod.mat[,var], partial.res, iter=iter, f=span), lwd=lwd,
+#          col=col.lines[2])
 	}
 }                    
 

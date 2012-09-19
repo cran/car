@@ -20,7 +20,8 @@ ceresPlot(model, ...)
   labels, 
   id.n = if(id.method[1]=="identify") Inf else 0,
   id.cex=1, id.col=palette()[1],
-  line=TRUE, smooth=TRUE, span=.5, iter,  
+  line=TRUE, smoother=loessLine, smoother.args=list(),
+    smooth, span,
 	col=palette()[1], col.lines=palette()[-1],
   xlab, ylab, pch=1, lwd=2,  
   grid=TRUE, ...)
@@ -62,13 +63,14 @@ axis}
 }
   \item{line}{\code{TRUE} to plot least-squares line.
 }
-  \item{smooth}{\code{TRUE} to plot nonparametric-regression (lowess) line.
+  \item{smoother}{Function to add a nonparametric smooth.
 }
-  \item{span}{span for lowess smoother.
+  \item{smoother.args}{see \code{\link{ScatterplotSmoothers}} for available
+  smooethers and arguments.
 }
-  \item{iter}{number of robustness iterations for nonparametric-regression smooth;
-    defaults to 3 for a linear model and to 0 for a non-Gaussian glm.
-}
+  \item{smooth, span}{these arguments are included for backwards compatility: 
+    if \code{smooth=TRUE} then \code{smoother} is set to \code{loessLine},
+    and if \code{span} is specified, it is added to \code{smoother.args}.}
   \item{col}{color for points; the default is the first entry
     in the current color palette (see \code{\link[grDevices]{palette}}
     and \code{\link[graphics]{par}}).
