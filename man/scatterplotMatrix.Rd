@@ -13,29 +13,29 @@
 
 scatterplotMatrix(x, ...)
 
-\method{scatterplotMatrix}{formula}(x, data=NULL, subset, labels, ...)
+\method{scatterplotMatrix}{formula}(formula, data=NULL, subset, labels, ...)
 
-\method{scatterplotMatrix}{default}(x, var.labels = colnames(x), diagonal = c("density", 
-    "boxplot", "histogram", "oned", "qqplot", "none"), adjust = 1, 
-    nclass, plot.points = TRUE, smooth = TRUE, 
-    spread = smooth && !by.groups, span = 0.5, 
-    loess.threshold = 5, reg.line = lm, 
-    transform = FALSE, family = c("bcPower", "yjPower"), ellipse = FALSE, 
-    levels = c(0.5, 0.95), robust = TRUE, groups = NULL, by.groups = FALSE, 
-    labels, id.method="mahal", id.n=0, id.cex=1, id.col=palette()[1], 
-    col = if (n.groups == 1) palette()[3:1] else rep(palette(), 
-        length = n.groups), 
-    pch = 1:n.groups, lwd = 1, lwd.smooth = lwd, 
-    lwd.spread = lwd, lty = 1, lty.smooth = lty, lty.spread = 2, 
-    cex = par("cex"), cex.axis = par("cex.axis"), cex.labels = NULL, 
-    cex.main = par("cex.main"), legend.plot = length(levels(groups)) > 
-        1, row1attop = TRUE, ...)
+\method{scatterplotMatrix}{default}(x, var.labels=colnames(x), 
+    diagonal=c("density", "boxplot", "histogram", "oned", "qqplot", "none"), 
+    adjust=1, nclass,
+    plot.points=TRUE, smoother=loessLine, smoother.args=list(), smooth, span,
+    spread = !by.groups, reg.line=lm,
+    transform=FALSE, family=c("bcPower", "yjPower"),
+    ellipse=FALSE, levels=c(.5, .95), robust=TRUE,
+    groups=NULL, by.groups=FALSE, 
+    labels, id.method="mahal", id.n=0, id.cex=1, id.col=palette()[1],
+    col=if (n.groups == 1) palette()[3:1] else rep(palette(), length=n.groups),
+    pch=1:n.groups, lwd=1, lty=1, 
+    cex=par("cex"), cex.axis=par("cex.axis"), cex.labels=NULL, 
+    cex.main=par("cex.main"), 
+    legend.plot=length(levels(groups)) > 1, row1attop=TRUE, ...)
 
 spm(x, ...)
 }
 
 \arguments{
-  \item{x}{a data matrix, numeric data frame, or a one-sided \dQuote{model} formula, of the form 
+  \item{x}{a data matrix, numeric data frame.}
+  \item{formula}{a one-sided \dQuote{model} formula, of the form 
     \code{ ~ x1 + x2 + ... + xk} or \code{ ~ x1 + x2 + ... + xk | z} where \code{z}
     evaluates to a factor or other variable to divide the data into groups.}
   \item{data}{for \code{scatterplotMatrix.formula},
@@ -55,14 +55,19 @@ spm(x, ...)
     function.}
   \item{plot.points}{if \code{TRUE} the points are plotted in each 
     off-diagonal panel.}
-  \item{smooth}{if \code{TRUE} a loess smooth is plotted in each
-    off-diagonal panel.}
-  \item{spread}{if \code{TRUE} (the default when not smoothing by groups), a smoother is applied to
-  	the root-mean-square positive and negative residuals from the loess line to display conditional spread and
-  	asymmetry.}
-  \item{span}{span for loess smoother.}
-   \item{loess.threshold}{suppress the loess smoother if there are fewer than \code{loess.threshold} unique
-  	values (default, 5) of the variable on the vertical axis.}
+  \item{smoother}{a function to draw a nonparametric-regression smooth; the default is \code{\link{gamLine}}, which
+    uses the \code{\link[mgcv]{gam}} function in the \pkg{mgcv} package. For this and other smoothers,
+    see \code{\link{ScatterplotSmoothers}}.
+    Setting this argument to something other than a function, e.g., \code{FALSE} suppresses the smoother.}
+  \item{smoother.args}{a list of named values to be passed to the smoother function; the specified elements of the
+    list depend upon the smoother (see \code{\link{ScatterplotSmoothers}}).}
+  \item{smooth, span}{these arguments are included for backwards compatility: if \code{smooth=TRUE} then \code{smoother} is set to \code{loessLine},
+  and if \code{span} is specified, it is added to \code{smoother.args}.}
+  \item{spread}{if TRUE, estimate the (square root) of the variance function.  For \code{loessLine} and
+    for \code{gamLine}, this is done by separately smoothing the squares of the postive and negative
+    residuals from the mean fit, and then adding the square root of the fitted values to the mean fit.  For
+    \code{quantregLine}, fit the .25 and .75 quantiles with a quantile regression additive model.
+    The default is TRUE if \code{by.groups=FALSE} and FALSE is \code{by.groups=TRUE}.}
   \item{reg.line}{if not \code{FALSE} a line is plotted using the
     function given by this argument; e.g., using \code{rlm} in
     package \code{MASS} plots a robust-regression line.}
@@ -89,11 +94,7 @@ spm(x, ...)
   	for points if there are
   	no groups, and successive colors for the groups if there are groups.}
   \item{lwd}{width of linear-regression lines (default \code{1}).}
-  \item{lwd.smooth}{width for smooth regression lines (default is the same as \code{lwd}).}
-  \item{lwd.spread}{width for lines showing spread (default is the same as \code{lwd}).}
   \item{lty}{type of linear-regression lines (default \code{1}, solid line).}
-  \item{lty.smooth}{type of smooth regression lines (default is the same as \code{lty}).}
-  \item{lty.spread}{width for lines showing spread (default is \code{2}, broken line).}
   \item{cex, cex.axis, cex.labels, cex.main}{set sizes of various graphical elements
     (see \code{\link[graphics]{par}}).}
   \item{legend.plot}{if \code{TRUE} then a legend for the groups is plotted
@@ -118,13 +119,13 @@ spm(x, ...)
 \seealso{\code{\link[graphics]{pairs}}, \code{\link{scatterplot}},
   \code{\link{dataEllipse}}, \code{\link{powerTransform}}, 
   \code{\link{bcPower}}, \code{\link{yjPower}}, \code{\link[MASS]{cov.trob}},
-  \code{\link{showLabels}}.}
+  \code{\link{showLabels}}, \code{\link{ScatterplotSmoothers}}.}
 
 \examples{
 scatterplotMatrix(~ income + education + prestige | type, data=Duncan)
 scatterplotMatrix(~ income + education + prestige, 
-    transform=TRUE, data=Duncan)
-scatterplotMatrix(~ income + education + prestige | type, smooth=FALSE, 
+    transform=TRUE, data=Duncan, smoother=loessLine)
+scatterplotMatrix(~ income + education + prestige | type, smoother=FALSE, 
 	by.group=TRUE, transform=TRUE, data=Duncan)
 }
 

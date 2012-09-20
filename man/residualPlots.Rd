@@ -36,22 +36,24 @@ residualPlots (model, ...)
 
 residualPlot(model, ...)  
 
-\S3method{residualPlot}{default}(model, variable = "fitted", type = "pearson", 
+\S3method{residualPlot}{default}(model, variable = "fitted", type = "pearson",
                  plot = TRUE,     
                  quadratic = TRUE, 
-                 smooth = FALSE, span = 1/2, smooth.lwd=lwd, smooth.lty=lty,
-                 smooth.col=col.lines, 
-                 labels,
-                 id.method = "y",
+                 smoother=NULL, smoother.args=list(), 
+                 col.smooth=palette()[3],
+                 labels, 
+                 id.method = "y", 
                  id.n = if(id.method[1]=="identify") Inf else 0,
-                 id.cex=1, id.col=palette()[1],
-                 col = palette()[1], col.lines = palette()[2], 
-                 xlab, ylab, lwd = 1, lty=1, grid=TRUE, ...)   
+                 id.cex=1, id.col=palette()[1], 
+                 col = palette()[1], col.quad = palette()[2],
+                 xlab, ylab, lwd = 1, lty = 1,  
+                 grid=TRUE, ...)   
                  
 \S3method{residualPlot}{lm}(model, ...) 
   
 \S3method{residualPlot}{glm}(model, variable = "fitted", type = "pearson", 
-                 plot = TRUE, quadratic = FALSE, smooth = TRUE, ...)  
+                 plot = TRUE, quadratic = FALSE, 
+                 smoother = loessLine, smoother.args=list(k=3), ...)  
 }
 \arguments{
   \item{model}{ 
@@ -122,24 +124,28 @@ if \code{TRUE}, fits the quadratic regression of the
 vertical axis on the horizontal axis and displays a lack of fit test.  Default
 is \code{TRUE} for \code{lm} and \code{}FALSE for \code{glm}.  
 }
-  \item{smooth}{
-if TRUE fits a loess smooth using the settings given below.  Defaults to FALSE
-for lm objects and TRUE for glm objects.
+\item{smoother}{the name of the smoother to use, selected from the choices 
+descripbed at \code{\link{ScatterplotSmoothers}}  For \code{lm} objects the 
+default is \code{NULL}.  For \code{glm} object the default is \code{loessLine}.  
 }
-  \item{span, smooth.lwd, smooth.lty, smooth.col}{
-Should a lowess smooth be added to the figure?  The \code{span} is the smoothing
-parameter for lowess, \code{smooth.lwd}, \code{smooth.lty}, and \code{smooth.col} 
-are, respectively, the width, type, and color of the line drawn on the plot. 
+\item{smoother.args}{arguments passed to the smoother.  
+See \code{\link{ScatterplotSmoothers}}.  For generalized linear models the  
+number of elements in the spline basis is set to
+\code{k=3}; this is done to allow fitting for predictors with just a few support
+points.  If you have many support points you may wish to set \code{k} to a higher
+number, or \code{k=-1} for the default used by \code{\link{gam}}.
 }
-  \item{id.method,labels,id.n,id.cex,id.col}{Arguments for the labelling of
+\item{col.smooth}{color for the smoother
+}
+\item{id.method,labels,id.n,id.cex,id.col}{Arguments for the labelling of
     points.  The default is \code{id.n=0} for labeling no points.  See
     \code{\link{showLabels}} for details of these arguments.
 }
   \item{col}{
 default color for points
 }
-  \item{col.lines}{
-default color for lines
+  \item{col.quad}{
+default color for quadratic fit
 }
   \item{xlab}{
 X-axis label.  If not specified, a useful label is constructed by

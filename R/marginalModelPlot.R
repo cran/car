@@ -18,27 +18,34 @@
 #    replaced by just x in the 'terms' argument to mmps.
 # 16 June 2011 allow layout=NA, in which case the layout is not set in this
 #  function, so it is the responsibility of the user
+# 14 September 2012 improved the smoothers
 #############################################
 marginalModelPlot <- function(...){mmp(...)}
 mmp <- function(model, ...){UseMethod("mmp")}
 
 mmp.lm <- 
-function (model, variable, mean = TRUE, sd = FALSE, 
-    xlab = deparse(substitute(variable)), degree = 1, span = 2/3, key=TRUE,   
-    ...)
+function (model, variable, sd = FALSE,
+    xlab = deparse(substitute(variable)),
+    smoother = loessLine, smoother.args=list(degree=1, span=2/3),
+    key=TRUE, ...)
 {
-    mmp.default(model, variable, mean, sd, xlab, degree, 
-        span, key, ...)
+    mmp.default(model, variable, sd, xlab, smoother=smoother,
+       smoother.args=smoother.args, key, ...)
 }
 
 mmp.default <-
-function (model, variable, mean = TRUE, sd = FALSE, 
-    xlab = deparse(substitute(variable)), degree = 1, span = 2/3, key=TRUE, 
+function (model, variable, sd = FALSE,
+    xlab = deparse(substitute(variable)), smoother=loessLine,
+    smoother.args, key=TRUE,
     col.line = palette()[c(4, 2)], col=palette()[1], 
     labels, id.method="y", 
     id.n=if(id.method[1]=="identify") Inf else 0,
     id.cex=1, id.col=palette()[1], grid=TRUE, ...)
-{   
+{     
+    if (!is.function(smoother)) {
+        smoother <- loessLine
+        smoother.args <- list()
+        }
     if  (!is.null(attr(model$model, "na.action"))) {
         if (attr(attr(model$model, "na.action"), "class") == "exclude")
             model <- update(model, na.action=na.omit)}     
@@ -49,7 +56,6 @@ function (model, variable, mean = TRUE, sd = FALSE,
         u <- variable}
     if(missing(labels)) 
         labels <- names(residuals(model))
-    zpred <- function(...){pmax(predict(...), 0)}
     resp <- model.response(model.frame(model))
     plot(u, resp, 
         xlab = xlab, ylab = colnames(model$model[1]), type="n", ...)
@@ -62,51 +68,27 @@ function (model, variable, mean = TRUE, sd = FALSE,
           bty="n", cex=0.75, fill=col.line, border=col.line, horiz=TRUE, 
           offset=0)
           }
-    deg <- if(length(unique(u)) == 2) 0 else degree
     ow <- options(warn=-1)
     on.exit(options(ow))
-    loess.y <- loess(resp ~ u, degree = deg, 
-        span = span)
-    loess.yhat <- loess(predict(model) ~ u, degree = deg, 
-        span = span)
-    new <- seq(min(u), max(u), length = 200)
-    if (mean == TRUE) {
-        lines(new, predict(loess.y, data.frame(u = new)), lty = 1, 
-            lwd=2, col = col.line[1])
-        lines(new, predict(loess.yhat, data.frame(u = new)), 
-            lwd=2, lty = 2, col = col.line[2])
-    }
-    if (sd == TRUE) {
-        loess.y.var <- loess(residuals(loess.y)^2 ~ u, degree = deg, 
-            span = span)
-        lines(new, predict(loess.y, data.frame(u = new)) +
-            sqrt(zpred(loess.y.var, data.frame(u = new))), 
-                 lty = 1, col = col.line[1])
-        lines(new, predict(loess.y, 
-            data.frame(u = new)) - sqrt(zpred(loess.y.var, 
-            data.frame(u = new))), lty = 1, col = col.line[1])
-        loess.yhat.var <- loess(residuals(loess.yhat)^2 ~ u, 
-            degree = deg, span = span)
-        s2 <- summary(model)$sigma^2
-        lines(new, predict(loess.yhat, data.frame(u = new)) +
-            sqrt(s2 + zpred(loess.yhat.var, data.frame(u = new))), 
-            lty = 2, col = col.line[2])
-        lines(new, predict(loess.yhat, data.frame(u = new)) -
-            sqrt(s2 + zpred(loess.yhat.var, data.frame(u = new))), 
-            lty = 2, col = col.line[2])
-    }    
+    smoother.args$lty <- smoother.args$lty.spread <- 1
+    smoother(u, resp, col.line[1], log.x=FALSE, log.y=FALSE, spread=sd,
+       smoother.args=smoother.args)
+    smoother.args$lty <- smoother.args$lty.spread <- 2
+    smoother(u, predict(model), col.line[2], log.x=FALSE, log.y=FALSE, spread=sd,
+       smoother.args=smoother.args)
     showLabels(u, resp, labels=labels, 
         id.method=id.method, id.n=id.n, id.cex=id.cex, 
         id.col=id.col)
 }
 
-mmp.glm <- function (model, variable, mean = TRUE, sd = FALSE, 
-    xlab = deparse(substitute(variable)), degree = 1, span = 2/3, key=TRUE, 
+mmp.glm <- function (model, variable, sd = FALSE, 
+    xlab = deparse(substitute(variable)), smoother=gamLine,
+    smoother.args=list(k=3), key=TRUE, 
     col.line = palette()[c(4, 2)], col=palette()[1], 
     labels, id.method="y", 
     id.n=if(id.method[1]=="identify") Inf else 0,
     id.cex=1, id.col=palette()[1], grid=TRUE, ...)
-{
+{   
     if (missing(variable)) {
         xlab <- "Linear Predictor"
         u <- fitted(update(model, na.action=na.omit))
@@ -114,22 +96,10 @@ mmp.glm <- function (model, variable, mean = TRUE, sd = FALSE,
         u <- variable }
     if(missing(labels)) 
         labels <- names(residuals(model)[!is.na(residuals(model))])
-#    na.cases <- attr(model$model, "na.action")
-#    if(length(na.cases)>0) u <- u[-na.cases]
-    fr.mmp <- function(family, x) {
-        if (family == "binomial")
-            pmax(0, pmin(1, x))
-        else if (family == "poisson")
-            pmax(0, x)
-        else if (family == "gamma")
-            pmax(0, x)
-        else x
-    }
     response <- model.response(model.frame(model))
     fam <- model$family$family
+    lin <- model$family$link
     pw <- model$prior.weights # relevant only for binomial 
-# For family = "binomial" we need to figure out the correct response
-# The sample sizes are in  prior.weights
     bernoulli <- FALSE
     if(fam == "binomial") {
         if(!any(pw > 1.1)) bernoulli <- TRUE 
@@ -146,39 +116,17 @@ mmp.glm <- function (model, variable, mean = TRUE, sd = FALSE,
           bty="n", cex=0.75, fill=col.line, border=col.line, 
           horiz=TRUE, offset=0)
        }
-    loess.y <- loess(response ~ u, degree = degree, span = span)
-    loess.yhat <- loess(predict(model, type = "response") ~
-        u, degree = degree, span = span)
-    new <- seq(min(u), max(u), length = 200)
-    pred.loess.y <- fr.mmp(fam, predict(loess.y, data.frame(u = new)))
-    pred.loess.yhat <- fr.mmp(fam, predict(loess.yhat, data.frame(u = new)))
-    if (mean == TRUE) {
-        lines(new, pred.loess.y, lty = 1, col = col.line[1], lwd=2)
-        lines(new, pred.loess.yhat, lty = 2, col = col.line[2], lwd=2)
-    }
-    if (sd == TRUE & bernoulli==FALSE) {
-        loess.y.var <- loess(residuals(loess.y)^2 ~ u, degree = degree, 
-            span = span)
-        pred.loess.y.var <- pmax(0, predict(loess.y.var, data.frame(u = new)))
-        lines(new, fr.mmp(fam, pred.loess.y + sqrt(pred.loess.y.var)), 
-            lty = 1, col = col.line[1])
-        lines(new, fr.mmp(fam, pred.loess.y - sqrt(pred.loess.y.var)), 
-            lty = 1, col = col.line[1])
-        loess.yhat.var <- loess(residuals(loess.yhat)^2 ~ u, 
-            degree = degree, span = span)
-        pred.loess.yhat.var <- pmax(0, predict(loess.yhat.var, 
-            data.frame(u = new)))
-        varfun <- summary(model)$dispersion * 
-            model$family$variance(predict(model, type = "response"))/
-              if (!is.null(model$prior.weights)) model$prior.weights else 1
-        loess.varfun <- loess(varfun ~ u, degree = degree, span = span)
-        pred.loess.varfun <- pmax(0, predict(loess.varfun, data.frame(u = new)))
-        sd.smooth <- sqrt(pred.loess.yhat.var + pred.loess.varfun)
-        lines(new, fr.mmp(fam, pred.loess.yhat + sd.smooth), 
-            lty = 2, col = col.line[2])
-        lines(new, fr.mmp(fam, pred.loess.yhat - sd.smooth), 
-            lty = 2, col = col.line[2])
-    }
+    smoother.args$lty <- smoother.args$lty.spread <- 1
+    smoother.args$family <- fam
+    smoother.args$link <- lin
+    smoother.args$weights <- pw
+    smoother(u, response, col.line[1], log.x=FALSE, log.y=FALSE, spread=FALSE,
+       smoother.args=smoother.args)
+    smoother.args$lty <- smoother.args$lty.spread <- 2
+    response <- if(fam=="binomial") predict(model, type="response")/pw
+         else predict(model, type="response")
+    smoother(u, response, col.line[2], log.x=FALSE, log.y=FALSE, spread=FALSE,
+       smoother.args=smoother.args)
     showLabels(u, model$model[, 1], labels=labels, 
         id.method=id.method, id.n=id.n, id.cex=id.cex, 
         id.col=id.col)
@@ -191,7 +139,7 @@ mmps <- function(model, terms= ~ ., fitted=TRUE, layout=NULL, ask,
   mf2 <- try(update(model, as.formula(terms), method="model.frame"),
      silent=TRUE)
 # This second test is used for models like m1 <- lm(longley) which
-# fail the first test becasue update doesn't work
+# fail the first test because update doesn't work
   if(class(mf2) == "try-error")
        mf2 <- try(update(model, as.formula(terms),
                method="model.frame", data=model.frame(model)), silent=TRUE)

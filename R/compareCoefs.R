@@ -5,6 +5,7 @@
 # 11 Jan 2012: fix to work with any 'S4' object with a coef() method. 
 #   suggested by David Hugh-Jones  University of Warwick http://davidhughjones.googlepages.com 
 # 3 May 2012:  fixed bug if models are less than full rank.
+# 17 Seot 2912: suppressing printing calls when there are none. J. Fox
 
 compareCoefs <- function(..., se=TRUE, print=TRUE, digits=3){
     fixefmer <- function(m) {
@@ -34,12 +35,13 @@ compareCoefs <- function(..., se=TRUE, print=TRUE, digits=3){
     colnames(table) <- if (se) if (n.models > 1) paste(rep(c("Est.", "SE"), n.models),
                            rep(1:n.models, each=2)) else c("Estimate", "Std. Error")
         else if (n.models > 1) paste(rep("Est.", n.models), 1:n.models) else "Estimate" 
-    if(print == TRUE) cat("\nCall:")
+    calls <- !any(sapply(models, getcall) == "NULL")
+    if(print == TRUE && calls) cat("\nCall:")
     for (i in 1:n.models){
         model <- models[[i]]
         fout <- deparse(getcall(model), width.cutoff=getOption("width") - 9)
 		mod <- if (n.models > 1) paste(i, ":", sep="") else ""
-        if(print == TRUE) cat(paste("\n", mod, fout[1], sep=""))
+        if(print == TRUE && calls) cat(paste("\n", mod, fout[1], sep=""))
         if(length(fout) > 1) for (f in fout[-1]) cat("\n",f)
         if (se) {
           ests <- getcoef(model)

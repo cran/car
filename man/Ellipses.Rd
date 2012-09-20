@@ -16,11 +16,13 @@ ellipse(center, shape, radius, log="", center.pch=19, center.cex=1.5,
   segments=51, draw=TRUE, add=draw, xlab="", ylab="", 
    col=palette()[2], lwd=2, fill=FALSE, fill.alpha=0.3, grid=TRUE, ...)
 
-dataEllipse(x, y, weights, log="", levels=c(0.5, 0.95), center.pch=19, center.cex=1.5, 
-  draw=TRUE, plot.points=draw, add=!plot.points, segments=51, robust=FALSE,
-  xlab=deparse(substitute(x)), 
-  ylab=deparse(substitute(y)), 
-  col=palette()[1:2], lwd=2, fill=FALSE, fill.alpha=0.3, grid=TRUE, ...)
+dataEllipse(x, y, weights, log = "", levels = c(0.5, 0.95), center.pch = 19,
+    center.cex = 1.5, draw = TRUE, plot.points = draw, add = !plot.points,
+    segments = 51, robust = FALSE, xlab = deparse(substitute(x)),
+    ylab = deparse(substitute(y)), col = palette()[1:2], lwd = 2,
+    fill = FALSE, fill.alpha = 0.3, grid = TRUE, labels, id.method = "mahal",
+    id.n = if (id.method[1] == "identify") Inf else 0, id.cex = 1,
+    id.col = palette()[1], ...)
 
 confidenceEllipse(model, ...)
 
@@ -88,6 +90,9 @@ confidenceEllipse(model, ...)
   \item{fill.alpha}{transparency of fill (default = \code{0.3}).}
   \item{\dots}{other plotting parameters to be passed to \code{plot} and
     \code{line}.}
+  \item{labels,id.method,id.n,id.cex,id.col}{Arguments for the labelling of
+    points.  The default is \code{id.n=0} for labeling no points.  See
+    \code{\link{showLabels}} for details of these arguments.}
   \item{grid}{If TRUE, the default, a light-gray background grid is put on the
 graph}
 }

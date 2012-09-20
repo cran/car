@@ -88,35 +88,15 @@ residualPlot <- function(model, ...) UseMethod("residualPlot")
 residualPlot.default <- function(model, variable = "fitted", type = "pearson", 
                  plot = TRUE,     
                  quadratic = TRUE, 
-                 smooth = FALSE, span = 1/2, smooth.lwd=lwd, smooth.lty=lty, 
-                 smooth.col=col.lines,  
+                 smoother=NULL, smoother.args=list(), 
+                 col.smooth=palette()[3],
                  labels, 
                  id.method = "y", 
                  id.n = if(id.method[1]=="identify") Inf else 0,
                  id.cex=1, id.col=palette()[1], 
-                 col = palette()[1], col.lines = palette()[2], 
+                 col = palette()[1], col.quad = palette()[2],
                  xlab, ylab, lwd = 1, lty = 1,  
                  grid=TRUE, ...) {
-# two functions modified from 'scatterplot' function:
-	logged <- function(axis=c("x", "y")){
-		axis <- match.arg(axis)
-		0 != length(grep(axis, log))
-	}
-	lowess.line <- function(x, y, col, span) {
-	  call <- match.call(expand.dots=TRUE)
-	  uselogx <- length(call$log == "x") == 1
-    if(uselogx) x <- log(x)
-		valid <- complete.cases(x, y)
-		x <- x[valid]
-		y <- y[valid]
-		ord <- order(x)
-		x <- x[ord]
-		y <- y[ord]
-		fit <- loess.smooth(x, y, span=span)
-		lines(if(uselogx) exp(fit$x) else fit$x, fit$y, 
-         lwd=smooth.lwd, col=smooth.col, lty=smooth.lty)
-		}
-# End of copied functions
  string.capitalize <- function(string) {
      paste(toupper(substring(string, 1, 1)), substring(string, 2), sep="")}
  if(missing(labels)) 
@@ -166,9 +146,12 @@ residualPlot.default <- function(model, variable = "fitted", type = "pearson",
      if(quadratic==TRUE){
         new <- seq(min(horiz), max(horiz), length=200)
         lm2 <- lm(residuals(model, type="pearson")~poly(horiz, 2))
-        lines(new, predict(lm2, list(horiz=new)), lty=1, lwd=2, col=col.lines)
+        lines(new, predict(lm2, list(horiz=new)), lty=1, lwd=2, col=col.quad)
         }
-     if(smooth==TRUE) lowess.line(horiz, vert, smooth.col, span)
+     #browser()
+     if(is.function(smoother))
+       smoother(horiz, vert, col.smooth, log.x=FALSE, log.y=FALSE,
+          spread=FALSE, smoother.args=smoother.args)
      showLabels(horiz, vert, labels=labels, 
             id.method=id.method, id.n=id.n, id.cex=id.cex, 
             id.col=id.col)  
@@ -221,8 +204,10 @@ residualPlot.lm <- function(model, ...) {
   }
   
 residualPlot.glm <- function(model, variable = "fitted", type = "pearson", 
-                 plot = TRUE, quadratic = FALSE, smooth = TRUE, ...) {
+                 plot = TRUE, quadratic = FALSE, 
+                 smoother = loessLine, smoother.args=list(k=3), ...) {
   residualPlot.default(model, variable=variable, type=type, plot=plot, 
-                 quadratic=quadratic, smooth=smooth, ...)
+                 quadratic=quadratic, smoother=smoother, 
+                 smoother.args=smoother.args, ...)
   }
 
