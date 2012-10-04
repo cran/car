@@ -1,3 +1,13 @@
+Changes to Version 2.0-15
+
+    o Added an nls method for Boot
+
+    o Recode() introduced as alias for recode() to avoid name clash with Hmisc.
+
+    o residualPlots for glms now ignore starting values for the computing algorithm when computing lack of fit tests; starting values previously caused an error.
+
+    o Marginal Model Plots now allow conditioning on a categorical variable.
+
 Changes to Version 2.0-14
 
     o Smoothers now given as arguments to scatterplot(), scatterplotMatrix(), residualPlots() and other functions; gamLine(), loessLine() (default), and quantregLine() smoothers provided.

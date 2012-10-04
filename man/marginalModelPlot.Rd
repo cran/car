@@ -19,29 +19,29 @@ for \code{marginalModelPlots}, and \code{mmp} is an alias for \code{marginalMode
 marginalModelPlots(...)
 
 mmps(model, terms= ~ ., fitted=TRUE, layout=NULL, ask,
-        main, ...)
+        main, groups, key=TRUE, ...)
 
 marginalModelPlot(...)
 
 \method{mmp}{lm}(model, variable, sd = FALSE,
     xlab = deparse(substitute(variable)),
-    smoother = loessLine, smoother.args=list(degree=1, span=2/3),
-    key=TRUE, ...)
+    smoother = loessLine, smoother.args=list(span=2/3),
+    key=TRUE, pch, groups=NULL, ...)
     
 \method{mmp}{default}(model, variable, sd = FALSE,
     xlab = deparse(substitute(variable)), smoother=loessLine,
-    smoother.args, key=TRUE,
-    col.line = palette()[c(4, 2)], col=palette()[1], 
-    labels, id.method="y", 
+    smoother.args, key=TRUE, pch, groups=NULL, 
+    col.line = palette()[c(4, 2)], col=palette()[1],
+    labels, id.method="y",
     id.n=if(id.method[1]=="identify") Inf else 0,
     id.cex=1, id.col=palette()[1], grid=TRUE, ...)
    
-\method{mmp}{glm}(model, variable, sd = FALSE, 
+\method{mmp}{glm}(model, variable, sd = FALSE,
     xlab = deparse(substitute(variable)), smoother=gamLine,
-    smoother.args=list(k=3), key=TRUE, 
-    col.line = palette()[c(4, 2)], col=palette()[1], 
-    labels, id.method="y", 
-    id.n=if(id.method[1]=="identify") Inf else 0,
+    smoother.args=list(k=3), key=TRUE, pch, groups=NULL,
+    col.line = palette()[c(4, 2)], col=palette()[1],
+    labels, id.method="y",
+    id.n=if(id.method[1]=="identify") Inf else 0, 
     id.cex=1, id.col=palette()[1], grid=TRUE, ...)
 }
 
@@ -51,7 +51,9 @@ marginalModelPlot(...)
 \item{terms}{A one-sided formula.  A marginal model plot will be drawn for
   each variable on the right-side of this formula that is not a factor.  The
   default is \code{~ .}, which specifies that all the terms in 
-  \code{formula(object)} will be used.  See examples below.}
+  \code{formula(object)} will be used.  If a conditioning argument is given,
+  eg \code{terms = ~. | a}, then separate colors and smoothers are used for
+  each unique non-missing value of \code{a}.  See examples below.}
 \item{fitted}{If the default \code{TRUE}, then a marginal model plot in the direction
   of the fitted values or linear predictor of a generalized linear model will
   be drawn.}
@@ -97,12 +99,16 @@ is \code{gamLine}, using the \code{gam} package and using splines.
   defaults match the smoother used before September 2012, and may be changed
   later.  See \code{\link{ScatterplotSmoothers}}.
 }
+\item{groups}{The name of a vector that specifies a grouping variable for
+separate colors/smoothers.  This can also be specified as a conditioning
+argument on the \code{terms} argument.}
 \item{key}{If \code{TRUE}, include a key at the top of the plot, if \code{FALSE} omit the
-key}
+key.  If grouping is present, the key is only printed for the upper-left plot.}
   \item{id.method,labels,id.n,id.cex,id.col}{Arguments for labelling
 points.  The default \code{id.n=0} suppresses labelling, and setting this
 argument greater than zero will include labelling.  See
 \code{\link{showLabels}} for these arguments.}
+\item{pch}{plotting character to use if no grouping is present.}
 \item{col.line}{ colors for data and model smooth, respectively.  Using
 the default palette, these are blue and red. }
 \item{col}{color(s) for the plotted points.}
@@ -123,7 +129,10 @@ terms.  For example, if you specify \code{terms ~ X1 + poly(X2, 3)} and
 axis of the marginal model plot will be the value of
 \code{predict(model, type="terms")[, "poly(X2, 3)"])}.  If the \code{predict}
 method for the model you are using doesn't support \code{type="terms"}, 
-then the polynomial/spline term is skipped.
+then the polynomial/spline term is skipped.  Adding a conditioning variable,
+e.g., \code{terms = ~ a + b | c}, will produce marginal model plots for \code{a} 
+and \code{b} with different colors and smoothers for each unique non-missing
+value of \code{c}.
 
 The smoothers used were changed in September 2012.  For linear models, the 
 default smoother is still loess with the same smoothing parameters as were
@@ -169,6 +178,8 @@ p1 <- lm(prestige ~ income + education, Prestige)
 mmps(p1, sd=TRUE)
 # logisitic regression example
 # smoothers return warning messages.
+mmps(p1, ~. | type)
+# fit a separate smoother and color for each type of occupation.
 
 m1 <- glm(lfp ~ ., family=binomial, data=Mroz)
 mmps(m1)

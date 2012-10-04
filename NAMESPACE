@@ -1,4 +1,4 @@
-# last modified 2012-09-11 by J. Fox
+# last modified 2012-09-30 by J. Fox
 
 export(
     basicPowerAxis,
@@ -17,6 +17,7 @@ export(
     qqPlot,
     qqp,
     recode,
+    Recode,
     regLine,
     scatter3d,
     scatterplot, 
@@ -239,6 +240,7 @@ S3method(symbox, default)
 S3method(Boot, default)
 S3method(Boot, lm)
 S3method(Boot, glm)
+S3method(Boot, nls)
 S3method(hist, boot)
 S3method(confint, boot)
 S3method(summary, boot)

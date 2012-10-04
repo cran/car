@@ -219,7 +219,9 @@ Manova(mod, ...)
   MANOVA method for analyzing repeated measures designs: An extensive primer.
   \emph{Psychological Bulletin} \bold{97}, 316--333.
 }
-\author{John Fox \email{jfox@mcmaster.ca}}
+\author{John Fox \email{jfox@mcmaster.ca}; the code for the Mauchly test and Greenhouse-Geisser and Huynh-Feldt
+corrections for non-spericity in repeated-measures ANOVA are adapted from the functions 
+\code{stats:::stats:::mauchly.test.SSD} and \code{stats:::sphericity} by R Core.}
 
 \section{Warning}{Be careful of type-III tests.}
 

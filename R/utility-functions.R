@@ -231,7 +231,7 @@ showLabelsScatter <- function(x, y, labels, id.var = NULL,
 #  all the args from legend are used except for x, y, and xpd which are
 #  set in the function.
 #  offset is a fraction of the plot width or height to locate the legend
-outerLegend <- function(..., margin=3, offset=0, adjust=FALSE){  
+outerLegend <- function(..., margin=3, offset=0, adjust=FALSE){
    lims <- par("usr")
    if (margin == 3) {
       x0 <- lims[1] + offset*(lims[2]-lims[1])
@@ -277,3 +277,67 @@ exists.method <- function(generic, object, default=TRUE, strict=FALSE){
 	any(paste(generic, ".", classes, sep="") %in%
 					as.character(methods(generic)))
 }
+
+     
+# Used by marginalModelPlots, residualPlots added 2012-09-24
+plotArrayLegend <- function(
+      location=c("top", "none", "separate"),
+      items, col.items, lty.items, lwd.items, title="legend") {
+   if(location== "none") return()
+   n <- length(items)
+   if(location == "top" ) { # add legend
+      usr <- par("usr")
+      coords <-list(x=usr[1], y=usr[3])
+      leg <- legend( coords, items,
+                col=col.items, pch=1:length(col.items),
+                bty="n", cex=1, xpd=NA, plot=FALSE)
+      coords <- list(x = usr[1], y=usr[4] + leg$rect$h)
+      legend( coords, items,
+         col=col.items, pch=1:length(col.items), bty="n", cex=1, xpd=NA)
+  }
+  if(location == "separate") {
+    plot(0:1, 0:1, xaxt="n", yaxt="n", xlab="", ylab="", type="n")
+    bg <- par()$bg
+    legend("center", items,
+          lty=lty.items, lwd=lwd.items, fill=col.items, border=col.items,,
+          col=col.items, box.col=par()$bg,
+          title=title)
+  }
+}
+
+termsToMf <- function(model, terms){
+  gform <- function(formula) {
+    if (is.null(formula)){
+        return(list(vars=formula, groups=NULL))
+    }
+    rhs <- formula[[2 + (length(formula) == 3)]]
+    if (class(rhs) == "name"){
+        return(list(vars=formula, groups=NULL))
+    }
+    if (length(rhs) == 1){
+        return(list(vars=formula, groups=NULL))
+    }
+    if (length(rhs) != 3) stop("bad terms argument")
+    if ("|" != deparse(rhs[[1]])) stop("bad terms argument")
+    vars <- as.formula(paste("~", deparse(rhs[[2]])))
+    groups <- as.formula(paste("~", deparse(rhs[[3]])))
+    list(vars=vars, groups=groups)
+  }
+  terms <- gform(as.formula(terms))
+  mf.vars <- try(update(model, terms$vars, method="model.frame"),
+     silent=TRUE)
+# This second test is used for models like m1 <- lm(longley) which
+# fail the first test because update doesn't work
+  if(class(mf.vars) == "try-error")
+       mf.vars <- try(update(model, terms$vars,
+               method="model.frame", data=model.frame(model)), silent=TRUE)
+  if(class(mf.vars) == "try-error") stop("argument 'terms' not interpretable.")
+  if(!is.null(terms$groups)){
+     mf.groups <- try(update(model, terms$groups, method="model.frame"), silent=TRUE)
+     if(class(mf.groups) == "try-error")
+       mf.groups <- try(update(model, terms$groups,
+               method="model.frame", data=model.frame(model)), silent=TRUE)
+     if(class(mf.groups) == "try-error") stop("argument 'terms' not interpretable.")
+  } else {mf.groups <- NULL}
+  list(mf.vars=mf.vars, mf.groups=mf.groups)
+  }
