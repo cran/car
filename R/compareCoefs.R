@@ -42,7 +42,7 @@ compareCoefs <- function(..., se=TRUE, print=TRUE, digits=3){
         fout <- deparse(getcall(model), width.cutoff=getOption("width") - 9)
 		mod <- if (n.models > 1) paste(i, ":", sep="") else ""
         if(print == TRUE && calls) cat(paste("\n", mod, fout[1], sep=""))
-        if(length(fout) > 1) for (f in fout[-1]) cat("\n",f)
+        if(length(fout) > 1) for (f in fout[-1]) if(print) cat("\n",f)
         if (se) {
           ests <- getcoef(model)
           new <- cbind(ests, rep(NA, length(ests)))

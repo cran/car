@@ -6,7 +6,8 @@ default.arg <- function(args.list, arg, default){
     if (is.null(args.list[[arg]])) default else args.list[[arg]]
 }
 
-loessLine <- function(x, y, col, log.x, log.y, spread=FALSE, smoother.args) {
+loessLine <- function(x, y, col, log.x, log.y, spread=FALSE, smoother.args,
+               draw=TRUE) {
     lty <- default.arg(smoother.args, "lty", 1)
     lwd <- default.arg(smoother.args, "lwd", 2)
     lty.spread <- default.arg(smoother.args, "lty.spread", 2)
@@ -31,7 +32,8 @@ loessLine <- function(x, y, col, log.x, log.y, spread=FALSE, smoother.args) {
     if (class(fit)[1] != "try-error"){
             if (log.x) x <- exp(x)
             y <- if (log.y) exp(fitted(fit)) else fitted(fit)
-            lines(x, y, lwd=lwd, col=col, lty=lty)
+            if(draw)lines(x, y, lwd=lwd, col=col, lty=lty) else
+               out <- list(x=x, y=y)
             }
     else{ options(warn)
           warning("could not fit smooth")
@@ -49,7 +51,9 @@ loessLine <- function(x, y, col, log.x, log.y, spread=FALSE, smoother.args) {
         if(class(pos.fit)[1] != "try-error"){
             y.pos <- if (log.y) exp(fitted(fit)[pos] + sqrt(fitted(pos.fit)))
                      else fitted(fit)[pos] + sqrt(fitted(pos.fit))
-            lines(x[pos], y.pos, lwd=lwd.spread, lty=lty.spread, col=col)
+            if(draw) lines(x[pos], y.pos, lwd=lwd.spread, lty=lty.spread, col=col)
+                else {out$x.pos <- x[pos]
+                      out$y.pos <- y.pos}
             }
         else{ options(warn)
             warning("coud not fit positive part of the spread")
@@ -57,15 +61,19 @@ loessLine <- function(x, y, col, log.x, log.y, spread=FALSE, smoother.args) {
         if(class(neg.fit)[1] != "try-error"){
             y.neg <- if (log.y) exp(fitted(fit)[!pos] - sqrt(fitted(neg.fit)))
                      else fitted(fit)[!pos] - sqrt(fitted(neg.fit))
-            lines(x[!pos], y.neg, lwd=lwd.spread, lty=lty.spread, col=col)
+            if(draw) lines(x[!pos], y.neg, lwd=lwd.spread, lty=lty.spread, col=col)
+                 else {out$x.neg <- x[!pos]
+                      out$y.neg <- y.neg}
             }
         else {options(warn)
             warning("cound not fit negative part of the spread") }
         }
+    if(!draw) return(out)
     }
 
 
-gamLine <- function(x, y, col, log.x, log.y, spread=FALSE, smoother.args) {
+gamLine <- function(x, y, col, log.x, log.y, spread=FALSE, smoother.args,
+              draw=TRUE) {
     if (!require(mgcv)) stop("mgcv package missing")
     lty <- default.arg(smoother.args, "lty", 1)
     lwd <- default.arg(smoother.args, "lwd", 2)
@@ -96,7 +104,8 @@ gamLine <- function(x, y, col, log.x, log.y, spread=FALSE, smoother.args) {
     if (class(fit)[1] != "try-error"){
             if (log.x) x <- exp(x)
             y <- if (log.y) exp(fitted(fit)) else fitted(fit)
-            lines(x, y, lwd=lwd, col=col, lty=lty)
+            if (draw) lines(x, y, lwd=lwd, col=col, lty=lty) else
+               out <- list(x=x, y=y)
             }
     else{ options(warn)
           warning("could not fit smooth")
@@ -109,7 +118,9 @@ gamLine <- function(x, y, col, log.x, log.y, spread=FALSE, smoother.args) {
         if(class(pos.fit)[1] != "try-error"){
             y.pos <- if (log.y) exp(fitted(fit)[pos] + sqrt(fitted(pos.fit)))
             else fitted(fit)[pos] + sqrt(fitted(pos.fit))
-            lines(x[pos], y.pos, lwd=lwd.spread, lty=lty.spread, col=col)
+            if(draw) lines(x[pos], y.pos, lwd=lwd.spread, lty=lty.spread, col=col)
+               else {out$x.pos <- x[pos]
+                     out$y.pos <- y.pos}
             }
         else{ options(warn)
             warning("coud not fit positive part of the spread")
@@ -117,14 +128,18 @@ gamLine <- function(x, y, col, log.x, log.y, spread=FALSE, smoother.args) {
         if(class(neg.fit)[1] != "try-error"){
             y.neg <- if (log.y) exp(fitted(fit)[!pos] - sqrt(fitted(neg.fit)))
             else fitted(fit)[!pos] - sqrt(fitted(neg.fit))
-            lines(x[!pos], y.neg, lwd=lwd.spread, lty=lty.spread, col=col)
+            if(draw) lines(x[!pos], y.neg, lwd=lwd.spread, lty=lty.spread, col=col)
+               else {out$x.neg <- x[!pos]
+                     out$y.neg <- y.neg}
             }
         else {options(warn)
             warning("cound not fit negative part of the spread") }
         }
+    if(!draw) return(out)
     }
 
-quantregLine <- function(x, y, col, log.x, log.y, spread=FALSE, smoother.args) {
+quantregLine <- function(x, y, col, log.x, log.y, spread=FALSE, smoother.args,
+                   draw=TRUE) {
     if (!require(quantreg)) stop("quantreg package missing")
     lty <- default.arg(smoother.args, "lty", 1)
     lwd <- default.arg(smoother.args, "lwd", 2)
@@ -143,7 +158,8 @@ quantregLine <- function(x, y, col, log.x, log.y, spread=FALSE, smoother.args) {
         fit <- rqss(y ~ qss(x, lambda=lambda))
         if (log.x)  x <- exp(x)
         y <-if (log.y) exp(fitted(fit)) else fitted(fit)
-        lines(x, y, lwd=lwd, col=col, lty=lty)
+        if(draw) lines(x, y, lwd=lwd, col=col, lty=lty)  else
+           out <- list(x=x, y=x)
     }
     else{
         fit <- rqss(y ~ qss(x, lambda=lambda))
@@ -151,10 +167,16 @@ quantregLine <- function(x, y, col, log.x, log.y, spread=FALSE, smoother.args) {
         q3fit <- rqss(y ~ qss(x, lambda=lambda), tau=0.75)
         if (log.x) x <- exp(x)
         y <- if (log.y) exp(fitted(fit)) else fitted(fit)
-        lines(x, y, lwd=lwd, col=col, lty=lty)
+        if(draw) lines(x, y, lwd=lwd, col=col, lty=lty) else
+           out <- list(x=x, y=y)
         y.q1 <- if (log.y) exp(fitted(q1fit)) else fitted(q1fit)
-        lines(x, y.q1, lwd=lwd.spread, lty=lty.spread, col=col)
+        if(draw) lines(x, y.q1, lwd=lwd.spread, lty=lty.spread, col=col) else
+           {out$x.neg <- x
+            out$y.neg <- y.q1}
         y.q3 <- if (log.y) exp(fitted(q3fit)) else fitted(q3fit)
-        lines(x, y.q3, lwd=lwd.spread, lty=lty.spread, col=col)
+        if(draw) lines(x, y.q3, lwd=lwd.spread, lty=lty.spread, col=col) else
+           {out$x.neg <- x
+            out$y.neg <- y.q1}
     }
+    if(!draw) return(out)
 }

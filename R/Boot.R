@@ -28,9 +28,10 @@ Boot.default <- function(object, f=coef, labels=names(coef(object)),
      boot.f <- function(data, indices, f) {
       assign(".boot.indices", indices, envir=.GlobalEnv)
       mod <- update(object, subset=.boot.indices)
-      if(mod$qr$rank != object$qr$rank)
-        stop("Bootstrap fit of lower dimension than original fit---stopping")
-      f(mod)
+      if(mod$qr$rank != object$qr$rank){
+            out <- f(object)
+            out <- rep(NA, length(out)) } else  {out <- f(mod)}
+     out
      }
     } else {
     boot.f <- function(data, indices, f) {
@@ -46,7 +47,10 @@ Boot.default <- function(object, f=coef, labels=names(coef(object)),
             }
       assign(".y.boot", val, envir=.GlobalEnv)
       mod <- update(object, .y.boot ~ .)
-      f(mod)
+      if(mod$qr$rank != object$qr$rank){
+            out <- f(object)
+            out <- rep(NA, length(out)) } else  {out <- f(mod)}
+      out
       }
   }
   b <- boot(data.frame(update(object, model=TRUE)$model), boot.f, R, f=f)
@@ -73,6 +77,51 @@ Boot.glm <- function(object, f=coef, labels=names(coef(object)),
   Use the 'boot' function in the 'boot' package to write
   your own version of residual bootstrap for a glm.")
    }
+  }
+  
+Boot.nls <- function(object, f=coef, labels=names(coef(object)),
+                     R=999, method=c("case", "residual")) {
+  if(!(require(boot))) stop("The 'boot' package is missing")
+  f0 <- f(object)
+  if(length(labels) != length(f0)) labels <- paste("V", seq(length(f0)), sep="")
+  method <- match.arg(method)
+  opt<-options(show.error.messages = FALSE)
+  if(method=="case") {
+     boot.f <- function(data, indices, f) {
+         assign(".boot.indices", indices, envir=.GlobalEnv)
+         mod <- try(update(object, subset=.boot.indices, start=coef(object)))
+         if(class(mod) == "try-error"){
+            out <- f(object)
+            out <- rep(NA, length(out)) } else  {out <- f(mod)}
+     out
+     }
+    } else {
+    boot.f <- function(data, indices, f) {
+      first <- all(indices == seq(length(indices)))
+      res <- residuals(object)
+      val <- fitted(object) + res[indices]
+      if (!is.null(object$na.action)){
+            pad <- object$na.action
+            attr(pad, "class") <- "exclude"
+            val <- naresid(pad, val)
+            }
+      assign(".y.boot", val, envir=.GlobalEnv)
+      mod <- try(update(object, .y.boot ~ ., start=coef(object)))
+      if(class(mod) == "try-error"){
+            out <- f(object)
+            out <- rep(NA, length(out)) } else  {out <- f(mod)}
+      out
+      }
+  }
+  b <- boot(data.frame(update(object, model=TRUE)$model), boot.f, R, f=f)
+  colnames(b$t) <- labels
+  if(exists(".y.boot")) remove(".y.boot", envir=.GlobalEnv)
+  if(exists(".boot.indices")) remove(".boot.indices", envir=.GlobalEnv)
+  options(opt)
+  d <- dim(na.omit(b$t))[1]
+  if(d != R)
+   cat( paste("\n","Number of bootstraps was", d, "out of", R, "attempted", "\n"))
+  b
   }
 
 confint.boot <- function(object, parm, level = 0.95,
@@ -184,21 +233,23 @@ hist.boot <- function(x, parm, layout=NULL, ask, main="", freq=FALSE,
   what <- c(estNormal & !freq, estDensity & !freq, ci != "none", estPoint)
   for (j in parm){
 # determine the range of the y-axis
-       h <- hist(x$t[, j], plot=FALSE)
-       d <- density(x$t[, j])
-       n <- pnorm(0)/(sd <- sd(x$t[, j]))
+       z <- na.omit(x$t[, j])
+       h <- hist(z, plot=FALSE)
+       d <- density(z)
+       n <- pnorm(0)/(sd <- sd(z))
        m <- if(freq == FALSE) max(h$density, d$y, n) else max(h$counts)
-       plot(h, xlab=pn[j], freq=freq, 
+       plot(h, xlab=pn[j], freq=freq,
             main=if(length(parm)==1) main else "", ylim=c(0, m), ...)
        if(estDensity & !freq){
           lines(d, col=den.col, lty=den.lty, lwd=den.lwd)
           }
        if(estNormal & !freq){
+          z <- na.omit(x$t[, j])
           xx <- seq(-4, 4, length=400)
-          xbar <- mean(x$t[, j])
-          sd <- sd(x$t[, j])
+          xbar <- mean(z)
+          sd <- sd(z)
           lines( xbar + sd*xx, dnorm(xx)/sd, col=nor.col, lty=nor.lty,
-              lwd=nor.lwd)          
+              lwd=nor.lwd)
           }
        if(ci != "none") lines( clim[j ,], c(0, 0), lwd=4)
        if(estPoint) abline(v=pe[j], lty=point.lty, col=point.col, lwd=point.lwd)
@@ -207,11 +258,11 @@ hist.boot <- function(x, parm, layout=NULL, ask, main="", freq=FALSE,
 		        usr <- par("usr")
 		        legend.coords <- list(x=usr[1], y=usr[4] + 1.3 * (1 + sum(what)) *strheight("N"))
             legend( legend.coords,
-             c("Normal Density", "Kernel Density", 
+             c("Normal Density", "Kernel Density",
              paste(ci, " ", round(100*level), "% CI", sep=""),
                    "Obs. Value")[what],
              lty=c(nor.lty, den.lty, 1, point.lty)[what],
-             col=c(nor.col, den.col, "black", point.col)[what], 
+             col=c(nor.col, den.col, "black", point.col)[what],
              fill=c(nor.col, den.col, "black", point.col)[what],
              lwd=c(2, 2, 4, 2)[what],
              border=c(nor.col, den.col, "black", point.col)[what],

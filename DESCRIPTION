@@ -1,6 +1,6 @@
 Package: car
-Version: 2.0-14
-Date: 2012/09/19
+Version: 2.0-15
+Date: 2012/10/04
 Title: Companion to Applied Regression
 Authors@R: c(person("John", "Fox", role = c("aut", "cre"), email =
         "jfox@mcmaster.ca"), person("Sanford", "Weisberg", role =
@@ -13,7 +13,8 @@ Authors@R: c(person("John", "Fox", role = c("aut", "cre"), email =
         person("Georges", "Monette", role = "ctb"), person("Henric",
         "Nilsson", role = "ctb"), person("Derek", "Ogle", role =
         "ctb"), person("Brian", "Ripley", role = "ctb"),
-        person("Achim", "Zeileis", role = "ctb"))
+        person("Achim", "Zeileis", role = "ctb"), person("R-Core",
+        role="ctb"))
 Depends: R (>= 2.14.0), stats, graphics, MASS, nnet
 Suggests: alr3, boot, leaps, lme4, lmtest, nlme, quantreg, sandwich,
         mgcv, pbkrtest (>= 0.3-2), rgl, survival, survey
@@ -31,11 +32,11 @@ Author: John Fox [aut, cre], Sanford Weisberg [aut], Douglas Bates
         Gorjanc [ctb], Spencer Graves [ctb], Richard Heiberger [ctb],
         Rafael Laboissiere [ctb], Georges Monette [ctb], Henric Nilsson
         [ctb], Derek Ogle [ctb], Brian Ripley [ctb], Achim Zeileis
-        [ctb]
+        [ctb], R-Core [ctb]
 Maintainer: John Fox <jfox@mcmaster.ca>
 Repository: CRAN
 Repository/R-Forge/Project: car
-Repository/R-Forge/Revision: 286
-Repository/R-Forge/DateTimeStamp: 2012-09-19 15:20:59
-Date/Publication: 2012-09-20 06:10:04
-Packaged: 2012-09-19 18:21:55 UTC; rforge
+Repository/R-Forge/Revision: 295
+Repository/R-Forge/DateTimeStamp: 2012-10-05 19:17:08
+Date/Publication: 2012-10-09 20:07:01
+Packaged: 2012-10-05 22:21:34 UTC; rforge

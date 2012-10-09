@@ -3,6 +3,7 @@
 \alias{Boot.default}
 \alias{Boot.lm}
 \alias{Boot.glm}
+\alias{Boot.nls}
 
 \title{Bootstrapping for regression models }
 \description{
@@ -21,10 +22,13 @@ meet the needs of many users.
 \S3method{Boot}{glm}(object, f=coef, labels=names(coef(object)),
                      R=999, method=c("case", "residual"))
 
+\S3method{Boot}{nls}(object, f=coef, labels=names(coef(object)),
+                     R=999, method=c("case", "residual"))
+
 }
 \arguments{
-  \item{object}{ A regression object of class \code{lm} or \code{glm}.  The function may work with other regression objects that support the \code{update}
-method and have a \code{subset} argument, but it will fail if the fitting method for the model is iterative and sensitive to starting values.  See details below.}
+  \item{object}{ A regression object of class \code{lm}, \code{glm} or \code{nls}.  The function may work with other regression objects that support the \code{update}
+method and have a \code{subset} argument}
   \item{f}{A function whose one argument is the name of a regression object that will be applied to the updated regression object to
 compute the statistics of interest.  The default is \code{coef}, to return to
 regression coefficient estimates.  For example, 
@@ -32,10 +36,12 @@ regression coefficient estimates.  For example,
   \item{labels}{Provides labels for the statistics computed by \code{f}.  If
 this argument is of the wrong length, then generic labels will be generated.
 }
-  \item{R}{Number of bootstrap samples.}
+  \item{R}{Number of bootstrap samples.  The number of bootstrap samples actually computed may be smaller than
+this value if either the fitting method is iterative, or if the rank of a fittle \code{lm} or \code{glm}
+model is different in the bootstrap replication than in the original data.}
   \item{method}{The bootstrap method, either \dQuote{case} for resampling
 cases or \dQuote{residuals} for a residual bootstrap.  See the details
-below. The residual bootstrap is available only for \code{lm} objects and will return an error for \code{glm} objects.}
+below. The residual bootstrap is available only for \code{lm} and \code{nls} objects and will return an error for \code{glm} objects.}
 }
 \details{
 Whereas the \code{boot} function is
@@ -45,18 +51,24 @@ passed as the \code{statistic} argument to \code{boot}.  The argument \code{R}
 is also passed to \code{boot}.  All other arguments to \code{boot} are
 kept at their default values.
 
-The methods available for \code{lm} objects are \dQuote{case} and
+The methods available for \code{lm} and \code{nls} objects are \dQuote{case} and
 \dQuote{residual}.  The case bootstrap resamples from the joint distribution
 of the terms in the model and the response.  The residual bootstrap fixes the
 fitted values from the original data, and creates bootstraps by adding a
 bootstrap sample of the residuals to the fitted values to get a bootstrap
 response.  It is an implementation of Algorithm 6.3, page 271, of
-Davison and Hinkley (1997).  The residual bootstrap for
+Davison and Hinkley (1997).  For \code{nls} objects ordinary residuals are used
+in the resampling rather than the standardized residuals used in the \code{lm}
+method.  The residual bootstrap for
 generalized linear models has several competing approaches, but none are
 without problems.  If you want to do a residual bootstrap for a glm, you
 will need to write your own call to \code{boot}.
 
-This function may fail if the model fit to any of the bootstrap samples is of lower rank than the model fit to the original data.  This will occur, for example, if the model includes factors and interactions with a very small number of observations per cell.  In this case bootstrap samples may have zero counts in some cells and lose rank.
+An attempt to model fit to a bootstrap sample may fail.  In a \code{lm} or
+\code{glm} fit, the bootstrap sample could have a different rank from the original
+fit.  In an \code{nls} fit, convergence may not be obtained for some bootstraps.
+In either case, \code{NA} are returned for the value of the function \code{f}.
+The summary methods handle the \code{NA}s appropriately.
 }
 \value{
 See \code{\link[boot]{boot}} for the returned value from this function.  The car

@@ -1,12 +1,17 @@
 \name{recode}
 \alias{recode}
+\alias{Recode}
 \title{Recode a Variable}
 \description{
  Recodes a numeric vector, character vector, or factor 
- according to simple recode specifications.
+ according to simple recode specifications. \code{Recode}
+ is an alias for \code{recode} that avoids name clashes
+ with packages, such as \pkg{Hmisc}, that have a \code{recode} function.
 }
 \usage{
 recode(var, recodes, as.factor.result, as.numeric.result=TRUE, levels)
+
+Recode(...)
 }
 
 \arguments{
@@ -21,6 +26,7 @@ recode(var, recodes, as.factor.result, as.numeric.result=TRUE, levels)
   \item{levels}{an optional argument specifying the order of the
     levels in the returned factor; the default is to use the sort order
     of the level names.}
+  \item{...}{arguments to be passed to \code{recode}.}
 }
 \details{
   Recode specifications appear in a character string, separated by
@@ -65,7 +71,7 @@ x
 recode(x, "c(1,2)='A'; 
 	else='B'")
 ## [1] "A" "A" "B" "A" "A" "B" "A" "A" "B"
-recode(x, "1:2='A'; 3='B'")
+Recode(x, "1:2='A'; 3='B'")
 ## [1] "A" "A" "B" "A" "A" "B" "A" "A" "B"
 }
 

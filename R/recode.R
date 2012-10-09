@@ -1,5 +1,5 @@
 # recode function (J. Fox)
-# last modified 18 January 2011 by J. Fox
+# last modified 2012-09-30 by J. Fox
 
 recode <- function(var, recodes, as.factor.result, as.numeric.result=TRUE, levels){
 	recodes <- gsub("\n|\t", " ", recodes)
@@ -46,4 +46,6 @@ recode <- function(var, recodes, as.factor.result, as.numeric.result=TRUE, level
 	}
 	result
 }
+
+Recode <- function (...) car::recode(...)
 
