@@ -1,7 +1,7 @@
 #-------------------------------------------------------------------------------
 # Revision history:
-# 2009-09-28 by J. Fox (/renamed)
-# 2012-07-01 Rewritted by S. Weisberg.  The 'data' gone
+# 2009-09-28 by J. Fox (renamed)
+# 2012-07-01 Rewritten by S. Weisberg.  The 'data' gone
 #-------------------------------------------------------------------------------
 
 # score test of nonconstant variance (J. Fox)

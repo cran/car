@@ -1,6 +1,6 @@
 Package: car
-Version: 2.0-15
-Date: 2012/10/04
+Version: 2.0-16
+Date: 2013/02/14
 Title: Companion to Applied Regression
 Authors@R: c(person("John", "Fox", role = c("aut", "cre"), email =
         "jfox@mcmaster.ca"), person("Sanford", "Weisberg", role =
@@ -36,7 +36,8 @@ Author: John Fox [aut, cre], Sanford Weisberg [aut], Douglas Bates
 Maintainer: John Fox <jfox@mcmaster.ca>
 Repository: CRAN
 Repository/R-Forge/Project: car
-Repository/R-Forge/Revision: 295
-Repository/R-Forge/DateTimeStamp: 2012-10-05 19:17:08
-Date/Publication: 2012-10-09 20:07:01
-Packaged: 2012-10-05 22:21:34 UTC; rforge
+Repository/R-Forge/Revision: 319
+Repository/R-Forge/DateTimeStamp: 2013-02-14 14:01:54
+Date/Publication: 2013-02-18 07:34:46
+Packaged: 2013-02-14 15:16:16 UTC; rforge
+NeedsCompilation: no

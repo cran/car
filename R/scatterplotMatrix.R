@@ -6,6 +6,7 @@
 # 2012-04-18: J. Fox: fixed labels argument in scatterplotMatrix.formula()
 # 2012-09-12: J. Fox: smoother now given as function
 # 2012-09-19: J. Fox: restored smooth and span args for backwards compatibility
+# 2013-02-08: S. Weisberg: bug-fix for showLabels with groups 
 
 scatterplotMatrix <- function(x, ...){
 	UseMethod("scatterplotMatrix")
@@ -62,7 +63,7 @@ scatterplotMatrix.default <- function(x, var.labels=colnames(x),
                                       cex=par("cex"), cex.axis=par("cex.axis"), cex.labels=NULL, 
                                       cex.main=par("cex.main"), 
                                       legend.plot=length(levels(groups)) > 1, row1attop=TRUE, ...){
-    if (id.method == "identify") stop("interactive point identification not permitted")
+    if (id.method[1] == "identify") stop("interactive point identification not permitted")
     family <- match.arg(family)
     if (missing(labels)){
         labels <- rownames(x)
@@ -167,7 +168,7 @@ scatterplotMatrix.default <- function(x, var.labels=colnames(x),
                       if (ellipse) dataEllipse(x[subs], y[subs], plot.points=FALSE, 
                                                levels=levels, col=col[i], robust=robust, lwd=1)
                       showLabels(x[subs], y[subs], labs[subs], id.method=id.method, 
-                                 id.n=id.n, id.col=col[i], id.cex=id.cex)
+                                 id.n=id.n, id.col=col[i], id.cex=id.cex, all=list(labels=labs, subs=subs))
                   }
               }
               if (!by.groups){

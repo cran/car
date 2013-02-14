@@ -16,13 +16,17 @@ ellipse(center, shape, radius, log="", center.pch=19, center.cex=1.5,
   segments=51, draw=TRUE, add=draw, xlab="", ylab="", 
    col=palette()[2], lwd=2, fill=FALSE, fill.alpha=0.3, grid=TRUE, ...)
 
-dataEllipse(x, y, weights, log = "", levels = c(0.5, 0.95), center.pch = 19,
-    center.cex = 1.5, draw = TRUE, plot.points = draw, add = !plot.points,
-    segments = 51, robust = FALSE, xlab = deparse(substitute(x)),
-    ylab = deparse(substitute(y)), col = palette()[1:2], lwd = 2,
-    fill = FALSE, fill.alpha = 0.3, grid = TRUE, labels, id.method = "mahal",
-    id.n = if (id.method[1] == "identify") Inf else 0, id.cex = 1,
-    id.col = palette()[1], ...)
+dataEllipse(x, y, groups, group.labels = group.levels, ellipse.label, 
+    weights, log = "", levels = c(0.5, 0.95), center.pch = 19, 
+    center.cex = 1.5, draw = TRUE, plot.points = draw, add = !plot.points, 
+    segments = 51, robust = FALSE, xlab = deparse(substitute(x)), 
+    ylab = deparse(substitute(y)), 
+    col = if (missing(groups)) palette()[1:2] else palette()[1:length(group.levels)], 
+    pch = if (missing(groups)) 1 else seq(group.levels), lwd = 2, 
+    fill = FALSE, fill.alpha = 0.3, grid = TRUE, labels, id.method = "mahal", 
+    id.n = if (id.method[1] == "identify") Inf else 0, id.cex = 1, 
+    id.col = if (missing(groups)) palette()[1] else palette()(1:length(groups)), 
+    ...) 
 
 confidenceEllipse(model, ...)
 
@@ -55,6 +59,10 @@ confidenceEllipse(model, ...)
   \item{ylab}{label for vertical axis.}
   \item{x}{a numeric vector, or (if \code{y} is missing) a 2-column numeric matrix.}
   \item{y}{a numeric vector, of the same length as \code{x}.}
+  \item{groups}{optional: a factor to divide the data into groups; a separate ellipse will be plotted for each group (level of the factor).}
+  \item{group.labels}{labels to be plotted for the groups; by default, the levels of the \code{groups} factor.}
+  \item{ellipse.label}{a label for the ellipse(s) or a vector of labels; if several ellipses are drawn and just one label is given,
+    then that label will be repeated. The default is not to label the ellipses.}
   \item{weights}{a numeric vector of weights, of the same length as \code{x} and \code{y} to be used  by \code{\link[stats]{cov.wt}}
     or \code{\link[MASS]{cov.trob}} in computing a weighted covariance matrix; if absent, weights of \code{1} are used.}
   \item{plot.points}{if \code{FALSE} data ellipses are drawn,
@@ -84,7 +92,11 @@ confidenceEllipse(model, ...)
   \item{col}{color for lines and ellipse center; the default is the \emph{second} entry
     in the current color palette (see \code{\link[grDevices]{palette}}
     and \code{\link[graphics]{par}}). For \code{dataEllipse}, two colors can be given, in
-    which case the first is for plotted points and the second for lines and the ellipse center.}
+    which case the first is for plotted points and the second for lines and the ellipse center;
+    if ellipses are plotted for \code{groups}, then this is a vector of colors for the groups.}
+  \item{pch}{for \code{dataEllipse} this is the plotting character (default, symbol \code{1}, a hollow circle)
+    to use for the points; if ellipses are plotted by \code{groups}, then this a vector of plotting characters,
+    with consecutive symbols starting with \code{1} as the default.}
   \item{lwd}{line width; default is \code{2} (see \code{\link[graphics]{par}}).}
   \item{fill}{fill the ellipse with translucent color \code{col} (default, \code{FALSE})?}
   \item{fill.alpha}{transparency of fill (default = \code{0.3}).}
@@ -128,8 +140,8 @@ graph}
 \seealso{\code{\link[MASS]{cov.trob}}, \code{\link[stats]{cov.wt}}, \code{\link{linearHypothesis}}.}
   
 \examples{
-dataEllipse(Duncan$income, Duncan$education, levels=0.1*1:9, lty=2, 
-	fill=TRUE, fill.alpha=0.1)
+dataEllipse(Duncan$income, Duncan$education, levels=0.1*1:9, 
+    ellipse.label=0.1*1:9, lty=2, fill=TRUE, fill.alpha=0.1)
 confidenceEllipse(lm(prestige~income+education, data=Duncan), Scheffe=TRUE)
 confidenceEllipse(lm(prestige~income+education, data=Duncan), 
 	L=c("income + education", "income - education"))
@@ -143,6 +155,11 @@ with(Duncan, {
 	dataEllipse(income, prestige, weights=wts, robust=TRUE, levels=0.68, 
 		plot.points=FALSE, col="blue")
 	})
+    
+with(Prestige, dataEllipse(income, education, type, id.n=2, pch=15:17,
+    labels=rownames(Prestige), xlim=c(0, 25000), center.pch="+",
+    group.labels=c("Blue Collar", "Professional", "White Collar"),
+    ylim=c(5, 20), level=.95, fill=TRUE, fill.alpha=0.1))
 }
 
 \keyword{hplot}

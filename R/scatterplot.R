@@ -10,6 +10,7 @@
 # 2012-09-12: J. Fox: modified treatment of smoother; added loessLine(), gamLine(), quantregLine(). 
 # 2012-09-17: S. Weisberg:  smoothers moved to scatterplotSmoothers.R, defaults changed
 # 2012-09-19: J. Fox: restored smooth and span arguments for backwards compatibility
+# 2013-02-07: S. Weisberg:  modifed call to showLabels to work correctly with groups
 
 reg <- function(reg.line, x, y, col, lwd, lty, log.x, log.y){
     if(log.x) x <- log(x)
@@ -236,9 +237,13 @@ scatterplot.default <- function(x, y, smoother=loessLine, smoother.args=list(), 
                 with(X, dataEllipse(x, y, plot.points=FALSE, lwd=1, log=log,
                                     levels=levels, col=col[i], robust=robust))
             }
-            if (id.method[1] != "identify") indices <- c(indices,
-                                                         showLabels(.x[subs], .y[subs], labels=labels[subs], id.method=id.method,
-                                                                    id.n=id.n, id.cex=id.cex, id.col=col[i]))
+            if (id.method[1] != "identify")
+                indices <- c(indices,
+                     showLabels(.x[subs], .y[subs], labels=labels[subs], id.method=id.method,
+                     id.n=id.n, id.cex=id.cex, id.col=col[i], all=list(labels=labels, subs=subs)))
+#            if (id.method[1] != "identify") indices <- c(indices,
+#                                                         showLabels(.x[subs], .y[subs], labels=labels[subs], id.method=id.method,
+#                                                                    id.n=id.n, id.cex=id.cex, id.col=col[i]))
         }}
     if (!by.groups){
         if (is.function(smoother)) smoother(.x, .y, col=col[2], 

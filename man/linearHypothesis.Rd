@@ -12,6 +12,7 @@
 %   2011-11-13 clarification of test argument in linearHypothesis.mlm(). J. Fox
 %   2012-02-28 added test argument to linearHypothesis.mer(). J. Fox
 %   2012-03-07 singular.ok argument added to linearHypothesis.mlm(). J. Fox
+%   2012-11-06 coef. argument added to linearHypothesis.default(), S. Weisberg
 %-------------------------------------------------------------------------------
 
 \name{linearHypothesis}
@@ -31,6 +32,7 @@
 \alias{matchCoefs.mer}
 \alias{matchCoefs.lme}
 \alias{matchCoefs.mlm}
+\alias{linearHypothesis.nlsList}
 %%\alias{coef.multinom}
 
 \title{Test Linear Hypothesis}
@@ -47,8 +49,9 @@ linearHypothesis(model, ...)
 
 lht(model, ...)
 
-\method{linearHypothesis}{default}(model, hypothesis.matrix, rhs=NULL, 
-    test=c("Chisq", "F"), vcov.=NULL, singular.ok=FALSE, verbose=FALSE, ...)  
+\method{linearHypothesis}{default}(model, hypothesis.matrix, rhs=NULL,
+		test=c("Chisq", "F"), vcov.=NULL, singular.ok=FALSE, verbose=FALSE, 
+    coef. = coef(model), ...)  
 
 \method{linearHypothesis}{lm}(model, hypothesis.matrix, rhs=NULL,
     test=c("F", "Chisq"), vcov.=NULL, 
@@ -56,6 +59,8 @@ lht(model, ...)
 	singular.ok=FALSE, ...)
 
 \method{linearHypothesis}{glm}(model,  ...)
+
+\method{linearHypothesis}{nlsList}(model,  ..., vcov., coef.)
 
 \method{linearHypothesis}{mlm}(model, hypothesis.matrix, rhs=NULL, SSPE, V,
     test, idata, icontrasts=c("contr.sum", "contr.poly"), idesign, iterms, 
@@ -146,7 +151,10 @@ matchCoefs(model, pattern, ...)
     it is computed from the model.}
   \item{vcov.}{a function for estimating the covariance matrix of the regression
     coefficients, e.g., \code{\link{hccm}}, or an estimated covariance matrix
-    for \code{model}. See also \code{white.adjust}.}        
+    for \code{model}. See also \code{white.adjust}.}
+  \item{coef.}{a vector of coefficient estimates.  The default is to get the
+    coefficient estimates from the \code{model} argument, but the user can input
+    any vector of the correct length.}       
   \item{white.adjust}{logical or character. Convenience interface to \code{hccm}
     (instead of using the argument \code{vcov.}). Can be set either to a character value
     specifying the \code{type} argument of \code{\link{hccm}} or \code{TRUE},
@@ -162,7 +170,6 @@ matchCoefs(model, pattern, ...)
   \item{digits}{minimum number of signficiant digits to print.}
 %%  \item{object}{a \code{multinom} model object.}
   \item{pattern}{a \link[base:regex]{regular expression} to be matched against coefficient names.}
-  \item{coef.}{a function that returns a named vector of coefficients.}
   \item{...}{arguments to pass down.}
 }
 
@@ -200,7 +207,14 @@ matchCoefs(model, pattern, ...)
   numeric constants multiplying coefficient names (in which case the number
   precedes the coefficient, and may be separated from it by spaces or an
   asterisk); constants of 1 or -1 may be omitted.  Spaces are always optional.
-  Components are separated by plus or minus signs. See the examples below.
+  Components are separated by plus or minus signs. Newlines or tabs in
+  hypotheses will be treated as spaces. See the examples below.
+  
+  If the user sets the arguments \code{coef.} and \code{vcov.}, then the computations
+  are done without reference to the \code{model} argument.  This is like assuming
+  that \code{coef.} is normally distibuted with estimated variance \code{vcov.}
+  and the \code{linearHypothesis} will compute tests on the mean vector for 
+  \code{coef.}, without actually using the \code{model} argument.
   
   A linear hypothesis for a multivariate linear model (i.e., an object of
   class \code{"mlm"}) can optionally include an intra-subject transformation matrix

@@ -15,6 +15,7 @@
 #             method="residual" not implemented.  Too problematic.
 # May 23, 2012 Sanford Weisberg sandy@umn.edu
 # June 1, 2012:  changed from class c("Boot", "boot") to just class "boot"
+# 2012-12-10 replaced .GlobalEnv with .carEnv to avoid warnings
 
 Boot <- function(object, f, labels, R=999, method){UseMethod("Boot")}
 
@@ -25,16 +26,16 @@ Boot.default <- function(object, f=coef, labels=names(coef(object)),
   if(length(labels) != length(f0)) labels <- paste("V", seq(length(f0)), sep="")
   method <- match.arg(method)
   if(method=="case") {
-     boot.f <- function(data, indices, f) {
-      assign(".boot.indices", indices, envir=.GlobalEnv)
-      mod <- update(object, subset=.boot.indices)
+     boot.f <- function(data, indices, .fn) {
+      assign(".boot.indices", indices, envir=.carEnv)
+      mod <- update(object, subset=get(".boot.indices", envir=.carEnv))
       if(mod$qr$rank != object$qr$rank){
-            out <- f(object)
-            out <- rep(NA, length(out)) } else  {out <- f(mod)}
+            out <- .fn(object)
+            out <- rep(NA, length(out)) } else  {out <- .fn(mod)}
      out
      }
     } else {
-    boot.f <- function(data, indices, f) {
+    boot.f <- function(data, indices, .fn) {
       first <- all(indices == seq(length(indices)))
       res <- if(first) object$residuals else
                   residuals(object, type="pearson")/sqrt(1 - hatvalues(object))
@@ -45,18 +46,18 @@ Boot.default <- function(object, f=coef, labels=names(coef(object)),
             attr(pad, "class") <- "exclude" 
             val <- naresid(pad, val)
             }
-      assign(".y.boot", val, envir=.GlobalEnv)
-      mod <- update(object, .y.boot ~ .)
+      assign(".y.boot", val, envir=.carEnv)
+      mod <- update(object, get(".y.boot", envir=.carEnv) ~ .)
       if(mod$qr$rank != object$qr$rank){
-            out <- f(object)
-            out <- rep(NA, length(out)) } else  {out <- f(mod)}
+            out <- .fn(object)
+            out <- rep(NA, length(out)) } else  {out <- .fn(mod)}
       out
       }
   }
-  b <- boot(data.frame(update(object, model=TRUE)$model), boot.f, R, f=f)
+  b <- boot(data.frame(update(object, model=TRUE)$model), boot.f, R, .fn=f)
   colnames(b$t) <- labels
-  if(exists(".y.boot")) remove(".y.boot", envir=.GlobalEnv)
-  if(exists(".boot.indices")) remove(".boot.indices", envir=.GlobalEnv)
+  if(exists(".y.boot", envir=.carEnv)) remove(".y.boot", envir=.carEnv)
+  if(exists(".boot.indices", envir=.carEnv)) remove(".boot.indices", envir=.carEnv)
   b
   }
   
@@ -66,12 +67,8 @@ Boot.lm <- function(object, f=coef, labels=names(coef(object)),
   
 Boot.glm <- function(object, f=coef, labels=names(coef(object)),
                      R=999, method=c("case", "residual")) {
-  if(!(require(boot))) stop("The 'boot' package is missing")
-  f0 <- f(object)
-  if(length(labels) != length(f0)) labels <- paste("V", seq(length(f0)), sep="")
   method <- match.arg(method)
-  require(boot)
-  if(method=="case") { Boot.lm(object, f, R, method)
+  if(method=="case") { Boot.default(object, f, labels, R, method)
     } else {
     stop("Residual bootstrap not implemented in the 'car' function Boot.
   Use the 'boot' function in the 'boot' package to write
@@ -87,16 +84,17 @@ Boot.nls <- function(object, f=coef, labels=names(coef(object)),
   method <- match.arg(method)
   opt<-options(show.error.messages = FALSE)
   if(method=="case") {
-     boot.f <- function(data, indices, f) {
-         assign(".boot.indices", indices, envir=.GlobalEnv)
-         mod <- try(update(object, subset=.boot.indices, start=coef(object)))
+     boot.f <- function(data, indices, .fn) {
+         assign(".boot.indices", indices, envir=.carEnv)
+         mod <- try(update(object, subset=get(".boot.indices", envir=.carEnv),
+                 start=coef(object)))
          if(class(mod) == "try-error"){
-            out <- f(object)
-            out <- rep(NA, length(out)) } else  {out <- f(mod)}
+            out <- .fn(object)
+            out <- rep(NA, length(out)) } else  {out <- .fn(mod)}
      out
      }
     } else {
-    boot.f <- function(data, indices, f) {
+    boot.f <- function(data, indices, .fn) {
       first <- all(indices == seq(length(indices)))
       res <- residuals(object)
       val <- fitted(object) + res[indices]
@@ -105,18 +103,19 @@ Boot.nls <- function(object, f=coef, labels=names(coef(object)),
             attr(pad, "class") <- "exclude"
             val <- naresid(pad, val)
             }
-      assign(".y.boot", val, envir=.GlobalEnv)
-      mod <- try(update(object, .y.boot ~ ., start=coef(object)))
+      assign(".y.boot", val, envir=.carEnv)
+      mod <- try(update(object, get(".y.boot", envir-.carEnv) ~ .,
+             start=coef(object)))
       if(class(mod) == "try-error"){
-            out <- f(object)
-            out <- rep(NA, length(out)) } else  {out <- f(mod)}
+            out <- .fn(object)
+            out <- rep(NA, length(out)) } else  {out <- .fn(mod)}
       out
       }
   }
-  b <- boot(data.frame(update(object, model=TRUE)$model), boot.f, R, f=f)
+  b <- boot(data.frame(update(object, model=TRUE)$model), boot.f, R, .fn=f)
   colnames(b$t) <- labels
-  if(exists(".y.boot")) remove(".y.boot", envir=.GlobalEnv)
-  if(exists(".boot.indices")) remove(".boot.indices", envir=.GlobalEnv)
+  if(exists(".y.boot", envir=.carEnv)) remove(".y.boot", envir=.carEnv)
+  if(exists(".boot.indices", envir=.carEnv)) remove(".boot.indices", envir=.carEnv)
   options(opt)
   d <- dim(na.omit(b$t))[1]
   if(d != R)
@@ -133,7 +132,7 @@ confint.boot <- function(object, parm, level = 0.95,
   typelab <- c("bca", "normal",   "basic", "percent")[match(type, types)]
   nn <- colnames(object$t)
   names(nn) <- nn
-  parm <- if(missing(parm)) seq(length(nn)) else parm
+  parm <- if(missing(parm)) which(!is.na(object$t0)) else parm
   out <- list()
   for (j in 1:length(parm)){
    out[[j]] <- boot.ci(object, conf=level, type=type, index=parm[j], ...)
@@ -173,11 +172,13 @@ summary.boot <- function (object, parm, high.moments = FALSE,
        xbar <- mean(x)
        sum((x - xbar)^4)/(length(x) * sd(x)^4) - 3
        }
-    boots <- object$t
-    stats <- matrix(rep(NA, ncol(boots) * 10), ncol = 10)
+    not.aliased <-  !is.na(object$t0)
+    boots <- object$t[ , not.aliased, drop=FALSE ]
+    nc <- if(is.matrix(boots)) ncol(boots) else 1
+    stats <- matrix(rep(NA, nc * 10), ncol = 10)
     rownames(stats) <- colnames(boots)
     stats[, 1] <- apply(boots, 2, function(x) sum(!is.na(x))) # num. obs
-    stats[, 2] <- object$t0  # point estimate
+    stats[, 2] <- object$t0[not.aliased]  # point estimate
     stats[, 3] <- apply(boots, 2, function(x) mean(x, na.rm=TRUE)) - stats[, 2]
     stats[, 5] <- apply(boots, 2, function(x) median(x, na.rm=TRUE))
     stats[, 4] <- apply(boots, 2, function(x) sd(x, na.rm=TRUE))
@@ -209,11 +210,12 @@ hist.boot <- function(x, parm, layout=NULL, ask, main="", freq=FALSE,
       estNormal = !freq,  nor.col="red",   nor.lty=2, nor.lwd=2,
       ci=c("bca", "none", "percentile"), level=0.95,
       legend=c("top", "none", "separate"), box=TRUE, ...){
+  not.aliased <- which(!is.na(x$t0))
   ci <- match.arg(ci)
   legend <- match.arg(legend)
-  pe <- x$t0
+  pe <- x$t0[not.aliased]
   if(is.null(names(pe))) names(pe) <- colnames(x$t)
-  if(missing(parm)) parm <- 1:length(pe)
+  if(missing(parm)) parm <- not.aliased
   nt <- length(parm) + if(legend == "separate") 1 else 0
   if (nt > 1 & (is.null(layout) || is.numeric(layout))) {
     if(is.null(layout)){

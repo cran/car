@@ -1,5 +1,26 @@
+Changes to Version 2.0-16
+  
+    o Fixed bug in printing of hypotheses by linearHypothesis(), where numeric
+constants of the form 1.* or -1.* were printed incorrectly (reported by Johannes Kutsam).
+
+    o Fixed a bug in showLabels() with multiple groups in the scatterplot() and scatterplotMatrix() function
+    
+    o linearHypothesisTest() now tolerates newlines and tabs in hypotheses (suggestion of David Hugh-Jones).
+
+    o two bugs fixed in Boot() (found by David Pain) changed argument f to f. in bootCase().
+
+    o summary.Boot(), confint.Boot() and hist.Boot() handle aliases correctly.
+
+    o Boxplot.formula() now accepts more than one conditioning variable (suggestion of Christina Yassouridis).
+
+    o Small fixes.
+
 Changes to Version 2.0-15
 
+    o Added an argument coef. to linearHypothesis so tests of the linear hypohtesis form can be computed without reference to a fitted model
+
+    o Added a linearHypothesis.nlsList method
+    
     o Added an nls method for Boot
 
     o Recode() introduced as alias for recode() to avoid name clash with Hmisc.
