@@ -1,5 +1,5 @@
 # checked in 26 December 2009 by J. Fox
-# 6 January 2009: Fixed Boxplot.default() so that it works properly when g is numeric. J. Fox
+# 2012-12-12: Fixed Boxplot.default() so that it works properly when g is numeric. J. Fox
 
 Boxplot <- function(y, ...){
 	UseMethod("Boxplot")
@@ -15,7 +15,7 @@ Boxplot.default <- function(y, g, labels, id.method=c("y", "identify", "none"),
 		y <- y[valid]
 		labels <- labels[valid]
 		b <- boxplot(y, ylab=ylab, ...)
-		if (id.method == "none") return(invisible(NULL))
+		if (id.method == "none" | id.n==0) return(invisible(NULL))
 		else if (id.method == "identify"){
 			res <- identify(rep(1, length(y)), y, labels)
 			return(if(length(res) == 0) invisible(NULL) else labels[res])
@@ -55,7 +55,7 @@ Boxplot.default <- function(y, g, labels, id.method=c("y", "identify", "none"),
 		b <- boxplot(split(y, g), ylab=ylab, xlab=xlab, ...)
 		levels <- if (is.factor(g)) levels(g) else sort(unique(g))
 		gg <- as.numeric(g)
-		if (id.method == "none") return(invisible(NULL))
+		if (id.method == "none" | id.n==0) return(invisible(NULL))
 		else if (id.method == "identify"){
 			res <- identify(gg, y, labels)
 			return(if(length(res) == 0) invisible(NULL) else labels[res])
@@ -116,7 +116,10 @@ Boxplot.formula <- function(formula, data=NULL, subset, na.action=NULL, labels.,
 		response <- attr(attr(mf, "terms"), "response")
 		if (missing(ylab)) ylab <- names(mf)[response]
 		if (missing(xlab)) xlab <- names(mf)[-c(response, lab.var)]
-		Boxplot(mf[[response]], mf[, -c(response, lab.var)], labels=mf[[lab.var]], 
+        x <- mf[, -c(response, lab.var)]
+		if (is.data.frame(x)) x <- do.call("interaction", as.list(x))
+        if (length(xlab) > 1) xlab <- paste(xlab, collapse="*")
+		Boxplot(mf[[response]], x, labels=mf[[lab.var]], 
             xlab=xlab, ylab=ylab, id.method=id.method, ...)
 	}
 	else if (length(formula) == 2){

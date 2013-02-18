@@ -14,11 +14,11 @@ returns a matrix of the estimated coefficients from each of the bootstrap
 samples.
 }
 \usage{
-\S3method{bootCase}{lm}(object, f=coef, B=999)
+\S3method{bootCase}{lm}(object, f.=coef, B=999)
 
-\S3method{bootCase}{glm}(object, f=coef, B=999)
+\S3method{bootCase}{glm}(object, f.=coef, B=999)
 
-\S3method{bootCase}{nls}(object, f=coef, B=999)
+\S3method{bootCase}{nls}(object, f.=coef, B=999)
 
 nextBoot(object, sample)
 
@@ -27,7 +27,7 @@ nextBoot(object, sample)
   \item{object}{ A regression object of type \code{lm}, \code{glm} or class
 \code{nls}.  May work with other regression objects that support the \code{update}
 method and has a \code{subset} argument.  See details below.}
-  \item{f}{A function that will be applied to the updated regression object to
+  \item{f.}{A function that will be applied to the updated regression object to
 compute the statistics of interest.  The default is \code{coef}, to return to
 regression coefficient estimates.}
   \item{B}{Number of bootstrap samples.}
@@ -79,7 +79,7 @@ Lexin Li.}
 \examples{
 m1 <- lm(Fertility ~ ., swiss)
 betahat <- coef(m1)
-betahat.boot <- bootCase(m1,B=99) # 99 bootstrap samples--too small to be useful
+betahat.boot <- bootCase(m1, B=99) # 99 bootstrap samples--too small to be useful
 summary(betahat.boot)  # default summary
 cbind("Bootstrap SD"=apply(betahat.boot, 2, sd),
     t(apply(betahat.boot, 2, function(x) quantile(x, c(.025, .975)))))

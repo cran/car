@@ -62,11 +62,14 @@ values to determine the points to be labeled.  For example, for a linear model
 points corresponding to the four largest values of Cook's distance, or
 \code{id.method = abs(residuals(m, type="pearson")), id.n=2} would label
 the two observations corresponding to the largest absolute Pearson residuals.
+Warning:  If missing data are present, points may be incorrectly labelled.
   \item \code{id.method} can be a vector of case numbers or case-labels, in which case
-  those cases will be labeled, as long as \code{id.n} is greater than zero.
+  those cases will be labeled.  Warning:  If missing data are present, a list of
+  case numbers may identify the wrong points.  A list of case labels, however,
+  will work correctly with missing values.
 }
 
-With \code{showLabels}, the \code{id.method} argument can be list, so, for
+With \code{showLabels}, the \code{id.method} argument can be a list, so, for
 example \code{id.method=list("x", "y")} would label according to the horizontal 
 and vertical axes variables.
 

@@ -157,7 +157,7 @@ summary(a3 <- powerTransform(cbind(len, ADT, trks, sigs1) ~ hwy, Highway1))
 testTransform(a3, c(0, 0, 0, -1))
 
 # save the rounded transformed values, plot them with a separate
-# color for males and females
+# color for each highway type
 transformedY <- bcPower(with(Highway1, cbind(len, ADT, trks, sigs1)),
                 coef(a3, round=TRUE))
 \dontrun{pairs(transformedY, col=as.numeric(Highway1$hwy)) }

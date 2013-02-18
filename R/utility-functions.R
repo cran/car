@@ -6,9 +6,12 @@
 # 15 November 2010 added squeezeBlanks
 # 21 January 2011 added functions to support mixed models
 # 2012-04-08 added exists.method
-# 20120-06-23: added call to globalVariables(). John
+# 2012-06-23: added call to globalVariables(). John
+# 2012-12-10: added .carEnv to avoid warnings in R > 2.16.0
 
-if (getRversion() >= "2.15.1") globalVariables(c(".boot.sample", ".boot.indices"))
+#if (getRversion() >= "2.15.1") globalVariables(c(".boot.sample", ".boot.indices"))
+
+.carEnv <- new.env(parent=emptyenv())
 
 # function to find "nice" numbers
 

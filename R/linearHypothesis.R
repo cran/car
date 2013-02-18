@@ -18,6 +18,9 @@
 #   2012-03-07: singular.ok argument added to linearHypothesis.mlm(). J. Fox
 #   2012-08-20: Fixed p-value bug for chisq test in .mer method. John
 #   2012-09-17: updated linearHypothesis.mer for pkrtest 0.3-2. John
+#   2012-11-21: test for NULL rhs to avoid warning in R 2.16.0. John
+#   2013-01-28: hypotheses can now contain newlines and tabs
+#   2013-02-14: fixed bug in printing constants of the form 1.x*. John
 #---------------------------------------------------------------------------------------
 
 vcov.default <- function(object, ...){
@@ -37,6 +40,8 @@ makeHypothesis <- function(cnames, hypothesis, rhs = NULL){
 		component
 	}
 	stripchars <- function(x) {
+	  x <- gsub("\\n", " ", x)
+	  x <- gsub("\\t", " ", x)
 		x <- gsub(" ", "", x, fixed = TRUE)
 		x <- gsub("*", "", x, fixed = TRUE)
 		x <- gsub("-", "+-", x, fixed = TRUE)
@@ -72,7 +77,7 @@ makeHypothesis <- function(cnames, hypothesis, rhs = NULL){
 		rv
 	}
 	
-	rhs <- rep(rhs, length.out = length(hypothesis))
+	if (!is.null(rhs)) rhs <- rep(rhs, length.out = length(hypothesis))
 	if (length(hypothesis) > 1)
 		return(rbind(Recall(cnames, hypothesis[1], rhs[1]),
 						Recall(cnames, hypothesis[-1], rhs[-1])))
@@ -130,8 +135,8 @@ printHypothesis <- function(L, rhs, cnames){
 		h <- sub("^-\\ ", "-", h)	
 		h <- paste(" ", h, sep="")
 		h <- paste(h, "=", rhs[i])		
-		h <- gsub(" 1([^[:alnum:]]+)[ *]*", "", 
-				gsub("-1([^[:alnum:]_]+)[ *]*", "-", 
+		h <- gsub(" 1([^[:alnum:]_.]+)[ *]*", "", 
+				gsub("-1([^[:alnum:]_.]+)[ *]*", "-", 
 						gsub("- +1 +", "-1 ", h)))
 		h <- sub("Intercept)", "(Intercept)", h)		
 		h <- gsub("-", " - ", h)
@@ -148,14 +153,31 @@ linearHypothesis <- function (model, ...)
 
 lht <- function (model, ...)
 	UseMethod("linearHypothesis")
+	
+linearHypothesis.nlsList <- function(model,  ..., vcov., coef.){
+   vcov.nlsList <- function(object, ...) {
+       vlist <- lapply(object, vcov)
+       ng <- length(vlist)
+       nv <- dim(vlist[[1]])[1]
+       v <- matrix(0, nrow=ng*nv, ncol=ng*nv)
+       for (j in 1:ng){
+          cells <- ((j-1)*nv + 1):(j*nv)
+          v[cells, cells] <- vlist[[j]]
+        }
+      v
+      }
+   linearHypothesis.default(model, vcov.=vcov.nlsList(model), 
+       coef.=unlist(lapply(model, coef)), ...)}
+
 
 linearHypothesis.default <- function(model, hypothesis.matrix, rhs=NULL,
-		test=c("Chisq", "F"), vcov.=NULL, singular.ok=FALSE, verbose=FALSE, ...){
+		test=c("Chisq", "F"), vcov.=NULL, singular.ok=FALSE, verbose=FALSE, 
+    coef. = coef(model), ...){
 	df <- df.residual(model)
 	if (is.null(df)) df <- Inf ## if no residual df available
 	V <- if (is.null(vcov.)) vcov(model)
 			else if (is.function(vcov.)) vcov.(model) else vcov.
-	b <- coef(model)
+	b <- coef.
 	if (any(aliased <- is.na(b)) && !singular.ok)
 		stop("there are aliased coefficients in the model")
 	b <- b[!aliased]

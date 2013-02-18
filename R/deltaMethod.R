@@ -11,6 +11,7 @@
 #   works correctly
 # 2012-03-02: fixed abbreviation of envir argument. J. Fox
 # 2012-04-08: modfied deltaMethod.default() to use coef and vcov
+# 2012-12-10: removed the 'deltaMethodMessageFlag'
 #-------------------------------------------------------------------------------
 
 deltaMethod <- function (object, ...) {
@@ -45,10 +46,10 @@ deltaMethod.default <- function (object, g, vcov., func = g, ...) {
 
 deltaMethod.lm <- function (object, g, vcov. = vcov, 
            parameterNames = names(coef(object)), ...) {
-  if( !exists("deltaMethodMessageFlag")){
-     message("deltaMethod arguments have changed, see help(deltaMethod)")
-     assign("deltaMethodMessageFlag", TRUE, envir=.GlobalEnv)
-     }
+#  if( !exists("deltaMethodMessageFlag", envir=.carEnv)){
+#     message("deltaMethod arguments have changed, see help(deltaMethod)")
+#     assign("deltaMethodMessageFlag", TRUE, envir=.carEnv)
+#     }
 	para <- coef(object)
 	para.names <- parameterNames
 	para.names[1] <- gsub("\\(Intercept\\)", "Intercept", para.names[1])
