@@ -5,8 +5,8 @@
 American Math Society Survey Data
 }
 \description{
-Counts of new PhDs in the mathematical sciences for 2008-09 categorized by type
-of institution, gender, and US citizenship status.
+Counts of new PhDs in the mathematical sciences for 2008-09 and 2011-12
+categorized by type of institution, gender, and US citizenship status.
 }
 \usage{AMSsurvey}
 \format{
@@ -16,12 +16,12 @@ of institution, gender, and US citizenship status.
 public universities, \code{I(Pr)} for group I private universities, \code{II}
 and \code{III} for groups II and III, \code{IV} for statistics and
 biostatistics programs, and \code{Va} for applied mathemeatics programs.}
-    \item{class}{a factor with levels \code{Female:Non-US}, \code{Female:US}, \code{Male:Non-US}, \code{Male:US}}
     \item{sex}{a factor with levels \code{Female}, \code{Male} of the
 recipient}
     \item{citizen}{a factor with levels \code{Non-US}, \code{US} giving
 citizenship status}
-    \item{count}{The number of individuals of each type}
+    \item{count}{The number of individuals of each type in 2008-09}
+    \item{count11}{The number of individuals of each type in 2011-12}
   }
 }
 \details{

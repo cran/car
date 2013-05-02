@@ -70,7 +70,8 @@ You have to install the \code{rgl} package to produce 3D plots.
   \item{axis.col}{colours for axes; if \code{axis.scales} is \code{FALSE}, then
     the second colour is used for all three axes.}
   \item{surface.col}{vector of colours for regression planes, 
-    used in the order specified by \code{fit}.}
+    used in the order specified by \code{fit}; for multi-group plots, the colours are used for the regression
+    surfaces and points in the several groups.}
   \item{surface.alpha}{transparency of regression surfaces, from \code{0.0} (fully transparent) to \code{1.0} (opaque); default is \code{0.5}.}
   \item{neg.res.col, pos.res.col}{colours for lines representing negative 
     and positive residuals.}
@@ -112,7 +113,7 @@ You have to install the \code{rgl} package to produce 3D plots.
     e.g., \code{c("lin", "quad")}.}
   \item{groups}{if \code{NULL} (the default), no groups are defined; if a factor, a different surface
     or set of surfaces is plotted for each level of the factor; in this event, the colours in 
-    \code{plane.col} are used successively for the points, surfaces, and residuals corresponding to
+    \code{surface.col} are used successively for the points, surfaces, and residuals corresponding to
     each level of the factor.}
   \item{parallel}{when plotting surfaces by \code{groups}, should the surfaces be constrained to be
     parallel? A logical value, with default \code{TRUE}.}
@@ -137,7 +138,7 @@ You have to install the \code{rgl} package to produce 3D plots.
     the observation indices, in the \code{formula} method to the row names of the data.}
   \item{col}{colours for the point labels, given by group. There must be at
     least as many colours as groups; if there are no groups, the first colour is used. Normally, the colours
-    would correspond to the \code{plane.col} argument to \code{scatter3d}.}
+    would correspond to the \code{surface.col} argument to \code{scatter3d}.}
   \item{offset}{vertical displacement for point labels (to avoid overplotting the points).}
   \item{\dots}{arguments to be passed down.}
 }

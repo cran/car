@@ -7,6 +7,7 @@
 # 28 June 2010: fixed labeling bug S. Weisberg
 # 11 March 2011: moved up ... argument. J. Fox
 # 23 May 2012: line="none" now honored in qqPlot.default. J. Fox
+# 2 May 2013: qqPlot.lm() now works with "aov" objects (fixing problem reported by Thomas Burk). J. Fox
 
 qqp <- function(...) qqPlot(...)
 
@@ -82,7 +83,7 @@ qqPlot.lm <- function(x, xlab=paste(distribution, "Quantiles"),
 	good <- !is.na(rstudent)
 	rstudent <- rstudent[good]
 	labels <- labels[good]
-	sumry <- summary(x)
+	sumry <- summary.lm(x)
 	res.df <- sumry$df[2]
 	if(!simulate)
 		result <- qqPlot(rstudent, distribution=if (distribution == "t") "t" else "norm", df=res.df-1, line=line,

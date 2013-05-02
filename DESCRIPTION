@@ -1,20 +1,20 @@
 Package: car
-Version: 2.0-16
-Date: 2013/02/14
+Version: 2.0-17
+Date: 2013/05/02
 Title: Companion to Applied Regression
 Authors@R: c(person("John", "Fox", role = c("aut", "cre"), email =
         "jfox@mcmaster.ca"), person("Sanford", "Weisberg", role =
         "aut", email = "sandy@umn.edu"), person("Douglas", "Bates",
-        role = "ctb"), person("David", "Firth", role = "ctb"),
-        person("Michael", "Friendly", role = "ctb"), person("Gregor",
-        "Gorjanc", role = "ctb"), person("Spencer", "Graves", role =
-        "ctb"), person("Richard", "Heiberger", role = "ctb"),
-        person("Rafael", "Laboissiere", role = "ctb"),
-        person("Georges", "Monette", role = "ctb"), person("Henric",
-        "Nilsson", role = "ctb"), person("Derek", "Ogle", role =
-        "ctb"), person("Brian", "Ripley", role = "ctb"),
-        person("Achim", "Zeileis", role = "ctb"), person("R-Core",
-        role="ctb"))
+        role = "ctb"), person("Steve", "Ellison", role="ctb"),
+        person("David", "Firth", role = "ctb"), person("Michael",
+        "Friendly", role = "ctb"), person("Gregor", "Gorjanc", role =
+        "ctb"), person("Spencer", "Graves", role = "ctb"),
+        person("Richard", "Heiberger", role = "ctb"), person("Rafael",
+        "Laboissiere", role = "ctb"), person("Georges", "Monette", role
+        = "ctb"), person("Henric", "Nilsson", role = "ctb"),
+        person("Derek", "Ogle", role = "ctb"), person("Brian",
+        "Ripley", role = "ctb"), person("Achim", "Zeileis", role =
+        "ctb"), person("R-Core", role="ctb"))
 Depends: R (>= 2.14.0), stats, graphics, MASS, nnet
 Suggests: alr3, boot, leaps, lme4, lmtest, nlme, quantreg, sandwich,
         mgcv, pbkrtest (>= 0.3-2), rgl, survival, survey
@@ -27,17 +27,14 @@ License: GPL (>= 2)
 URL: https://r-forge.r-project.org/projects/car/,
         http://CRAN.R-project.org/package=car,
         http://socserv.socsci.mcmaster.ca/jfox/Books/Companion/index.html
+Packaged: 2013-05-04 15:04:26 UTC; John Fox
 Author: John Fox [aut, cre], Sanford Weisberg [aut], Douglas Bates
-        [ctb], David Firth [ctb], Michael Friendly [ctb], Gregor
-        Gorjanc [ctb], Spencer Graves [ctb], Richard Heiberger [ctb],
-        Rafael Laboissiere [ctb], Georges Monette [ctb], Henric Nilsson
-        [ctb], Derek Ogle [ctb], Brian Ripley [ctb], Achim Zeileis
-        [ctb], R-Core [ctb]
+        [ctb], Steve Ellison [ctb], David Firth [ctb], Michael Friendly
+        [ctb], Gregor Gorjanc [ctb], Spencer Graves [ctb], Richard
+        Heiberger [ctb], Rafael Laboissiere [ctb], Georges Monette
+        [ctb], Henric Nilsson [ctb], Derek Ogle [ctb], Brian Ripley
+        [ctb], Achim Zeileis [ctb], R-Core [ctb]
 Maintainer: John Fox <jfox@mcmaster.ca>
-Repository: CRAN
-Repository/R-Forge/Project: car
-Repository/R-Forge/Revision: 319
-Repository/R-Forge/DateTimeStamp: 2013-02-14 14:01:54
-Date/Publication: 2013-02-18 07:34:46
-Packaged: 2013-02-14 15:16:16 UTC; rforge
 NeedsCompilation: no
+Repository: CRAN
+Date/Publication: 2013-05-05 21:42:46

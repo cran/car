@@ -1,9 +1,23 @@
+Changes to Version 2.0-17
+
+    o Add a variable to AMSsurvey.
+
+    o Fix to residualPlots to compute lack of fit tests with missing values and glms.
+    
+    o Fix to residualPlots with a 0/1 variable not declared a factor.
+
+    o Boxplot() now works properly with at argument passed to boxplot() via ... (contribution of Steve Ellison).
+
+    o qqPlot.lm() now works with "aov" objects (fixing problem reported by Thomas Burk).
+    
+    o Small fixes to code and docs.
+
 Changes to Version 2.0-16
   
     o Fixed bug in printing of hypotheses by linearHypothesis(), where numeric
 constants of the form 1.* or -1.* were printed incorrectly (reported by Johannes Kutsam).
 
-    o Fixed a bug in showLabels() with multiple groups in the scatterplot() and scatterplotMatrix() function
+    o Fixed a bug in showLabels() with multiple groups in the scatterplot() and scatterplotMatrix() function.
     
     o linearHypothesisTest() now tolerates newlines and tabs in hypotheses (suggestion of David Hugh-Jones).
 
@@ -12,6 +26,8 @@ constants of the form 1.* or -1.* were printed incorrectly (reported by Johannes
     o summary.Boot(), confint.Boot() and hist.Boot() handle aliases correctly.
 
     o Boxplot.formula() now accepts more than one conditioning variable (suggestion of Christina Yassouridis).
+
+    O Boxplot() now properly handles at argument passed through via ... to boxplot() (contribution of Steve Ellison).
 
     o Small fixes.
 
