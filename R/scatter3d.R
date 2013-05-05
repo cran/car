@@ -6,6 +6,7 @@
 # 30 July 2010: checks for rgl
 # 23 October 2010: added surface.alpha and ellipsoid.alpha arguments
 # 2012-03-02: fixed some argument abbreviations. J. Fox
+# 2013-02-20: fixed error message, docs for surface.col argument. J. Fox
 
 scatter3d <- function(x, ...){
 	if (!require(rgl)) stop("rgl package missing")
@@ -71,8 +72,8 @@ scatter3d.default <- function(x, y, z,
 	else squares <- FALSE
 	summaries <- list()
 	if ((!is.null(groups)) && (nlevels(groups) > length(surface.col)))
-		stop(sprintf("Number of groups (%d) exceeds number of colors (%d)"),
-				nlevels(groups), length(surface.col))
+		stop(sprintf("Number of groups (%d) exceeds number of colors (%d)",
+				nlevels(groups), length(surface.col)))
 	if ((!is.null(groups)) && (!is.factor(groups))) stop("groups variable must be a factor")
 	bg.col <- match.arg(bg.col)
 	fogtype <- match.arg(fogtype)

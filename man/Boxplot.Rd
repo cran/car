@@ -37,10 +37,11 @@ Boxplot(y, ...)
     produce parallel boxplots for \code{y} within levels of the grouping variable(s)
     \code{g}, etc., usually factors.}
   \item{data, subset, na.action}{as for statistical modeling functions (see, e.g., \code{\link{lm}}).}
-  \item{\dots}{further arguments to be passed to \code{\link{boxplot}}.}
+  \item{\dots}{further arguments, such as \code{at}, to be passed to \code{\link{boxplot}}.}
 }
 
-\author{John Fox \email{jfox@mcmaster.ca}}
+\author{John Fox \email{jfox@mcmaster.ca}, with a contribution from Steve Ellison 
+    to handle \code{at} argument (see \code{\link{boxplot}}).}
 
 \references{
   Fox, J. and Weisberg, S. (2011) 
@@ -54,6 +55,7 @@ Boxplot(y, ...)
 \examples{
 Boxplot(~income, data=Prestige, id.n=Inf) # identify all outliers
 Boxplot(income ~ type, data=Prestige)
+Boxplot(income ~ type, data=Prestige, at=c(1, 3, 2))
 Boxplot(k5 + k618 ~ lfp*wc, data=Mroz)
 with(Prestige, Boxplot(income, labels=rownames(Prestige)))
 with(Prestige, Boxplot(income, type, labels=rownames(Prestige)))

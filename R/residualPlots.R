@@ -15,6 +15,7 @@
 # 16 June 2011 allow layout=NA, in which case the layout is not set in this
 #  function, so it is the responsibility of the user
 # 10 Feb 2013:  adjusted colinearity check in tukeyNonaddTest
+# 21 March 2013:  fixed nonconstant variance test with missing values for glms
 
 residualPlots <- function(model, ...){UseMethod("residualPlots")}
 
@@ -148,9 +149,10 @@ residualPlot.default <- function(model, variable = "fitted", type = "pearson",
      abline(h=0, lty=2)
      if(quadratic==TRUE){
         new <- seq(min(horiz), max(horiz), length=200)
-        lm2 <- lm(residuals(model, type="pearson")~poly(horiz, 2))
-        lines(new, predict(lm2, list(horiz=new)), lty=1, lwd=2, col=col.quad)
-        }
+        if(length(unique(horiz)) > 2){
+           lm2 <- lm(residuals(model, type="pearson")~poly(horiz, 2))
+           lines(new, predict(lm2, list(horiz=new)), lty=1, lwd=2, col=col.quad)
+        }}
      if(is.function(smoother))
        smoother(horiz, vert, col.smooth, log.x=FALSE, log.y=FALSE,
           spread=FALSE, smoother.args=smoother.args)
@@ -178,7 +180,7 @@ residCurvTest.glm <- function(model, variable) {
  if(variable == "fitted") c(NA, NA) else {
   if(is.na(match(variable, attr(model$terms, "term.labels"))))
      stop(paste(variable, "is not a term in the mean function")) else {
-     newmod <- paste(" ~ . -", variable, " + poly(", variable,", 2)")
+     newmod <- paste(" ~ . + I(", variable, "^2)")
      m2 <- update(model, newmod, start=NULL)
      c(Test= test<-deviance(model)-deviance(m2), Pvalue=1-pchisq(test, 1))
 }}}
