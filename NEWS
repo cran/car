@@ -1,3 +1,9 @@
+Changes to Version 2.0-18
+
+    o Bug fix to boot with type="residual"
+
+    o Added densityPlot() function.
+
 Changes to Version 2.0-17
 
     o Add a variable to AMSsurvey.

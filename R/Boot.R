@@ -53,7 +53,7 @@ Boot.default <- function(object, f=coef, labels=names(coef(object)),
             out <- rep(NA, length(out)) } else  {out <- .fn(mod)}
       out
       }
-  }
+  } 
   b <- boot(data.frame(update(object, model=TRUE)$model), boot.f, R, .fn=f)
   colnames(b$t) <- labels
   if(exists(".y.boot", envir=.carEnv)) remove(".y.boot", envir=.carEnv)

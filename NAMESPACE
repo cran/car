@@ -1,4 +1,4 @@
-# last modified 2012-09-30 by J. Fox
+# last modified 2013-06-04 by J. Fox
 
 export(
     basicPowerAxis,
@@ -10,6 +10,7 @@ export(
     contr.Sum,
     contr.Treatment,
     dataEllipse,
+    densityPlot,
     ellipse,
     logit,
     panel.car,
@@ -170,6 +171,8 @@ S3method(deltaMethod, coxph)
 S3method(deltaMethod, mer)
 S3method(deltaMethod, lme)
 S3method(deltaMethod, lmList)
+S3method(densityPlot, default)
+S3method(densityPlot, formula)
 S3method(dfbetaPlots, lm)
 S3method(dfbetasPlots, lm)
 S3method(durbinWatsonTest, default)
