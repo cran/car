@@ -37,8 +37,9 @@ scatter3d(x, ...)
 	  residuals=(length(fit) == 1), surface=TRUE, fill=TRUE, grid=TRUE, 
       grid.lines=26, df.smooth=NULL, df.additive=NULL,
 	  sphere.size=1, radius=1, threshold=0.01, speed=1, fov=60, 
-	  fit="linear", groups=NULL, parallel=TRUE, ellipsoid=FALSE, level=0.5,
-	   ellipsoid.alpha=0.1, id.method=c("mahal", "xz", "y", "xyz", "identify", "none"), 
+	  fit="linear", groups=NULL, parallel=TRUE, 
+      ellipsoid=FALSE, level=0.5, ellipsoid.alpha=0.1, 
+      id.method=c("mahal", "xz", "y", "xyz", "identify", "none"), 
 	  id.n=if (id.method == "identify") Inf else 0,
 	  labels=as.character(seq(along=x)), offset = ((100/length(x))^(1/3)) * 0.02,
 	  model.summary=FALSE, ...)
