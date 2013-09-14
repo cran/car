@@ -46,7 +46,7 @@ Fox, J. and Weisberg, S. (2011)
 
 Weisberg, S. (2005) \emph{Applied Linear Regression}, Third Edition. Wiley.
 }
-\author{ Sanford Weisberg, <sandy@stat.umn.edu> }
+\author{ Sanford Weisberg, <sandy@umn.edu> }
 
 \seealso{\code{\link{powerTransform}}. }
 \examples{

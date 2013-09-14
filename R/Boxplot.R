@@ -2,6 +2,8 @@
 # 2012-12-12: Fixed Boxplot.default() so that it works properly when g is numeric. J. Fox
 # 2013-04-10: handles at argument properly, contribution of Steve Ellison. J. Fox
 
+# 2013-08-19: removed loading of stats package. J. Fox
+
 Boxplot <- function(y, ...){
 	UseMethod("Boxplot")
 }
@@ -122,7 +124,6 @@ Boxplot.formula <- function(formula, data=NULL, subset, na.action=NULL, labels.,
 		m$data <- as.data.frame(data)
 	m$xlab <- m$ylab <- m$id.method <- m$... <- NULL
 	m$na.action <- na.action
-	require(stats, quietly = TRUE)
 	m[[1]] <- as.name("model.frame")
 	mf <- eval(m, parent.frame())
 	if (missing(labels.)) mf$"(labels.)" <- rownames(mf)

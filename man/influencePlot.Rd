@@ -56,7 +56,7 @@ used for its side-effect of drawing a plot.
 }
 
 \author{John Fox \email{jfox@mcmaster.ca}, minor changes by S. Weisberg
-\email{sandy@stat.umn.edu}}
+\email{sandy@umn.edu}}
 
 
 \seealso{\code{\link[stats]{cooks.distance}}, \code{\link[stats]{rstudent}}, 

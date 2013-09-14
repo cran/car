@@ -1,7 +1,9 @@
 #-------------------------------------------------------------------------------
 # Revision history:
 # 2009-09-28 by J. Fox (renamed)
-# 2012-07-01 Rewritten by S. Weisberg.  The 'data' gone
+# 2012-07-01 Rewritten by S. Weisberg.  The 'data' argument is now gone
+# 2013-07-09 Works correctly if data arg is not set in the model
+#            works correctly if the formula in 'lm' is an argument
 #-------------------------------------------------------------------------------
 
 # score test of nonconstant variance (J. Fox)
@@ -11,7 +13,7 @@ ncvTest <- function(model, ...){
 }
 
 ncvTest.lm <- function(model, var.formula, ...) {
-  model <- update(model, na.action="na.exclude")
+  model <- update(model, formula(model), na.action="na.exclude")
 	sumry <- summary(model)
 	residuals <- residuals(model, type="pearson")
 	S.sq <- df.residual(model)*(sumry$sigma)^2/sum(!is.na(residuals))
@@ -23,15 +25,17 @@ ncvTest.lm <- function(model, var.formula, ...) {
 		df <- 1
 	}
 	else 
-  { 
+  {
    form <- as.formula(paste(".U ~ ", as.character(var.formula)[[2]], sep=""))
    data <- getCall(model)$data
    if(!is.null(data)){
         data <- eval(data)
-        data$.U <- .U 
+        data$.U <- .U
+   }  else {
+        data <- as.data.frame(cbind(model.matrix(model), .U))
    }
-   mod <- update(model, form, data=data, weights=NULL) 
-   df <- sum(!is.na(coefficients(mod))) - 1    
+  mod <- update(model, form, data=data, weights=NULL)
+  df <- sum(!is.na(coefficients(mod))) - 1
   }	    
 	SS <- anova(mod)$"Sum Sq"
 	RegSS <- sum(SS) - SS[length(SS)]

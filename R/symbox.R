@@ -1,4 +1,5 @@
 # 2010-09-05: J. Fox: allow xlab argument, pass through ...
+# 2013-08-19: J. Fox: remove loading of stats package
 
 symbox <- function(x, ...){
 	UseMethod("symbox")
@@ -12,7 +13,6 @@ symbox.formula <- function(formula, data=NULL, subset, na.action=NULL, ylab, ...
 		m$data <- as.data.frame(data)
 	m$ylab <- m$... <- NULL
 	m$na.action <- na.action
-	require(stats, quietly = TRUE)
 	m[[1]] <- as.name("model.frame")
 	mf <- eval(m, parent.frame())
 	if (missing(ylab)) ylab <- paste("Transformations of", variable)

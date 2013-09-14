@@ -72,7 +72,8 @@ The summary methods handle the \code{NA}s appropriately.
 }
 \value{
 See \code{\link[boot]{boot}} for the returned value from this function.  The car
-package includes additional generic functions, as listed below.
+package includes additional generic functions summary, confint and hist that works
+with boot objects.
 }
 \references{
 Davison, A, and Hinkley, D.  (1997)  \emph{Bootstrap Methods and their

@@ -12,28 +12,34 @@
 # 2012-03-02: fixed abbreviation of envir argument. J. Fox
 # 2012-04-08: modfied deltaMethod.default() to use coef and vcov
 # 2012-12-10: removed the 'deltaMethodMessageFlag'
+# 2013-06-20: added deltaMethod.merMod(). J. Fox
+# 2013-06-20: tweaks for lme4. J. Fox
+# 2013-07-01: New 'constants' argument for use when called from within a function.
+# 2013-07-18: fixed a bug in passing the 'func' argument
 #-------------------------------------------------------------------------------
 
 deltaMethod <- function (object, ...) {
 	UseMethod("deltaMethod")
 }
 
-deltaMethod.default <- function (object, g, vcov., func = g, ...) {
+deltaMethod.default <- function (object, g, vcov., func = g, constants, ...) {
 	if (!is.character(g)) 
 		stop("The argument 'g' must be a character string")
-	if ((exists.method("coef", object, default=FALSE) || 
+	if ((exists.method("coef", object, default=FALSE) ||
 				(!is.atomic(object) && !is.null(object$coefficients))) 
 			&& exists.method("vcov", object, default=FALSE)){
 		if (missing(vcov.)) vcov. <- vcov(object)
 		object <- coef(object)
 	}
-	para <- object
+	para <- object         
 	para.names <- names(para)
 	g <- parse(text = g)
 	q <- length(para)
 	for (i in 1:q) {
 		assign(names(para)[i], para[i])
 	}
+	if(!missing(constants)){
+     for (i in seq_along(constants)) assign(names(constants[i]), constants[[i]])}
 	est <- eval(g)
 	names(est) <- NULL
 	gd <- rep(0, q)
@@ -54,17 +60,16 @@ deltaMethod.lm <- function (object, g, vcov. = vcov,
 	para.names <- parameterNames
 	para.names[1] <- gsub("\\(Intercept\\)", "Intercept", para.names[1])
 	names(para) <- para.names
-	func <- g
 	vcov. <- if (is.function(vcov.)) 
 			vcov.(object)
 		else vcov.
-	deltaMethod.default(para, g, vcov., func)
+	deltaMethod.default(para, g, vcov.,  ...)
 }
 
 # nls has named parameters so parameterNames is ignored
 deltaMethod.nls <- function(object, g, vcov.=vcov,...){
 	vcov. <- if(is.function(vcov.)) vcov.(object)
-	deltaMethod.default(coef(object), g, vcov.)   
+	deltaMethod.default(coef(object), g, vcov., ...)   
 }
 
 deltaMethod.polr <- function(object,g,vcov.=vcov,...){
@@ -83,7 +88,7 @@ deltaMethod.multinom <- function(object, g, vcov.=vcov,
 	nc <- dim(coefs)[2]
 	for (i in 1:dim(coefs)[1]){
 		para <- coefs[i, ]
-		ans <- deltaMethod(para, g, vcov.(object)[(i - 1) + 1:nc, (i - 1) + 1:nc])
+		ans <- deltaMethod(para, g, vcov.(object)[(i - 1) + 1:nc, (i - 1) + 1:nc], ...)
 		rownames(ans)[1] <- paste(rownames(coefs)[i], rownames(ans)[1])
 		out <- rbind(out,ans)
 	}
@@ -101,6 +106,13 @@ deltaMethod.coxph <- function(object, g, vcov. = vcov,
  deltaMethod.lm(object, g, vcov.,  parameterNames, ...) }
            
 # lmer
+
+deltaMethod.merMod <- function(object, g, vcov. = vcov,
+                            parameterNames = names(fixef(object)), ...) {
+    deltaMethod.mer(object=object, g=g, vcov.=vcov, 
+                       parameterNames=parameterNames, ...)
+}
+    
 deltaMethod.mer <- function(object, g, vcov. = vcov,
            parameterNames = names(fixef(object)), ...) {
   para <- fixef(object)
@@ -108,7 +120,7 @@ deltaMethod.mer <- function(object, g, vcov. = vcov,
  	vcov. <- if (is.function(vcov.)) 
 			vcov.(object)
 		else vcov.
-  deltaMethod(para, g, vcov.)
+  deltaMethod(para, g, vcov., ...)
   }
 
 
@@ -120,7 +132,7 @@ deltaMethod.lme <- function(object, g, vcov. = vcov,
  	vcov. <- if (is.function(vcov.)) 
 			vcov.(object)
 		else vcov.
-  deltaMethod(para, g, vcov.)
+  deltaMethod(para, g, vcov., ...)
   }
   
 # nlsList  lsList

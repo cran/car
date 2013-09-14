@@ -19,7 +19,7 @@
 # 16 June 2011 allow layout=NA, in which case the layout is not set in this
 #  function, so it is the responsibility of the user
 # 14 September 2012 improved the smoothers
-# 22 September 2012 added conditioning on one categorical predictor
+# 22 September 2012 added conditioning on one categorical regressor
 #############################################
 marginalModelPlot <- function(...){mmp(...)}
 mmp <- function(model, ...){UseMethod("mmp")}

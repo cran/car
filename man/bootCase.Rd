@@ -69,7 +69,7 @@ Thousand Oaks:  Sage.
 S. Weisberg (2005) \emph{Applied Linear Regression}, Third Edition.   
 Wiley, Chapters 4 and 11.}
 
-\author{ Sanford Weisberg, \email{sandy@stat.umn.edu}.  The error checking was
+\author{ Sanford Weisberg, \email{sandy@umn.edu}.  The error checking was
 written by
 Lexin Li.}
 

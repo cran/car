@@ -64,7 +64,7 @@ Statistics}.
   Weisberg, S. (2005) \emph{Applied Linear Regression}, Third Edition, Wiley, Chapter 7.
 }
 
-\author{Sanford Weisberg, \code{sandy@stat.umn.edu}}
+\author{Sanford Weisberg, \code{sandy@umn.edu}}
 
 \examples{
 m2 <- lm(rate ~ log(len) + log(ADT) + slim + shld + log(sigs1), Highway1)

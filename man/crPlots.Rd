@@ -3,7 +3,6 @@
 \alias{crp}
 \alias{crPlot}
 \alias{crPlot.lm}
-\alias{crPlot.glm}
 
 \title{Component+Residual (Partial Residual) Plots}
 \description{
@@ -27,8 +26,6 @@ crPlot(model, ...)
 	smoother.args=list(), smooth, span,
   col=palette()[1], col.lines=palette()[-1],
   xlab, ylab, pch=1, lwd=2, grid=TRUE, ...)
-
-\method{crPlot}{glm}(model, ...)
 }
 
 \arguments{

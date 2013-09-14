@@ -23,6 +23,7 @@ scatterplotMatrix(x, ...)
     transform=FALSE, family=c("bcPower", "yjPower"),
     ellipse=FALSE, levels=c(.5, .95), robust=TRUE,
     groups=NULL, by.groups=FALSE, 
+    use=c("complete.obs", "pairwise.complete.obs"),
     labels, id.method="mahal", id.n=0, id.cex=1, id.col=palette()[1],
     col=if (n.groups == 1) palette()[3:1] else rep(palette(), length=n.groups),
     pch=1:n.groups, lwd=1, lty=1, 
@@ -87,6 +88,8 @@ spm(x, ...)
   \item{groups}{a factor or other variable dividing the data into groups; groups are
     plotted with different colors and plotting characters.}
   \item{by.groups}{if \code{TRUE}, regression lines are fit by groups.}
+  \item{use}{if \code{"complete.obs"} (the default), cases with missing data are omitted; if \code{"pairwise.complete.obs"), all valid cases are used
+    in each panel of the plot.}}
   \item{pch}{plotting characters for points; default is the plotting characters in
     order (see \code{\link[graphics]{par}}).}
   \item{col}{colors for lines and points; the default is taken from the color palette, 

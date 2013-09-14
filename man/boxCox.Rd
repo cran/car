@@ -107,7 +107,7 @@ Yeo, I. and Johnson, R. (2000)  A new family of
 power transformations to improve normality or symmetry.  
 \emph{Biometrika}, 87, 954-959.
 }
-\author{ Sanford Weisberg, <sandy@stat.umn.edu> }
+\author{ Sanford Weisberg, <sandy@umn.edu> }
 
 \seealso{
 \code{\link{boxcox}}, \code{\link{yjPower}}, \code{\link{bcPower}},
@@ -117,6 +117,7 @@ power transformations to improve normality or symmetry.
 boxCox(Volume ~ log(Height) + log(Girth), data = trees,
        lambda = seq(-0.25, 0.25, length = 10))
 
+data("quine", package = "MASS")
 boxCox(Days ~ Eth*Sex*Age*Lrn, data = quine,
        lambda = seq(-0.05, 0.45, len = 20), family="yjPower")
 }

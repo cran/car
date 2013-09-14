@@ -15,6 +15,7 @@
 #  function, so it is the responsibility of the user
 # 14 Sept 2012 use the ScatterplotSmoothers in car
 # 18 Sept 2012 restore smooth and span args
+# 20 Aug 2013 replace residuals.glm() with residuals(). John
 
 ceresPlots<-function(model, terms= ~ ., layout=NULL, ask, main, ...){
   terms <- if(is.character(terms)) paste("~", terms) else terms
@@ -147,7 +148,7 @@ ceresPlot.lm<-function(model, variable,
 	coef<-coefficients(aug.model)
 	k<-length(coef)
 	posn<-k:(k-n.x+1)
-	partial.res<-residuals.glm(aug.model, "partial")[,var] +
+	partial.res<-residuals(aug.model, "partial")[,var] +
 		aug.mod.mat[,posn] %*% as.matrix(coef[posn])
 	xlab <- if(!missing(xlab)) xlab else var
 	ylab <- if(!missing(ylab)) ylab else

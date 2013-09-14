@@ -206,7 +206,7 @@ Fox, J. and Weisberg, S. (2011)
 
 Weisberg, S. (2005) \emph{Applied
 Linear Regression}, Third Edition, Wiley, Chapter 8}
-\author{Sanford Weisberg, \email{sandy@stat.umn.edu}}
+\author{Sanford Weisberg, \email{sandy@umn.edu}}
 
 \seealso{See Also \code{\link{lm}}, \code{\link{identify}},
 \code{\link{showLabels}} }

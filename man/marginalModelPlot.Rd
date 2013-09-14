@@ -163,7 +163,7 @@ Weisberg, S. (2005) \emph{Applied
 Linear Regression}, Third Edition, Wiley, Chapter 8.
 }
 
-\author{Sanford Weisberg, \email{sandy@stat.umn.edu}}
+\author{Sanford Weisberg, \email{sandy@umn.edu}}
 
 \examples{
 \dontrun{

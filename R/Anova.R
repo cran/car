@@ -21,6 +21,12 @@
 # 2012-02-28: added test.statistic argument to Anova.mer(). J.Fox
 # 2012-03-02: fixed test abbreviation of test.statistic argument to Anova.default()
 #             called by other Anova() methods. J. Fox
+# 2013-06-17: modified summary.Anova.mlm(), introduced print.summary.Anova.mlm(),
+#             adapting code contributed by Gabriel Baud-Bovy. J. Fox
+# 2013-06-20: added Anova.merMod() method. J. Fox
+# 2013-06-22: tweaks to local fixef(). J. Fox
+# 2013-06-22: test argument uniformly uses "Chisq" rather than "chisq". J. Fox
+# 2013-08-19: replaced calls to print.anova(). J. Fox
 #-------------------------------------------------------------------------------
 
 # Type II and III tests for linear, generalized linear, and other models (J. Fox)
@@ -585,6 +591,51 @@ Anova.III.polr <- function (mod, ...)
 
 # multivariate linear models
 
+# the following 3 functions copied from the stats package (not exported from stats)
+
+Pillai <- function (eig, q, df.res) {
+    test <- sum(eig/(1 + eig))
+    p <- length(eig)
+    s <- min(p, q)
+    n <- 0.5 * (df.res - p - 1)
+    m <- 0.5 * (abs(p - q) - 1)
+    tmp1 <- 2 * m + s + 1
+    tmp2 <- 2 * n + s + 1
+    c(test, (tmp2/tmp1 * test)/(s - test), s * tmp1, s * tmp2)
+}
+
+Wilks <- function (eig, q, df.res) {
+    test <- prod(1/(1 + eig))
+    p <- length(eig)
+    tmp1 <- df.res - 0.5 * (p - q + 1)
+    tmp2 <- (p * q - 2)/4
+    tmp3 <- p^2 + q^2 - 5
+    tmp3 <- if (tmp3 > 0) 
+        sqrt(((p * q)^2 - 4)/tmp3)
+    else 1
+    c(test, ((test^(-1/tmp3) - 1) * (tmp1 * tmp3 - 2 * tmp2))/p/q, 
+      p * q, tmp1 * tmp3 - 2 * tmp2)
+}
+
+HL <- function (eig, q, df.res) {
+    test <- sum(eig)
+    p <- length(eig)
+    m <- 0.5 * (abs(p - q) - 1)
+    n <- 0.5 * (df.res - p - 1)
+    s <- min(p, q)
+    tmp1 <- 2 * m + s + 1
+    tmp2 <- 2 * (s * n + 1)
+    c(test, (tmp2 * test)/s/s/tmp1, s * tmp1, tmp2)
+}
+
+Roy <- function (eig, q, df.res) {
+    p <- length(eig)
+    test <- max(eig)
+    tmp1 <- max(p, q)
+    tmp2 <- df.res - tmp1 + q
+    c(test, (tmp2 * test)/tmp1, tmp1, tmp2)
+}
+
 has.intercept.mlm <- function (model, ...) 
 	any(row.names(coefficients(model)) == "(Intercept)")
 
@@ -824,10 +875,10 @@ print.Anova.mlm <- function(x, ...){
 		eigs <- Re(eigen(qr.coef(if (repeated) qr(x$SSPE[[term]]) else SSPE.qr,
 								x$SSP[[term]]), symmetric = FALSE)$values)
 		tests[term, 1:4] <- switch(test,
-				Pillai = stats:::Pillai(eigs, x$df[term], x$error.df),
-				Wilks = stats:::Wilks(eigs, x$df[term], x$error.df),
-				"Hotelling-Lawley" = stats:::HL(eigs, x$df[term], x$error.df),
-				Roy = stats:::Roy(eigs, x$df[term], x$error.df))
+				Pillai = Pillai(eigs, x$df[term], x$error.df),
+				Wilks = Wilks(eigs, x$df[term], x$error.df),
+				"Hotelling-Lawley" = HL(eigs, x$df[term], x$error.df),
+				Roy = Roy(eigs, x$df[term], x$error.df))
 	}
 	ok <- tests[, 2] >= 0 & tests[, 3] > 0 & tests[, 4] > 0
 	ok <- !is.na(ok) & ok
@@ -843,116 +894,152 @@ print.Anova.mlm <- function(x, ...){
 	invisible(x)
 }
 
-summary.Anova.mlm <- function(object, test.statistic, multivariate=TRUE, univariate=TRUE, 
-		digits=getOption("digits"), ...){
-	GG <- function(SSPE, P){ # Greenhouse-Geisser correction
-		p <- nrow(SSPE)
-		if (p < 2) return(NA) 
-		lambda <- eigen(SSPE %*% solve(t(P) %*% P))$values
-		lambda <- lambda[lambda > 0]
-		((sum(lambda)/p)^2)/(sum(lambda^2)/p)
-	}
-	HF <- function(gg, error.df, p){ # Huynh-Feldt correction
-		((error.df + 1)*p*gg - 2)/(p*(error.df - p*gg))
-	}
-	mauchly <- function (SSD, P, df) {
-		# most of this function borrowed from stats:::mauchly.test.SSD
-		if (nrow(SSD) < 2) return(c(NA, NA))
-		Tr <- function (X) sum(diag(X))
-		p <- nrow(P)
-		I <- diag(p)
-		Psi <- t(P) %*% I %*% P 
-		B <- SSD 
-		pp <- nrow(SSD) 
-		U <- solve(Psi, B)
-		n <- df 
-		logW <- log(det(U)) - pp * log(Tr(U/pp))
-		rho <- 1 - (2 * pp^2 + pp + 2)/(6 * pp * n)
-		w2 <- (pp + 2) * (pp - 1) * (pp - 2) * (2 * pp^3 + 6 * pp^2 + 
-					3 * p + 2)/(288 * (n * pp * rho)^2)
-		z <- -n * rho * logW
-		f <- pp * (pp + 1)/2 - 1
-		Pr1 <- pchisq(z, f, lower.tail = FALSE)
-		Pr2 <- pchisq(z, f + 4, lower.tail = FALSE)
-		pval <- Pr1 + w2 * (Pr2 - Pr1)
-		c(statistic = c(W = exp(logW)), p.value = pval)
-	}        
-	if (missing(test.statistic)) test.statistic <- c("Pillai", "Wilks", "Hotelling-Lawley", "Roy")
-	test.statistic <- match.arg(test.statistic, c("Pillai", "Wilks", "Hotelling-Lawley", "Roy"),
-			several.ok=TRUE)
-	nterms <- length(object$terms)
-	if (multivariate || !object$repeated){       
-		cat(paste("\nType ", object$type, if (object$repeated) " Repeated Measures",
-						" MANOVA Tests:\n", sep=""))
-		if (!object$repeated){ 
-			cat("\nSum of squares and products for error:\n")
-			print(object$SSPE, digits=digits)
-		}
-		for (term in 1:nterms){
-			cat(paste("\n------------------------------------------\n",
-							"\nTerm:", object$terms[term], "\n"))
-			hyp <- list(SSPH=object$SSP[[term]], 
-					SSPE=if (object$repeated) object$SSPE[[term]] else object$SSPE,
-					P=if (object$repeated) object$P[[term]] else NULL, 
-					test=test.statistic, df=object$df[term], 
-					df.residual=object$error.df, title=object$terms[term])
-			class(hyp) <- "linearHypothesis.mlm"
-			print(hyp, digits=digits, SSPE=object$repeated, ...)
-		}
-	}
-	if (object$repeated && univariate){
-		singular <- object$singular
-		error.df <- object$error.df
-		table <- matrix(0, nterms, 6)
-		table2 <- matrix(0, nterms, 4)
-		table3 <- matrix(0, nterms, 2)
-		rownames(table3) <- rownames(table2) <- rownames(table) <- object$terms
-		colnames(table) <- c("SS", "num Df", "Error SS", "den Df", "F", "Pr(>F)")
-		colnames(table2) <- c("GG eps", "Pr(>F[GG])",  "HF eps", "Pr(>F[HF])")
-		colnames(table3) <- c("Test statistic", "p-value")
-		if (singular) warning("Singular error SSP matrix:\nnon-sphericity test and corrections not available")
-		for (term in 1:nterms){
-			SSP <- object$SSP[[term]]
-			SSPE <- object$SSPE[[term]]
-			P <- object$P[[term]]
-			p <- ncol(P)
-			PtPinv <- solve(t(P) %*% P)
-			gg <- if (!singular) GG(SSPE, P) else NA
-			table[term, "SS"] <- sum(diag(SSP %*% PtPinv))
-			table[term, "Error SS"] <- sum(diag(SSPE %*% PtPinv))
-			table[term, "num Df"] <- object$df[term] * p
-			table[term, "den Df"] <- error.df * p
-			table[term, "F"] <-  (table[term, "SS"]/table[term, "num Df"])/
-					(table[term, "Error SS"]/table[term, "den Df"])
-			table[term, "Pr(>F)"] <- pf(table[term, "F"], table[term, "num Df"],
-					table[term, "den Df"], lower.tail=FALSE)
-			table2[term, "GG eps"] <- gg
-			table2[term, "HF eps"] <- if (!singular) HF(gg, error.df, p) else NA
-			table3[term,] <- if (!singular) mauchly(SSPE, P, object$error.df) else NA
-		}
-		cat("\nUnivariate Type", object$type, 
-				"Repeated-Measures ANOVA Assuming Sphericity\n\n")
-		print.anova(table)
-		table3 <- na.omit(table3)
-		if (nrow(table3) > 0){
-			cat("\n\nMauchly Tests for Sphericity\n\n")
-			print.anova(table3)
-			cat("\n\nGreenhouse-Geisser and Huynh-Feldt Corrections\n",
-					"for Departure from Sphericity\n\n")
-			table2[,"Pr(>F[GG])"] <- pf(table[,"F"], table2[,"GG eps"]*table[,"num Df"],
-					table2[,"GG eps"]*table[,"den Df"], lower.tail=FALSE)
-			table2[,"Pr(>F[HF])"] <- pf(table[,"F"], 
-					pmin(1, table2[,"HF eps"])*table[,"num Df"],
-					pmin(1, table2[,"HF eps"])*table[,"den Df"], lower.tail=FALSE)
-			table2 <- na.omit(table2)
-			print.anova(table2[,1:2, drop=FALSE])
-			cat("\n")
-			print.anova(table2[,3:4, drop=FALSE])
-			if (any(table2[,"HF eps"] > 1)) 
-				warning("HF eps > 1 treated as 1")
-		}
-	}
-	invisible(object)
+# path <-  "D:/R-package-sources/car/R"
+# files <- list.files(path, pattern=".*\\.R")
+# files <- paste(path, files, sep="/")
+# for (file in files) source(file)
+
+# summary.Anova.mlm and print.summary.Anova.mlm methods
+#  with contributions from Gabriel Baud-Bovy
+summary.Anova.mlm <- function (object, test.statistic, univariate=TRUE, multivariate=TRUE, ...) {
+    GG <- function(SSPE, P) { # Greenhouse-Geisser correction
+        p <- nrow(SSPE)
+        if (p < 2) 
+            return(NA)
+        lambda <- eigen(SSPE %*% solve(t(P) %*% P))$values
+        lambda <- lambda[lambda > 0]
+        ((sum(lambda)/p)^2)/(sum(lambda^2)/p)
+    }
+    HF <- function(gg, error.df, p) { # Huynh-Feldt correction
+        ((error.df + 1) * p * gg - 2)/(p * (error.df - p * gg))
+    }
+    mauchly <- function(SSD, P, df) {
+        # most of this function borrowed from stats:::mauchly.test.SSD
+        if (nrow(SSD) < 2) 
+            return(c(NA, NA))
+        Tr <- function(X) sum(diag(X))
+        p <- nrow(P)
+        I <- diag(p)
+        Psi <- t(P) %*% I %*% P
+        B <- SSD
+        pp <- nrow(SSD)
+        U <- solve(Psi, B)
+        n <- df
+        logW <- log(det(U)) - pp * log(Tr(U/pp))
+        rho <- 1 - (2 * pp^2 + pp + 2)/(6 * pp * n)
+        w2 <- (pp + 2) * (pp - 1) * (pp - 2) * (2 * pp^3 + 6 * 
+                pp^2 + 3 * p + 2)/(288 * (n * pp * rho)^2)
+        z <- -n * rho * logW
+        f <- pp * (pp + 1)/2 - 1
+        Pr1 <- pchisq(z, f, lower.tail = FALSE)
+        Pr2 <- pchisq(z, f + 4, lower.tail = FALSE)
+        pval <- Pr1 + w2 * (Pr2 - Pr1)
+        c(statistic = c(W = exp(logW)), p.value = pval)
+    }
+    if (missing(test.statistic)) 
+        test.statistic <- c("Pillai", "Wilks", "Hotelling-Lawley", "Roy")
+    test.statistic <- match.arg(test.statistic, c("Pillai", "Wilks", "Hotelling-Lawley", "Roy"), several.ok = TRUE)
+    nterms <- length(object$terms)
+    summary.object <- list(type=object$type, repeated=object$repeated, 
+        multivariate.tests=NULL, univariate.tests=NULL, 
+        pval.adjustments=NULL, sphericity.tests=NULL)
+    if (multivariate){
+        summary.object$multivariate.tests <- vector(nterms, mode="list")
+        names(summary.object$multivariate.tests) <- object$terms 
+        summary.object$SSPE <- object$SSPE
+        for (term in 1:nterms) {
+            hyp <- list(SSPH = object$SSP[[term]], 
+                SSPE = if (object$repeated) object$SSPE[[term]] else object$SSPE, 
+                P = if (object$repeated) object$P[[term]] else NULL, 
+                test = test.statistic, df = object$df[term], 
+                df.residual = object$error.df, title = object$terms[term])
+            class(hyp) <- "linearHypothesis.mlm"
+            summary.object$multivariate.tests[[term]] <- hyp
+        }
+    }
+    if (object$repeated && univariate) {
+        singular <- object$singular
+        error.df <- object$error.df
+        table <- matrix(0, nterms, 6)
+        table2 <- matrix(0, nterms, 4)
+        table3 <- matrix(0, nterms, 2)
+        rownames(table3) <- rownames(table2) <- rownames(table) <- object$terms
+        colnames(table) <- c("SS", "num Df", "Error SS", "den Df", "F", "Pr(>F)")
+        colnames(table2) <- c("GG eps", "Pr(>F[GG])", "HF eps","Pr(>F[HF])")
+        colnames(table3) <- c("Test statistic", "p-value")
+        if (singular) 
+            warning("Singular error SSP matrix:\nnon-sphericity test and corrections not available")
+        for (term in 1:nterms) {
+            SSP <- object$SSP[[term]]
+            SSPE <- object$SSPE[[term]]
+            P <- object$P[[term]]
+            p <- ncol(P)
+            PtPinv <- solve(t(P) %*% P)
+            gg <- if (!singular) GG(SSPE, P) else NA
+            table[term, "SS"] <- sum(diag(SSP %*% PtPinv))
+            table[term, "Error SS"] <- sum(diag(SSPE %*% PtPinv))
+            table[term, "num Df"] <- object$df[term] * p
+            table[term, "den Df"] <- error.df * p
+            table[term, "F"] <- (table[term, "SS"]/table[term, "num Df"])/
+                (table[term, "Error SS"]/table[term, "den Df"])
+            table[term, "Pr(>F)"] <- pf(table[term, "F"], table[term, "num Df"], table[term, "den Df"], 
+                lower.tail = FALSE)
+            table2[term, "GG eps"] <- gg
+            table2[term, "HF eps"] <- if (!singular) HF(gg, error.df, p) else NA
+            table3[term, ] <- if (!singular) mauchly(SSPE, P, object$error.df) else NA
+        }
+        table3 <- na.omit(table3)
+        if (nrow(table3) > 0) {
+            table2[, "Pr(>F[GG])"] <- pf(table[, "F"], table2[, "GG eps"] * 
+                    table[, "num Df"], table2[, "GG eps"] * table[, "den Df"], 
+                lower.tail = FALSE)
+            table2[, "Pr(>F[HF])"] <- pf(table[, "F"], pmin(1, table2[, "HF eps"]) * 
+                    table[, "num Df"], pmin(1, table2[, "HF eps"]) * table[, "den Df"], 
+                lower.tail = FALSE)
+            table2 <- na.omit(table2)
+            if (any(table2[, "HF eps"] > 1)) warning("HF eps > 1 treated as 1")
+        }
+        class(table3) <- class(table) <- "anova"
+        summary.object$univariate.tests <- table
+        summary.object$pval.adjustments <- table2
+        summary.object$sphericity.tests <- table3
+    }
+    class(summary.object) <- "summary.Anova.mlm"
+    summary.object
+}
+
+print.summary.Anova.mlm <- function(x, digits = getOption("digits"), ... ) {
+    if (!is.null(x$multivariate.tests)) {
+        cat(paste("\nType ", x$type, if (x$repeated) 
+            " Repeated Measures", " MANOVA Tests:\n", sep = ""))
+        if (!x$repeated) {
+            cat("\nSum of squares and products for error:\n")
+            print(x$SSPE, digits = digits)
+        }
+        for (term in 1:length(x$multivariate.tests)) {
+            cat(paste("\n------------------------------------------\n", 
+                "\nTerm:", names(x$multivariate.tests)[term], "\n"))
+            print(x$multivariate.tests[[term]], digits = digits, SSPE = x$repeated, ...)
+        }
+    }
+    if  (!is.null(x$univariate.tests)) {
+        cat("\nUnivariate Type", x$type, "Repeated-Measures ANOVA Assuming Sphericity\n\n")
+        print(x$univariate.tests)
+        if (nrow(x$sphericity.tests) > 0) {
+            cat("\n\nMauchly Tests for Sphericity\n\n")
+            print(x$sphericity.tests)
+            cat("\n\nGreenhouse-Geisser and Huynh-Feldt Corrections\n", 
+                "for Departure from Sphericity\n\n")
+            table <- x$pval.adjustments[, 1:2, drop = FALSE]
+            class(table) <- "anova"
+            print(table)
+            cat("\n")
+            table <- x$pval.adjustments[, 3:4, drop = FALSE]
+            class(table)
+            print(table)
+        }
+    }
+    invisible(x)
 }
 
 Anova.manova <- function(mod, ...){
@@ -1312,13 +1399,29 @@ Anova.III.default <- function(mod, vcov., test, singular.ok=FALSE, ...){
 
 ## functions for mixed models
 
-# the following function, not exported, to make nlme play better with lme4
+# the following function, not exported, to make car consistent with CRAN and development versions of lme4 and with nlme
 
 fixef <- function (object){
-	if (isS4(object)) object@fixef else object$coefficients$fixed
+	if (isS4(object)) {
+        if (!inherits(object, "merMod")) object@fixef
+        else lme4::fixef(object)
+	}
+    else object$coefficients$fixed
 }
 
-Anova.mer <- function(mod, type=c("II","III", 2, 3), test.statistic=c("chisq", "F"),
+Anova.merMod <- function(mod, type=c("II","III", 2, 3), 
+                         test.statistic=c("Chisq", "F"),
+                         vcov.=vcov(mod), singular.ok, ...){
+    type <- as.character(type)
+    type <- match.arg(type)
+    test.statistic <- match.arg(test.statistic)
+    if (missing(singular.ok))
+        singular.ok <- type == "2" || type == "II"
+    Anova.mer(mod=mod, type=type, test.statistic=test.statistic, vcov.=vcov.,
+              singular.ok=singular.ok, ...)
+}
+
+Anova.mer <- function(mod, type=c("II","III", 2, 3), test.statistic=c("Chisq", "F"),
 		vcov.=vcov(mod), singular.ok, ...){
 	type <- as.character(type)
 	type <- match.arg(type)
@@ -1332,7 +1435,7 @@ Anova.mer <- function(mod, type=c("II","III", 2, 3), test.statistic=c("chisq", "
 			"3"=Anova.III.mer(mod, test=test.statistic, vcov., singular.ok=singular.ok))
 }
 
-Anova.II.mer <- function(mod, vcov., singular.ok=TRUE, test=c("chisq", "F"), ...){
+Anova.II.mer <- function(mod, vcov., singular.ok=TRUE, test=c("Chisq", "F"), ...){
 	hyp.term <- function(term){
 		which.term <- which(term==names)
 		subs.term <- which(assign==which.term)
@@ -1352,7 +1455,7 @@ Anova.II.mer <- function(mod, vcov., singular.ok=TRUE, test=c("chisq", "F"), ...
 			return(c(statistic=NA, df=0))            
 		hyp <- linearHypothesis(mod, hyp.matrix.term, 
 				vcov.=vcov., singular.ok=singular.ok, test=test, ...)
-		if (test == "chisq") return(c(statistic=hyp$Chisq[2], df=hyp$Df[2]))
+		if (test == "Chisq") return(c(statistic=hyp$Chisq[2], df=hyp$Df[2]))
 		else return(c(statistic=hyp$F[2], df=hyp$Df[2], res.df=hyp$Res.Df[2]))
 	}
 	test <- match.arg(test)
@@ -1381,10 +1484,10 @@ Anova.II.mer <- function(mod, vcov., singular.ok=TRUE, test=c("chisq", "F"), ...
 		teststat[i] <- abs(hyp["statistic"])
 		df[i] <- abs(hyp["df"])
 		res.df[i] <- hyp["res.df"]
-		p[i] <- if (test == "chisq") pchisq(teststat[i], df[i], lower.tail=FALSE) 
+		p[i] <- if (test == "Chisq") pchisq(teststat[i], df[i], lower.tail=FALSE) 
 				else pf(teststat[i], df[i], res.df[i], lower.tail=FALSE)
 	} 
-	if (test=="chisq"){
+	if (test=="Chisq"){
 		result <- data.frame(teststat, df, p)
 		row.names(result) <- names
 		names(result) <- c ("Chisq", "Df", "Pr(>Chisq)")
@@ -1403,7 +1506,7 @@ Anova.II.mer <- function(mod, vcov., singular.ok=TRUE, test=c("chisq", "F"), ...
 	result
 }
 
-Anova.III.mer <- function(mod, vcov., singular.ok=FALSE, test=c("chisq", "F"), ...){
+Anova.III.mer <- function(mod, vcov., singular.ok=FALSE, test=c("Chisq", "F"), ...){
 	intercept <- has.intercept(mod)
 	p <- length(fixef(mod))
 	I.p <- diag(p)
@@ -1435,7 +1538,7 @@ Anova.III.mer <- function(mod, vcov., singular.ok=FALSE, test=c("chisq", "F"), .
 		else {
 			hyp <- linearHypothesis(mod, hyp.matrix, test=test,
 					vcov.=vcov., singular.ok=singular.ok, ...)
-			if (test == "chisq"){
+			if (test == "Chisq"){
 				teststat[term] <-  hyp$Chisq[2] 
 				df[term] <- abs(hyp$Df[2])
 				p[term] <- pchisq(teststat[term], df[term], lower.tail=FALSE) 
@@ -1448,7 +1551,7 @@ Anova.III.mer <- function(mod, vcov., singular.ok=FALSE, test=c("chisq", "F"), .
 			}
 		}
 	}
-	if (test == "chisq"){
+	if (test == "Chisq"){
 		result <- data.frame(teststat, df, p)
 		row.names(result) <- names
 		names(result) <- c ("Chisq", "Df", "Pr(>Chisq)")
