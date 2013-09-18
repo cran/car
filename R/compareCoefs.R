@@ -5,21 +5,22 @@
 # 11 Jan 2012: fix to work with any 'S4' object with a coef() method. 
 #   suggested by David Hugh-Jones  University of Warwick http://davidhughjones.googlepages.com 
 # 3 May 2012:  fixed bug if models are less than full rank.
-# 17 Seot 2912: suppressing printing calls when there are none. J. Fox
+# 17 Sept 2012: suppressing printing calls when there are none. J. Fox
+# 22 June 2013: tweaks for lem4. J. Fox
 
 compareCoefs <- function(..., se=TRUE, print=TRUE, digits=3){
-    fixefmer <- function(m) {
-      if(inherits(m, "mer")) m@fixef else fixef(m)
-    }
+#     fixefmer <- function(m) {
+#       if(inherits(m, "mer")) m@fixef else fixef(m)
+#     }
     models <- list(...)
     n.models <- length(models)
     if (n.models < 1) return(NULL)
     getnames <- function(model) {
-      if(inherits(model, "mer") | inherits(model, "lme")) names(fixef(model)) else
+      if (inherits(model, "merMod") || inherits(model, "mer") | inherits(model, "lme")) names(fixef(model)) else
          names(coef(model))
          }
     getcoef <- function(model) {
-      if(inherits(model, "mer") | inherits(model, "lme")) fixef(model) else 
+      if (inherits(model, "merMod") || inherits(model, "mer") | inherits(model, "lme")) fixef(model) else 
           coef(model)
        }
     getcall <- function(model) {
@@ -27,7 +28,7 @@ compareCoefs <- function(..., se=TRUE, print=TRUE, digits=3){
                width.cutoff =  getOption("width") - 9)
        }
     getvar <- function(model) {
-       if(inherits(model, "mer")) as.matrix(vcov(model)) else vcov(model)
+       if (inherits(model, "merMod") || inherits(model, "mer")) as.matrix(vcov(model)) else vcov(model)
        }
     coef.names <- unique(unlist(lapply(models, getnames)))
     table <- matrix(NA, length(coef.names), n.models*(1 + se))

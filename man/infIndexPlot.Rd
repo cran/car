@@ -60,7 +60,7 @@ p-values for outlier tests, and leverages.
   \emph{Applied Linear Regression}, Third Edition. Wiley.
 }
 
-\author{Sanford Weisberg, \email{sandy@stat.umn.edu}}
+\author{Sanford Weisberg, \email{sandy@umn.edu}}
 
 \seealso{ \code{\link{cooks.distance}}, \code{\link{rstudent}},
   \code{\link{outlierTest}}, \code{\link{hatvalues}} }

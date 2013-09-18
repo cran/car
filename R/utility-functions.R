@@ -8,6 +8,7 @@
 # 2012-04-08 added exists.method
 # 2012-06-23: added call to globalVariables(). John
 # 2012-12-10: added .carEnv to avoid warnings in R > 2.16.0
+# 2013-06020: added .merMod methods to df.residual() and has.intercept(). John
 
 #if (getRversion() >= "2.15.1") globalVariables(c(".boot.sample", ".boot.indices"))
 
@@ -261,10 +262,16 @@ squeezeBlanks <- function(text){
 
 df.residual.mer <- function(object, ...) NULL
 
+df.residual.merMod <- function(object, ...) NULL
+
 df.residual.lme <- function(object, ...) Inf
 
 has.intercept.mer <- function(model){
 	any(names(fixef(model))=="(Intercept)")
+}
+
+has.intercept.merMod <- function(model){
+    any(names(fixef(model))=="(Intercept)")
 }
 	
 model.matrix.lme <- function(object, ...){
@@ -285,18 +292,19 @@ exists.method <- function(generic, object, default=TRUE, strict=FALSE){
 # Used by marginalModelPlots, residualPlots added 2012-09-24
 plotArrayLegend <- function(
       location=c("top", "none", "separate"),
-      items, col.items, lty.items, lwd.items, title="legend") {
+      items, col.items, lty.items, lwd.items, title="legend",
+      pch=1:length(items)) {
    if(location== "none") return()
    n <- length(items)
    if(location == "top" ) { # add legend
       usr <- par("usr")
       coords <-list(x=usr[1], y=usr[3])
       leg <- legend( coords, items,
-                col=col.items, pch=1:length(col.items),
+                col=col.items, pch=pch,
                 bty="n", cex=1, xpd=NA, plot=FALSE)
       coords <- list(x = usr[1], y=usr[4] + leg$rect$h)
       legend( coords, items,
-         col=col.items, pch=1:length(col.items), bty="n", cex=1, xpd=NA)
+         col=col.items, pch=pch, bty="n", cex=1, xpd=NA)
   }
   if(location == "separate") {
     plot(0:1, 0:1, xaxt="n", yaxt="n", xlab="", ylab="", type="n")

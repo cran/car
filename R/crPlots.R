@@ -14,6 +14,7 @@
 #  function, so it is the responsibility of the user
 # 14 Sept 2012 use the ScatterplotSmoothers in car
 # 19 Sept 2012 restore smooth and span args
+# 20 Aug 2013 replace residuals.glm() with residuals(). John
 
 # these functions to be rewritten; simply renamed for now
 
@@ -84,7 +85,7 @@ crPlot.lm<-function(model, variable,
 		stop("C+R plots not available for models with interactions.")
 	}
 	if (!is.null(model$contrasts[[var]])){
-		partial.res<-residuals.glm(model,"partial")
+		partial.res<-residuals(model,"partial")
 		.x<-model.frame(model)[,var]
 		boxplot(partial.res[,var]~.x, xlab=xlab,
 			ylab=ylab, ...)
@@ -93,7 +94,7 @@ crPlot.lm<-function(model, variable,
 	.x<-if (df.terms(model, var)>1) predict(model, type="terms", term=var)
 		else model.matrix(model)[,var]
 	if (order==1){          # handle first-order separately for efficiency
-		partial.res<-residuals.glm(model,"partial")
+		partial.res<-residuals(model,"partial")
 		plot(.x, partial.res[,var], type="n", xlab=xlab,
       ylab=ylab, ...)
 	  if(grid){
@@ -114,7 +115,7 @@ crPlot.lm<-function(model, variable,
 			stop(paste("Order", order, "C+R plot not available for a term with > 1 df:", var))
 		aug.model<-update(model, 
 			as.formula(paste(".~.-",var,"+poly(",var,",",order,")")))
-		partial.res<-residuals.glm(aug.model, "partial")
+		partial.res<-residuals(aug.model, "partial")
 		last<-ncol(partial.res)
 		plot(.x, partial.res[,last], xlab=xlab, 
 			ylab=ylab, type="n", ...)
@@ -132,7 +133,3 @@ crPlot.lm<-function(model, variable,
             id.col=id.col)
 	}          
 }
-
-crPlot.glm<-function(model, ...){
-	crPlot.lm(model, ...)
-	}

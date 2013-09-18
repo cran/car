@@ -13,6 +13,7 @@
 %   2012-02-28 added test argument to linearHypothesis.mer(). J. Fox
 %   2012-03-07 singular.ok argument added to linearHypothesis.mlm(). J. Fox
 %   2012-11-06 coef. argument added to linearHypothesis.default(), S. Weisberg
+%   2013-06-20 added .merMod methods to linearHypothesis() and matchCoefs(). J. Fox
 %-------------------------------------------------------------------------------
 
 \name{linearHypothesis}
@@ -24,12 +25,14 @@
 \alias{linearHypothesis.polr}
 \alias{linearHypothesis.default}
 \alias{linearHypothesis.mer}
+\alias{linearHypothesis.merMod}
 \alias{linearHypothesis.lme}
 \alias{linearHypothesis.svyglm}
 \alias{print.linearHypothesis.mlm}
 \alias{matchCoefs}
 \alias{matchCoefs.default}
 \alias{matchCoefs.mer}
+\alias{matchCoefs.merMod}
 \alias{matchCoefs.lme}
 \alias{matchCoefs.mlm}
 \alias{linearHypothesis.nlsList}
@@ -76,7 +79,10 @@ lht(model, ...)
 		vcov.=NULL, singular.ok=FALSE, verbose=FALSE, ...)
     
 \method{linearHypothesis}{mer}(model, hypothesis.matrix, rhs=NULL,
-		vcov.=NULL, test=c("chisq", "F"), singular.ok=FALSE, verbose=FALSE, ...)
+		vcov.=NULL, test=c("Chisq", "F"), singular.ok=FALSE, verbose=FALSE, ...)
+        
+\method{linearHypothesis}{merMod}(model, hypothesis.matrix, rhs=NULL,
+    	vcov.=NULL, test=c("Chisq", "F"), singular.ok=FALSE, verbose=FALSE, ...)
 		
 \method{linearHypothesis}{svyglm}(model, ...)
     
@@ -89,6 +95,8 @@ matchCoefs(model, pattern, ...)
 \method{matchCoefs}{lme}(model, pattern, ...)
 
 \method{matchCoefs}{mer}(model, pattern, ...)
+
+\method{matchCoefs}{merMod}(model, pattern, ...)
 
 \method{matchCoefs}{mlm}(model, pattern, ...)
 }
@@ -367,7 +375,7 @@ linearHypothesis(mod.ok, c("treatment1:gender1", "treatment2:gender1"),
 
 \dontrun{
 	library(lme4)
-	example(lmer)
+	example(glmer)
 	linearHypothesis(gm1, matchCoefs(gm1, "period"))
 }
 

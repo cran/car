@@ -96,7 +96,7 @@ Weisberg, S. (2005)  \emph{Applied Linear Regression}, Third Edition.
   Wiley. 
 }
 
-\author{Sanford Weisberg, \email{sandy@stat.umn.edu} }
+\author{Sanford Weisberg, \email{sandy@umn.edu} }
 
 \examples{
 with(UN, invTranPlot(gdp, infant.mortality))

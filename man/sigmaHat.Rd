@@ -23,7 +23,7 @@ the square root of the estimated dispersion parameter.
 \value{
   A nonnegative number
 }
-\author{Sanford Weisberg, \email{sandy@stat.umn.edu} }
+\author{Sanford Weisberg, \email{sandy@umn.edu} }
 
 \examples{
 m1 <- lm(prestige ~ income + education, data=Duncan)
