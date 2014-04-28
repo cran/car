@@ -51,7 +51,7 @@ basicPower(U,lambda)
 Fox, J. and Weisberg, S. (2011) 
 \emph{An R Companion to Applied Regression}, Second Edition, Sage.
   
-Weisberg, S. (2005)  \emph{Applied Linear Regression}, Third Edition.
+Weisberg, S. (2014)  \emph{Applied Linear Regression}, Fourth Edition, Wiley
 Wiley, Chapter 7.
 
 Yeo, In-Kwon and Johnson, Richard (2000) A new family of power

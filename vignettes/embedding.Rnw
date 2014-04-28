@@ -1,6 +1,5 @@
 \documentclass{article}
 \usepackage{url,Sweave}
-%\usepackage{fpage}
 %\VignetteIndexEntry{Using car functions inside user functions}
 \newcommand{\R}{{\normalfont\textsf{R}}{}}
 \newcommand{\car}{\texttt{car}}

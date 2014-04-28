@@ -25,7 +25,7 @@ residualPlots (model, ...)
 
 \S3method{residualPlots}{default}(model, terms = ~., layout = NULL, ask, 
                  main = "", fitted = TRUE, AsIs=TRUE, plot = TRUE, 
-                 tests = TRUE, ...)
+                 tests = TRUE, groups, ...)
 
 \S3method{residualPlots}{lm}(model, ...)
 
@@ -37,17 +37,20 @@ residualPlots (model, ...)
 residualPlot(model, ...)  
 
 \S3method{residualPlot}{default}(model, variable = "fitted", type = "pearson",
-                 plot = TRUE,     
-                 quadratic = TRUE, 
-                 smoother=NULL, smoother.args=list(), 
+                 groups,
+                 plot = TRUE,
+                 linear = TRUE,
+                 quadratic = if(missing(groups)) TRUE else FALSE,
+                 smoother=NULL, smoother.args=list(),
                  col.smooth=palette()[3],
-                 labels, 
-                 id.method = "y", 
+                 labels,
+                 id.method = "r",
                  id.n = if(id.method[1]=="identify") Inf else 0,
-                 id.cex=1, id.col=palette()[1], 
+                 id.cex=1, id.col=palette()[1],
                  col = palette()[1], col.quad = palette()[2],
-                 xlab, ylab, lwd = 1, lty = 1,  
-                 grid=TRUE, ...)   
+                 pch=1,
+                 xlab, ylab, lwd = 1, lty = 1,
+                 grid=TRUE, key=!missing(groups), ...)
                  
 \S3method{residualPlot}{lm}(model, ...) 
   
@@ -65,7 +68,7 @@ residual plot is drawn for each specified.  The default
 \code{~ .} is to plot against all predictors.  For example, the
 specification \code{terms = ~ . - X3} would plot against all predictors
 except for \code{X3}.  To get a plot against fitted values only, use the
-arguments \code{terms = ~ 1, fitted=TRUE},  Interactions are skipped.  
+arguments \code{terms = ~ 1},  Interactions are skipped.
 For polynomial terms, the
 plot is against the first-order variable (which may be centered and scaled
 depending on how the \code{poly} function is used).  Plots against factors
@@ -73,6 +76,11 @@ are boxplots.  Plots against other matrix terms, like splines, use the
 result of \code{predict(model), type="terms")[, variable])} as the
 horizontal axis; if the \code{predict} method doesn't permit this type, 
 then matrix terms are skipped.
+
+A grouping variable can also be specified in the terms, so, for example
+\code{terms= ~ .|type} would use the factor \code{type} to set a different
+color and symbol for each level of \code{type}.  Any fits in the plots will
+also be done separately for each level of group.
 }
   \item{layout}{ 
 If set to a value like \code{c(1, 1)} or \code{c(4, 3)}, the layout
@@ -120,13 +128,23 @@ is an appropriate value of the \code{type} argument to
 \code{\link{residuals.lm}} or \code{"rstudent"} or \code{"rstandard"} for 
 Studentized or standardized residuals.
 }
+  \item{groups}{A list of group indicators.  Points in different
+groups will be plotted with different colors and symbols. If missing, no grouping.
+In \code{residualPlots}, the grouping variable can also be set in the \code{terms}
+argument, as described above.  The default is no grouping.
+}
+  \item{linear}{If \code{TRUE}, adds a horizontal line at zero if no groups.
+With groups, display the within level of groups ols regression of the residuals
+as response and the horizontal axis as the regressor.
+} 
   \item{quadratic}{
 if \code{TRUE}, fits the quadratic regression of the
 vertical axis on the horizontal axis and displays a lack of fit test.  Default
-is \code{TRUE} for \code{lm} and \code{}FALSE for \code{glm}.  
+is \code{TRUE} for \code{lm} and \code{FALSE} for \code{glm} or if \code{groups} 
+not missing.  
 }
 \item{smoother}{the name of the smoother to use, selected from the choices 
-descripbed at \code{\link{ScatterplotSmoothers}}  For \code{lm} objects the 
+described at \code{\link{ScatterplotSmoothers}}  For \code{lm} objects the 
 default is \code{NULL}.  For \code{glm} object the default is \code{loessLine}.  
 }
 \item{smoother.args}{arguments passed to the smoother.  
@@ -136,18 +154,23 @@ number of elements in the spline basis is set to
 points.  If you have many support points you may wish to set \code{k} to a higher
 number, or \code{k=-1} for the default used by \code{\link{gam}}.
 }
-\item{col.smooth}{color for the smoother
+\item{col.smooth}{color for the smoother if groups missing, and ignored if
+groups is set.
 }
 \item{id.method,labels,id.n,id.cex,id.col}{Arguments for the labelling of
     points.  The default is \code{id.n=0} for labeling no points.  See
     \code{\link{showLabels}} for details of these arguments.
 }
   \item{col}{
-default color for points
+default color for points.  If groups is set, col can abe a list at least
+as long as the number of levels for groups giving the colors for each groups.
 }
   \item{col.quad}{
-default color for quadratic fit
+default color for quadratic fit if groups is missing.  Ignored if groups are used.
 }
+  \item{pch}{plotting character.  The default is pch=1.  If groups are used,
+pch can be set to a vector at least as long as the number of groups.
+} 
   \item{xlab}{
 X-axis label.  If not specified, a useful label is constructed by
 the function.
@@ -164,7 +187,9 @@ line type for quadratic.
 }
   \item{grid}{If TRUE, the default, a light-gray background grid is put on the
 graph}
+  \item{key}{Should a key be added to the plot?  Default is \code{!is.null(groups)}.
   }
+}
 \details{
 \code{residualPlots} draws one or more residuals plots depending on the
 value of the \code{terms} and \code{fitted} arguments.  If \code{terms = ~ .},
@@ -179,9 +204,10 @@ In addition to plots, a table of curvature tests is displayed. For plots
 against a term in the model formula, say \code{X1}, the test displayed is
 the t-test for for \code{I(X^2)} in the fit of \code{update, model, ~. + I(X^2))}.
 Econometricians call this a specification test.  For factors, the displayed
-plot is a boxplot, and no curvature test is computed.
+plot is a boxplot, no curvature test is computed, and grouping is ignored.
 For fitted values, the test is Tukey's one-degree-of-freedom test for 
 nonadditivity.  You can suppress the tests with the argument \code{tests=FALSE}.
+If grouping is used curvature tests are not displayed.
   
 \code{residualPlot}, which is called by \code{residualPlots},
 should be viewed as an internal function, and is included here to display its
@@ -204,8 +230,8 @@ residual plots.
 Fox, J. and Weisberg, S. (2011)
 \emph{An R Companion to Applied Regression}, Second Edition.  Sage.
 
-Weisberg, S. (2005) \emph{Applied
-Linear Regression}, Third Edition, Wiley, Chapter 8}
+Weisberg, S. (2014) \emph{Applied
+Linear Regression}, Fourth Edition, Wiley, Chapter 8}
 \author{Sanford Weisberg, \email{sandy@umn.edu}}
 
 \seealso{See Also \code{\link{lm}}, \code{\link{identify}},
@@ -213,7 +239,9 @@ Linear Regression}, Third Edition, Wiley, Chapter 8}
 
 
 \examples{
-residualPlots(lm(longley))
+m1 <- lm(prestige ~ income, data=Prestige)
+residualPlots(m1)
+residualPlots(m1, terms= ~ 1 | type) # plot vs. yhat grouping by type
 }
 \keyword{ hplot }% at least one, from doc/KEYWORDS
 \keyword{ regression }% __ONLY ONE__ keyword per line

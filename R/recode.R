@@ -1,17 +1,15 @@
 # recode function (J. Fox)
-# last modified 2012-09-30 by J. Fox
+# last modified 2014-02-12 by J. Fox
 
 recode <- function(var, recodes, as.factor.result, as.numeric.result=TRUE, levels){
+  lo <- -Inf
+  hi <- Inf
 	recodes <- gsub("\n|\t", " ", recodes)
 	recode.list <- rev(strsplit(recodes, ";")[[1]])
 	is.fac <- is.factor(var)
 	if (missing(as.factor.result)) as.factor.result <- is.fac
 	if (is.fac) var <- as.character(var)
 	result <- var
-	if (is.numeric(var)) {
-		lo <- min(var, na.rm=TRUE)
-		hi <- max(var, na.rm=TRUE)
-	}
 	for (term in recode.list){
 		if (0 < length(grep(":", term))) {
 			range <- strsplit(strsplit(term, "=")[[1]][1],":")

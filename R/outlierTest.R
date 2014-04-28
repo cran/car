@@ -2,6 +2,7 @@
 # Revision history:
 # 2009-09-28 by J. Fox (renamed)
 # 2010-04-14 by J. Fox fixed error in reporting largest abs rstudent
+# 2012-12-12 by J. Fox fixed handling of labels argument
 #-------------------------------------------------------------------------------
 
 # Bonferroni test for an outlier (J. Fox)
@@ -12,9 +13,9 @@ outlierTest <- function(model, ...){
 
 outlierTest.lm <- function(model, cutoff=0.05, n.max=10, order=TRUE, labels=names(rstudent), ...){
 	rstudent <- rstudent(model)
-	labels <- if(is.null(labels)) seq(along=rstudent) else labels
 	if (length(rstudent) != length(labels)) 
 		stop("Number of labels does not correspond to number of residuals.")
+    else names(rstudent) <- labels
 	df <- df.residual(model) - 1
 	rstudent <- rstudent[!is.na(rstudent)]
 	n <- length(rstudent)

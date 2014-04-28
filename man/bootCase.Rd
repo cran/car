@@ -66,7 +66,7 @@ has an attribute \code{"pointEstimate"} that contains the value of the function
 Fox, J. and Weisberg, S. (2011) \emph{Companion to Applied Regression}, Second Edition.
 Thousand Oaks:  Sage.
 
-S. Weisberg (2005) \emph{Applied Linear Regression}, Third Edition.   
+Weisberg, S. (2014) \emph{Applied Linear Regression}, Fourth Edition, Wiley   
 Wiley, Chapters 4 and 11.}
 
 \author{ Sanford Weisberg, \email{sandy@umn.edu}.  The error checking was

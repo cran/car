@@ -54,14 +54,16 @@ argument \code{id.method}.
 \itemize{
    \item \code{id.method = "x"} select points according to their value of \code{abs(x - mean(x))}
    \item \code{id.method = "y"} select points according to their value of \code{abs(y - mean(y))}
+   \item \code{id.method = "r"} select points according to their value of \code{abs(y)}, as may be
+appropriate in residual plots, or others with a meaningful origin at 0
    \item \code{id.method = "mahal"} Treat \code{(x, y)} as if it were a bivariate sample, and
 select cases according to their Mahalanobis distance from  \code{(mean(x), mean(y))}
   \item \code{id.method} can be a vector of the same length as \code{x} consisting of 
 values to determine the points to be labeled.  For example, for a linear model
 \code{m}, setting \code{id.method=cooks.distance(m), id.n=4} will label the 
 points corresponding to the four largest values of Cook's distance, or
-\code{id.method = abs(residuals(m, type="pearson")), id.n=2} would label
-the two observations corresponding to the largest absolute Pearson residuals.
+\code{id.method = which(abs(residuals(m, type="pearson")) > 2} would label
+all observations with Pearson residuals greater than 2 in absolute value.
 Warning:  If missing data are present, points may be incorrectly labelled.
   \item \code{id.method} can be a vector of case numbers or case-labels, in which case
   those cases will be labeled.  Warning:  If missing data are present, a list of
@@ -87,7 +89,7 @@ the car package, this function can be used directly.
   Fox, J. and Weisberg, S. (2011) \emph{An R Companion to Applied Regression},
     Second Edition, Sage.
   
-  Weisberg, S. (2005) \emph{Applied Linear Regression}, Third Edition, Wiley.
+  Weisberg, S. (2014) \emph{Applied Linear Regression}, Fourth Edition, Wiley.
 }
 \author{John Fox \email{jfox@mcmaster.ca}, Sanford Weisberg \email{sandy@umn.edu}}
 

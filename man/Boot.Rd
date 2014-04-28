@@ -85,7 +85,7 @@ Thousand Oaks:  Sage.
 Fox, J. and Weisberg, S. (2012) \emph{Bootstrapping}, 
 \url{http://socserv.mcmaster.ca/jfox/Books/Companion/appendix/Appendix-Bootstrapping.pdf}.
 
-S. Weisberg (2005) \emph{Applied Linear Regression}, Third Edition.   
+Weisberg, S. (2014) \emph{Applied Linear Regression}, Fourth Edition, Wiley   
 Wiley, Chapters 4 and 11.}
 
 \author{ Sanford Weisberg, \email{sandy@umn.edu}.}

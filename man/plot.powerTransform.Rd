@@ -38,7 +38,7 @@ in the transformed scale.
 None.  Produces a graph as a side-effect.
 }
 \references{
-Weisberg, S. (2005) \emph{Applied Linear Regression}, Third Edition. Wiley.
+Weisberg, S. (2014) \emph{Applied Linear Regression}, Fourth Edition, Wiley.
 
 Fox, J. and Weisberg, S. (2011) \emph{An R Companion to Applied Linear Regression},
 Second Edition, Sage.

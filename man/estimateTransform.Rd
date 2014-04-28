@@ -65,7 +65,7 @@ Fox, J. and Weisberg, S. (2011)
 Velilla, S. (1993)  A note on the multivariate Box-Cox transformation to 
 normality.  \emph{Statistics and Probability Letters}, 17, 259-263.
 
-Weisberg, S. (2005) \emph{Applied Linear Regression}, Third Edition. Wiley.
+Weisberg, S. (2014) \emph{Applied Linear Regression}, Fourth Edition, Wiley.
 
 Yeo, I. and Johnson, R. (2000) A new family of
 power transformations to improve normality or symmetry.  

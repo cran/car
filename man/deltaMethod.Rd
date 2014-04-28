@@ -175,8 +175,8 @@ by the function \code{\link{D}}.}
   Fox, J. and Weisberg, S. (2011) 
   \emph{An R Companion to Applied Regression}, Second Edition, Sage.
 
-  S. Weisberg (2005) \emph{Applied
-  Linear Regression}, Third Edition, Wiley, Section 6.1.2.
+  Weisberg, S. (2014) \emph{Applied
+  Linear Regression}, Fourth Edition, Wiley, Section 6.1.2.
 }
 
 \author{Sanford Weisberg, \email{sandy@umn.edu},

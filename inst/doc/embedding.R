@@ -1,13 +1,13 @@
 ### R code from vignette source 'embedding.Rnw'
 
 ###################################################
-### code chunk number 1: embedding.Rnw:12-13
+### code chunk number 1: embedding.Rnw:11-12
 ###################################################
 options(width=80, digits=4, useFancyQuotes=FALSE, prompt=" ", continue=" ")
 
 
 ###################################################
-### code chunk number 2: embedding.Rnw:29-32
+### code chunk number 2: embedding.Rnw:28-31
 ###################################################
 library(car)
 m1 <- lm(time ~ t1 + t2, Transact)
@@ -15,7 +15,7 @@ deltaMethod(m1, "t1/(t2 + 2)")
 
 
 ###################################################
-### code chunk number 3: embedding.Rnw:35-40
+### code chunk number 3: embedding.Rnw:34-39
 ###################################################
 ans <- NULL
 for (z in 1:4) {
@@ -25,7 +25,7 @@ ans
 
 
 ###################################################
-### code chunk number 4: embedding.Rnw:45-52
+### code chunk number 4: embedding.Rnw:44-51
 ###################################################
 f1 <- function(mod) {
  ans <- NULL
@@ -37,14 +37,14 @@ f1 <- function(mod) {
 
 
 ###################################################
-### code chunk number 5: embedding.Rnw:64-66
+### code chunk number 5: embedding.Rnw:63-65
 ###################################################
 x <- 10
 f1(m1)
 
 
 ###################################################
-### code chunk number 6: embedding.Rnw:72-80
+### code chunk number 6: embedding.Rnw:71-79
 ###################################################
 f2 <- function(mod) {
  ans <- NULL
@@ -57,14 +57,14 @@ f2(m1)
 
 
 ###################################################
-### code chunk number 7: embedding.Rnw:86-88
+### code chunk number 7: embedding.Rnw:85-87
 ###################################################
 m2 <- lm(prestige ~ education, Prestige)
 ncvTest(m2, ~ income)
 
 
 ###################################################
-### code chunk number 8: embedding.Rnw:91-96 (eval = FALSE)
+### code chunk number 8: embedding.Rnw:90-95 (eval = FALSE)
 ###################################################
 ## f3 <- function(meanmod, dta, varmod) {
 ##   m3 <- lm(meanmod, dta)
@@ -74,7 +74,7 @@ ncvTest(m2, ~ income)
 
 
 ###################################################
-### code chunk number 9: embedding.Rnw:104-115
+### code chunk number 9: embedding.Rnw:103-114
 ###################################################
 f4 <- function(meanmod, dta, varmod) {
    assign(".dta", dta, envir=.GlobalEnv)
@@ -90,7 +90,7 @@ f4(prestige ~ education, Prestige, ~income)
 
 
 ###################################################
-### code chunk number 10: embedding.Rnw:120-128 (eval = FALSE)
+### code chunk number 10: embedding.Rnw:119-127 (eval = FALSE)
 ###################################################
 ## library(effects)
 ## fc <- function(dta, formula, terms) {
@@ -103,7 +103,7 @@ f4(prestige ~ education, Prestige, ~income)
 
 
 ###################################################
-### code chunk number 11: embedding.Rnw:131-139 (eval = FALSE)
+### code chunk number 11: embedding.Rnw:130-138 (eval = FALSE)
 ###################################################
 ## library(effects)
 ## fc.working <- function(dta, formula, terms) {
@@ -116,7 +116,7 @@ f4(prestige ~ education, Prestige, ~income)
 
 
 ###################################################
-### code chunk number 12: embedding.Rnw:145-148
+### code chunk number 12: embedding.Rnw:144-147
 ###################################################
 m1 <- lm(time ~ t1 + t2, Transact)
 b1 <- Boot(m1, R=999)
@@ -124,25 +124,25 @@ summary(b1)
 
 
 ###################################################
-### code chunk number 13: embedding.Rnw:151-152
+### code chunk number 13: embedding.Rnw:150-151
 ###################################################
 confint(b1)
 
 
 ###################################################
-### code chunk number 14: embedding.Rnw:156-157 (eval = FALSE)
+### code chunk number 14: embedding.Rnw:155-156 (eval = FALSE)
 ###################################################
 ## .carEnv <- new.env(parent=emptyenv())
 
 
 ###################################################
-### code chunk number 15: embedding.Rnw:160-161
+### code chunk number 15: embedding.Rnw:159-160
 ###################################################
 car:::.carEnv
 
 
 ###################################################
-### code chunk number 16: embedding.Rnw:164-207 (eval = FALSE)
+### code chunk number 16: embedding.Rnw:163-206 (eval = FALSE)
 ###################################################
 ## Boot.default <- function(object, f=coef, labels=names(coef(object)),
 ##                      R=999, method=c("case", "residual")) {

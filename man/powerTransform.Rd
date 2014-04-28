@@ -53,7 +53,7 @@ normally distributed as possible.  \code{cbind(y1,y2,y3)~1} would specify transf
 to multivariate normality with no predictors.  This generalizes the multivariate
 power transformations suggested by Velilla (1993) by allowing for different
 families of transformations, and by allowing for predictors.  Cook and Weisberg (1999)
-and Weisberg (2005) suggest the usefulness of transforming
+and Weisberg (2014) suggest the usefulness of transforming
 a set of predictors \code{z1, z2, z3} for multivariate normality and for transforming
 for multivariate normality conditional on levels of a factor, which is equivalent
 to setting the predictors to be indicator variables for that factor.  
@@ -129,7 +129,7 @@ Fox, J. and Weisberg, S. (2011)
 Velilla, S. (1993)  A note on the multivariate Box-Cox transformation to 
 normality.  \emph{Statistics and Probability Letters}, 17, 259-263.
 
-Weisberg, S. (2005) \emph{Applied Linear Regression}, Third Edition. Wiley.
+Weisberg, S. (2014) \emph{Applied Linear Regression}, Fourth Edition, Wiley.
 
 Yeo, I. and Johnson, R. (2000) A new family of
 power transformations to improve normality or symmetry.  

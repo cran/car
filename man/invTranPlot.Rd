@@ -92,7 +92,7 @@ Pendergast, L, and Sheather, S. (in press).  On sensitivity of response plot
 estimation of a robust estimation approach.  \emph{Scandinavian Journal of
 Statistics}.
 
-Weisberg, S. (2005)  \emph{Applied Linear Regression}, Third Edition.
+Weisberg, S. (2014)  \emph{Applied Linear Regression}, Fourth Edition, Wiley
   Wiley. 
 }
 

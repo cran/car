@@ -20,6 +20,7 @@
 # Modified 14&16 Dec 2011 by J. Fox (suggested by Michael Friendly) to add weights argument to dataEllipse().
 # Modified 2 Feb 2012 by J. Fox: Improved handling of center.pch argument to ellipse() (suggestion of Rob Kushler).
 # 16 July 2012 added showLabels to dataEllipse
+# 2014-02-16: prevent dataEllipse() from opening a graphics device when draw=FALSE (fixing bug reported by Rafael Laboissiere).
 
 ellipse <- function(center, shape, radius, log="", center.pch=19, center.cex=1.5, segments=51, draw=TRUE, add=draw, 
 		xlab="", ylab="", col=palette()[2], lwd=2, fill=FALSE, fill.alpha=0.3,
@@ -187,7 +188,7 @@ dataEllipse <- function(x, y, groups,
         }
     }
     if (missing(labels)) labels <- seq(length(x))
-    showLabels(x, y, labels=labels,
+    if (draw) showLabels(x, y, labels=labels,
         id.method=id.method, id.n=id.n, id.cex=id.cex,
         id.col=id.col)
     invisible(if (length(levels) == 1) result[[1]] else result)

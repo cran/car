@@ -63,6 +63,7 @@ export(
     leveragePlots,
 	lht,
     linearHypothesis,
+    makeHypothesis, printHypothesis,
     Manova,
     mmp, mmps, marginalModelPlot, marginalModelPlots,
     ncvTest,

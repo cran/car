@@ -14,6 +14,7 @@
 %   2012-03-07 singular.ok argument added to linearHypothesis.mlm(). J. Fox
 %   2012-11-06 coef. argument added to linearHypothesis.default(), S. Weisberg
 %   2013-06-20 added .merMod methods to linearHypothesis() and matchCoefs(). J. Fox
+%   2014-04-23 added aliases for makeHypothesis and printHypothesis
 %-------------------------------------------------------------------------------
 
 \name{linearHypothesis}
@@ -36,6 +37,8 @@
 \alias{matchCoefs.lme}
 \alias{matchCoefs.mlm}
 \alias{linearHypothesis.nlsList}
+\alias{makeHypothesis}
+\alias{printHypothesis}
 %%\alias{coef.multinom}
 
 \title{Test Linear Hypothesis}

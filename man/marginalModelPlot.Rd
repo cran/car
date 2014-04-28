@@ -159,8 +159,8 @@ Fox, J. and Weisberg, S. (2011)
 \emph{An R Companion to Applied Regression}, Second Edition.  Sage.
 
 
-Weisberg, S. (2005) \emph{Applied
-Linear Regression}, Third Edition, Wiley, Chapter 8.
+Weisberg, S. (2014) \emph{Applied
+Linear Regression}, Fourth Edition, Wiley, Chapter 8.
 }
 
 \author{Sanford Weisberg, \email{sandy@umn.edu}}
@@ -175,10 +175,11 @@ c2 <- update(c1, ~ poly(gdp, 4), data=na.omit(UN))
 mmps(c2, ~ poly(gdp,4) + gdp)
 # include SD lines
 p1 <- lm(prestige ~ income + education, Prestige)
-mmps(p1, sd=TRUE)
+mmps(p1, sd=TRUE) 
+# condition on type:
+mmps(p1, ~. | type)
 # logisitic regression example
 # smoothers return warning messages.
-mmps(p1, ~. | type)
 # fit a separate smoother and color for each type of occupation.
 
 m1 <- glm(lfp ~ ., family=binomial, data=Mroz)

@@ -6,6 +6,7 @@
 #   scatterplot.R for an example of its use.
 #   If a list of cases to be labelled is supplied, id.n is needed only
 #   if all n labels are to be printed.
+# 2014-03-12 added new id.method "r" that labels using order(abs(y), decreasing=TRUE)
 
 
 showLabels <- function(x, y, labels=NULL, id.method="identify",
@@ -31,9 +32,9 @@ showLabels1 <- function(x, y, labels=NULL, id.method="identify",
 #    --- a list of row numbers
 #    --- a list of labels
 #    --- a vector of n numbers
-#    --- a text string:  'identify', 'x', 'y', 'mahal'-
-  idmeth <- pmatch(id.method[1], c("x", "y", "mahal", "identify"))
-  if(!is.na(idmeth)) idmeth <- c("x", "y", "mahal", "identify")[idmeth]
+#    --- a text string:  'identify', 'x', 'y', 'mahal', 'r'
+  idmeth <- pmatch(id.method[1], c("x", "y", "mahal", "identify", "r"))
+  if(!is.na(idmeth)) idmeth <- c("x", "y", "mahal", "identify", "r")[idmeth]
 # if idmeth is NA, then it must be <= n numbers or row names
   id.var <- NULL
   if(is.na(idmeth)){
@@ -77,6 +78,11 @@ showLabels1 <- function(x, y, labels=NULL, id.method="identify",
 								    abs(log(y) - mean(log(y))) else
                     return(invisible(NULL)))  else
                  abs(y - mean(y)),
+					r = if(log.y==TRUE)
+					       suppressWarnings(if(all(y) > 0)
+					          abs(log(y)) else
+					          return(invisible(NULL)))  else
+					          abs(y),
           mahal = if(log.x == TRUE & log.y == TRUE) {
                    suppressWarnings(if(all(x) > 0 & all(y) > 0)
 								      rowSums( qr.Q(qr(cbind(1, log(x), log(y))))^2 ) else
@@ -94,7 +100,7 @@ showLabels1 <- function(x, y, labels=NULL, id.method="identify",
 # require id.n positive
   if(id.n <= 0L) return(invisible(NULL))
 # criterion
-  ind <-  order(-id.var)[1L:min(length(id.var), id.n)]
+  ind <-  order(id.var, decreasing=TRUE)[1L:min(length(id.var), id.n)]
 # position
   mid <- mean(if(par("xlog")==TRUE) 10^(par("usr")[1:2]) else
               par("usr")[1:2])

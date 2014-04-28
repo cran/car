@@ -117,7 +117,7 @@ plots from two models in the same graphics window.
   Adding a variable in generalized linear models.
   \emph{Technometrics} \bold{27}, 273--276.
   
-  Weisberg, S. (2005) \emph{Applied Linear Regression}, Third Edition, Wiley.
+  Weisberg, S. (2014) \emph{Applied Linear Regression}, Fourth Edition, Wiley.
 }
 
 \author{John Fox \email{jfox@mcmaster.ca}, Sanford Weisberg \email{sandy@umn.edu}}

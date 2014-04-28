@@ -61,7 +61,7 @@ outlierTest(model, ...)
   Fox, J. and Weisberg, S. (2011) 
   \emph{An R Companion to Applied Regression}, Second Edition, Sage.
   
-  Weisberg, S. (2005) \emph{Applied Linear Regression}, Third Edition, Wiley.
+  Weisberg, S. (2014) \emph{Applied Linear Regression}, Fourth Edition, Wiley.
   
   Williams, D. A. (1987)
   Generalized linear model diagnostics using the deviance and single

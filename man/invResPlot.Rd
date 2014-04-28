@@ -61,7 +61,7 @@ If robust = TRUE, the value of Huber objective function is returned.}
 estimation of a robust estimation approach.  \emph{Scandinavian Journal of
 Statistics}.
 
-  Weisberg, S. (2005) \emph{Applied Linear Regression}, Third Edition, Wiley, Chapter 7.
+  Weisberg, S. (2014) \emph{Applied Linear Regression}, Fourth Edition, Wiley, Chapter 7.
 }
 
 \author{Sanford Weisberg, \code{sandy@umn.edu}}
