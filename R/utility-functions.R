@@ -9,6 +9,7 @@
 # 2012-06-23: added call to globalVariables(). John
 # 2012-12-10: added .carEnv to avoid warnings in R > 2.16.0
 # 2013-06020: added .merMod methods to df.residual() and has.intercept(). John
+# 2014-05-16: added .multinom method for has.intercept(). John
 
 #if (getRversion() >= "2.15.1") globalVariables(c(".boot.sample", ".boot.indices"))
 
@@ -35,6 +36,11 @@ has.intercept <- function (model, ...) {
 
 has.intercept.default <- function(model, ...) any(names(coefficients(model))=="(Intercept)")
 
+has.intercept.multinom <- function(model, ...) {
+  nms <- names(coef(model))
+  any(grepl("\\(Intercept\\)", nms))
+}
+  
 term.names <- function (model, ...) {
 	UseMethod("term.names")
 }

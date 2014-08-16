@@ -9,6 +9,7 @@
 # 2013-02-20: fixed error message, docs for surface.col argument. J. Fox
 # 2013-08-20: changed rgl:::rgl.projection to rgl::rgl.projection; more such fixes to come. J. Fox
 # 2013-08-31: rgl functions used now exported; got rid of ::: and ::. J. Fox
+# 2014-08-04: changed name of identify3d() to Identify3d(). J. Fox
 
 scatter3d <- function(x, ...){
 	if (!require(rgl)) stop("rgl package missing")
@@ -305,7 +306,7 @@ scatter3d.default <- function(x, y, z,
 	}
 	else levs <- levels(groups)
 	if (id.method == "identify"){
-		identify3d(xg, yg, zg, axis.scales=axis.scales, groups=ggroups, labels=glabels, 
+		Identify3d(xg, yg, zg, axis.scales=axis.scales, groups=ggroups, labels=glabels, 
 				col=surface.col, offset=offset)
 	}
 	else if (id.method != "none"){
@@ -357,7 +358,7 @@ car.select3d <- function (...) {
 	}
 }
 
-identify3d  <- function (x, y, z, axis.scales=TRUE, groups = NULL, labels = 1:length(x),
+Identify3d  <- function (x, y, z, axis.scales=TRUE, groups = NULL, labels = 1:length(x),
 		col = c("blue", "green", "orange", "magenta", "cyan", "red", "yellow", "gray"),
 		offset = ((100/length(x))^(1/3)) * 0.02){
 	valid <- if (is.null(groups))

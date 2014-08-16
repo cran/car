@@ -33,7 +33,7 @@ quantregLine(x, y, col, log.x, log.y, spread=FALSE, smoother.args, draw=TRUE)
   \item{col}{line color.}
   \item{log.x}{\code{TRUE} if the $x$-axis is logged.}
   \item{log.y}{\code{TRUE} if the $y$-axis is logged.}
-  \item{spread}{the default is to plot only an estimated mean or median.  If this
+  \item{spread}{the default is to plot only an estimated mean or median function.  If this
   argument is TRUE, then a measure of spread is also plotted.}
   \item{smoother.args}{additional options accapted by the smoother, in the form of a list of
     named values (see \emph{Details} below).}
@@ -45,11 +45,11 @@ quantregLine(x, y, col, log.x, log.y, spread=FALSE, smoother.args, draw=TRUE)
 
 \details{
 The function \code{loessLine} is a reimplementation of the \code{loess} smoother
-that has been used in \code{car} prior to September 2012.  The only enhancement is the ability to
+that was used in \code{car} prior to September 2012.  The only enhancement is the ability to
 set more arguments through the \code{smoother.args} argument.
 
 The function \code{gamLine} is new and more general than the \code{loess} fitting
-because it allows fitting a generalized additive model using splines.  You can specify a error
+because it allows fitting a generalized additive model using splines.  You can specify an error
 distribution and link function.  
 
 The function \code{quantregLine} fits an additive model using splines with estimation
@@ -72,13 +72,13 @@ specifies no robustness iterations.
 For \code{gamLine} the default is
 \code{smoother.args=list(lty=1, lwd=2, lty.spread=2, lwd.spread=1,
 k=-1, bs="tp", family="gaussian", link=NULL, weights=NULL)}
-The first for arguments are as for \code{loessLine}.  The next two 
+The first four arguments are as for \code{loessLine}.  The next two 
 arguments are passed to the \code{gam} function to control the smoothing:
 \code{k=-1} allows \code{gam} to choose the number of splines in the basis
 function; \code{bs="tp"} provides the type of spline basis to be used with \code{"tp"} 
 for the default thin-plate splines.  The last three arguments allow providing
 a family, link and weights as in generalized linear models.  See examples
-below.
+below.  The spread argument is ignored unless family="gaussian" and link=NULL.
 
 For \code{quantregLine} the default is
 \code{smoother.args=list(lty=1, lwd=2, lty.spread=2, lwd.spread=1,
@@ -89,7 +89,7 @@ parameter, here a robust estimate of the scale of the horizontal axis variable.
 This is an arbitrary choice, and may not work well in all circumstances.
 }
     
-\author{John Fox \email{jfox@mcmaster.ca} and Sanford Weisberg\email{sandy@umn.edu}.}
+\author{John Fox \email{jfox@mcmaster.ca} and Sanford Weisberg \email{sandy@umn.edu}.}
 
 \seealso{\code{\link{scatterplot}}, \code{\link{scatterplotMatrix}}, \code{\link[mgcv]{gam}},
     \code{\link[stats]{loess}}, and \code{\link[quantreg]{rqss}}.}

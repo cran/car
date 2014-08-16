@@ -9,6 +9,7 @@
 %   2012-03-01 removed commented-out output listings. J. Fox
 %   2013-06-17 update for summary.Anova.mlm and print.summary.Anova.mlm. J. Fox
 %   2013-06-20 added Anova.merMod(). J. Fox
+%   2014-08-09: added vcov. argument to Anova.lm(). J. Fox
 %-------------------------------------------------------------------------------
 
 \name{Anova}
@@ -56,7 +57,7 @@ Manova(mod, ...)
 
 \method{Anova}{lm}(mod, error, type=c("II","III", 2, 3), 
 	white.adjust=c(FALSE, TRUE, "hc3", "hc0", "hc1", "hc2", "hc4"), 
-	singular.ok, ...)
+	vcov.=NULL, singular.ok, ...)
 
 \method{Anova}{aov}(mod, ...)
 
@@ -160,8 +161,10 @@ Manova(mod, ...)
   \item{multivariate, univariate}{compute and print multivariate and univariate tests for a repeated-measures
     ANOVA; the default is \code{TRUE} for both.}
   \item{digits}{minimum number of significant digits to print.}
-  \item{vcov.}{an optional coefficient-covariance matrix, computed by default by applying the 
-  	generic \code{vcov} function to the model object.}
+  \item{vcov.}{in the \code{default} method, an optional coefficient-covariance matrix or function
+    to compute a covariance matrix, computed by default by applying the generic \code{vcov} function to the model object.
+    A similar argument may be supplied to the \code{lm} method, and the default (\code{NULL}) is to ignore the argument;
+    if both \code{vcov.} and \code{white.adjust} are supplied to the \code{lm} method, the latter is used.}
   \item{\dots}{do not use.}
 }
 \details{

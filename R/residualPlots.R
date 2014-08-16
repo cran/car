@@ -18,6 +18,7 @@
 # 21 March 2013:  fixed nonconstant variance test with missing values for glms
 # 11 July 2013:  wording changes
 # 11 July 2013:  'groups' arg for residualPlot and residualPlots.
+# 19 July 2014:  type='rstudent' fixed
 
 residualPlots <- function(model, ...){UseMethod("residualPlots")}
 
@@ -164,27 +165,27 @@ residualPlot.default <- function(model, variable = "fitted", type = "pearson",
    pchs <- if(length(pch) >= length(levels(groups))) pch else 1:length(levels(groups))
    pch <-  pchs[as.numeric(groups)] 
  }
+ theResiduals <- switch(type, "rstudent"=rstudent(model), 
+               "rstandard"=rstandard(model), residuals(model, type=type))
  if(plot==TRUE){
-  vert <- switch(type, "rstudent"=rstudent(model), 
-       "rstandard"=rstandard(model), residuals(model, type=type))
   if(class(horiz) == "factor") {
      idm <- if(is.list(id.method)) {
             lapply(id.method, function(x) if(x[1]=="xy") "y" else x)} else {
             if(id.method[1] == "xy") "y"}    
-     Boxplot(vert, horiz, xlab=lab, ylab=ylab, labels=labels, 
+     Boxplot(theResiduals, horiz, xlab=lab, ylab=ylab, labels=labels, 
             id.method=idm, id.n=id.n, id.cex=id.cex,  
             id.col=id.col, ...) 
      abline(h=0, lty=2) } else 
      {    
-     plot(horiz, vert, xlab=lab, ylab=ylab, type="n", ...)
+     plot(horiz, theResiduals, xlab=lab, ylab=ylab, type="n", ...)
 	   if(grid){
        grid(lty=1, equilogs=FALSE)
        box()}
-     points(horiz, vert, col=col, pch=pch, ...)
+     points(horiz, theResiduals, col=col, pch=pch, ...)
      if(linear){
         if(missing(groups)){abline(h=0, lty=2, lwd=2)} else {
         for (g in 1:length(levels(groups)))
-             abline(lm(residuals(model, type=type) ~ horiz, 
+             abline(lm(theResiduals ~ horiz, 
                        subset=groups==levels(groups)[g]), lty=2, lwd=2,
                        col=colors[g])
         }}
@@ -192,28 +193,28 @@ residualPlot.default <- function(model, variable = "fitted", type = "pearson",
        new <- seq(min(horiz), max(horiz), length=200)
        if(missing(groups)){
           if(length(unique(horiz)) > 2){
-             lm2 <- lm(residuals(model, type=type)~poly(horiz, 2))
+             lm2 <- lm(theResiduals ~ poly(horiz, 2))
              lines(new, predict(lm2, list(horiz=new)), lty=1, lwd=2, col=col.quad)
              }} else {
           for (g in 1:length(levels(groups))){
              if(length(unique(horiz)) > 2){
-             lm2 <- lm(residuals(model, type=type)~poly(horiz, 2),
+             lm2 <- lm(theResiduals~poly(horiz, 2),
                 subset=groups==levels(groups)[g])
              lines(new, predict(lm2, list(horiz=new)), lty=1, lwd=1.5, col=colors[g])
              }}}}
      if(is.function(smoother))
        if(missing(groups)){
-       smoother(horiz, vert, col.smooth, log.x=FALSE, log.y=FALSE,
+       smoother(horiz, theResiduals, col.smooth, log.x=FALSE, log.y=FALSE,
           spread=FALSE, smoother.args=smoother.args)} else
        for (g in 1:length(levels(groups))){
           sel <- groups == levels(groups)[g]
-          smoother(horiz[sel], vert[sel], colors[g], log.x=FALSE, log.y=FALSE,
+          smoother(horiz[sel], theResiduals[sel], colors[g], log.x=FALSE, log.y=FALSE,
              spread=FALSE, smoother.args=smoother.args)}
      if(key & !missing(groups)){
        items <- paste(groups.name, levels(groups), sep= " = ")
        plotArrayLegend("top", items=items, col.items=colors, pch=pchs)
        }
-     showLabels(horiz, vert, labels=labels, 
+     showLabels(horiz, theResiduals, labels=labels, 
             id.method=id.method, id.n=id.n, id.cex=id.cex, 
             id.col=id.col)  
         }

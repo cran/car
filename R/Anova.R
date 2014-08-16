@@ -60,8 +60,8 @@ Anova <- function(mod, ...){
 # linear models
 
 Anova.lm <- function(mod, error, type=c("II","III", 2, 3), 
-		white.adjust=c(FALSE, TRUE, "hc3", "hc0", "hc1", "hc2", "hc4"), 
-		singular.ok, ...){
+		white.adjust=c(FALSE, TRUE, "hc3", "hc0", "hc1", "hc2", "hc4"),
+        vcov.=NULL, singular.ok, ...){
 	type <- as.character(type)
 	white.adjust <- as.character(white.adjust)
 	type <- match.arg(type)
@@ -77,8 +77,10 @@ Anova.lm <- function(mod, error, type=c("II","III", 2, 3),
 	if (white.adjust != "FALSE"){
 		if (white.adjust == "TRUE") white.adjust <- "hc3" 
 		return(Anova.default(mod, type=type, vcov.=hccm(mod, type=white.adjust), test.statistic="F", 
-						singular.ok=singular.ok))
+						singular.ok=singular.ok, ...))
 	}
+    else if (!is.null(vcov.)) return(Anova.default(mod, type=type, vcov.=vcov., test.statistic="F", 
+        singular.ok=singular.ok, ...))
 	switch(type,
 			II=Anova.II.lm(mod, error, singular.ok=singular.ok, ...),
 			III=Anova.III.lm(mod, error, singular.ok=singular.ok, ...),

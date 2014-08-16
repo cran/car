@@ -2,12 +2,12 @@
 \alias{scatter3d}
 \alias{scatter3d.formula}
 \alias{scatter3d.default}
-\alias{identify3d}
+\alias{Identify3d}
 \title{Three-Dimensional Scatterplots and Point Identification}
 
 \description{
   The \code{scatter3d} function uses the \code{rgl} package to draw 3D scatterplots
-  with various regression surfaces. The function \code{identify3d} 
+  with various regression surfaces. The function \code{Identify3d} 
   allows you to label points interactively with the mouse:
   Press the right mouse button (on a two-button mouse) or the centre button (on a
   three-button mouse), drag a 
@@ -44,7 +44,7 @@ scatter3d(x, ...)
 	  labels=as.character(seq(along=x)), offset = ((100/length(x))^(1/3)) * 0.02,
 	  model.summary=FALSE, ...)
     
-identify3d(x, y, z, axis.scales=TRUE, groups = NULL, labels = 1:length(x),
+Identify3d(x, y, z, axis.scales=TRUE, groups = NULL, labels = 1:length(x),
 	col = c("blue", "green", "orange", "magenta", "cyan", "red", "yellow", "gray"),
 	offset = ((100/length(x))^(1/3)) * 0.02)
 }
@@ -64,7 +64,7 @@ You have to install the \code{rgl} package to produce 3D plots.
   \item{z}{variable for out-of-screen axis.}
   \item{xlab, ylab, zlab}{axis labels.}
   \item{axis.scales}{if \code{TRUE}, label the values of the ends of the axes.
-    \emph{Note:} For \code{identify3d} to work properly, the value of this argument must
+    \emph{Note:} For \code{Identify3d} to work properly, the value of this argument must
     be the same as in \code{scatter3d}.}
   \item{revolutions}{number of full revolutions of the display.}
   \item{bg.col}{background colour; one of \code{"white"}, \code{"black"}.}
@@ -146,7 +146,7 @@ You have to install the \code{rgl} package to produce 3D plots.
 
 \value{
   \code{scatter3d} does not return a useful value; it is used for its side-effect of
-  creating a 3D scatterplot. \code{identify3d} returns the labels of the
+  creating a 3D scatterplot. \code{Identify3d} returns the labels of the
   identified points.
 }
 

@@ -1,4 +1,4 @@
-# last modified 2013-09-14 by J. Fox
+# last modified 2014-08-04 by J. Fox
 
 importFrom(MASS, cov.trob, rlm)
 importFrom(nnet, multinom)
@@ -53,7 +53,7 @@ export(
 	durbinWatsonTest,
 	estimateTransform, testTransform,	
 	hccm,
-	identify3d,
+	Identify3d,
 	infIndexPlot,
 	influenceIndexPlot,
 	influencePlot,
@@ -246,7 +246,7 @@ S3method(residualPlot, glm)
 S3method(summary, powerTransform)
 S3method(coef, powerTransform)
 S3method(vcov, powerTransform)
-S3method(vif, lm)
+S3method(vif, default)
 S3method(symbox, formula)
 S3method(symbox, default)
 

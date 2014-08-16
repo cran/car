@@ -1,6 +1,6 @@
 \name{vif}
 \alias{vif}
-\alias{vif.lm}
+\alias{vif.default}
 
 \title{Variance Inflation Factors}
 \description{
@@ -10,12 +10,12 @@
 \usage{
 vif(mod, ...)
 
-\method{vif}{lm}(mod, ...)
+\method{vif}{default}(mod, ...)
 }
  
 \arguments{
-  \item{mod}{an object that inherits from class \code{lm}, such as an \code{lm}
-  or \code{glm} object.}
+  \item{mod}{an object that responds to \code{\link{coef}}, \code{\link{vcov}}, and
+  \code{\link{model.matrix}}, such as an \code{lm} or \code{glm} object.}
   \item{\dots}{not used.}
 }
 \details{
@@ -35,7 +35,7 @@ vif(mod, ...)
   associated with the term.
   
   Through a further generalization, the implementation here is applicable as well to other sorts of models,
-  in particular weighted linear models and  generalized linear models, that inherit from class \code{lm}.
+  in particular weighted linear models and  generalized linear models.
 }
 \value{
   A vector of vifs, or a matrix containing one row for each term in the model, and

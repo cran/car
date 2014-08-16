@@ -1,5 +1,5 @@
 # recode function (J. Fox)
-# last modified 2014-02-12 by J. Fox
+# last modified 2014-08-04 by J. Fox
 
 recode <- function(var, recodes, as.factor.result, as.numeric.result=TRUE, levels){
   lo <- -Inf
@@ -13,18 +13,42 @@ recode <- function(var, recodes, as.factor.result, as.numeric.result=TRUE, level
 	for (term in recode.list){
 		if (0 < length(grep(":", term))) {
 			range <- strsplit(strsplit(term, "=")[[1]][1],":")
-			low <- eval(parse(text=range[[1]][1]))
-			high <- eval(parse(text=range[[1]][2]))
-			target <- eval(parse(text=strsplit(term, "=")[[1]][2]))
+			low <- try(eval(parse(text=range[[1]][1])), silent=TRUE)
+            if (class(low) == "try-error"){
+                stop("\n  in recode term: ", term, 
+                    "\n  message: ", low)
+            }
+			high <- try(eval(parse(text=range[[1]][2])), silent=TRUE)
+		    if (class(high) == "try-error"){
+		        stop("\n  in recode term: ", term, 
+		            "\n  message: ", high)
+		    }
+			target <- try(eval(parse(text=strsplit(term, "=")[[1]][2])), silent=TRUE)
+		    if (class(target) == "try-error"){
+		        stop("\n  in recode term: ", term, 
+		            "\n  message: ", target)
+		    }
 			result[(var >= low) & (var <= high)] <- target
 		}
 		else if (0 < length(grep("^else=", squeezeBlanks(term)))) {
-			target <- eval(parse(text=strsplit(term, "=")[[1]][2]))
+			target <- try(eval(parse(text=strsplit(term, "=")[[1]][2])), silent=TRUE)
+		    if (class(target) == "try-error"){
+		        stop("\n  in recode term: ", term, 
+		            "\n  message: ", target)
+		    }
 			result[1:length(var)] <- target
 		}
 		else {
-			set <- eval(parse(text=strsplit(term, "=")[[1]][1]))
-			target <- eval(parse(text=strsplit(term, "=")[[1]][2]))
+			set <- try(eval(parse(text=strsplit(term, "=")[[1]][1])), silent=TRUE)
+		    if (class(set) == "try-error"){
+		        stop("\n  in recode term: ", term, 
+		            "\n  message: ", set)
+		    }
+			target <- try(eval(parse(text=strsplit(term, "=")[[1]][2])), silent=TRUE)
+		    if (class(target) == "try-error"){
+		        stop("\n  in recode term: ", term, 
+		            "\n  message: ", target)
+		    }
 			for (val in set){
 				if (is.na(val)) result[is.na(var)] <- target
 				else result[var == val] <- target

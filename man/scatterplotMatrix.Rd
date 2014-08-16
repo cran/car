@@ -29,7 +29,7 @@ scatterplotMatrix(x, ...)
     pch=1:n.groups, lwd=1, lty=1, 
     cex=par("cex"), cex.axis=par("cex.axis"), cex.labels=NULL, 
     cex.main=par("cex.main"), 
-    legend.plot=length(levels(groups)) > 1, row1attop=TRUE, ...)
+    legend.plot=length(levels(groups)) > 1, legend.pos=NULL, row1attop=TRUE, ...)
 
 spm(x, ...)
 }
@@ -49,7 +49,8 @@ spm(x, ...)
     label colors are determined by the \code{col} argument. 
 }
   \item{var.labels}{variable labels (for the diagonal of the plot).}
-  \item{diagonal}{contents of the diagonal panels of the plot.}
+  \item{diagonal}{contents of the diagonal panels of the plot. If plotting by groups, a different
+    univariate display (with the exception of \code{"histogram"}) will be drawn for each group.}
   \item{adjust}{relative bandwidth for density estimate, passed to 
     \code{density} function.}
   \item{nclass}{number of bins for histogram, passed to \code{hist}
@@ -102,6 +103,9 @@ spm(x, ...)
     (see \code{\link[graphics]{par}}).}
   \item{legend.plot}{if \code{TRUE} then a legend for the groups is plotted
     in the first diagonal cell.}
+  \item{legend.pos}{position for the legend, specified as one of the keywords accepted by
+    \code{\link{legend}}. If \code{NULL}, the default, the position will vary by the 
+    \code{diagonal} argument --- e.g., \code{"topright"} for \code{diagonal="density"}.}
   \item{row1attop}{If \code{TRUE} (the default) the first row is at the top, as in a matrix, as
   	opposed to at the bottom, as in graph (argument suggested by Richard Heiberger).}
   \item{...}{arguments to pass down.}

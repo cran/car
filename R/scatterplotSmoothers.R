@@ -1,6 +1,7 @@
 # Scatterplot Smoothers (J. Fox and S. Weisberg)
 
 # Sept 17, 2012 moved from scatterplot.R to scatterplotSmoothers.R
+# June 18, 2014 Fixed bug in gamLine so the smoother.arg link="linkname" works; thanks to Hani Christoph
 
 default.arg <- function(args.list, arg, default){
     if (is.null(args.list[[arg]])) default else args.list[[arg]]
@@ -79,13 +80,17 @@ gamLine <- function(x, y, col, log.x, log.y, spread=FALSE, smoother.args,
     lwd <- default.arg(smoother.args, "lwd", 2)
     lty.spread <- default.arg(smoother.args, "lty.spread", 2)
     lwd.spread <- default.arg(smoother.args, "lwd.spread", 1)
-    family <- default.arg(smoother.args, "family", gaussian)
+    fam <- default.arg(smoother.args, "family", gaussian)
+    link <- default.arg(smoother.args, "link", NULL)
+# June 18, 2014
+    fam <- if(is.character(fam)) eval(parse(text=fam)) else fam
+    link <- if(is.character(link)) make.link(link) else link
+# end
     k <- default.arg(smoother.args, "k", -1)
     bs <- default.arg(smoother.args, "bs", "tp")
     if (is.character(family)) family <- eval(parse(text=family))
-    link <- default.arg(smoother.args, "link", NULL)
     weights <- default.arg(smoother.args, "weights", NULL)
-    spread <- spread && identical(family, gaussian) && is.null(link)
+    spread <- spread && identical(fam, gaussian) && is.null(link)
     if (log.x) x <- log(x)
     if (log.y) y <- log(y)
     valid <- complete.cases(x, y)
@@ -98,9 +103,10 @@ gamLine <- function(x, y, col, log.x, log.y, spread=FALSE, smoother.args,
     else weights[valid][ord]
     warn <- options(warn=-1)
     on.exit(options(warn))
-    fit <- try(if (is.null(link)) gam(y ~ s(x, k=k, bs=bs), weights=w, family=family)
-                 else gam(y ~ s(x, k=k, bs=bs), weights=w, family=family(link=link)),
-                 silent=TRUE)
+# new June 18, 2014
+    fam1 <- if(is.null(link)) fam else fam(link)
+    fit <- try(gam(y ~ s(x, k=k, bs=bs), weights=w, family=fam1))
+# end bug fix.
     if (class(fit)[1] != "try-error"){
             if (log.x) x <- exp(x)
             y <- if (log.y) exp(fitted(fit)) else fitted(fit)
@@ -110,7 +116,7 @@ gamLine <- function(x, y, col, log.x, log.y, spread=FALSE, smoother.args,
     else{ options(warn)
           warning("could not fit smooth")
           return()}
-    if(spread) {
+    if(spread) { 
         res <- residuals(fit)
         pos <- res > 0
         pos.fit <- try(gam(res^2 ~ s(x, k=k, bs=bs), subset=pos), silent=TRUE)
