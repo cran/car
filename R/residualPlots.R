@@ -19,6 +19,7 @@
 # 11 July 2013:  wording changes
 # 11 July 2013:  'groups' arg for residualPlot and residualPlots.
 # 19 July 2014:  type='rstudent' fixed
+# 7 October 2014: trapped error resulting from groups= when n<3
 
 residualPlots <- function(model, ...){UseMethod("residualPlots")}
 
@@ -185,9 +186,9 @@ residualPlot.default <- function(model, variable = "fitted", type = "pearson",
      if(linear){
         if(missing(groups)){abline(h=0, lty=2, lwd=2)} else {
         for (g in 1:length(levels(groups)))
-             abline(lm(theResiduals ~ horiz, 
+             try(abline(lm(theResiduals ~ horiz, 
                        subset=groups==levels(groups)[g]), lty=2, lwd=2,
-                       col=colors[g])
+                       col=colors[g]), silent=TRUE)
         }}
      if(quadratic){
        new <- seq(min(horiz), max(horiz), length=200)
@@ -242,6 +243,15 @@ residCurvTest.glm <- function(model, variable) {
      m2 <- update(model, newmod, start=NULL)
      c(Test= test<-deviance(model)-deviance(m2), Pvalue=1-pchisq(test, 1))
 }}}
+
+residCurvTest.negbin <- function(model, variable) {
+  if(variable == "fitted") c(NA, NA) else {
+    if(is.na(match(variable, attr(model$terms, "term.labels"))))
+      stop(paste(variable, "is not a term in the mean function")) else {
+        newmod <- paste(" ~ . + I(", variable, "^2)")
+        m2 <- update(model, newmod, start=NULL)
+        c(Test= test<-m2$twologlik - model$twologlik, Pvalue=1-pchisq(test, 1))
+      }}}
      
 tukeyNonaddTest <- function(model){
  tol <- model$qr$tol

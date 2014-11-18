@@ -15,6 +15,7 @@
 %   2012-11-06 coef. argument added to linearHypothesis.default(), S. Weisberg
 %   2013-06-20 added .merMod methods to linearHypothesis() and matchCoefs(). J. Fox
 %   2014-04-23 added aliases for makeHypothesis and printHypothesis
+%   2014-08-23 added linearHypothesis.rlm. J. Fox
 %-------------------------------------------------------------------------------
 
 \name{linearHypothesis}
@@ -29,6 +30,7 @@
 \alias{linearHypothesis.merMod}
 \alias{linearHypothesis.lme}
 \alias{linearHypothesis.svyglm}
+\alias{linearHypothesis.rlm}
 \alias{print.linearHypothesis.mlm}
 \alias{matchCoefs}
 \alias{matchCoefs.default}
@@ -46,7 +48,10 @@
 \description{
 Generic function for testing a linear hypothesis, and methods
 for linear models, generalized linear models, multivariate linear
-models, linear and generalized linear mixed-effects models, and other models that have methods for \code{coef} and \code{vcov}. 
+models, linear and generalized linear mixed-effects models, 
+generalized linear models fit with \code{svyglm} in the \pkg{survey} package,
+robust linear models fit with \code{rlm} in the \pkg{MASS} package,
+and other models that have methods for \code{coef} and \code{vcov}. 
 For mixed-effects models, the tests are Wald chi-square tests for the fixed effects.
 }
 
@@ -88,6 +93,8 @@ lht(model, ...)
     	vcov.=NULL, test=c("Chisq", "F"), singular.ok=FALSE, verbose=FALSE, ...)
 		
 \method{linearHypothesis}{svyglm}(model, ...)
+
+\method{linearHypothesis}{rlm}(model, ...)
     
 %%\method{coef}{multinom}(object, ...)
 

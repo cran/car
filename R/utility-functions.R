@@ -10,6 +10,8 @@
 # 2012-12-10: added .carEnv to avoid warnings in R > 2.16.0
 # 2013-06020: added .merMod methods to df.residual() and has.intercept(). John
 # 2014-05-16: added .multinom method for has.intercept(). John
+# 2014-08-19: added package.installed() function, unexported. John
+# 2014-11-02: termsToMf fixed, Sandy
 
 #if (getRversion() >= "2.15.1") globalVariables(c(".boot.sample", ".boot.indices"))
 
@@ -322,22 +324,25 @@ plotArrayLegend <- function(
   }
 }
 
-termsToMf <- function(model, terms){
+termsToMf <- function(model, terms){ 
   gform <- function(formula) {
     if (is.null(formula)){
         return(list(vars=formula, groups=NULL))
     }
-    rhs <- formula[[2 + (length(formula) == 3)]]
-    if (class(rhs) == "name"){
-        return(list(vars=formula, groups=NULL))
-    }
+    has.response <- length(formula) == 3
+    rhs <- if(has.response) formula[[3]] else formula[[2]]
+# either a single variable or '.' on the RHS
     if (length(rhs) == 1){
         return(list(vars=formula, groups=NULL))
     }
-    if (length(rhs) != 3) stop("bad terms argument")
-    if ("|" != deparse(rhs[[1]])) stop("bad terms argument")
-    vars <- as.formula(paste("~", deparse(rhs[[2]])))
-    groups <- as.formula(paste("~", deparse(rhs[[3]])))
+    if (length(rhs) != 3) stop("incorrectly formatted 'terms' argument")
+# check for "|", indicating grouping
+    if(deparse(rhs[[1]] == "|")) {
+      if(length(rhs[[3]]) > 1) stop("Only one conditioning variable is permitted")
+      groups <- as.formula(paste("~", deparse(rhs[[3]])))
+      rhs <- rhs[[2]]
+    } else groups <- NULL 
+    vars <- as.formula(paste("~ ", deparse(rhs)))
     list(vars=vars, groups=groups)
   }
   terms <- gform(as.formula(terms))
@@ -358,3 +363,11 @@ termsToMf <- function(model, terms){
   } else {mf.groups <- NULL}
   list(mf.vars=mf.vars, mf.groups=mf.groups)
   }
+
+# the following function isn't exported, tests for existance of a package:
+
+package.installed <- function(package){
+  package <- as.character(substitute(package))
+  result <- try(find.package(package), silent=TRUE)
+  !class(result) ==  "try-error"
+}

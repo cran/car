@@ -17,12 +17,13 @@
 # June 1, 2012:  changed from class c("Boot", "boot") to just class "boot"
 # 2012-12-10 replaced .GlobalEnv with .carEnv to avoid warnings
 # 2013-07-08 changed .carEnv to car:::.carEnv so 'boot' could find the environment
+# 4014-08-17: added calls to requireNamespace() and :: where necessary. J. Fox
 
 Boot <- function(object, f, labels, R=999, method){UseMethod("Boot")}
 
 Boot.default <- function(object, f=coef, labels=names(coef(object)),
                      R=999, method=c("case", "residual")) {
-  if(!(require(boot))) stop("The 'boot' package is missing")
+  if(!(requireNamespace("boot"))) stop("The 'boot' package is missing")
   f0 <- f(object)
   if(length(labels) != length(f0)) labels <- paste("V", seq(length(f0)), sep="")
   method <- match.arg(method)
@@ -55,7 +56,7 @@ Boot.default <- function(object, f=coef, labels=names(coef(object)),
       out
       }
   } 
-  b <- boot(data.frame(update(object, model=TRUE)$model), boot.f, R, .fn=f)
+  b <- boot::boot(data.frame(update(object, model=TRUE)$model), boot.f, R, .fn=f)
   colnames(b$t) <- labels
   if(exists(".y.boot", envir=car:::.carEnv))
      remove(".y.boot", envir=car:::.carEnv)
@@ -81,7 +82,7 @@ Boot.glm <- function(object, f=coef, labels=names(coef(object)),
   
 Boot.nls <- function(object, f=coef, labels=names(coef(object)),
                      R=999, method=c("case", "residual")) {
-  if(!(require(boot))) stop("The 'boot' package is missing")
+  if(!(requireNamespace("boot"))) stop("The 'boot' package is missing")
   f0 <- f(object)
   if(length(labels) != length(f0)) labels <- paste("V", seq(length(f0)), sep="")
   method <- match.arg(method)
@@ -115,7 +116,7 @@ Boot.nls <- function(object, f=coef, labels=names(coef(object)),
       out
       }
   }
-  b <- boot(data.frame(update(object, model=TRUE)$model), boot.f, R, .fn=f)
+  b <- boot::boot(data.frame(update(object, model=TRUE)$model), boot.f, R, .fn=f)
   colnames(b$t) <- labels
   if(exists(".y.boot", envir=car:::.carEnv))
      remove(".y.boot", envir=car:::.carEnv)
@@ -130,6 +131,7 @@ Boot.nls <- function(object, f=coef, labels=names(coef(object)),
 
 confint.boot <- function(object, parm, level = 0.95,
     type = c("bca", "norm", "basic", "perc", "all"), ...){
+  if (!requireNamespace("boot")) "boot package is missing"
   cl <- match.call()
   type <- match.arg(type)
   if(type=="all") stop("Use 'boot.ci' if you want to see 'all' types")
@@ -140,7 +142,7 @@ confint.boot <- function(object, parm, level = 0.95,
   parm <- if(missing(parm)) which(!is.na(object$t0)) else parm
   out <- list()
   for (j in 1:length(parm)){
-   out[[j]] <- boot.ci(object, conf=level, type=type, index=parm[j], ...)
+   out[[j]] <- boot::boot.ci(object, conf=level, type=type, index=parm[j], ...)
   }
   levs <- unlist(lapply(level, function(x) c( (1-x)/2, 1 - (1-x)/2)))
   ints <- matrix(0, nrow=length(parm), ncol=length(levs))

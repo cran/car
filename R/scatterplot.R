@@ -11,6 +11,7 @@
 # 2012-09-17: S. Weisberg:  smoothers moved to scatterplotSmoothers.R, defaults changed
 # 2012-09-19: J. Fox: restored smooth and span arguments for backwards compatibility
 # 2013-02-07: S. Weisberg:  modifed call to showLabels to work correctly with groups
+# 2014-09-04: J. Fox: empty groups produce warning rather than error
 
 reg <- function(reg.line, x, y, col, lwd, lty, log.x, log.y){
     if(log.x) x <- log(x)
@@ -221,7 +222,13 @@ scatterplot.default <- function(x, y, smoother=loessLine, smoother.args=list(), 
     if (length(col) == 1) col <- rep(col, 3)
     indices <- NULL
     range.x <- if (logged("x")) range(log(.x), na.rm=TRUE) else range(.x, na.rm=TRUE)
+    counts <- table(groups)
+    if (any(counts == 0)){
+        levels <- levels(groups)
+        warning("the following groups are empty: ", paste(levels[counts == 0], collapse=", "))
+    }
     for (i in 1:n.groups){
+        if (counts[i] == 0) next
         subs <- groups == levels(groups)[i]
         points(if (is.null(jitter$x) || jitter$x == 0) .x[subs] else jitter(.x[subs], factor=jitter$x), 
                if (is.null(jitter$y) || jitter$y == 0) .y[subs] else jitter(.y[subs], factor=jitter$y), 
@@ -269,8 +276,8 @@ scatterplot.default <- function(x, y, smoother=loessLine, smoother.args=list(), 
             legend.y <- if (logged("y")) 10^(usr[4] + 1.2*top*strheight("x")) else usr[4] + 1.2*top*strheight("x")
             legend.coords <- list(x=legend.x, y=legend.y)
         }
-        legend(legend.coords, legend=levels(groups), 
-               pch=pch, col=col[1:n.groups], pt.cex=cex, cex=cex.lab, title=legend.title, bg="white")
+        legend(legend.coords, legend=levels(groups)[counts > 0], 
+               pch=pch[counts > 0], col=col[1:n.groups][counts > 0], pt.cex=cex, cex=cex.lab, title=legend.title, bg="white")
     }
     if (id.method[1] == "identify") indices <- showLabels(.x, .y, labels, 
                                                           id.method=id.method, id.n=length(.x), id.cex=id.cex, id.col=id.col)

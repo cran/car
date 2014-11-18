@@ -28,7 +28,8 @@ avPlot(model, ...)
 	xlab, ylab, pch = 1, lwd = 2, 
 	main=paste("Added-Variable Plot:", variable),
 	grid=TRUE,
-	ellipse=FALSE, ellipse.args=NULL, ...)
+	ellipse=FALSE, ellipse.args=NULL, 
+  marginal.scale=FALSE, ...)
 
 \method{avPlot}{glm}(model, variable, 
 	id.method = list(abs(residuals(model, type="pearson")), "x"),
@@ -90,6 +91,7 @@ plots from two models in the same graphics window.
   \item{ellipse.args}{Arguments to pass to the \code{link{dataEllipse}} function, in the form of a list
     with named elements; e.g., \code{ellipse.args=list(robust=TRUE))} will cause the ellipse to be plotted using
     a robust covariance-matrix.}
+  \item{marginal.scale}{Consider an added-variable plot of Y versus X given Z.  If this argument is \code{FALSE} then the limits on the horizontal axis are determined by the range of the residuals from the regression of X on Z and the limits on the vertical axis are determined by the range of the residuals from the regressnio of Y on Z.  If the argument is \code{TRUE}, then the limits on the horizontal axis are determined by the range of X minus it mean, and on the vertical axis by the range of Y minus its means; adjustment is made if necessary to include outliers.  This scaling allows visualization of the correlations between Y and Z and between X and Z.  For example, if the X and Z are highly correlated, then the points will be concentrated on the middle of the plot.} 
 }
 
 \details{
@@ -131,6 +133,14 @@ avPlots(lm(prestige~income+education+type, data=Duncan))
 
 avPlots(glm(partic != "not.work" ~ hincome + children, 
   data=Womenlf, family=binomial))
+  
+m1 <- lm(partic ~ tfr + menwage + womwage + debt + parttime, Bfox)
+par(mfrow=c(1,3))
+plot(partic ~ womwage, Bfox) # marginal plot, ignoring other predictors
+abline(lm(partic ~ womwage, Bfox), col="red", lwd=2)
+grid()
+avPlots(m1, ~ womwage) # av Plot, adjusting for others
+avPlots(m1, ~ womwage, marginal.scale=TRUE) # av Plot, adjusting and scaling as in marginal plot
 }
 
 \keyword{hplot}

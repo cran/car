@@ -1,3 +1,27 @@
+Changes to Version 2.0-22
+
+    o corrected bug in 'terms' argument in residualPlots, and other graphic functions with a 'terms' argument
+
+    o added residual curvature tests for glm.nb
+
+    o mcPlot and mcPlot draw 'marginal/conditional' plots for lm objects.  The marginal plot is of the centered response versus a centered regressor; the conditional plot is the corresponding added-variable plot.  The plots can be overlaid or viewed side-by-side.
+
+    o added argument marginal.scale to avPlots to scale the added-variable plot for Y on X|Z using the scale from the marginal plot of Y vs X ignoring X.  The default is FALSE, corresponding to using scaling to maximize resolution or use xlim and ylim to set user scaling.
+
+    o Fixed bugs in Anova.survreg() that could affect types II, II tests, both Wald and LR, and one similar bug in linearHypothesis.survreg().
+
+    o Replaced calls to require() with requireNamespace() where possible (suggestion of Brian Ripley).
+
+    o The following functions now produce warnings rather than errors when there are empty groups: scatterplot(), scatterplotMatrix(), scatter3d(), densityPlot().
+
+    o Corrected name of "Blackmoor" dataset to "Blackmore".
+
+    o Added KosteckiDillon migraines dataset (contributed by Georges Monette).
+
+    o introduced linearHypothesis.rlm() for rlm models (suggestion of Matthieu Stigler).
+
+    o Small bug fixes/improvements.
+
 Changes to Version 2.0-21
 
     o residualPlot error when using 'type="rstudent" has been fixed.

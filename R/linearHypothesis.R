@@ -25,6 +25,9 @@
 #   2013-06-22: tweaks for lme4. John
 #   2013-06-22: test argument uniformly uses "Chisq" rather than "chisq". J. Fox
 #   2013-08-19: removed calls to unexported functions in stats. J. Fox
+#   2014-08-17: added call to requireNamespace() and :: as needed (doesn't work for pbkrtest). J. Fox
+#   2014-08-18: fixed bug in linearHypothesis.survreg(). J. Fox
+#   2014-09-23: added linearHypothesis.rlm. J. Fox
 #---------------------------------------------------------------------------------------
 
 vcov.default <- function(object, ...){
@@ -494,8 +497,8 @@ linearHypothesis.survreg <- function(model, hypothesis.matrix, rhs=NULL,
 		test=c("Chisq", "F"), vcov., verbose=FALSE, ...){
 	if (missing(vcov.)) {
 		vcov. <- vcov(model)
-		p <- nrow(vcov.)
-		vcov. <- vcov.[-p, -p]
+		p <- which(rownames(vcov.) == "Log(scale)")
+		if (length(p) > 0) vcov. <- vcov.[-p, -p]
 	}
 	linearHypothesis.default(model, hypothesis.matrix, rhs, test, vcov., verbose=verbose, ...)
 }
@@ -580,10 +583,11 @@ linearHypothesis.mer <- function(model, hypothesis.matrix, rhs=NULL,
         SSH <- as.vector(t(L %*% b - rhs) %*% solve(L %*% V %*% t(L)) %*% (L %*% b - rhs))
     }
     else {
-        if (!require(pbkrtest) || packageVersion("pbkrtest") < "0.3.2") stop("pbkrtest package version >= 0.3.2 required for F-test on linear mixed model")
-        if (!isREML(model)) 
+        if (!requireNamespace("lme4")) stop("lme4 package is missing")
+        if (!require("pbkrtest") || packageVersion("pbkrtest") < "0.3.2") stop("pbkrtest package version >= 0.3.2 required for F-test on linear mixed model")
+        if (!lme4::isREML(model)) 
             stop("F test available only for linear mixed model fit by REML")
-        res <- KRmodcomp(model, L)$test
+        res <- pbkrtest::KRmodcomp(model, L)$test
         df <- res["Ftest", "ddf"]
         F <- res["Ftest", "stat"]
         p <- res["Ftest", "p.value"]
@@ -669,6 +673,19 @@ linearHypothesis.lme <- function(model, hypothesis.matrix, rhs=NULL,
 ## for svyglm
 
 linearHypothesis.svyglm <- function(model, ...) linearHypothesis.default(model, ...)
+
+## for rlm
+
+df.residual.rlm <- function(object, ...){
+  p <- length(coef(object))
+  wt.method <- object$call$wt.method
+  if (!is.null(wt.method) && wt.method == "case") {
+    sum(object$weights) - p
+  }
+  else length(object$wresid) - p
+}
+
+linearHypothesis.rlm <- function(model, ...) linearHypothesis.default(model, test="F", ...)
 
 
 ## matchCoefs

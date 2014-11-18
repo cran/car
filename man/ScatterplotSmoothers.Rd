@@ -35,7 +35,7 @@ quantregLine(x, y, col, log.x, log.y, spread=FALSE, smoother.args, draw=TRUE)
   \item{log.y}{\code{TRUE} if the $y$-axis is logged.}
   \item{spread}{the default is to plot only an estimated mean or median function.  If this
   argument is TRUE, then a measure of spread is also plotted.}
-  \item{smoother.args}{additional options accapted by the smoother, in the form of a list of
+  \item{smoother.args}{additional options accepted by the smoother, in the form of a list of
     named values (see \emph{Details} below).}
   \item{draw}{if TRUE, the default, draw the smoother on the currently active graph.
     If FALSE, return a list with coordinates \code{x} and \code{y} for the points 
@@ -44,7 +44,7 @@ quantregLine(x, y, col, log.x, log.y, spread=FALSE, smoother.args, draw=TRUE)
 }
 
 \details{
-The function \code{loessLine} is a reimplementation of the \code{loess} smoother
+The function \code{loessLine} is a re-implementation of the \code{loess} smoother
 that was used in \code{car} prior to September 2012.  The only enhancement is the ability to
 set more arguments through the \code{smoother.args} argument.
 
@@ -82,7 +82,7 @@ below.  The spread argument is ignored unless family="gaussian" and link=NULL.
 
 For \code{quantregLine} the default is
 \code{smoother.args=list(lty=1, lwd=2, lty.spread=2, lwd.spread=1,
-lambda=IQR(x)}.  The first four
+lambda=IQR(x))}.  The first four
 arguments are as for \code{loessLine}.  The last argument is passed to the
 \code{\link[quantreg]{qss}} function in \code{quantreg}.  It is a smoothing
 parameter, here a robust estimate of the scale of the horizontal axis variable.

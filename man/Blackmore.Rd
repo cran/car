@@ -1,11 +1,11 @@
-\name{Blackmoor}
-\alias{Blackmoor}
+\name{Blackmore}
+\alias{Blackmore}
 \docType{data}
 \title{Exercise Histories of Eating-Disordered and Control Subjects}
-\usage{Blackmoor}
+\usage{Blackmore}
 \description{
-The \code{Blackmoor} data frame has 945 rows and 4 columns.
-Blackmoor and Davis's data on exercise histories of 138 teenaged
+The \code{Blackmore} data frame has 945 rows and 4 columns.
+Blackmore and Davis's data on exercise histories of 138 teenaged
 girls hospitalized for eating disorders and 98 control subjects.
 }
 \format{
@@ -22,7 +22,7 @@ girls hospitalized for eating disorders and 98 control subjects.
 }
 
 \source{
- Personal communication from Elizabeth Blackmoor and Caroline Davis,
+ Personal communication from Elizabeth Blackmore and Caroline Davis,
  York University.
 }
 

@@ -27,6 +27,10 @@
 # 2013-06-22: tweaks to local fixef(). J. Fox
 # 2013-06-22: test argument uniformly uses "Chisq" rather than "chisq". J. Fox
 # 2013-08-19: replaced calls to print.anova(). J. Fox
+# 2014-08-17: added calls to requireNamespace() and :: where needed (doesn't work for pbkrtest). J. Fox
+# 2014-08-18: fixed bugs in Anova.survreg() for types II, III LR tests and Wald tests. J. Fox
+# 2014-09-23: added Anova.rlm(). J. Fox
+# 2014-10-10: removed MASS:: from calls to polr(). John
 #-------------------------------------------------------------------------------
 
 # Type II and III tests for linear, generalized linear, and other models (J. Fox)
@@ -528,6 +532,7 @@ Anova.polr <- function (mod, type = c("II", "III", 2, 3), ...)
 
 Anova.II.polr <- function (mod, ...)
 {
+  if (!requireNamespace("MASS")) stop("MASS package is missing")
 	which.nms <- function(name) which(asgn == which(names ==
 								name))
 	fac <- attr(mod$terms, "factors")
@@ -567,6 +572,7 @@ Anova.II.polr <- function (mod, ...)
 
 Anova.III.polr <- function (mod, ...)
 {
+  if (!requireNamespace("MASS")) stop("MASS package is missing")
 	names <- term.names(mod)
 	n.terms <- length(names)
 	X <- model.matrix(mod)
@@ -1094,6 +1100,7 @@ Anova.coxph <- function(mod, type=c("II","III", 2, 3), test.statistic=c("LR", "W
 }
 
 Anova.II.LR.coxph <- function(mod, ...){
+  if (!requireNamespace("survival")) stop("survival package is missing")
 	which.nms <- function(name) which(asgn == which(names == name))
 	fac <-attr(terms(mod), "factors")
 	names <- term.names(mod)
@@ -1106,12 +1113,12 @@ Anova.II.LR.coxph <- function(mod, ...){
 	for (term in 1:n.terms){
 		rels <- names[relatives(names[term], names, fac)]
 		exclude.1 <- as.vector(unlist(sapply(c(names[term], rels), which.nms)))
-		mod.1 <- coxph(mod$y ~ X[, -exclude.1, drop = FALSE])
+		mod.1 <- survival::coxph(mod$y ~ X[, -exclude.1, drop = FALSE])
 		loglik.1 <- logLik(mod.1)
 		mod.2 <- if (length(rels) == 0) mod
 				else {
 					exclude.2 <- as.vector(unlist(sapply(rels, which.nms)))
-					coxph(mod$y ~ X[, -exclude.2, drop = FALSE])
+					survival::coxph(mod$y ~ X[, -exclude.2, drop = FALSE])
 				}
 		loglik.2 <- logLik(mod.2)
 		LR[term] <- -2*(loglik.1 - loglik.2)
@@ -1126,6 +1133,7 @@ Anova.II.LR.coxph <- function(mod, ...){
 }
 
 Anova.III.LR.coxph <- function(mod, ...){
+  if (!requireNamespace("survival")) stop("survival package is missing")
 	which.nms <- function(name) which(asgn == which(names == name))
 	fac <-attr(terms(mod), "factors")
 	names <- term.names(mod)
@@ -1137,7 +1145,7 @@ Anova.III.LR.coxph <- function(mod, ...){
 	LR <- p <- rep(0, n.terms)
 	loglik1 <- logLik(mod)
 	for (term in 1:n.terms){
-		mod.0 <- coxph(mod$y ~ X[, -which.nms(names[term])])
+		mod.0 <- survival::coxph(mod$y ~ X[, -which.nms(names[term])])
 		LR[term] <- -2*(logLik(mod.0) - loglik1)
 		p[term] <- pchisq(LR[term], df[term], lower.tail=FALSE)
 	}
@@ -1182,86 +1190,106 @@ Anova.survreg <- function(mod, type=c("II","III", 2, 3), test.statistic=c("LR", 
 }
 
 Anova.II.LR.survreg <- function(mod, ...){
-	which.nms <- function(name) which(asgn == which(names == name))
-	fac <-attr(terms(mod), "factors")
-	names <- term.names(mod)
-	X <- model.matrix(mod)
-	asgn <- attr(X, 'assign')
-	asgn <- asgn[asgn != 0]
-	if (has.intercept(mod)){
-		int <- which(names == "(Intercept)")
-		X <- X[, -int]
-		names <- names[-int]
-	}
-	n.terms <- length(names)
-	if (n.terms < 2) return(anova(mod))
-	p <- LR <- rep(0, n.terms)
-	df <- df.terms(mod)
-	y <- model.frame(mod)[,1]
-	for (term in 1:n.terms){
-		rels <- names[relatives(names[term], names, fac)]
-		exclude.1 <- as.vector(unlist(sapply(c(names[term], rels), which.nms)))
-		mod.1 <- survreg(y ~ X[, -exclude.1, drop = FALSE])
-		loglik.1 <- logLik(mod.1)
-		mod.2 <- if (length(rels) == 0) mod
-				else {
-					exclude.2 <- as.vector(unlist(sapply(rels, which.nms)))
-					survreg(y ~ X[, -exclude.2, drop = FALSE])
-				}
-		loglik.2 <- logLik(mod.2)
-		LR[term] <- -2*(loglik.1 - loglik.2)
-		p[term] <- pchisq(LR[term], df[term], lower.tail=FALSE)
-	}
-	result <- data.frame(LR, df, p)
-	row.names(result) <- names
-	names(result) <- c("LR Chisq", "Df", "Pr(>Chisq)")
-	class(result) <- c("anova", "data.frame")
-	attr(result, "heading") <- "Analysis of Deviance Table (Type II tests)"
-	result
+  if (!requireNamespace("survival")) stop("survival package is missing")
+  dist <- mod$dist
+  scale <- mod$call$scale
+  weights <- model.frame(mod)$"(weights)"
+  arg.list <- list(dist=dist)
+  if (!is.null(scale)) arg.list$scale <- scale
+  if (!is.null(weights)) arg.list$weights <- weights
+  which.nms <- function(name) which(asgn == which(names == name))
+  fac <-attr(terms(mod), "factors")
+  names <- term.names(mod)
+  X <- model.matrix(mod)
+  asgn <- attr(X, 'assign')
+  asgn <- asgn[asgn != 0]
+  if (has.intercept(mod)){
+    int <- which(names == "(Intercept)")
+    X <- X[, -int]
+    names <- names[-int]
+  }
+  n.terms <- length(names)
+  if (n.terms < 2) return(anova(mod))
+  p <- LR <- rep(0, n.terms)
+  df <- df.terms(mod)
+  y <- model.frame(mod)[,1]
+  for (term in 1:n.terms){
+    rels <- names[relatives(names[term], names, fac)]
+    exclude.1 <- as.vector(unlist(sapply(c(names[term], rels), which.nms)))
+    arg.list$formula <- y ~ X[, -exclude.1, drop = FALSE]
+    mod.1 <- do.call(survival::survreg, arg.list)
+    #    mod.1 <- survival::survreg(y ~ X[, -exclude.1, drop = FALSE])
+    loglik.1 <- logLik(mod.1)
+    mod.2 <- if (length(rels) == 0) mod
+    else {
+      arg.list$formula <- y ~ X[, -exclude.2, drop = FALSE]
+      exclude.2 <- as.vector(unlist(sapply(rels, which.nms)))
+      do.call(survival::survreg, arg.list)     
+      #     survival::survreg(y ~ X[, -exclude.2, drop = FALSE])
+    }
+    loglik.2 <- logLik(mod.2)
+    LR[term] <- -2*(loglik.1 - loglik.2)
+    p[term] <- pchisq(LR[term], df[term], lower.tail=FALSE)
+  }
+  result <- data.frame(LR, df, p)
+  row.names(result) <- names
+  names(result) <- c("LR Chisq", "Df", "Pr(>Chisq)")
+  class(result) <- c("anova", "data.frame")
+  attr(result, "heading") <- "Analysis of Deviance Table (Type II tests)"
+  result
 }
 
 Anova.III.LR.survreg <- function(mod, ...){
-	which.nms <- function(name) which(asgn == which(names == name))
-	fac <-attr(terms(mod), "factors")
-	names <- term.names(mod)
-	X <- model.matrix(mod)
-	asgn <- attr(X, 'assign')
-	asgn <- asgn[asgn != 0]
-	if (has.intercept(mod)){
-		int <- which(names == "(Intercept)")
-		X <- X[, -int]
-		names <- names[-int]
-	}
-	n.terms <- length(names)
-	if (n.terms < 2) return(anova(mod))
-	p <- LR <- rep(0, n.terms)
-	df <- df.terms(mod)
-	y <- model.frame(mod)[,1]
-	loglik1 <- logLik(mod)
-	for (term in 1:n.terms){
-		mod.0 <- survreg(y ~ X[, -which.nms(names[term])])
-		LR[term] <- -2*(logLik(mod.0) - loglik1)
-		p[term] <- pchisq(LR[term], df[term], lower.tail=FALSE)
-	}
-	result <- data.frame(LR, df, p)
-	row.names(result) <- names
-	names(result) <- c("LR Chisq", "Df","Pr(>Chisq)")
-	class(result) <- c("anova", "data.frame")
-	attr(result,"heading") <- "Analysis of Deviance Table (Type III tests)"
-	result
+  if (!requireNamespace("survival")) stop("survival package is missing")
+  dist <- mod$dist
+  scale <- mod$call$scale
+  weights <- model.frame(mod)$"(weights)"
+  arg.list <- list(dist=dist)
+  if (!is.null(scale)) arg.list$scale <- scale
+  if (!is.null(weights)) arg.list$weights <- weights
+  which.nms <- function(name) which(asgn == which(names == name))
+  fac <-attr(terms(mod), "factors")
+  names <- term.names(mod)
+  X <- model.matrix(mod)
+  asgn <- attr(X, 'assign')
+  asgn <- asgn[asgn != 0]
+  if (has.intercept(mod)){
+    int <- which(names == "(Intercept)")
+    X <- X[, -int]
+    names <- names[-int]
+  }
+  n.terms <- length(names)
+  if (n.terms < 2) return(anova(mod))
+  p <- LR <- rep(0, n.terms)
+  df <- df.terms(mod)
+  y <- model.frame(mod)[,1]
+  loglik1 <- logLik(mod)
+  for (term in 1:n.terms){
+    arg.list$formula <- y ~ X[, -which.nms(names[term])]
+    mod.0 <- do.call(survival::survreg, arg.list)
+    #    mod.0 <- survival::survreg(y ~ X[, -which.nms(names[term])])
+    LR[term] <- -2*(logLik(mod.0) - loglik1)
+    p[term] <- pchisq(LR[term], df[term], lower.tail=FALSE)
+  }
+  result <- data.frame(LR, df, p)
+  row.names(result) <- names
+  names(result) <- c("LR Chisq", "Df","Pr(>Chisq)")
+  class(result) <- c("anova", "data.frame")
+  attr(result,"heading") <- "Analysis of Deviance Table (Type III tests)"
+  result
 }
 
 Anova.II.Wald.survreg <- function(mod){
 	V <- vcov(mod)
-	p <- nrow(V)
-	V <- V[-p, -p]
+	p <- which(rownames(V) == "Log(scale)")
+	if (length(p) > 0) V <- V[-p, -p]
 	Anova.II.default(mod, V, test="Chisq")
 }
 
 Anova.III.Wald.survreg <- function(mod){
 	V <- vcov(mod)
-	p <- nrow(V)
-	V <- V[-p, -p]
+	p <- which(rownames(V) == "Log(scale)")
+	if (length(p) > 0) V <- V[-p, -p]
 	Anova.III.default(mod, V, test="Chisq")
 }
 
@@ -1470,8 +1498,8 @@ Anova.II.mer <- function(mod, vcov., singular.ok=TRUE, test=c("Chisq", "F"), ...
 	I.p <- diag(p)
 	if (!missing(vcov.)){
 		vcov. <- if (test == "F"){
-					if (!require(pbkrtest)) stop("pbkrtest package required for F-tests on linear mixed model")
-					as.matrix(vcovAdj(mod, details=0))
+					if (!require("pbkrtest")) stop("pbkrtest package required for F-tests on linear mixed model")
+					as.matrix(pbkrtest::vcovAdj(mod, details=0))
 				}
 				else vcov(mod)
 	}
@@ -1522,8 +1550,8 @@ Anova.III.mer <- function(mod, vcov., singular.ok=FALSE, test=c("Chisq", "F"), .
 		stop("there are aliased coefficients in the model")
 	if (!missing(vcov.)){
 		vcov. <- if (test == "F"){
-					if (!require(pbkrtest)) stop("pbkrtest package required for F-tests on linear mixed model")
-					as.matrix(vcovAdj(mod, details=0))
+					if (!require("pbkrtest")) stop("pbkrtest package required for F-tests on linear mixed model")
+					as.matrix(pbkrtest::vcovAdj(mod, details=0))
 				}
 				else vcov(mod)
 	}
@@ -1676,3 +1704,5 @@ Anova.III.lme <- function(mod, vcov., singular.ok=FALSE, ...){
 }
 
 Anova.svyglm <- function(mod, ...) Anova.default(mod, ...)
+
+Anova.rlm <- function(mod, ...) Anova.default(mod, test.statistic="F", ...)

@@ -1,4 +1,5 @@
 # checked in 2013-06-05 by J. Fox
+# 2014-09-04: J. Fox: empty groups produce warning rather than error
 
 densityPlot <- function(x, ...){
     UseMethod("densityPlot")
@@ -24,6 +25,12 @@ densityPlot.default <- function (x, g, bw="SJ", adjust=1,
     }
     else {
         if (!is.factor(g)) stop("argument g must be a factor")
+        counts <- table(g)
+        if (any(counts == 0)){
+            levels <- levels(g)
+            warning("the following groups are empty: ", paste(levels[counts == 0], collapse=", "))
+            g <- factor(g, levels=levels[counts != 0])
+        }
         legend.title
         valid <- complete.cases(x, g)
         x <- x[valid]

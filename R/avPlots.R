@@ -11,6 +11,8 @@
 #   return x and y residuals invisibly
 # 16 June 2011 allow layout=NA, in which case the layout is not set in this
 #  function, so it is the responsibility of the user
+# 22 Sept 2013 added argument marginal.scale to set xlim and ylim according to xlim and 
+#  ylim of marginal plot (S. Weisberg)
 
 
 
@@ -59,7 +61,8 @@ avPlot.lm <- function(model, variable,
 		id.cex=1, id.col=palette()[1],
 		col = palette()[1], col.lines = palette()[2],
 		xlab, ylab, pch = 1, lwd = 2, main=paste("Added-Variable Plot:", variable), grid=TRUE,
-		ellipse=FALSE, ellipse.args=NULL, ...){
+		ellipse=FALSE, ellipse.args=NULL, 
+    marginal.scale=FALSE, ...){
 	variable <- if (is.character(variable) & 1 == length(variable))
 				variable
 			else deparse(substitute(variable))
@@ -80,7 +83,17 @@ avPlot.lm <- function(model, variable,
 			wt = wt, intercept = FALSE)$residuals
 	xlab <- if(missing(xlab)) paste(var.names[var], "| others") else xlab
 	ylab <- if(missing(ylab)) paste(responseName, " | others")  else ylab
-	plot(res[, 1], res[, 2], xlab = xlab, ylab = ylab, type="n", main=main, ...)
+  adjrange <- function(z, zres, wt){
+    wtmean <- sum(z*wt)/sum(wt)
+    c(min(z-wtmean, zres), max(z-wtmean, zres))
+  }
+  xlm <- if(marginal.scale) adjrange(mod.mat[, var], res[, 1], wt) else NA
+	ylm <- if(marginal.scale) adjrange(response, res[, 2], wt) else NA
+  if(marginal.scale) {
+    plot(res[, 1], res[, 2], xlab = xlab, ylab = ylab, type="n", main=main, xlim=xlm, ylim=ylm, ...) 
+  } else{
+	  plot(res[, 1], res[, 2], xlab = xlab, ylab = ylab, type="n", main=main, ...)
+  }
 	if(grid){
 		grid(lty=1, equilogs=FALSE)
 		box()}

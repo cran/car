@@ -1,6 +1,6 @@
-# last modified 2014-08-04 by J. Fox
+# last modified 2014-09-23 by J. Fox
 
-importFrom(MASS, cov.trob, rlm)
+importFrom(MASS, cov.trob, polr, rlm)
 importFrom(nnet, multinom)
 
 export(
@@ -35,33 +35,32 @@ export(
     symbox,
     which.names, whichNames,
     yjPowerAxis,
-    
     Anova,
-	basicPower, bcPower, yjPower, powerTransform,
-	boxCox,
-	boxCoxVariable,
-	boxTidwell,
-	ceresPlot,
+    basicPower, bcPower, yjPower, powerTransform,
+    boxCox,
+    boxCoxVariable,
+    boxTidwell,
+    ceresPlot,
     ceresPlots,
     crPlot,
     crPlots,
     crp,
-	deltaMethod,
-	dfbetaPlots,
-	dfbetasPlots,
-	dwt,
-	durbinWatsonTest,
-	estimateTransform, testTransform,	
-	hccm,
-	Identify3d,
-	infIndexPlot,
-	influenceIndexPlot,
-	influencePlot,
-	invResPlot, inverseResponsePlot, invTranPlot, invTranEstimate,
-	leveneTest,
-	leveragePlot,
+    deltaMethod,
+    dfbetaPlots,
+    dfbetasPlots,
+    dwt,
+    durbinWatsonTest,
+    estimateTransform, testTransform,	
+    hccm,
+    Identify3d,
+    infIndexPlot,
+    influenceIndexPlot,
+    influencePlot,
+    invResPlot, inverseResponsePlot, invTranPlot, invTranEstimate,
+    leveneTest,
+    leveragePlot,
     leveragePlots,
-	lht,
+    lht,
     linearHypothesis,
     makeHypothesis, printHypothesis,
     Manova,
@@ -78,6 +77,8 @@ export(
     gamLine,
     loessLine,
     quantregLine,
+    mcPlot,
+    mcPlots,
     
     # method explicitly exported for import in other packages
     linearHypothesis.default,
@@ -138,7 +139,6 @@ S3method(subsets, regsubsets)
 S3method(boxCox, default)
 S3method(boxCox, lm)
 S3method(boxCox, formula)      
-
 S3method(Anova, aov)
 S3method(Anova, coxph)
 S3method(Anova, default)
@@ -151,6 +151,7 @@ S3method(Anova, merMod)
 S3method(Anova, multinom)
 S3method(Anova, mlm)
 S3method(Anova, polr)
+S3method(Anova, rlm)
 S3method(Anova, survreg)
 S3method(Anova, svyglm)
 S3method(avPlot, lm)
@@ -207,6 +208,7 @@ S3method(linearHypothesis, mer)
 S3method(linearHypothesis, merMod)
 S3method(linearHypothesis, mlm)
 S3method(linearHypothesis, polr)
+S3method(linearHypothesis, rlm)
 S3method(linearHypothesis, svyglm)
 S3method(linearHypothesis, nlsList)
 S3method(Manova, mlm)
@@ -215,6 +217,7 @@ S3method(matchCoefs, lme)
 S3method(matchCoefs, mer)
 S3method(matchCoefs, merMod)
 S3method(matchCoefs, mlm)
+S3method(mcPlot, lm)
 S3method(mmp, default)
 S3method(mmp, lm)
 S3method(mmp, glm)
