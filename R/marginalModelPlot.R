@@ -87,8 +87,10 @@ function (model, variable, sd = FALSE,
        smoother(u, resp, col.line[1], log.x=FALSE, log.y=FALSE, spread=sd,
           smoother.args=smoother.args)
        smoother.args$lty <- smoother.args$lty.spread <- 2
+# 11/21/14:  SD smooth under the model corrected by adding the 'offset'
        smoother(u, predict(model), col.line[2], log.x=FALSE, log.y=FALSE, spread=sd,
-          smoother.args=smoother.args)
+                smoother.args=smoother.args, offset=sigmaHat(model))
+#          smoother.args=smoother.args)
        if(key){
           outerLegend(c("Data", "Model"), lty=1:2, col=col.line,
              bty="n", cex=0.75, fill=col.line, border=col.line, horiz=TRUE,

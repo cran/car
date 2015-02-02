@@ -12,7 +12,8 @@ subsets(object, ...)
 
 \method{subsets}{regsubsets}(object, 
     names=abbreviate(object$xnames, minlength = abbrev), 
-    abbrev=1, min.size=1, max.size=length(names), legend, 
+    abbrev=1, min.size=1, max.size=length(names), 
+    legend="interactive", 
     statistic=c("bic", "cp", "adjr2", "rsq", "rss"), 
     las=par('las'), cex.subsets=1, ...)
 }
@@ -26,8 +27,10 @@ subsets(object, ...)
   \item{abbrev}{minimum number of characters to use in abbreviating predictor names.}
   \item{min.size}{minimum size subset to plot; default is \code{1}.}
   \item{max.size}{maximum size subset to plot; default is number of predictors.}
-  \item{legend}{\code{TRUE} to plot a legend of predictor names; defaults to \code{TRUE} if
-    abbreviations are computed for predictor names. The legend is placed on the
+  \item{legend}{If not \code{FALSE}, in which case the legend is suppressed,
+    the coordinates at which to place a legend of the abbreviated predictor names on the plot, 
+    in a form recognized by
+    the \code{\link{legend}} function. If \code{"interactive"}, the legend is placed on the
     plot interactively with the mouse. By expanding the left or right plot margin, you can place
     the legend in the margin, if you wish (see \code{\link{par}}).}
   \item{statistic}{statistic to plot for each predictor subset; one of: 
@@ -62,8 +65,9 @@ subsets(object, ...)
 \seealso{\code{\link[leaps]{regsubsets}}}
 
 \examples{
-if (interactive() && require(leaps)){
-	subsets(regsubsets(undercount ~ ., data=Ericksen))
+if (require(leaps)){
+    subsets(regsubsets(undercount ~ ., data=Ericksen),
+            legend=c(3.5, -37))
 }
 }
 

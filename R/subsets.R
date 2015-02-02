@@ -1,20 +1,19 @@
 # Plot optimal subsets regressions -- output from regsubsets
 # function in leaps package
 
-# last modified 30 July 2010 by J. Fox
+# last modified 2015-01-27 by J. Fox
 
 subsets <- function(object, ...){
-	if (!require(leaps)) stop("leaps package missing")
+#	if (!require(leaps)) stop("leaps package missing")
 	UseMethod("subsets")
 }
 
 
 subsets.regsubsets <- function(object, 
 	names=abbreviate(object$xnames, minlength=abbrev), abbrev=1,
-	min.size=1, max.size=length(names), legend,
+	min.size=1, max.size=length(names), legend="interactive",
 	statistic=c("bic", "cp", "adjr2", "rsq", "rss"), las=par("las"), cex.subsets=1,
 	...) {
-	if (missing(legend)) legend <- missing(names)
 	sumry <- summary(object)
 	incidence <- sumry$which
 	if (object$xnames[1] == "(Intercept)"){
@@ -43,8 +42,11 @@ subsets.regsubsets <- function(object,
 			do.call("paste", c(as.list(names[incidence[i,]]),sep='-')),
 			cex=cex.subsets, adj=adj)
 	}
-	if (legend) {
-		legend(locator(1),
+	if (!is.logical(legend)){
+		legend(if (!is.na(charmatch(legend[1], "interactive"))) locator(1) 
+               else if (is.character(legend)) legend
+               else if (is.numeric(legend) && length(legend == 2)) list(x=legend[1], y=legend[2])
+               else stop("improper legend argument"),
 			legend=apply(cbind(names, names(names)), 1, 
 				function(x) do.call("paste", c(as.list(x), sep=": "))), xpd=TRUE)
 		return(invisible(NULL))

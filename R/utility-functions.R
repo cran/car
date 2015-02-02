@@ -12,10 +12,12 @@
 # 2014-05-16: added .multinom method for has.intercept(). John
 # 2014-08-19: added package.installed() function, unexported. John
 # 2014-11-02: termsToMf fixed, Sandy
+# 2015-01-13: fixed model.matrix.lme() to work with model with formula as object. John
+# 2015-01-27: .carEnv now lives in the global environment. John
 
 #if (getRversion() >= "2.15.1") globalVariables(c(".boot.sample", ".boot.indices"))
 
-.carEnv <- new.env(parent=emptyenv())
+.carEnv <- new.env(parent=globalenv())
 
 # function to find "nice" numbers
 
@@ -283,7 +285,7 @@ has.intercept.merMod <- function(model){
 }
 	
 model.matrix.lme <- function(object, ...){
-	model.matrix(as.formula(object$call$fixed), eval(object$call$data))
+	model.matrix(formula(object), eval(object$call$data))
 }
 
 # added by J. Fox 2012-04-08 to use in deltaMethod.default()

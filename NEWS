@@ -1,10 +1,30 @@
+Changes to Version 2.0-24
+
+    o Fixed broken URLs.
+
+    o Changed handling of .carEnv environment.
+
+    o Moved pbkrtest, quantreg, and mgcv from Suggests: to Imports:.
+
+Changes to Version 2.0-23
+
+    o Modified ScatterplotSmoothers to add an 'offset' to the vertical axis of spread smooths.  This are required in the marginal model plot functions.  
+
+    o Fixed labels on mcPlot with overlay=FALSE
+
+    o Check for 0 residual df and 0 residual deviance (within rounding) in Anova() and linearHypothesis() (problem reported by Jonathan Love).
+
+    o Fixed model.matrix.lme and model.matrix.gls utility functions, and hence Anova and vif, respectively, to work with models specified with formulas supplied as objects (after problem noted by Gang Chen).
+
+    o Added Wong data set, used in mixed-models appendix.
+
 Changes to Version 2.0-22
 
     o corrected bug in 'terms' argument in residualPlots, and other graphic functions with a 'terms' argument
 
     o added residual curvature tests for glm.nb
 
-    o mcPlot and mcPlot draw 'marginal/conditional' plots for lm objects.  The marginal plot is of the centered response versus a centered regressor; the conditional plot is the corresponding added-variable plot.  The plots can be overlaid or viewed side-by-side.
+    o mcPlot and mcPlots draw 'marginal/conditional' plots for lm objects.  The marginal plot is of the centered response versus a centered regressor; the conditional plot is the corresponding added-variable plot.  The plots can be overlaid or viewed side-by-side.
 
     o added argument marginal.scale to avPlots to scale the added-variable plot for Y on X|Z using the scale from the marginal plot of Y vs X ignoring X.  The default is FALSE, corresponding to using scaling to maximize resolution or use xlim and ylim to set user scaling.
 

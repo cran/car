@@ -20,11 +20,11 @@ the contents of which vary by the smoother (see \emph{Details} below). The \code
 }
 
 \usage{
-gamLine(x, y, col, log.x, log.y, spread=FALSE, smoother.args, draw=TRUE)
+gamLine(x, y, col, log.x, log.y, spread=FALSE, smoother.args, draw=TRUE, offset=0)
 
-loessLine(x, y, col, log.x, log.y, spread=FALSE, smoother.args, draw=TRUE)
+loessLine(x, y, col, log.x, log.y, spread=FALSE, smoother.args, draw=TRUE, offset=0)
 
-quantregLine(x, y, col, log.x, log.y, spread=FALSE, smoother.args, draw=TRUE)
+quantregLine(x, y, col, log.x, log.y, spread=FALSE, smoother.args, draw=TRUE, offset=0)
 }
 
 \arguments{
@@ -41,6 +41,7 @@ quantregLine(x, y, col, log.x, log.y, spread=FALSE, smoother.args, draw=TRUE)
     If FALSE, return a list with coordinates \code{x} and \code{y} for the points 
     that make up the smooth and if requested \code{x.pos, y.pos, x.neg, y.neg} for the
     spread smooths.}
+  \item{offset}{For use when \code{spread=TRUE}, the vertical axis is \code{sqrt(offset^2 + variance smooth)}.}
 }
 
 \details{
@@ -115,14 +116,14 @@ set.seed(12345)
 w <- 1 + rpois(100, 5)
 x <- rnorm(100)
 p <- 1/(1 + exp(-(x + 0.5*x^2)))
-s <- rbinom(100, w, p)
-scatterplot(s/w ~ x, smoother=gamLine, 
+y <- rbinom(100, w, p)
+scatterplot(y/w ~ x, smoother=gamLine, 
        smoother.args=list(family="binomial", weights=w))
-scatterplot(s/w ~ x, smoother=gamLine, 
+scatterplot(y/w ~ x, smoother=gamLine, 
        smoother.args=list(family=binomial, link="probit", weights=w))
-scatterplot(s/w ~ x, smoother=gamLine, 
+scatterplot(y/w ~ x, smoother=gamLine, 
        smoother.args=list(family=binomial, link="probit", weights=w)) 
-scatterplot(s/w ~ x, smoother=loessLine, reg=FALSE) 
+scatterplot(y/w ~ x, smoother=loessLine, reg=FALSE) 
 
 y <- rbinom(100, 1, p)
 scatterplot(y ~ x, smoother=gamLine, smoother.args=list(family=binomial)) 

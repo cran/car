@@ -120,7 +120,9 @@ mcPlot.lm <- function(model, variable,
     rownames(res) <- rownames(mod.mat)
     invisible(res)} 
   else { # side.by.side plots
-    plot(res0[, 1], res0[, 2], xlab = xlab, ylab = ylab, type="n", 
+    plot(res0[, 1], res0[, 2], type="n", 
+          xlab = paste("Centered", var.names[var], sep=" "), 
+          ylab = paste("Centered", responseName, sep=" "), 
           main=paste("Marginal plot of", var.names[var]),
           xlim=xlm, ylim=ylm,  ...)
     if(grid){

@@ -23,7 +23,7 @@ GDP per capita, in U.S.~dollars.
 \source{
  United Nations (1998) 
  Social indicators.  
- \url{http://www.un.org/Depts/unsd/social/main.htm}.
+ Originally from \samp{http://www.un.org/Depts/unsd/social/main.htm} but no longer there.
 }
 
 \references{

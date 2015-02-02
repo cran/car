@@ -1,7 +1,11 @@
-# last modified 2014-09-23 by J. Fox
+# last modified 2015-01-27 by J. Fox
 
 importFrom(MASS, cov.trob, polr, rlm)
 importFrom(nnet, multinom)
+importFrom(pbkrtest, KRmodcomp, KRmodcomp.lmerMod, KRmodcomp.mer, 
+           vcovAdj, vcovAdj.lmerMod, vcovAdj.mer)
+importFrom(mgcv, gam, s)
+importFrom(quantreg, rqss, qss, fitted.rqss)
 
 export(
     basicPowerAxis,

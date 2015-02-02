@@ -41,7 +41,7 @@ polynomial contrasts are useful).
   Multivariate-covariance and canonical analysis: 
   A method for selecting the most effective discriminators in a multivariate situation.
   \emph{Biometrics} \bold{24}, 845--858.
-  \url{http://www.stat.lsu.edu/faculty/moser/exst7037/soils.sas}
+  Originally from \samp{http://www.stat.lsu.edu/faculty/moser/exst7037/soils.sas} but no longer available there.
 }
 \references{
   Khattree, R., and Naik, D. N. (2000)

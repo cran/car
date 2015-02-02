@@ -38,7 +38,7 @@ Supplementary Table 4 in the 2008-09 data.
 Phipps, Polly, Maxwell, James W. and Rose, Colleen
 (2009), \emph{2009 Annual Survey of the Mathematical Sciences},
 57, {250--259}, Supplementary Table 4,
-\url{http://www.ams/org/employment/2009Survey-First-Report-Supp-Table4.pdf}
+\url{http://www.ams.org/employment/2009Survey-First-Report-Supp-Table4.pdf}
 }
 
 \keyword{datasets}

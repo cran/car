@@ -3,6 +3,7 @@
 # 2009-09-28 by J. Fox 
 # 2013-05-21 replaced vif.lm with vif.default and added
 #            model.matrix.gls to make gls models work. J. Fox
+# 2015-01-13: fixed model.matrix.gls to work with models with formulas as object. J. Fox
 #-------------------------------------------------------------------------------
 
 # Generalized Variance-Inflation Factors (Henric Nilsson and John Fox)
@@ -71,6 +72,5 @@ vif.default <- function(mod, ...) {
 }
 
 model.matrix.gls <- function(object, ...){
-    call <- object$call
-    model.matrix(as.formula(call$model), data=eval(call$data))
+    model.matrix(formula(object), data=eval(object$call$data))
 }

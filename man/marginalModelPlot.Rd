@@ -9,10 +9,10 @@
 
 \title{Marginal Model Plotting}
 \description{
-For a regression object, plots the response on the vertical axis versus
-a linear combination \eqn{u} of terms in the mean function on the horizontal
-axis.  Added to the plot are a \code{loess} smooth for the graph, along with
-a loess smooth from the plot of the fitted values on \eqn{u}.  \code{mmps} is an alias
+For a regression object, draw a plot of the response on the vertical axis versus
+a linear combination \eqn{u} of regressors in the mean function on the horizontal
+axis.  Added to the plot are a smooth for the graph, along with
+a smooth from the plot of the fitted values on \eqn{u}.  \code{mmps} is an alias
 for \code{marginalModelPlots}, and \code{mmp} is an alias for \code{marginalModelPlot}.
 }
 \usage{
@@ -49,7 +49,7 @@ marginalModelPlot(...)
 \item{model}{A regression object, usually of class either \code{lm} or \code{glm},
    for which there is a \code{predict} method defined. }
 \item{terms}{A one-sided formula.  A marginal model plot will be drawn for
-  each variable on the right-side of this formula that is not a factor.  The
+  each term on the right-side of this formula that is not a factor.  The
   default is \code{~ .}, which specifies that all the terms in 
   \code{formula(object)} will be used.  If a conditioning argument is given,
   eg \code{terms = ~. | a}, then separate colors and smoothers are used for
@@ -77,20 +77,20 @@ then to \code{plot}.  Users should generally use \code{mmps}, or equivalently
 \code{marginalModelPlots}.
 }
 \item{variable}{ The quantity to be plotted on the horizontal axis.  The
-  default is the predicted values \code{predict(object)}.  Can be any other
+  default is the predicted values \code{predict(object)}.  It can be any other
   vector of length equal to the number of observations in the object. Thus the
   \code{mmp} function can be used to get a marginal model plot versus any
-  predictor or term while the \code{mmps} function can be used only to get
-  marginal model plots for the first-order terms in the formula.  In 
+  regressor or predictor while the \code{mmps} function can be used only to get
+  marginal model plots for the first-order regressors in the formula.  In 
   particular, terms defined by a spline basis are skipped by \code{mmps}, but
   you can use \code{mmp} to get the plot for the variable used to define
   the splines.}
-\item{sd}{ If \code{TRUE}, compare sd smooths.  For a binomial regression with all
+\item{sd}{ If \code{TRUE}, display sd smooths.  For a binomial regression with all
 sample sizes equal to one, this argument is ignored as the SD bounds don't
 make any sense. }
 \item{xlab}{ label for horizontal axis }
 \item{smoother}{the name of the smoother to use, selected from the choices 
-descripbed at \code{\link{ScatterplotSmoothers}}.  For linear models and
+described at \code{\link{ScatterplotSmoothers}}.  For linear models and
 the default method, the default smoother is the function
 is the function \code{loessLine}.  For generalized linear models the default
 is \code{gamLine}, using the \code{gam} package and using splines.
@@ -104,9 +104,9 @@ separate colors/smoothers.  This can also be specified as a conditioning
 argument on the \code{terms} argument.}
 \item{key}{If \code{TRUE}, include a key at the top of the plot, if \code{FALSE} omit the
 key.  If grouping is present, the key is only printed for the upper-left plot.}
-  \item{id.method,labels,id.n,id.cex,id.col}{Arguments for labelling
-points.  The default \code{id.n=0} suppresses labelling, and setting this
-argument greater than zero will include labelling.  See
+  \item{id.method,labels,id.n,id.cex,id.col}{Arguments for labeling
+points.  The default \code{id.n=0} suppresses labeling, and setting this
+argument greater than zero will include labeling.  See
 \code{\link{showLabels}} for these arguments.}
 \item{pch}{plotting character to use if no grouping is present.}
 \item{col.line}{ colors for data and model smooth, respectively.  Using
@@ -122,11 +122,11 @@ whatever is specified as the horizontal axis.
 versus each of the terms in the \code{terms} argument and versus fitted values.  
 \code{mmps} skips factors and  interactions if they are specified in the 
 \code{terms} argument.  Terms based on polynomials or on splines (or 
-potentially any term that is represented by a matrix of predictors) will
+potentially any term that is represented by a matrix of regressors) will
 be used to form a marginal model plot by returning a linear combination of the 
-terms.  For example, if you specify \code{terms ~ X1 + poly(X2, 3)} and
+terms.  For example, if you specify \code{terms = ~ X1 + poly(X2, 3)} and
 \code{poly(X2, 3)} was part of the original model formula, the horizontal
-axis of the marginal model plot will be the value of
+axis of the marginal model plot for \code{X2} will be the value of
 \code{predict(model, type="terms")[, "poly(X2, 3)"])}.  If the \code{predict}
 method for the model you are using doesn't support \code{type="terms"}, 
 then the polynomial/spline term is skipped.  Adding a conditioning variable,
@@ -155,12 +155,14 @@ Used for its side effect of producing plots.
 
 \references{ 
 
+Cook, R. D., & Weisberg, S. (1997). Graphics for assessing the adequacy of regression models. 
+\emph{Journal of the American Statistical Association}, 92(438), 490-499.
+
 Fox, J. and Weisberg, S. (2011)
 \emph{An R Companion to Applied Regression}, Second Edition.  Sage.
 
-
-Weisberg, S. (2014) \emph{Applied
-Linear Regression}, Fourth Edition, Wiley, Chapter 8.
+Weisberg, S. (2005) \emph{Applied
+Linear Regression}, Third Edition, Wiley, Section 8.4.
 }
 
 \author{Sanford Weisberg, \email{sandy@umn.edu}}

@@ -31,6 +31,8 @@
 # 2014-08-18: fixed bugs in Anova.survreg() for types II, III LR tests and Wald tests. J. Fox
 # 2014-09-23: added Anova.rlm(). J. Fox
 # 2014-10-10: removed MASS:: from calls to polr(). John
+# 2014-12-18: check that residual df and SS are nonzero in Anova.lm(). John
+# 2015-01-27: vcovAdj() and methods now imported from pbkrtest. John
 #-------------------------------------------------------------------------------
 
 # Type II and III tests for linear, generalized linear, and other models (J. Fox)
@@ -66,6 +68,8 @@ Anova <- function(mod, ...){
 Anova.lm <- function(mod, error, type=c("II","III", 2, 3), 
 		white.adjust=c(FALSE, TRUE, "hc3", "hc0", "hc1", "hc2", "hc4"),
         vcov.=NULL, singular.ok, ...){
+    if (df.residual(mod) == 0) stop("residual df = 0")
+    if (deviance(mod) < sqrt(.Machine$double.eps)) stop("residual sum of squares is 0 (within rounding error)")
 	type <- as.character(type)
 	white.adjust <- as.character(white.adjust)
 	type <- match.arg(type)
@@ -1498,8 +1502,8 @@ Anova.II.mer <- function(mod, vcov., singular.ok=TRUE, test=c("Chisq", "F"), ...
 	I.p <- diag(p)
 	if (!missing(vcov.)){
 		vcov. <- if (test == "F"){
-					if (!require("pbkrtest")) stop("pbkrtest package required for F-tests on linear mixed model")
-					as.matrix(pbkrtest::vcovAdj(mod, details=0))
+#					if (!require("pbkrtest")) stop("pbkrtest package required for F-tests on linear mixed model")
+					as.matrix(vcovAdj(mod, details=0))
 				}
 				else vcov(mod)
 	}
@@ -1550,8 +1554,8 @@ Anova.III.mer <- function(mod, vcov., singular.ok=FALSE, test=c("Chisq", "F"), .
 		stop("there are aliased coefficients in the model")
 	if (!missing(vcov.)){
 		vcov. <- if (test == "F"){
-					if (!require("pbkrtest")) stop("pbkrtest package required for F-tests on linear mixed model")
-					as.matrix(pbkrtest::vcovAdj(mod, details=0))
+#					if (!require("pbkrtest")) stop("pbkrtest package required for F-tests on linear mixed model")
+					as.matrix(vcovAdj(mod, details=0))
 				}
 				else vcov(mod)
 	}
