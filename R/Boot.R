@@ -19,6 +19,7 @@
 # 2013-07-08 changed .carEnv to car:::.carEnv so 'boot' could find the environment
 # 4014-08-17: added calls to requireNamespace() and :: where necessary. J. Fox
 # 2015-01-27 .carEnv now in global environment. John
+# 2015-02-20: fixed coding error in Boot.nls(). John
 
 Boot <- function(object, f, labels, R=999, method){UseMethod("Boot")}
 
@@ -109,7 +110,7 @@ Boot.nls <- function(object, f=coef, labels=names(coef(object)),
             val <- naresid(pad, val)
             }
       assign(".y.boot", val, envir=.carEnv)
-      mod <- try(update(object, get(".y.boot", envir-.carEnv) ~ .,
+      mod <- try(update(object, get(".y.boot", envir=.carEnv) ~ .,
              start=coef(object)))
       if(class(mod) == "try-error"){
             out <- .fn(object)

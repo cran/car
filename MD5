@@ -1,8 +1,8 @@
-1e62d6ac848816da91e14cb62b05e7e5 *DESCRIPTION
-3c02ceebf8cfe4418e0cfe2adea3e63c *NAMESPACE
-5811e34257129580c93fff1f37ac8bcc *NEWS
-dbd8ada7e6ffb128abaf28274fe8c2b4 *R/Anova.R
-d955a644d57efe733f5ea96dbfa62590 *R/Boot.R
+a6b239334cd7b1bf09df9ea6d73b7c1d *DESCRIPTION
+6d16362ad134bbe140e6aa1ab839362f *NAMESPACE
+b655174a54b686682ce58690daa7a687 *NEWS
+2b05802d685cbe5edfffe1b4f98a89df *R/Anova.R
+ccd8dc01996740d44efd61f3d22b1591 *R/Boot.R
 55cc561fe1c4cdc9e8cfd031d5b4269f *R/Boxplot.R
 e6e27da69e618a88c9a9cc715059b7d5 *R/Contrasts.R
 e263ffb8c7a728be0231bfa22f2a2de7 *R/Ellipse.R
@@ -28,7 +28,7 @@ c0ff90148286e0985a0351d206f32fce *R/infIndexPlot.R
 4e01544ceecb79224045373a8dc658d9 *R/invTranPlot.R
 fb408f740d16f05bd4f71144c74d078a *R/leveneTest.R
 3a7ea9f4ece747da986ba432f6d5fe45 *R/leveragePlots.R
-17f0a36ff5bd1321de9980b26e6fd2eb *R/linearHypothesis.R
+39e5b795b9192dbaa421060272e9186f *R/linearHypothesis.R
 1018d0332b3c63f2ee6731e444dccc61 *R/logit.R
 c2481b7a1b2dd67ef4cc8d848334089c *R/marginalModelPlot.R
 61812567fe019454e966d2db5a4df14d *R/mcPlots.R
@@ -108,11 +108,11 @@ f8c73e583d02bfc76cd358d0fef40f14 *data/Wool.rda
 e58584a26bbb414d417fca2ad22f2489 *inst/CITATION
 b39a6f4660e0f71abf561f4c327e2646 *inst/doc/embedding.R
 3235f4b3623fe042c98df9722172ef27 *inst/doc/embedding.Rnw
-99c00e3f945102cb3f89094a1a2538d6 *inst/doc/embedding.pdf
+3211f60b7d53cd89402b26dfa44eeb5d *inst/doc/embedding.pdf
 b2699da4e265aca98cab0280f7fb1b1e *man/AMSsurvey.Rd
 0121ac092471417593ac2e32b134a883 *man/Adler.Rd
 8a3ad189a7bd629bc812b28322acc5b3 *man/Angell.Rd
-e3c676d5a6e6acc83914870e175f2464 *man/Anova.Rd
+e641edd07c13cbab6a292d5b1994986b *man/Anova.Rd
 771c447ef810aecde56774754ce0c8ad *man/Anscombe.Rd
 74a8a2ff389993de7fd3ee2dd155aea1 *man/Baumann.Rd
 f5edd689536ad670cc6c9d4baa8bc510 *man/Bfox.Rd
@@ -173,7 +173,8 @@ dcfc0f03ab5744a2cdbb8f0a8cab7408 *man/avPlots.Rd
 10ed4775b0c83ddc27cf772f9deee75f *man/boxCoxVariable.Rd
 de4255eb83dc7ff062699b63b8316d03 *man/boxTidwell.Rd
 ea9540069b63940fd6ffb3634ff4b05d *man/car-deprecated.Rd
-fef207b3df7535e9f8caf5ec597e3443 *man/car-package.Rd
+e636a003e6e0c4009e728c0f57af8e9c *man/car-internal.Rd
+fee2357d2181ca71884c7ba3fdfef7dc *man/car-package.Rd
 94f2797f81c5989877684857b49e6c02 *man/carWeb.Rd
 b3fffdf6cb846b566b905490313f146f *man/ceresPlots.Rd
 398a2e3f449600419a47d4a994a32aa5 *man/compareCoefs.Rd

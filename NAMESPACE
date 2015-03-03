@@ -1,4 +1,4 @@
-# last modified 2015-01-27 by J. Fox
+# last modified 2015-02-20 by J. Fox
 
 importFrom(MASS, cov.trob, polr, rlm)
 importFrom(nnet, multinom)
@@ -8,6 +8,8 @@ importFrom(mgcv, gam, s)
 importFrom(quantreg, rqss, qss, fitted.rqss)
 
 export(
+    .carEnv,
+    
     basicPowerAxis,
     bcPowerAxis,
     Boxplot,

@@ -33,6 +33,7 @@
 # 2014-10-10: removed MASS:: from calls to polr(). John
 # 2014-12-18: check that residual df and SS are nonzero in Anova.lm(). John
 # 2015-01-27: vcovAdj() and methods now imported from pbkrtest. John
+# 2015-02-18: force evaluation of vcov. when it's a function. John
 #-------------------------------------------------------------------------------
 
 # Type II and III tests for linear, generalized linear, and other models (J. Fox)
@@ -68,6 +69,7 @@ Anova <- function(mod, ...){
 Anova.lm <- function(mod, error, type=c("II","III", 2, 3), 
 		white.adjust=c(FALSE, TRUE, "hc3", "hc0", "hc1", "hc2", "hc4"),
         vcov.=NULL, singular.ok, ...){
+    if (is.function(vcov.)) vcov. <- vcov.(mod)
     if (df.residual(mod) == 0) stop("residual df = 0")
     if (deviance(mod) < sqrt(.Machine$double.eps)) stop("residual sum of squares is 0 (within rounding error)")
 	type <- as.character(type)
@@ -1301,6 +1303,7 @@ Anova.III.Wald.survreg <- function(mod){
 
 Anova.default <- function(mod, type=c("II","III", 2, 3), test.statistic=c("Chisq", "F"), 
 		vcov.=vcov(mod), singular.ok, ...){
+    if (is.function(vcov.)) vcov. <- vcov.(mod)
 	type <- as.character(type)
 	type <- match.arg(type)
 	test.statistic <- match.arg(test.statistic)
@@ -1446,6 +1449,7 @@ fixef <- function (object){
 Anova.merMod <- function(mod, type=c("II","III", 2, 3), 
                          test.statistic=c("Chisq", "F"),
                          vcov.=vcov(mod), singular.ok, ...){
+    if (is.function(vcov.)) vcov. <- vcov.(mod)
     type <- as.character(type)
     type <- match.arg(type)
     test.statistic <- match.arg(test.statistic)
@@ -1457,6 +1461,7 @@ Anova.merMod <- function(mod, type=c("II","III", 2, 3),
 
 Anova.mer <- function(mod, type=c("II","III", 2, 3), test.statistic=c("Chisq", "F"),
 		vcov.=vcov(mod), singular.ok, ...){
+    if (is.function(vcov.)) vcov. <- vcov.(mod)
 	type <- as.character(type)
 	type <- match.arg(type)
 	test.statistic <- match.arg(test.statistic)
@@ -1606,6 +1611,7 @@ Anova.III.mer <- function(mod, vcov., singular.ok=FALSE, test=c("Chisq", "F"), .
 
 Anova.lme <- function(mod, type=c("II","III", 2, 3),
 		vcov.=vcov(mod), singular.ok, ...){
+    if (is.function(vcov.)) vcov. <- vcov.(mod)
 	type <- as.character(type)
 	type <- match.arg(type)
 	if (missing(singular.ok))

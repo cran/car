@@ -1,3 +1,11 @@
+Changes to Version 2.0-25
+
+    o Fixed df check in linearHypothesis.default() (bug report by Pierre Chausse).
+
+    o Fixed bug when vcov. argument to Anova() is a function (reported by Liviu Andronic).
+    
+    o Now export .carEnv to avoid problem with update() in Boot() (reported by Alan T. Arnholt).
+
 Changes to Version 2.0-24
 
     o Fixed broken URLs.

@@ -31,6 +31,7 @@
 #   2014-12-18: check that residual df nonzero in Anova.lm() and Anova.default
 #               and residual SS nonzero in Anova.lm(). John
 #   2015-01-27: KRmodcomp() and methods now imported from pbkrtest. John
+#   2015-02-03: Check for NULL df before 0 df in default method. John
 #---------------------------------------------------------------------------------------
 
 vcov.default <- function(object, ...){
@@ -184,8 +185,8 @@ linearHypothesis.default <- function(model, hypothesis.matrix, rhs=NULL,
 		test=c("Chisq", "F"), vcov.=NULL, singular.ok=FALSE, verbose=FALSE, 
     coef. = coef(model), ...){
 	df <- df.residual(model)
-    if (df == 0) stop("residual df = 0")
 	if (is.null(df)) df <- Inf ## if no residual df available
+    if (df == 0) stop("residual df = 0")
 	V <- if (is.null(vcov.)) vcov(model)
 			else if (is.function(vcov.)) vcov.(model) else vcov.
 	b <- coef.

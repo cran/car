@@ -11,6 +11,7 @@
 %   2013-06-20 added Anova.merMod(). J. Fox
 %   2014-08-09: added vcov. argument to Anova.lm(). J. Fox
 %   2014-09-23: added Anova.rlm(). J. Fox
+%   2015-02-18: updated info about when Anova.default() works. J. Fox
 %-------------------------------------------------------------------------------
 
 \name{Anova}
@@ -42,9 +43,8 @@
   package), \code{coxph} (in the \pkg{survival} package), 
   \code{svyglm} (in the \pkg{survival} package), \code{rlm} (in the \pkg{MASS} package),
   \code{lmer} in the \pkg{lme4} package,
-  \code{lme} in the \pkg{nlme} package, and for any
-  model with a linear predictor and asymptotically normal coefficients that
-  responds to the \code{vcov} and \code{coef} functions.  For linear
+  \code{lme} in the \pkg{nlme} package, and (by the default method) for most
+  models with a linear predictor and asymptotically normal coefficients (see details below). For linear
   models, F-tests are calculated; for generalized linear models, 
   likelihood-ratio chisquare, Wald chisquare, or F-tests are calculated;
   for multinomial logit and proportional-odds logit models, likelihood-ratio
@@ -214,6 +214,11 @@ Manova(mod, ...)
   can be specified directly via the \code{imatrix} argument.
   \code{Manova} is essentially a synonym for \code{Anova}
   for multivariate linear models.
+  
+  For the default method to work, the model object must contain a standard
+  \code{terms} element, and must respond to the \code{vcov}, \code{coef}, and \code{model.matrix} functions. 
+  If any of these requirements is missing, then it may be possible to supply it reasonably simply (e.g., by
+  writing a missing \code{vcov} method for the class of the model object).
 }
 \value{
   An object of class \code{"anova"}, or \code{"Anova.mlm"}, which usually is printed.
