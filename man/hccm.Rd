@@ -3,6 +3,7 @@
 % checked in 2008-12-29 by J. Fox (corresponds to version 1.2-10 of car)
 % 2009-09-16: added argument singular.ok to lm method. J. Fox
 % 2012-04-04: weighted lm now allowed. John
+% 2015-07-13: removed URL causing note in R CMD check. John
 %-------------------------------------------------------------------------------
 
 \name{hccm}
@@ -63,8 +64,7 @@ hccm(model, ...)
   
   Long, J. S. and Ervin, L. H. (2000)
   Using heteroscedasity consistent standard errors in the linear regression model. 
-  \emph{The American Statistician} \bold{54}, 217--224.  
-  \url{http://www.jstor.org/stable/2685594}
+  \emph{The American Statistician} \bold{54}, 217--224.
   
   White, H. (1980)
   A heteroskedastic consistent covariance matrix estimator and a direct test of heteroskedasticity.

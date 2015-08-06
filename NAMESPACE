@@ -1,4 +1,4 @@
-# last modified 2015-02-20 by J. Fox
+# last modified 2015-07-13 by J. Fox
 
 importFrom(MASS, cov.trob, polr, rlm)
 importFrom(nnet, multinom)
@@ -6,6 +6,21 @@ importFrom(pbkrtest, KRmodcomp, KRmodcomp.lmerMod, KRmodcomp.mer,
            vcovAdj, vcovAdj.lmerMod, vcovAdj.mer)
 importFrom(mgcv, gam, s)
 importFrom(quantreg, rqss, qss, fitted.rqss)
+importFrom(graphics, abline, arrows, axis, box, boxplot, hist, identify, 
+    layout, legend, lines, locator, mtext, pairs, par, plot, points, polygon, 
+    rug, segments, strheight, strwidth, text)
+importFrom(grDevices, boxplot.stats, col2rgb, gray, palette, rgb)
+importFrom(stats, D, IQR, alias, anova, as.formula, coef, coefficients, 
+    complete.cases, confint, contrasts, "contrasts<-", cooks.distance, cor, 
+    cov, cov.wt, cov2cor, density, deviance, df.residual, dfbeta, dnorm, 
+    drop1, family, fitted, fitted.values, fivenum, formula, gaussian, getCall, 
+    glm, glm.fit, hatvalues, is.empty.model, lm, lm.fit, loess, loess.control, 
+    logLik, lowess, lsfit, make.link, median, model.frame, model.matrix, 
+    model.matrix.default, model.response, model.weights, na.omit, na.pass, 
+    naresid, optim, optimize, pchisq, pf, pnorm, ppoints, predict, printCoefmat, 
+    pt, qchisq, qf, qnorm, qqline, qqnorm, qt, quantile, resid, residuals, rnorm, 
+    rstandard, rstudent, sd, spline, summary.lm, terms, update, var, vcov, weights)
+importFrom(utils, browseURL, head, methods)
 
 export(
     .carEnv,

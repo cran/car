@@ -136,9 +136,10 @@ Manova(mod, ...)
     test statistic, and the default is to report all four.}
   \item{error.estimate}{for F-tests for a generalized linear model, base the
     dispersion estimate on the Pearson residuals (\code{"pearson"}, the default); use the
-    dispersion estimate in the model object (\code{"dispersion"}), which, e.g., is
-    fixed to 1 for binomial and Poisson models; or base the dispersion estimate on
-    the residual deviance (\code{"deviance"}).}
+    dispersion estimate in the model object (\code{"dispersion"}); or base the dispersion estimate on
+    the residual deviance (\code{"deviance"}). For binomial or Poisson GLMs, where the dispersion
+    is fixed to 1, setting \code{error.estimate="dispersion"} is changed to \code{"pearson"},
+    with a warning.}
   \item{white.adjust}{if not \code{FALSE}, the default, 
   	tests use a heteroscedasticity-corrected coefficient
     covariance matrix; the various values of the argument specify different corrections.

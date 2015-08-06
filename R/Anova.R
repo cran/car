@@ -34,6 +34,8 @@
 # 2014-12-18: check that residual df and SS are nonzero in Anova.lm(). John
 # 2015-01-27: vcovAdj() and methods now imported from pbkrtest. John
 # 2015-02-18: force evaluation of vcov. when it's a function. John
+# 2015-04-30: don't allow error.estimate="dispersion" for F-tests in binomial
+#             and Poission GLMs. John
 #-------------------------------------------------------------------------------
 
 # Type II and III tests for linear, generalized linear, and other models (J. Fox)
@@ -284,39 +286,46 @@ Anova.III.LR.glm <- function(mod, singular.ok=FALSE, ...){
 # F test
 
 Anova.III.F.glm <- function(mod, error, error.estimate, singular.ok=FALSE, ...){
-	if (!singular.ok && any(is.na(coef(mod))))
-		stop("there are aliased coefficients in the model")
-	fam <- family(mod)$family
-	if (fam == "binomial" || fam == "poisson") 
-		warning("dispersion parameter estimated from the Pearson residuals, not taken as 1")
-	if (missing(error)) error <- mod
-	df.res <- df.residual(error)
-	error.SS <- switch(error.estimate,
-			pearson=sum(residuals(error, "pearson")^2, na.rm=TRUE),
-			dispersion=df.res*summary(error, corr = FALSE)$dispersion,
-			deviance=deviance(error))
-	Source <- if (has.intercept(mod)) term.names(mod)[-1]
-			else term.names(mod)
-	n.terms <- length(Source)
-	p <- df <- f <- SS <-rep(0, n.terms+1)
-	f[n.terms+1] <- p[n.terms+1] <- NA
-	df[n.terms+1] <- df.res
-	SS[n.terms+1] <- error.SS
-	dispersion <- error.SS/df.res
-	deviance <- deviance(mod)
-	for (term in 1:n.terms){
-		mod.1 <- drop1(mod, scope=eval(parse(text=paste("~",Source[term]))))
-		df[term] <- mod.1$Df[2]
-		SS[term] <- mod.1$Deviance[2] - deviance
-		f[term] <- (SS[term]/df[term])/dispersion
-		p[term] <- pf(f[term], df[term], df.res, lower.tail = FALSE)
-	}
-	result <- data.frame(SS, df, f, p)
-	row.names(result) <- c(Source, "Residuals")
-	names(result) <- c("SS", "Df", "F", "Pr(>F)")
-	class(result) <- c("anova","data.frame")
-	attr(result, "heading") <- c("Analysis of Deviance Table (Type III tests)\n", paste("Response:", responseName(mod)))
-	result
+    if (!singular.ok && any(is.na(coef(mod))))
+        stop("there are aliased coefficients in the model")
+    fam <- family(mod)$family
+    if ((fam == "binomial" || fam == "poisson") && error.estimate == "dispersion"){
+        warning("dispersion parameter estimated from the Pearson residuals, not taken as 1")
+        error.estimate <- "pearson"
+    }
+    if (missing(error)) error <- mod
+    df.res <- df.residual(error)
+    error.SS <- switch(error.estimate,
+        pearson=sum(residuals(error, "pearson")^2, na.rm=TRUE),
+        dispersion=df.res*summary(error, corr = FALSE)$dispersion,
+        deviance=deviance(error))
+    Source <- if (has.intercept(mod)) term.names(mod)[-1]
+    else term.names(mod)
+    n.terms <- length(Source)
+    p <- df <- f <- SS <-rep(0, n.terms+1)
+    f[n.terms+1] <- p[n.terms+1] <- NA
+    df[n.terms+1] <- df.res
+    SS[n.terms+1] <- error.SS
+    dispersion <- error.SS/df.res
+    deviance <- deviance(mod)
+    for (term in 1:n.terms){
+        mod.1 <- drop1(mod, scope=eval(parse(text=paste("~",Source[term]))))
+        df[term] <- mod.1$Df[2]
+        SS[term] <- mod.1$Deviance[2] - deviance
+        f[term] <- (SS[term]/df[term])/dispersion
+        p[term] <- pf(f[term], df[term], df.res, lower.tail = FALSE)
+    }
+    result <- data.frame(SS, df, f, p)
+    row.names(result) <- c(Source, "Residuals")
+    names(result) <- c("SS", "Df", "F", "Pr(>F)")
+    class(result) <- c("anova","data.frame")
+    attr(result, "heading") <- c("Analysis of Deviance Table (Type III tests)\n", 
+        paste("Response:", responseName(mod)), 
+        paste("Error estimate based on",
+            switch(error.estimate, 
+                pearson="Pearson residuals", dispersion="estimated dispersion", 
+                deviance="deviance"), "\n"))
+    result
 }
 
 # type II
@@ -373,62 +382,69 @@ Anova.II.LR.glm <- function(mod, singular.ok=TRUE, ...){
 # F test
 
 Anova.II.F.glm <- function(mod, error, error.estimate, singular.ok=TRUE, ...){
-	# (some code adapted from drop1.glm)
-	if (!singular.ok && any(is.na(coef(mod))))
-		stop("there are aliased coefficients in the model")
-	fam <- family(mod)$family
-	if (fam == "binomial" || fam == "poisson") 
-		warning("dispersion parameter estimated from the Pearson residuals, not taken as 1")
-	which.nms <- function(name) which(asgn == which(names == name))
-	if (missing(error)) error <- mod
-	df.res <- df.residual(error)
-	error.SS <- switch(error.estimate,
-			pearson = sum(residuals(error, "pearson")^2, na.rm=TRUE),
-			dispersion = df.res*summary(error, corr = FALSE)$dispersion,
-			deviance = deviance(error))
-	fac <- attr(mod$terms, "factors")
-	names <- if (has.intercept(mod)) term.names(mod)[-1]
-			else term.names(mod)
-	n.terms <- length(names)
-	X <- model.matrix(mod)
-	y <- mod$y
-	if (is.null(y)) y <- model.response(model.frame(mod), "numeric")
-	wt <- mod$prior.weights
-	if (is.null(wt)) wt <- rep(1, length(y))
-	asgn <- attr(X, 'assign')
-	p <- df <- f <- SS <- rep(0, n.terms+1)
-	f[n.terms+1] <- p[n.terms+1] <- NA
-	df[n.terms+1] <- df.res
-	SS[n.terms+1] <- error.SS
-	dispersion <- error.SS/df.res
-	for (term in 1:n.terms){
-		rels <- names[relatives(names[term], names, fac)]
-		exclude.1 <- as.vector(unlist(sapply(c(names[term], rels), which.nms)))
-		mod.1 <- glm.fit(X[, -exclude.1, drop = FALSE], y, wt, offset = mod$offset, 
-				family = mod$family, control = mod$control)
-		dev.1 <- deviance(mod.1)
-		mod.2 <- if (length(rels) == 0) mod
-				else {
-					exclude.2 <- as.vector(unlist(sapply(rels, which.nms)))
-					glm.fit(X[, -exclude.2, drop = FALSE], y, wt, offset = mod$offset, 
-							family = mod$family, control = mod$control)
-				}
-		dev.2 <- deviance(mod.2)
-		df[term] <- df.residual(mod.1) - df.residual(mod.2)
-		if (df[term] == 0) SS[term] <- f[term] <- p[term] <- NA
-		else {
-			SS[term] <- dev.1 - dev.2
-			f[term] <- SS[term]/(dispersion*df[term])
-			p[term] <- pf(f[term], df[term], df.res, lower.tail=FALSE)
-		}
-	}
-	result <- data.frame(SS, df, f, p)
-	row.names(result) <- c(names, "Residuals")
-	names(result) <- c("SS", "Df", "F", "Pr(>F)")
-	class(result) <- c("anova", "data.frame")
-	attr(result, "heading") <- c("Analysis of Deviance Table (Type II tests)\n", 
-			paste("Response:", responseName(mod)))
-	result
+    # (some code adapted from drop1.glm)
+    if (!singular.ok && any(is.na(coef(mod))))
+        stop("there are aliased coefficients in the model")
+    fam <- family(mod)$family
+    if ((fam == "binomial" || fam == "poisson") && error.estimate == "dispersion"){
+        warning("dispersion parameter estimated from the Pearson residuals, not taken as 1")
+        error.estimate <- "pearson"
+    }
+    which.nms <- function(name) which(asgn == which(names == name))
+    if (missing(error)) error <- mod
+    df.res <- df.residual(error)
+    error.SS <- switch(error.estimate,
+        pearson = sum(residuals(error, "pearson")^2, na.rm=TRUE),
+        dispersion = df.res*summary(error, corr = FALSE)$dispersion,
+        deviance = deviance(error))
+    fac <- attr(mod$terms, "factors")
+    names <- if (has.intercept(mod)) term.names(mod)[-1]
+    else term.names(mod)
+    n.terms <- length(names)
+    X <- model.matrix(mod)
+    y <- mod$y
+    if (is.null(y)) y <- model.response(model.frame(mod), "numeric")
+    wt <- mod$prior.weights
+    if (is.null(wt)) wt <- rep(1, length(y))
+    asgn <- attr(X, 'assign')
+    p <- df <- f <- SS <- rep(0, n.terms+1)
+    f[n.terms+1] <- p[n.terms+1] <- NA
+    df[n.terms+1] <- df.res
+    SS[n.terms+1] <- error.SS
+    dispersion <- error.SS/df.res
+    for (term in 1:n.terms){
+        rels <- names[relatives(names[term], names, fac)]
+        exclude.1 <- as.vector(unlist(sapply(c(names[term], rels), which.nms)))
+        mod.1 <- glm.fit(X[, -exclude.1, drop = FALSE], y, wt, offset = mod$offset, 
+            family = mod$family, control = mod$control)
+        dev.1 <- deviance(mod.1)
+        mod.2 <- if (length(rels) == 0) mod
+        else {
+            exclude.2 <- as.vector(unlist(sapply(rels, which.nms)))
+            glm.fit(X[, -exclude.2, drop = FALSE], y, wt, offset = mod$offset, 
+                family = mod$family, control = mod$control)
+        }
+        dev.2 <- deviance(mod.2)
+        df[term] <- df.residual(mod.1) - df.residual(mod.2)
+        if (df[term] == 0) SS[term] <- f[term] <- p[term] <- NA
+        else {
+            SS[term] <- dev.1 - dev.2
+            f[term] <- SS[term]/(dispersion*df[term])
+            p[term] <- pf(f[term], df[term], df.res, lower.tail=FALSE)
+        }
+    }
+    result <- data.frame(SS, df, f, p)
+    row.names(result) <- c(names, "Residuals")
+    names(result) <- c("SS", "Df", "F", "Pr(>F)")
+    class(result) <- c("anova", "data.frame")
+    attr(result, "heading") <- c("Analysis of Deviance Table (Type II tests)\n", 
+        paste("Response:", responseName(mod)),
+        paste("Error estimate based on",
+            switch(error.estimate,
+                pearson="Pearson residuals", 
+                dispersion="estimated dispersion", 
+                deviance="deviance"), "\n"))
+    result
 }
 
 # multinomial logit models (via multinom in the nnet package)

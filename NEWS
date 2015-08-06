@@ -1,3 +1,13 @@
+Changes to Version 2.0-26
+
+    o Anova() F-tests for binomial and Poisson GLMs now changes error.estimate="dispersion" to "pearson" as advertized (bug reported by Will Petry).
+    
+    o Improved behavior of above-plot legends in scatterplot().
+    
+    o Fixed sp() (bug reported by Cesar Rabak).
+    
+    o Conforms to new CRAN requirements for package imports.
+
 Changes to Version 2.0-25
 
     o Fixed df check in linearHypothesis.default() (bug report by Pierre Chausse).
@@ -16,7 +26,7 @@ Changes to Version 2.0-24
 
 Changes to Version 2.0-23
 
-    o Modified ScatterplotSmoothers to add an 'offset' to the vertical axis of spread smooths.  This are required in the marginal model plot functions.  
+    o Modified ScatterplotSmoothers to add an 'offset' to the vertical axis of spread smooths.  This is required in the marginal model plot functions.  
 
     o Fixed labels on mcPlot with overlay=FALSE
 

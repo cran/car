@@ -29,17 +29,17 @@ scatterplot(x, ...)
     cex=par("cex"), cex.axis=par("cex.axis"), cex.lab=par("cex.lab"), 
     cex.main=par("cex.main"), cex.sub=par("cex.sub"), 
     groups, by.groups=!missing(groups), 
-    legend.title=deparse(substitute(groups)), legend.coords,
+    legend.title=deparse(substitute(groups)), legend.coords, legend.columns,
     ellipse=FALSE, levels=c(.5, .95), robust=TRUE,
     col=if (n.groups == 1) palette()[3:1] else rep(palette(), length=n.groups),
     pch=1:n.groups, 
     legend.plot=!missing(groups), reset.par=TRUE, grid=TRUE, ...)
 
-sp(...)
+sp(x, ...)
 }
 
 \arguments{
-  \item{x}{vector of horizontal coordinates}
+  \item{x}{vector of horizontal coordinates (or first argument of generic function).}
   \item{y}{vector of vertical coordinates.}
   \item{formula}{a ``model'' formula, of the form \code{y ~ x} or 
     (to plot by groups) \code{y ~ x | z}, where \code{z} evaluates to a factor 
@@ -92,9 +92,11 @@ sp(...)
     plotted with different colors and plotting characters.}
   \item{by.groups}{if \code{TRUE}, regression lines are fit by groups.}
   \item{legend.title}{title for legend box; defaults to the name of the groups variable.}
-  \item{legend.coords}{coordinates for placing legend; an be a list with components x and y to
+  \item{legend.coords}{coordinates for placing legend; can be a list with components x and y to
   	specify the coordinates of the upper-left-hand corner of the legend; or a quoted keyword, such as \code{"topleft"},
   	recognized by \code{\link{legend}}.}
+  \item{legend.columns}{number of columns for the legend; if absent will be supplied automatically to
+    prefer horizontal legends when plotted above the graph.}
   \item{ellipse}{if \code{TRUE} data-concentration ellipses are plotted.}
   \item{levels}{level or levels at which concentration ellipses are plotted;
     the default is \code{c(.5, .95)}.}

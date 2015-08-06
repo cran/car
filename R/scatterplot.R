@@ -12,6 +12,8 @@
 # 2012-09-19: J. Fox: restored smooth and span arguments for backwards compatibility
 # 2013-02-07: S. Weisberg:  modifed call to showLabels to work correctly with groups
 # 2014-09-04: J. Fox: empty groups produce warning rather than error
+# 2015-07-17: J. Fox: improved above-plot legends.
+# 2015-08-05: J. Fox: fixed sp()
 
 reg <- function(reg.line, x, y, col, lwd, lty, log.x, log.y){
     if(log.x) x <- log(x)
@@ -38,6 +40,12 @@ reg <- function(reg.line, x, y, col, lwd, lty, log.x, log.y){
         y2 <- exp(y.hat[max])
     }
     lines(c(x1, x2), c(y1, y2), lwd=lwd, col=col, lty=lty)
+}
+
+find.legend.columns <- function(n, target=min(4, n)){
+  rem <- n %% target
+  if (rem != 0 && rem < target/2) target <- target - 1
+  target
 }
 
 scatterplot <- function(x, ...){
@@ -90,7 +98,8 @@ scatterplot.default <- function(x, y, smoother=loessLine, smoother.args=list(), 
                                 log="", jitter=list(), xlim=NULL, ylim=NULL,
                                 cex=par("cex"), cex.axis=par("cex.axis"), cex.lab=par("cex.lab"), 
                                 cex.main=par("cex.main"), cex.sub=par("cex.sub"), 
-                                groups, by.groups=!missing(groups), legend.title=deparse(substitute(groups)), legend.coords,
+                                groups, by.groups=!missing(groups), 
+                                legend.title=deparse(substitute(groups)), legend.coords, legend.columns,
                                 ellipse=FALSE, levels=c(.5, .95), robust=TRUE,
                                 col=if (n.groups == 1) palette()[3:1] else rep(palette(), length=n.groups),
                                 pch=1:n.groups, 
@@ -182,8 +191,14 @@ scatterplot.default <- function(x, y, smoother=loessLine, smoother.args=list(), 
         .x <- data[,2]
         .y <- data[,3]
         labels <- data[,4]
-        top <- if (legend.plot && missing(legend.coords)) 
-            4 + nlevels(groups) else mar[3]
+        top <- if (legend.plot && missing(legend.coords)){
+            if (missing(legend.columns)) legend.columns <- find.legend.columns(nlevels(groups))
+            4 + ceiling(nlevels(groups))/legend.columns
+        }
+        else mar[3]
+        if (legend.plot && !missing(legend.coords) && missing(legend.columns)){
+          legend.columns <- 1
+        }
     }
     else {
         .x <- x
@@ -277,12 +292,13 @@ scatterplot.default <- function(x, y, smoother=loessLine, smoother.args=list(), 
             legend.coords <- list(x=legend.x, y=legend.y)
         }
         legend(legend.coords, legend=levels(groups)[counts > 0], 
-               pch=pch[counts > 0], col=col[1:n.groups][counts > 0], pt.cex=cex, cex=cex.lab, title=legend.title, bg="white")
+               pch=pch[counts > 0], col=col[1:n.groups][counts > 0], pt.cex=cex, cex=cex.lab, 
+               title=legend.title, bg="white", ncol=legend.columns)
     }
     if (id.method[1] == "identify") indices <- showLabels(.x, .y, labels, 
                                                           id.method=id.method, id.n=length(.x), id.cex=id.cex, id.col=id.col)
     if (is.null(indices)) invisible(indices) else if (is.numeric(indices)) sort(indices) else indices
 } 
 
-sp <- function(...) scatterplot(...)
+sp <- function(x, ...)  UseMethod("scatterplot", x)
 
