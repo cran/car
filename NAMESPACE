@@ -1,4 +1,5 @@
-# last modified 2015-07-13 by J. Fox
+# modified 2015-07-13 by J. Fox
+# modified 2015-08-31 S. Weisberg, added optimHess
 
 importFrom(MASS, cov.trob, polr, rlm)
 importFrom(nnet, multinom)
@@ -6,7 +7,7 @@ importFrom(pbkrtest, KRmodcomp, KRmodcomp.lmerMod, KRmodcomp.mer,
            vcovAdj, vcovAdj.lmerMod, vcovAdj.mer)
 importFrom(mgcv, gam, s)
 importFrom(quantreg, rqss, qss, fitted.rqss)
-importFrom(graphics, abline, arrows, axis, box, boxplot, hist, identify, 
+importFrom(graphics, abline, arrows, axis, box, boxplot, contour, hist, identify, 
     layout, legend, lines, locator, mtext, pairs, par, plot, points, polygon, 
     rug, segments, strheight, strwidth, text)
 importFrom(grDevices, boxplot.stats, col2rgb, gray, palette, rgb)
@@ -19,7 +20,8 @@ importFrom(stats, D, IQR, alias, anova, as.formula, coef, coefficients,
     model.matrix.default, model.response, model.weights, na.omit, na.pass, 
     naresid, optim, optimize, pchisq, pf, pnorm, ppoints, predict, printCoefmat, 
     pt, qchisq, qf, qnorm, qqline, qqnorm, qt, quantile, resid, residuals, rnorm, 
-    rstandard, rstudent, sd, spline, summary.lm, terms, update, var, vcov, weights)
+    rstandard, rstudent, sd, spline, summary.lm, terms, update, var, vcov, weights,
+    optimHess)
 importFrom(utils, browseURL, head, methods)
 
 export(
@@ -57,7 +59,7 @@ export(
     which.names, whichNames,
     yjPowerAxis,
     Anova,
-    basicPower, bcPower, yjPower, powerTransform,
+    basicPower, bcPower, yjPower, powerTransform, skewPower,
     boxCox,
     boxCoxVariable,
     boxTidwell,
@@ -159,7 +161,7 @@ S3method(spreadLevelPlot, lm)
 S3method(subsets, regsubsets)  
 S3method(boxCox, default)
 S3method(boxCox, lm)
-S3method(boxCox, formula)      
+S3method(boxCox, formula) 
 S3method(Anova, aov)
 S3method(Anova, coxph)
 S3method(Anova, default)
@@ -257,11 +259,19 @@ S3method(summary, Anova.mlm)
 S3method(print, summary.Anova.mlm)
 S3method(print, powerTransform)
 S3method(print, summary.powerTransform)
+S3method(print, summary.skewpowerTransform)
+S3method(print, skewpowerTransform)
+S3method(summary, skewpowerTransform)
 S3method(summary, powerTransform)
 S3method(plot, powerTransform)
+S3method(plot, skewpowerTransform)
+S3method(contour, skewpowerTransform)
 S3method(coef, powerTransform)
+S3method(coef, skewpowerTransform)
 S3method(vcov, powerTransform)
+S3method(vcov, skewpowerTransform)
 S3method(testTransform, powerTransform)
+S3method(testTransform, skewpowerTransform)
 S3method(residualPlots, lm)
 S3method(residualPlots, glm)
 S3method(residualPlot, default)
@@ -273,6 +283,8 @@ S3method(vcov, powerTransform)
 S3method(vif, default)
 S3method(symbox, formula)
 S3method(symbox, default)
+# added with skewPower
+
 
 # methods related to Boot
 S3method(Boot, default)
@@ -284,3 +296,9 @@ S3method(confint, boot)
 S3method(summary, boot)
 S3method(print, summary.boot)
 S3method(print, confint.boot)
+
+# methods related to Box-Cox Transformations
+S3method(estimateTransform, default)
+S3method(estimateTransform, skewPower)
+
+

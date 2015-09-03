@@ -4,6 +4,7 @@
 % 2009-09-16: added argument singular.ok to lm method. J. Fox
 % 2012-04-04: weighted lm now allowed. John
 % 2015-07-13: removed URL causing note in R CMD check. John
+% 2015-08-05: fixed typo. John
 %-------------------------------------------------------------------------------
 
 \name{hccm}
@@ -43,7 +44,7 @@ hccm(model, ...)
   \deqn{V(b)=(X^{\prime }X)^{-1}X^{\prime }diag(e_{i}^{2})X(X^{\prime }X)^{-1}}{V(b) = inv(X'X) X' diag(e^2) X inv(X'X)}
   where \eqn{e_{i}^{2}}{e^2} are the squared residuals, and \eqn{X} is the model
   matrix. The other methods represent adjustments to this formula. If there are weights, these are incorporated in the
-  corrected covariance amtrix.
+  corrected covariance matrix.
   
   The function \code{hccm.default} simply catches non-\code{lm} objects.
 }

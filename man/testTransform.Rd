@@ -5,8 +5,8 @@
 \title{Likelihood-Ratio Tests for Univariate or Multivariate Power Transformations
 to Normality}
 \description{
-  \code{testTransform} computes likelihood ratio tests for particular transformations
-based on \code{powerTransform} objects.
+  \code{testTransform} computes likelihood ratio tests for particular values of the power parameter
+based on \code{powerTransform} objects.  
 }
 \usage{
 testTransform(object, lambda)
@@ -17,7 +17,7 @@ testTransform(object, lambda)
 \arguments{
   \item{object}{An object created by a call to 
 \code{estimateTransform} or \code{powerTransform}.}
-  \item{lambda}{A vector of values of length equal to the number of
+  \item{lambda}{A vector of responses of length equal to the number of
 variables to be transformed.}
 }
 
@@ -26,8 +26,11 @@ transformation for a univariate or multivariate sample or multiple linear
 regression problem, using the method of Box and Cox (1964).  It is usual to
 round the estimates to nearby convenient values, and this function is use to
 compulte a likelihood ratio test for values of the transformation parameter
-other than the ml estimate.  This is a generic function, but with only one
-method, for objects of class \code{powerTransform}.}
+other than the ml estimate.
+
+For one-parameter families of transformations, namely the Box-Cox power family \code{link{bcPower}} and the Yeo-Johnson power family \code{\link{yjPower}}, this function computes a test based on twice the difference in the log-likelihood between the maximum likelihood-like estimate and the log-likelihood evaluated at the value of \code{lambda} specified.
+
+For the skew power family, the test is based on the profile loglikelihood maximizing over the location (or start) parameter \code{gamma}.  Thus, the start parameter is treated as a nusiance parameter.}
 
 \value{
 A data frame with one row giving the value of the test statistic, its
@@ -48,7 +51,7 @@ Weisberg, S. (2014) \emph{Applied Linear Regression}, Fourth Edition, Wiley.
 }
 \author{ Sanford Weisberg, <sandy@umn.edu> }
 
-\seealso{\code{\link{powerTransform}}. }
+\seealso{\code{\link{powerTransform}} and \code{\link{skewPower}} for examples of the use of this function and other tests that might be of interest in some circumstances. }
 \examples{
 summary(a3 <- powerTransform(cbind(len, ADT, trks, sigs1) ~ hwy, Highway1))
 # test lambda = (0 0 0 -1)

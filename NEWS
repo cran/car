@@ -1,3 +1,9 @@
+Changes to Version 2.1-0
+
+    o New power family called skewPower has been added that can be used with the Box Cox method with a few negative responses (joint work with Doug Hawkins).  Several functions modified to accomodate two-parameter power families.
+    
+    o Fixed bug in Anova() for coxph models with clusters (reported by Jesus Humberto Gomez ), due apparently to a change in coxph().
+
 Changes to Version 2.0-26
 
     o Anova() F-tests for binomial and Poisson GLMs now changes error.estimate="dispersion" to "pearson" as advertized (bug reported by Will Petry).

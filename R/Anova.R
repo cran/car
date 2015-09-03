@@ -36,6 +36,7 @@
 # 2015-02-18: force evaluation of vcov. when it's a function. John
 # 2015-04-30: don't allow error.estimate="dispersion" for F-tests in binomial
 #             and Poission GLMs. John
+# 2015-08-29: fixed Anova() for coxph models with clusters. John
 #-------------------------------------------------------------------------------
 
 # Type II and III tests for linear, generalized linear, and other models (J. Fox)
@@ -1374,6 +1375,7 @@ Anova.II.default <- function(mod, vcov., test, singular.ok=TRUE, ...){
 		if (length(clusters) > 0) {
 			names <- names[-clusters]
 			df <- df[-clusters]
+			n.terms <- n.terms - length(clusters)
 		}
 	}
 	p <- teststat <- rep(0, n.terms + 1)
@@ -1411,6 +1413,7 @@ Anova.III.default <- function(mod, vcov., test, singular.ok=FALSE, ...){
 		if (length(clusters) > 0) {
 			names <- names[-clusters]
 			df <- df[-clusters]
+			n.terms <- n.terms - length(clusters)
 		}
 	}
 	if (intercept) df[1] <- 1
