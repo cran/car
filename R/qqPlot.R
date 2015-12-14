@@ -8,6 +8,7 @@
 # 11 March 2011: moved up ... argument. J. Fox
 # 23 May 2012: line="none" now honored in qqPlot.default. J. Fox
 # 2 May 2013: qqPlot.lm() now works with "aov" objects (fixing problem reported by Thomas Burk). J. Fox
+# 2015-12-12: allow vectorized col, pch, and cex arguments (suggestion of Emmanuel Curis)
 
 qqp <- function(...) qqPlot(...)
 
@@ -28,6 +29,9 @@ qqPlot.default <- function(x, distribution="norm", ..., ylab=deparse(substitute(
 	line <- match.arg(line)
 	good <- !is.na(x)
 	ord <- order(x[good])
+	if (length(col) == length(x)) col <- col[good][ord]
+	if (length(pch) == length(x)) pch <- pch[good][ord]
+	if (length(cex) == length(x)) cex <- cex[good][ord]
 	ord.x <- x[good][ord]
 	ord.lab <- labels[good][ord]
 	q.function <- eval(parse(text=paste("q", distribution, sep="")))

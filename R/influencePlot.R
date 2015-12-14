@@ -7,6 +7,7 @@
 # 23 April 2010: rewrote point marking, S. Weisberg
 # 10 May 2010: fixed computation of n
 # 2014-04-19: use labels for returned table rownames. J. Fox
+# 2015-11-06: now returns Cook's distance, not its square root.  S. Weisberg
 
 # moved from Rcmdr 5 December 2006
 
@@ -44,7 +45,7 @@ influencePlot.lm <- function(model, scale=10,
                            id.n=id.n, id.cex=id.cex, id.col=id.col)
   if (length(noteworthy > 0)){
     result <- data.frame(StudRes=rstud[noteworthy], Hat=hatval[noteworthy],
-                         CookD=cook[noteworthy])
+                         CookD=cook[noteworthy]^2)
     rownames(result) <- labels[noteworthy]
     return(result)
   }

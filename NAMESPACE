@@ -1,10 +1,9 @@
-# modified 2015-07-13 by J. Fox
-# modified 2015-08-31 S. Weisberg, added optimHess
+# last modified 2015-12-12 by J. Fox
 
 importFrom(MASS, cov.trob, polr, rlm)
 importFrom(nnet, multinom)
-importFrom(pbkrtest, KRmodcomp, KRmodcomp.lmerMod, KRmodcomp.mer, 
-           vcovAdj, vcovAdj.lmerMod, vcovAdj.mer)
+importFrom(pbkrtest, KRmodcomp, # KRmodcomp.lmerMod, KRmodcomp.mer, 
+           vcovAdj) #, vcovAdj.lmerMod, vcovAdj.mer)
 importFrom(mgcv, gam, s)
 importFrom(quantreg, rqss, qss, fitted.rqss)
 importFrom(graphics, abline, arrows, axis, box, boxplot, contour, hist, identify, 
@@ -23,6 +22,7 @@ importFrom(stats, D, IQR, alias, anova, as.formula, coef, coefficients,
     rstandard, rstudent, sd, spline, summary.lm, terms, update, var, vcov, weights,
     optimHess)
 importFrom(utils, browseURL, head, methods)
+# importFrom(VGAM, vcovvlm, coefvlm, formulavlm, model.matrixvlm)
 
 export(
     .carEnv,
@@ -164,6 +164,7 @@ S3method(boxCox, lm)
 S3method(boxCox, formula) 
 S3method(Anova, aov)
 S3method(Anova, coxph)
+S3method(Anova, coxme)
 S3method(Anova, default)
 S3method(Anova, glm)
 S3method(Anova, lm)

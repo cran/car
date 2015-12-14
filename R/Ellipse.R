@@ -21,6 +21,7 @@
 # Modified 2 Feb 2012 by J. Fox: Improved handling of center.pch argument to ellipse() (suggestion of Rob Kushler).
 # 16 July 2012 added showLabels to dataEllipse
 # 2014-02-16: prevent dataEllipse() from opening a graphics device when draw=FALSE (fixing bug reported by Rafael Laboissiere).
+# 2015-09-04: throw error if there are too few colors for groups (fixing bug reported by Ottorino Pantani). J. Fox
 
 ellipse <- function(center, shape, radius, log="", center.pch=19, center.cex=1.5, segments=51, draw=TRUE, add=draw, 
 		xlab="", ylab="", col=palette()[2], lwd=2, fill=FALSE, fill.alpha=0.3,
@@ -128,6 +129,8 @@ dataEllipse <- function(x, y, groups,
         groups <- groups[valid]
         labels <- labels[valid]
         group.levels <- levels(groups)
+        col <- col[!is.na(col)]
+        if (length(col) < length(group.levels)) stop("too few colors for number of groups")
         result <- vector(length(group.levels), mode="list")
         names(result) <- group.levels
         if(draw) {

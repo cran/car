@@ -2,6 +2,7 @@
 
 # 16 March 2010 by J. Fox: spreadLevelPlot.lm now deletes observations with negative fitted values
 # 25 May 2010 by J. Fox: corrected errors due to introduction of grid()
+# 2015-11-24: added smoother and related args to lm method. John
 
 slp <- function(...) spreadLevelPlot(...)
 
@@ -61,41 +62,12 @@ spreadLevelPlot.default <- function(x, by, robust.line=TRUE,
 	result
 }
 
-#spreadLevelPlot.lm <- function(x, start=0, robust.line=TRUE, 
-#	xlab="Fitted Values",
-#	ylab="Absolute Studentized Residuals", las=par("las"),
-#	main=paste("Spread-Level Plot for\n", deparse(substitute(x))),
-#	pch=1, col=palette()[2], lwd=2, ...){
-#	resid <- na.omit(abs(rstudent(x)))
-#	fitval <- na.omit(fitted.values(x))
-#	min <- min(fitval)
-#	if (min <= -start) {
-#		start<- nice(-min +0.05*diff(quantile(fitval, c(.25, .75))), direction="up")
-#		warning(paste("Start = ", start, 
-#				"added to fitted values to avoid 0 or negative values."))
-#	}
-#	if (start != 0) xlab <- paste(xlab, "+", signif(start, getOption("digits")))
-#	plot(fitval + start, resid, log="xy", main=main, xlab=xlab, ylab=ylab, 
-#		las=las, col=col, pch=pch, ...)
-#	mod <- if (robust.line)
-#			rlm(log(resid) ~ log(fitval + start))
-#		else lm(log(resid) ~ log(fitval + start), ...)
-#	first <- which.min(fitval) 
-#	last <- which.max(fitval) 
-#	lines((fitval + start)[c(first, last)], exp(fitted.values(mod)[c(first, last)]), 
-#		lwd=lwd, col=col, ...)
-#	p <- 1 - (coefficients(mod))[2]
-#	names(p) <- NULL
-#	result <- list(PowerTransformation=p)
-#	class(result) <- "spreadLevelPlot"
-#	result
-#}
-
 spreadLevelPlot.lm <- function(x, robust.line=TRUE, 
+    smoother=loessLine, smoother.args=list(),
 	xlab="Fitted Values",
 	ylab="Absolute Studentized Residuals", las=par("las"),
 	main=paste("Spread-Level Plot for\n", deparse(substitute(x))),
-	pch=1, col=palette()[1], col.lines=palette()[2], lwd=2, grid=TRUE, ...){
+	pch=1, col=palette()[1], col.lines=palette()[2], col.smoother=palette()[3], lwd=2, grid=TRUE, ...){
 	resid <- na.omit(abs(rstudent(x)))
 	fitval <- na.omit(fitted.values(x))
 	non.pos <- fitval <= 0
@@ -119,6 +91,10 @@ spreadLevelPlot.lm <- function(x, robust.line=TRUE,
 	last <- which.max(fitval) 
 	lines((fitval)[c(first, last)], exp(fitted.values(mod)[c(first, last)]), 
 		lwd=lwd, col=col.lines, ...)
+	if (is.null(smoother.args$lwd)) smoother.args$lwd <- lwd
+	if (is.null(smoother.args$lty)) smoother.args$lty <- 2
+	if (is.function(smoother)) smoother(fitval, resid, col=col.smoother,
+	    log.x=TRUE, log.y=TRUE, smoother.args=smoother.args)
 	p <- 1 - (coefficients(mod))[2]
 	names(p) <- NULL
 	result <- list(PowerTransformation=p)

@@ -24,8 +24,8 @@ scatter3d(x, ...)
 
 \method{scatter3d}{default}(x, y, z,
 	  xlab=deparse(substitute(x)), ylab=deparse(substitute(y)),
-	  zlab=deparse(substitute(z)), axis.scales=TRUE, revolutions=0, 
-      bg.col=c("white", "black"),
+	  zlab=deparse(substitute(z)), axis.scales=TRUE, axis.ticks=FALSE,
+	  revolutions=0, bg.col=c("white", "black"),
 	  axis.col=if (bg.col == "white") c("darkmagenta", "black", "darkcyan")
 		  else c("darkmagenta", "white", "darkcyan"),
 	  surface.col=c("blue", "green", "orange", "magenta", "cyan", "red", 
@@ -66,6 +66,8 @@ You have to install the \code{rgl} package to produce 3D plots.
   \item{axis.scales}{if \code{TRUE}, label the values of the ends of the axes.
     \emph{Note:} For \code{Identify3d} to work properly, the value of this argument must
     be the same as in \code{scatter3d}.}
+  \item{axis.ticks}{if \code{TRUE}, print interior axis-``tick'' labels; the default is \code{FALSE}.
+    (The code for this option was provided by David Winsemius.)}
   \item{revolutions}{number of full revolutions of the display.}
   \item{bg.col}{background colour; one of \code{"white"}, \code{"black"}.}
   \item{axis.col}{colours for axes; if \code{axis.scales} is \code{FALSE}, then

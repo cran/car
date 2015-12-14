@@ -12,6 +12,7 @@
 %   2014-08-09: added vcov. argument to Anova.lm(). J. Fox
 %   2014-09-23: added Anova.rlm(). J. Fox
 %   2015-02-18: updated info about when Anova.default() works. J. Fox
+%   2015-09-04: added Anova.coxme(). J. Fox
 %-------------------------------------------------------------------------------
 
 \name{Anova}
@@ -34,6 +35,7 @@
 \alias{Anova.coxph}
 \alias{Anova.svyglm}
 \alias{Anova.rlm}
+\alias{Anova.coxme}
 \alias{Anova.default}
 \title{Anova Tables for Various Statistical Models}
 \description{
@@ -41,7 +43,8 @@
   model objects produced by \code{lm}, \code{glm}, \code{multinom} 
   (in the \pkg{nnet} package), \code{polr} (in the \pkg{MASS}
   package), \code{coxph} (in the \pkg{survival} package), 
-  \code{svyglm} (in the \pkg{survival} package), \code{rlm} (in the \pkg{MASS} package),
+  \code{coxme} (in the \pkg{coxme} pckage),
+  \code{svyglm} (in the \pkg{survey} package), \code{rlm} (in the \pkg{MASS} package),
   \code{lmer} in the \pkg{lme4} package,
   \code{lme} in the \pkg{nlme} package, and (by the default method) for most
   models with a linear predictor and asymptotically normal coefficients (see details below). For linear
@@ -89,30 +92,33 @@ Manova(mod, ...)
     
 \method{print}{summary.Anova.mlm}(x, digits = getOption("digits"), ... )
     
-\method{Anova}{coxph}(mod, type=c("II","III", 2, 3), 
+\method{Anova}{coxph}(mod, type=c("II", "III", 2, 3), 
 	test.statistic=c("LR", "Wald"), ...)
+	
+\method{Anova}{coxme}(mod, type=c("II", "III", 2, 3), 
+    test.statistic=c("Wald", "LR"), ...)
 	
 \method{Anova}{lme}(mod, type=c("II","III", 2, 3),
 		vcov.=vcov(mod), singular.ok, ...)
 
-\method{Anova}{mer}(mod, type=c("II","III", 2, 3), 
+\method{Anova}{mer}(mod, type=c("II", "III", 2, 3), 
 	test.statistic=c("Chisq", "F"), vcov.=vcov(mod), singular.ok, ...)
     
-\method{Anova}{merMod}(mod, type=c("II","III", 2, 3), 
+\method{Anova}{merMod}(mod, type=c("II", "III", 2, 3), 
     test.statistic=c("Chisq", "F"), vcov.=vcov(mod), singular.ok, ...)
 		
 \method{Anova}{svyglm}(mod, ...)
 
 \method{Anova}{rlm}(mod, ...)
 	
-\method{Anova}{default}(mod, type=c("II","III", 2, 3), 
+\method{Anova}{default}(mod, type=c("II", "III", 2, 3), 
 	test.statistic=c("Chisq", "F"), vcov.=vcov(mod), 
 	singular.ok, ...)
 }
 
 \arguments{
   \item{mod}{\code{lm}, \code{aov}, \code{glm}, \code{multinom}, \code{polr}
-    \code{mlm}, \code{coxph}, \code{lme}, \code{mer}, \code{merMod}, \code{svyglm},
+    \code{mlm}, \code{coxph}, \code{coxme}, \code{lme}, \code{mer}, \code{merMod}, \code{svyglm},
     \code{rlm}, or other suitable model object.}
   \item{error}{for a linear model, an \code{lm} model object from which the
     error sum of squares and degrees of freedom are to be calculated. For 
@@ -125,7 +131,7 @@ Manova(mod, ...)
     if \code{FALSE}, a model with aliased coefficients produces an error.}
   \item{test.statistic}{for a generalized linear model, whether to calculate 
     \code{"LR"} (likelihood-ratio), \code{"Wald"}, or \code{"F"} tests; for a Cox
-    model, whether to calculate \code{"LR"} (partial-likelihood ratio) or
+    or Cox mixed-effects model, whether to calculate \code{"LR"} (partial-likelihood ratio) or
     \code{"Wald"} tests; in the default case or for linear mixed models fit by
     \code{lmer}, whether to calculate Wald \code{"Chisq"} or
     \code{"F"} tests.

@@ -1,3 +1,23 @@
+Changes to Version 2.1-1
+
+    o influencePlot now returns Cook's distance, not its square root.
+    
+    o Anova() now supports "coxme" objects (produced by coxme() in coxme package) (request of Philipp Sprenger).
+    
+    o Anova() now works via its default method with "vglm" objects produced by functions in the VGAM package; and the default method of linearHypothesis() again works with these objects (problem reported by Michael Friendly).
+    
+    o Fixed Anova.coxph() so that it takes account of method (ties) argument (bug reported by Karl Ove Hufthammer).
+    
+    o Improvements to Anova.default() so that a wider variety of model classes are accommodated (following request of Liviu Andronic.)
+    
+    o dataEllipse() now throws an error if there are too few colors for the number of groups (fixing bug reported by Ottorino Pantani).
+    
+    o spreadLevelPlot.lm() now includes an optional smoother in addition to the fitted straight line (suggestion of Michael Friendly).
+    
+    o No longer import methods (as opposed to generics) directly from pbkrtest.
+    
+    o Added axis.ticks argument to scatter3d() (code contributed by David Winsemius).
+
 Changes to Version 2.1-0
 
     o New power family called skewPower has been added that can be used with the Box Cox method with a few negative responses (joint work with Doug Hawkins).  Several functions modified to accomodate two-parameter power families.

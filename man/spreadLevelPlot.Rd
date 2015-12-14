@@ -28,10 +28,12 @@ slp(...)
     pch=1, lwd=2, grid=TRUE, ...)
 
 \method{spreadLevelPlot}{lm}(x, robust.line=TRUE, 
+    smoother=loessLine, smoother.args=list(),
 	xlab="Fitted Values",
 	ylab="Absolute Studentized Residuals", las=par("las"),
 	main=paste("Spread-Level Plot for\n", deparse(substitute(x))),
-	pch=1, col=palette()[1], col.lines=palette()[2], lwd=2, grid=TRUE, ...)
+	pch=1, col=palette()[1], col.lines=palette()[2], col.smoother=palette()[3],
+	lwd=2, grid=TRUE, ...)
 	  
 \method{print}{spreadLevelPlot}(x, ...)
 }
@@ -48,6 +50,13 @@ slp(...)
   \item{by}{a factor, numeric vector, or character vector defining groups.}
   \item{robust.line}{if \code{TRUE} a robust line is fit using the \code{rlm} function in
     the \code{MASS} package; if \code{FALSE} a line is fit using \code{lm}.}
+  \item{smoother}{a function to draw a nonparametric-regression smooth; the default is \code{\link{loessLine}},
+    which does loess smoothing.  The function \code{\link{gamLine}} fits a generalized additive model and
+    allows including a link and error function.
+    See \code{\link{ScatterplotSmoothers}}.
+    Setting this argument to something other than a function, e.g., \code{FALSE} suppresses the smoother.}
+  \item{smoother.args}{a list of named values to be passed to the smoother function; the specified elements of the
+    list depend upon the smoother (see \code{\link{ScatterplotSmoothers}}).}
   \item{start}{add the constant \code{start} to each data value.}
   \item{main}{title for the plot.}
   \item{xlab}{label for horizontal axis.}
@@ -60,6 +69,7 @@ slp(...)
     and \code{\link[graphics]{par}}).}
   \item{col.lines}{color for lines; default is the second entry in the current
     palette}
+  \item{col.smoother}{color for smooth line; default is third entry in the current palette.}
   \item{pch}{plotting character for points; default is \code{1} 
     (a circle, see \code{\link[graphics]{par}}).}
   \item{lwd}{line width; default is \code{2} (see \code{\link[graphics]{par}}).}
