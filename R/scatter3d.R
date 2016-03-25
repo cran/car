@@ -13,6 +13,7 @@
 # 2014-08-17: added calls to requireNamespace and :: as needed. J. Fox
 # 2014-09-04: J. Fox: empty groups produce warning rather than error
 # 2015-12-12: Added axis.ticks argument and code contributed by David Winsemius to add tick labels to axes. J. Fox
+# 2016-02-06: Changed call to rgl.clear() to next3d() for compatibility with embedding in HTML. J. Fox
 
 scatter3d <- function(x, ...){
     if (!requireNamespace("rgl")) stop("rgl package missing")
@@ -95,7 +96,7 @@ scatter3d.default <- function(x, y, z,
     xlab  # cause these arguments to be evaluated
     ylab
     zlab
-    rgl::rgl.clear()
+    rgl::next3d()
     rgl::rgl.viewpoint(fov=fov)
     rgl::rgl.bg(color=bg.col, fogtype=fogtype)
     if (id.method == "identify"){
