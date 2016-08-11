@@ -18,7 +18,7 @@ influencePlot(model, ...)
 	xlab="Hat-Values", ylab="Studentized Residuals", 
     labels, id.method = "noteworthy",
     id.n = if(id.method[1]=="identify") Inf else 0, 
-    id.cex=1, id.col=palette()[1], ...)
+    id.cex=1, id.col=palette()[1], id.location="lr", ...)
 }
 
 \arguments{
@@ -28,7 +28,7 @@ influencePlot(model, ...)
   }
   \item{xlab, ylab}{axis labels.
   }
-  \item{labels, id.method, id.n, id.cex, id.col}{settings for labelling
+  \item{labels, id.method, id.n, id.cex, id.col, id.location}{settings for labelling
 points; see \code{link{showLabels}} for details. To omit point labelling, set
 \code{id.n=0}, the default.  The default \code{id.method="noteworthy"} is used
 only in this function and indicates setting labels for points with large

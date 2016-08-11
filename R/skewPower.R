@@ -3,7 +3,7 @@
 #    Jacobian.adjustment optional
 #    U Univeriate or multivariate.
 #  skewPowerllik:  Evaluate the skew log-likelihood at (lambda, gamma)
-# April 15, 2015, corrected handing of invHess submatrices in estimateTransform.skewPower    
+# April 15, 2015, corrected handling of invHess submatrices in estimateTransform.skewPower    
 
 
 ## ------------------------------------------------------------------------

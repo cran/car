@@ -13,6 +13,7 @@
 #  function, so it is the responsibility of the user
 # 22 Sept 2013 added argument marginal.scale to set xlim and ylim according to xlim and 
 #  ylim of marginal plot (S. Weisberg)
+# 16 May 2016 added argument id.location to set location of labels (S. Weisberg)
 
 
 
@@ -58,7 +59,7 @@ avPlot.lm <- function(model, variable,
 		id.method = list(abs(residuals(model, type="pearson")), "x"),
 		labels, 
 		id.n = if(id.method[1]=="identify") Inf else 0,
-		id.cex=1, id.col=palette()[1],
+		id.cex=1, id.col=palette()[1], id.location="lr",
 		col = palette()[1], col.lines = palette()[2],
 		xlab, ylab, pch = 1, lwd = 2, main=paste("Added-Variable Plot:", variable), grid=TRUE,
 		ellipse=FALSE, ellipse.args=NULL, 
@@ -105,7 +106,7 @@ avPlot.lm <- function(model, variable,
 	}
 	showLabels(res[, 1],res[, 2], labels=labels, 
 			id.method=id.method, id.n=id.n, id.cex=id.cex, 
-			id.col=id.col)
+			id.col=id.col, id.location = id.location)
 	colnames(res) <- c(var.names[var], responseName)
 	rownames(res) <- rownames(mod.mat)
 	invisible(res)  
@@ -115,7 +116,7 @@ avPlot.glm <- function(model, variable,
 		id.method = list(abs(residuals(model, type="pearson")), "x"),
 		labels,
 		id.n = if(id.method[1]=="identify") Inf else 0,
-		id.cex=1, id.col=palette()[1], 
+		id.cex=1, id.col=palette()[1], id.location="lr",
 		col = palette()[1], col.lines = palette()[2],
 		xlab, ylab, pch = 1, lwd = 2,  type=c("Wang", "Weisberg"), 
 		main=paste("Added-Variable Plot:", variable), grid=TRUE,
@@ -150,7 +151,7 @@ avPlot.glm <- function(model, variable,
 	}
 	showLabels(res.x,res.y, labels=labels, 
 			id.method=id.method, id.n=id.n, id.cex=id.cex, 
-			id.col=id.col)
+			id.col=id.col, id.location = id.location)
 	res <- cbind(res.x, res.y)
 	colnames(res) <- c(var.names[var], responseName)
 	rownames(res) <- rownames(mod.mat)

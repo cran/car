@@ -26,7 +26,7 @@ dataEllipse(x, y, groups, group.labels = group.levels, ellipse.label,
     fill = FALSE, fill.alpha = 0.3, grid = TRUE, labels, id.method = "mahal", 
     id.n = if (id.method[1] == "identify") Inf else 0, id.cex = 1, 
     id.col = if (missing(groups)) palette()[1] else palette()(1:length(groups)), 
-    ...) 
+    id.location="lr", ...) 
 
 confidenceEllipse(model, ...)
 
@@ -102,7 +102,7 @@ confidenceEllipse(model, ...)
   \item{fill.alpha}{transparency of fill (default = \code{0.3}).}
   \item{\dots}{other plotting parameters to be passed to \code{plot} and
     \code{line}.}
-  \item{labels,id.method,id.n,id.cex,id.col}{Arguments for the labelling of
+  \item{labels,id.method,id.n,id.cex,id.col,id.location}{Arguments for the labelling of
     points.  The default is \code{id.n=0} for labeling no points.  See
     \code{\link{showLabels}} for details of these arguments.}
   \item{grid}{If TRUE, the default, a light-gray background grid is put on the

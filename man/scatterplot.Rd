@@ -24,7 +24,7 @@ scatterplot(x, ...)
     lwd=1, lty=1,
     labels, id.method = "mahal", 
     id.n = if(id.method[1]=="identify") length(x) else 0, 
-    id.cex = 1, id.col = palette()[1],
+    id.cex = 1, id.col = palette()[1], id.location="lr",
     log="", jitter=list(), xlim=NULL, ylim=NULL,
     cex=par("cex"), cex.axis=par("cex.axis"), cex.lab=par("cex.lab"), 
     cex.main=par("cex.main"), cex.sub=par("cex.sub"), 
@@ -74,7 +74,7 @@ sp(x, ...)
     axis; set to \code{1} for horizontal labels (see \code{\link[graphics]{par}}).}
   \item{lwd}{width of linear-regression lines (default \code{1}).}
   \item{lty}{type of linear-regression lines (default \code{1}, solid line).}
-  \item{id.method,id.n,id.cex,id.col}{Arguments for the labelling of
+  \item{id.method,id.n,id.cex,id.col,id.location}{Arguments for the labelling of
     points.  The default is \code{id.n=0} for labeling no points.  See
     \code{\link{showLabels}} for details of these arguments.  If the plot uses
     different colors for groups, then the \code{id.col} argument is ignored and

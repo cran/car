@@ -60,7 +60,7 @@ crPlot.lm<-function(model, variable,
   id.method = list(abs(residuals(model, type="pearson")), "x"),
   labels, 
   id.n = if(id.method[1]=="identify") Inf else 0,
-  id.cex=1, id.col=palette()[1],
+  id.cex=1, id.col=palette()[1], id.location="lr",
   order=1, line=TRUE, smoother=loessLine,
   smoother.args=list(), smooth, span,
   col=palette()[1], col.lines=palette()[-1],
@@ -108,7 +108,7 @@ crPlot.lm<-function(model, variable,
 		}
 		showLabels(.x, partial.res[,var], labels=labels, 
             id.method=id.method, id.n=id.n, id.cex=id.cex,
-            id.col=id.col)
+            id.col=id.col, id.location=id.location)
 	}
 	else {
 		if (df.terms(model, var)>1) 
@@ -130,6 +130,6 @@ crPlot.lm<-function(model, variable,
 		}
 		showLabels(.x, partial.res[,last], labels=labels, 
             id.method=id.method, id.n=id.n, id.cex=id.cex,
-            id.col=id.col)
+            id.col=id.col, id.location=id.location)
 	}          
 }

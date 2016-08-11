@@ -62,7 +62,7 @@ scatterplotMatrix.default <- function(x, var.labels=colnames(x),
     ellipse=FALSE, levels=c(.5, .95), robust=TRUE,
     groups=NULL, by.groups=FALSE, 
     use=c("complete.obs", "pairwise.complete.obs"),
-    labels, id.method="mahal", id.n=0, id.cex=1, id.col=palette()[1],
+    labels, id.method="mahal", id.n=0, id.cex=1, id.col=palette()[1], id.location="lr",
     col=if (n.groups == 1) palette()[3:1] else rep(palette(), length=n.groups),
     pch=1:n.groups, lwd=1, lty=1, 
     cex=par("cex"), cex.axis=par("cex.axis"), cex.labels=NULL, 
@@ -208,7 +208,8 @@ scatterplotMatrix.default <- function(x, var.labels=colnames(x),
                     if (ellipse) dataEllipse(x[subs], y[subs], plot.points=FALSE, 
                         levels=levels, col=col[i], robust=robust, lwd=1)
                     showLabels(x[subs], y[subs], labs[subs], id.method=id.method, 
-                        id.n=id.n, id.col=col[i], id.cex=id.cex, all=list(labels=labs, subs=subs))
+                        id.n=id.n, id.col=col[i], id.cex=id.cex, id.location=id.location,
+                        all=list(labels=labs, subs=subs))
                 }
             }
             if (!by.groups){
@@ -218,7 +219,7 @@ scatterplotMatrix.default <- function(x, var.labels=colnames(x),
                 if (ellipse) dataEllipse(x, y, plot.points=FALSE, levels=levels, col=col[1],
                     robust=robust, lwd=1)
                 showLabels(x, y, labs, id.method=id.method, 
-                    id.n=id.n, id.col=id.col, id.cex=id.cex)
+                    id.n=id.n, id.col=id.col, id.location=id.location, id.cex=id.cex)
             }
         }, ...
     )

@@ -6,7 +6,7 @@
 
 \title{Draw Linear Model Marginal and Conditional Plots in Parallel or Overlaid}
 \description{
-  These functions take a fitted \code{lm} object and draw two plots for each regressor, one showing the marginal relationship between the response and the regressor, centered but otherwise ignoring all other regressors, and the other an added-variable plot, showing the conditional relationship of Y and X given all other regressors.  The added variable plot by default is drawn using the same xlim and ylim as the centered marginal plot to emphasize that conditioning removes variation in both the regressor and the response.
+the \code{mcPlot} function draws two plots, or overlay the two graphs on one plot.  For a response Y and a regressor X, the first plot is the \emph{m}arginal plot of Y versus X with both variables centered, visualizing the conditional distribution of Y given X ignoring all other regressors.  The second plot is an added-variable for X after all other regressors, visualizing the \emph{c}onditional distribution of Y given X after adjusting for all other predictors.  The added variable plot by default is drawn using the same xlim and ylim as the centered marginal plot to emphasize that conditioning removes variation in both the regressor and the response.The plot is primarily intended as a pedagogical tool for understanding coefficients in first-order models.
 }
 
 \usage{
@@ -18,41 +18,39 @@ mcPlot(model, ...)
                       id.method = list(abs(residuals(model, type="pearson")), "x"),
                       labels, 
                       id.n = if(id.method[1]=="identify") Inf else 0,
-                      id.cex=1, id.col=palette()[1],
+                      id.cex=1, id.col=palette()[1], id.location="lr",
                       col.marginal="blue", col.conditional="red", col.arrows="gray",
                       pch = c(16, 1), lwd = 2, grid=TRUE,   ###removed arg main
                       ellipse=FALSE, ellipse.args=list(levels=0.5), 
                       overlaid=TRUE, new=TRUE, ...)
 }
 \arguments{
-  \item{model}{model object produced by \code{lm} or \code{glm}.
+  \item{model}{model object produced by \code{lm}.
 }
   \item{terms}{ A one-sided formula that specifies a subset of the predictors. 
-One added-variable plot is drawn for each term.   For example, the
-specification \code{terms = ~.-X3} would plot against all terms
+One added-variable plot is drawn for each numeric predictor and for each basis function used to define a factor. For example, the
+specification \code{terms = ~ . - X3} would plot against all terms
 except for \code{X3}. If this argument is a quoted name of one of the terms, the 
 added-variable plot is drawn for that term only.
 }
-\item{variable}{A quoted string giving the name of a regressor in the model matrix for the horizontal
-  axis
+\item{variable}{A quoted string giving the name of a numeric predictor in the model matrix for the horizontal
+  axis.  To plot against a factor, you need to specify the full name of one of the indicator variables that define the factor.  For example, for a factor called \code{type} with levels \code{A}, \code{B} and {C}, using the usual drop-first level parameterization of the factor, the regressors for \code{type} would be \code{typeB} or \code{typeC}.
 }
   \item{layout}{ 
 If set to a value like \code{c(1, 2)} or \code{c(6, 2)}, the layout
-of the graph will have this many rows and columns.  If not set, the program
-will select an appropriate layout of up to c(4,2); with more than 4 regressors, graphs
-will be drawing one-pair-at-a-time, with user input required between pairs of graphs
+of the graph will have this many rows and columns.  If not set, behavior depends on the value of the \code{overlaid} argument; see the details
 }
 \item{ask}{If \code{TRUE}, ask the user before drawing the next plot; if \code{FALSE} don't ask.
 }
 \item{\dots}{\code{mcPlots} passes these arguments to \code{mcPlot}.  
   \code{mcPlot} passes arguments to \code{plot}. 
 }
-  \item{id.method,labels,id.n,id.cex,id.col}{Arguments for the labelling of
+  \item{id.method,labels,id.n,id.cex,id.col,id.location}{Arguments for the labelling of
     points.  The default is \code{id.n=0} for labeling no points.  See
     \code{\link{showLabels}} for details of these arguments.
 }
-  \item{overlaid}{If TRUE, overlay the marginal and conditional plots; otherwise
-  plot them side-by-side}
+  \item{overlaid}{If TRUE, the default, overlay the marginal and conditional plots on the same graph; otherwise
+  plot them side-by-side.  See the details below}
   \item{col.marginal, col.conditional}{colors for points, lines,
   ellipses in the marginal and conditional plots, respectively}
   \item{col.arrows}{color for the arrows with \code{overlaid=TRUE}}
@@ -60,7 +58,7 @@ will be drawing one-pair-at-a-time, with user input required between pairs of gr
   \item{lwd}{line width; default is \code{2} (see \code{\link[graphics]{par}}).}
   \item{grid}{If \code{TRUE}, the default, a light-gray background grid is put on the graph.}
   \item{ellipse}{If \code{TRUE}, plot a concentration ellipse; default is \code{FALSE}.}
-  \item{ellipse.args}{Arguments to pass to the \code{link{dataEllipse}} function, in the form of a list
+  \item{ellipse.args}{Arguments to pass to the \code{\link{dataEllipse}} function, in the form of a list
     with named elements; e.g., \code{ellipse.args=list(robust=TRUE))} will cause the ellipse to be plotted using
     a robust covariance-matrix.}
   \item{new}{if \code{TRUE}, the default, the plot window is reset when \code{overlaid=FALSE} using \code{par{mfrow=c(1, 2)}}.  If \code{FALSE}, the layout of the plot window is not reset.  
@@ -68,16 +66,18 @@ will be drawing one-pair-at-a-time, with user input required between pairs of gr
 }  
 
 \details{
-With an \code{lm} object, suppose the response is Y, X is a focal regressor of interest, and Z is all the remaining regressors.  This function produces two graphs.  The marginal plot is simply of Y versus X, with each variable centered around its mean.  The conditional plot is the added-variable plot of e(Y|Z) versus e(X|Z) where e(a|b) means the ordinary residuals from the regression of a on b.  If \code{overlaid=TRUE}, these two plots are overlaid in one graph, with the points in different colors.  In addition, each point in the marginal plot is joined to its value in the conditional plot by an arrow.  Least squares regression lines fit to the marginal and conditional graphs are also shown; data ellipsoids can also be added.  If \code{overlaid=FALSE}, then the two graphs are shown in side-by-side plots, and the arrows are omitted.
+With an \code{lm} object, suppose the response is Y, X is a focal numeric predictor of interest, and Z is all the remaining predictors, possibly including interactions and factors.  This function produces two graphs.  The first graph is the marginal plot of Y versus X, with each variable centered around its mean.  The second conditional plot is the added-variable plot of e(Y|Z) versus e(X|Z) where e(a|b) means the Pearson residuals from the regression of a on b.  If \code{overlaid=TRUE}, these two plots are overlaid in one graph, with the points in different colors.  In addition, each point in the marginal plot is joined to its value in the conditional plot by an arrow.  Least squares regression lines fit to the marginal and conditional graphs are also shown; data ellipsoids can also be added.  If \code{overlaid=FALSE}, then the two graphs are shown in side-by-side plots as long as the second argument to \code{layout} is equal to \code{2}, or \code{layout} is set by the function. The arrows are omitted if the graphs are not overlaid.
   
 These graphs are primarily for teaching, as the marginal plot shows the relationship between Y and X ignoring Z, while the conditional is the relationship between Y and X given X.  By keeping the scales the same in both graphs the effect of conditioning on both X and Y can be visualized.
+
+This function is intended for first-order models with numeric predictors only.  If the focal predictor is a factor, then one (pair) of mcPlots will be produced for each of the basis variables that define the factor, and the resulting plots are not generally meaningful because they depend on parameterization.  If the mean function includes interactions, then mcPlots for main effects may violate the hierarchy principle, and may also be of little interest.  mcPlots for interactions of numerical predictors, however, can be useful.
 
 These graphs are closely related to the ARES plots proposed by Cook and Weisberg (1989).
 This plot would benefit from animation.
 }
 
 \value{
-  These functions are used for their side effect id producing
+  These functions are used for their side effect of producing
   plots.
 }
 
@@ -85,9 +85,9 @@ This plot would benefit from animation.
   Cook, R. D. and Weisberg, S. (1989)
   \emph{Regression diagnostics with dynamic graphics,} Technometrics, 31, 277.
 
-  Fox, J. (2008)
+  Fox, J. (2016)
   \emph{Applied Regression Analysis and Generalized Linear Models},
-  Second Edition. Sage.  
+  Third Edition. Sage.  
   
   Fox, J. and Weisberg, S. (2011) 
   \emph{An R Companion to Applied Regression}, Second Edition, Sage.

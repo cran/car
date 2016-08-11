@@ -21,7 +21,7 @@ crPlot(model, ...)
   id.method = list(abs(residuals(model, type="pearson")), "x"),
   labels, 
   id.n = if(id.method[1]=="identify") Inf else 0,
-  id.cex=1, id.col=palette()[1],
+  id.cex=1, id.col=palette()[1], id.location="lr",
   order=1, line=TRUE, smoother=loessLine,
 	smoother.args=list(), smooth, span,
   col=palette()[1], col.lines=palette()[-1],
@@ -55,7 +55,7 @@ This is relevant only if not all the graphs can be drawn in one window.}
   \item{variable}{A quoted string giving the name of a variable for the horizontal
 axis
 }
-  \item{id.method,labels,id.n,id.cex,id.col}{Arguments for the labelling of
+  \item{id.method,labels,id.n,id.cex,id.col,id.location}{Arguments for the labelling of
     points.  The default is \code{id.n=0} for labeling no points.  See
     \code{\link{showLabels}} for details of these arguments.
 }

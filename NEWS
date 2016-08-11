@@ -1,3 +1,23 @@
+Changes to Version 2.1-3
+
+  o Corrected documentation for mcPlots
+  
+  o added id.location argument to showLabels to vary location of labels
+  
+  o added fix for compatiblity with Rcmdr with missing data in several plotting functions.
+  
+  o deltaMethod() now reports confidence intervals.
+  
+  o print.summary.Anova.mlm() has new SSP and SSPE arguments to determine whether the corresponding matrices are printed (suggestion of Michael Friendly).
+  
+  o summary() and print() methods for Anova.mlm() can now report univariate ANOVAs (suggestion and some code by Michael Friendly).
+  
+  o added "value" and "vcov" attributes to objects returned by linearHypothesis() (after suggestions by Liviu Andronic and Steven Yen).
+  
+  o compareCoefs() now checks classes of models. 
+  
+  o small fixes/changes.
+
 Changes to Version 2.1-2
 
   o Modified scatter3d() so that plots can be embedded in HTML.

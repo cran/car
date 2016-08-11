@@ -34,7 +34,7 @@ marginalModelPlot(...)
     col.line = palette()[c(4, 2)], col=palette()[1],
     labels, id.method="y",
     id.n=if(id.method[1]=="identify") Inf else 0,
-    id.cex=1, id.col=palette()[1], grid=TRUE, ...)
+    id.cex=1, id.col=palette()[1], id.location="lr", grid=TRUE, ...)
    
 \method{mmp}{glm}(model, variable, sd = FALSE,
     xlab = deparse(substitute(variable)), smoother=gamLine,
@@ -42,7 +42,7 @@ marginalModelPlot(...)
     col.line = palette()[c(4, 2)], col=palette()[1],
     labels, id.method="y",
     id.n=if(id.method[1]=="identify") Inf else 0, 
-    id.cex=1, id.col=palette()[1], grid=TRUE, ...)
+    id.cex=1, id.col=palette()[1], id.location="lr", grid=TRUE, ...)
 }
 
 \arguments{
@@ -104,7 +104,7 @@ separate colors/smoothers.  This can also be specified as a conditioning
 argument on the \code{terms} argument.}
 \item{key}{If \code{TRUE}, include a key at the top of the plot, if \code{FALSE} omit the
 key.  If grouping is present, the key is only printed for the upper-left plot.}
-  \item{id.method,labels,id.n,id.cex,id.col}{Arguments for labeling
+  \item{id.method,labels,id.n,id.cex,id.col,id.location}{Arguments for labeling
 points.  The default \code{id.n=0} suppresses labeling, and setting this
 argument greater than zero will include labeling.  See
 \code{\link{showLabels}} for these arguments.}

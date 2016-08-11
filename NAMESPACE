@@ -1,4 +1,4 @@
-# last modified 2015-12-12 by J. Fox
+# last modified 2016-06-25 by J. Fox
 
 importFrom(MASS, cov.trob, polr, rlm)
 importFrom(nnet, multinom)
@@ -17,9 +17,9 @@ importFrom(stats, D, IQR, alias, anova, as.formula, coef, coefficients,
     glm, glm.fit, hatvalues, is.empty.model, lm, lm.fit, loess, loess.control, 
     logLik, lowess, lsfit, make.link, median, model.frame, model.matrix, 
     model.matrix.default, model.response, model.weights, na.omit, na.pass, 
-    naresid, optim, optimize, pchisq, pf, pnorm, ppoints, predict, printCoefmat, 
+    naresid, optim, optimize, p.adjust, pchisq, pf, pnorm, ppoints, predict, printCoefmat, 
     pt, qchisq, qf, qnorm, qqline, qqnorm, qt, quantile, resid, residuals, rnorm, 
-    rstandard, rstudent, sd, spline, summary.lm, terms, update, var, vcov, weights,
+    rstandard, rstudent, sd, setNames, spline, summary.lm, terms, update, var, vcov, weights,
     optimHess)
 importFrom(utils, browseURL, head, methods)
 # importFrom(VGAM, vcovvlm, coefvlm, formulavlm, model.matrixvlm)
@@ -174,6 +174,8 @@ S3method(Anova, mer)
 S3method(Anova, merMod)
 S3method(Anova, multinom)
 S3method(Anova, mlm)
+S3method(print, univaov)
+S3method(as.data.frame, univaov)
 S3method(Anova, polr)
 S3method(Anova, rlm)
 S3method(Anova, survreg)

@@ -35,7 +35,7 @@ invTranPlot.default<- function(x, y, lambda=c(-1, 0, 1), robust=FALSE,
         id.method = "x",
         labels, 
         id.n = if(id.method[1]=="identify") Inf else 0, 
-        id.cex=1, id.col=palette()[1], grid=TRUE, ...){
+        id.cex=1, id.col=palette()[1], id.location="lr", grid=TRUE, ...){
  if (missing(labels)) labels <- seq(length(x))
  if (is.factor(x)) stop("Predictor variable may not be a factor")
  if (is.factor(y)) stop("Response variable may not be a factor")
@@ -57,7 +57,7 @@ invTranPlot.default<- function(x, y, lambda=c(-1, 0, 1), robust=FALSE,
        col=col.lines[j], lwd=lwd.lines)}
  showLabels(x, y, labels=labels, 
           id.method=id.method, id.n=id.n, id.cex=id.cex, 
-          id.col=id.col)
+          id.col=id.col, id.location = id.location)
  if (!is.null(key)) {
       loc <- key
       if(length(lam) <= 4) {

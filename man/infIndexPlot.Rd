@@ -18,7 +18,7 @@ influenceIndexPlot(model, ...)
      main="Diagnostic Plots",
      labels, id.method = "y",
      id.n = if(id.method[1]=="identify") Inf else 0,
-     id.cex=1, id.col=palette()[1], grid=TRUE, ...)
+     id.cex=1, id.col=palette()[1], id.location="lr", grid=TRUE, ...)
 
 }
 \arguments{
@@ -31,7 +31,7 @@ and \code{"hat"} for hat-values (or leverages).   Capitalization is optional.
 All may be abbreviated by the first one or more letters.
 }
   \item{main}{main title for graph}
-  \item{id.method,labels,id.n,id.cex,id.col}{Arguments for the labelling of
+  \item{id.method,labels,id.n,id.cex,id.col,id.location}{Arguments for the labelling of
     points.  The default is \code{id.n=0} for labeling no points.  See
     \code{\link{showLabels}} for details of these arguments.
 }

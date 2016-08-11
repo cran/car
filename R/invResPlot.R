@@ -1,5 +1,6 @@
 # Last modified 25 Nov 2009 for point marking
 # 18 January 2012 added robust estimation from Pendergast and Sheather
+# 25 April 2016 check na.action for compatibility with Rcmdr
 
 inverseResponsePlot <- function(model, lambda=c(-1, 0, 1), robust=FALSE,
    xlab=NULL, ...)
@@ -18,9 +19,11 @@ inverseResponsePlot.lm <- function(model, lambda=c(-1, 0, 1), xlab=NULL,
 invResPlot <- function(model, ...) UseMethod("inverseResponsePlot")
 
 
-##########NEW
 inverseResponsePlot.lm <- function(model, lambda=c(-1, 0, 1), robust=FALSE, 
        xlab=NULL, labels = names(residuals(model)), ...) {
+# Added for compatibility with Rcmdr
+  if(class(model$na.action) == "exclude") model <- update(model, na.action=na.omit)
+# End addition
   if(robust == TRUE){
     m <- model$call
     m[[1L]] <- as.name("rlm")

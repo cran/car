@@ -24,7 +24,7 @@ qqp(...)
 	labels = if(!is.null(names(x))) names(x) else seq(along=x),
 	id.method = "y", 
 	id.n =if(id.method[1]=="identify") Inf else 0,
-	id.cex=1, id.col=palette()[1], grid=TRUE)
+	id.cex=1, id.col=palette()[1], id.location="lr", grid=TRUE)
 
 \method{qqPlot}{lm}(x, xlab=paste(distribution, "Quantiles"),
 	ylab=paste("Studentized Residuals(", deparse(substitute(x)), ")",
@@ -35,7 +35,7 @@ qqp(...)
 	pch=1, cex=par("cex"),
 	labels, id.method = "y", 
 	id.n = if(id.method[1]=="identify") Inf else 0,
-	id.cex=1, id.col=palette()[1], grid=TRUE, ...)
+	id.cex=1, id.col=palette()[1], id.location="lr", grid=TRUE, ...)
 }
 
 \arguments{
@@ -68,6 +68,7 @@ qqp(...)
     point identification.} 
   \item{id.cex}{set size of the text for point labels; the default is \code{cex} (which is typically \code{1}).}
   \item{id.col}{color for the point labels.}
+  \item{id.location}{The default \code{"lr"} identifies to the left or right of the point; the alterative \code{"ab"} identifies above or below the point.}
   \item{lwd}{line width; default is \code{2} (see \code{\link[graphics]{par}}).}
   \item{line}{\code{"quartiles"} to pass a line through the quartile-pairs, or
     \code{"robust"} for a robust-regression line; the latter uses the \code{rlm}

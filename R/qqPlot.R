@@ -24,7 +24,7 @@ qqPlot.default <- function(x, distribution="norm", ..., ylab=deparse(substitute(
 		labels = if(!is.null(names(x))) names(x) else seq(along=x),
 		id.method = "y", 
 		id.n = if(id.method[1]=="identify") Inf else 0,
-		id.cex=1, id.col=palette()[1], grid=TRUE)
+		id.cex=1, id.col=palette()[1], id.location="lr", grid=TRUE)
 {
 	line <- match.arg(line)
 	good <- !is.na(x)
@@ -68,7 +68,7 @@ qqPlot.default <- function(x, distribution="norm", ..., ylab=deparse(substitute(
 		lines(z, lower, lty=2, lwd=lwd, col=col.lines)
 	}
 	showLabels(z, ord.x, labels=ord.lab,
-			id.method = id.method, id.n = id.n, id.cex=id.cex, id.col=id.col)
+			id.method = id.method, id.n = id.n, id.cex=id.cex, id.col=id.col, id.location=id.location)
 }
 
 qqPlot.lm <- function(x, xlab=paste(distribution, "Quantiles"),
@@ -78,7 +78,7 @@ qqPlot.lm <- function(x, xlab=paste(distribution, "Quantiles"),
 		col=palette()[1], col.lines=palette()[2], lwd=2, pch=1, cex=par("cex"),
 		labels, id.method = "y", 
 		id.n = if(id.method[1]=="identify") Inf else 0, id.cex=1, 
-		id.col=palette()[1], grid=TRUE, ...){
+		id.col=palette()[1], id.location="lr", grid=TRUE, ...){
 	result <- NULL
 	distribution <- match.arg(distribution)
 	line <- match.arg(line)
@@ -94,7 +94,7 @@ qqPlot.lm <- function(x, xlab=paste(distribution, "Quantiles"),
 				main=main, xlab=xlab, ylab=ylab, las=las, envelope=envelope, 
 				col=col, col.lines=col.lines, lwd=lwd, pch=pch, cex=cex,
 				labels=labels, id.method=id.method, id.n=id.n, id.cex=id.cex,
-				id.col=id.col, ...)
+				id.col=id.col, id.location="lr", ...)
 	else {
 		n <- length(rstudent)        
 		ord <- order(rstudent)
@@ -128,7 +128,7 @@ qqPlot.lm <- function(x, xlab=paste(distribution, "Quantiles"),
 			abline(a, b, col=col.lines, lwd=lwd)
 		}                   
 		result <- showLabels(z, ord.x,labels=ord.lab,  
-				id.method = id.method, id.n = id.n, id.cex=id.cex, id.col=id.col)
+				id.method = id.method, id.n = id.n, id.cex=id.cex, id.col=id.col, id.location=id.location)
 	}
 	if (length(result) == 0) invisible(result) else if (is.numeric(result)) sort(result) else result
 }

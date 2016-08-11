@@ -12,7 +12,7 @@ these other functions.
 }
 \usage{
 showLabels(x, y, labels=NULL, id.method="identify",  
-  id.n = length(x), id.cex=1, id.col=palette()[1], ...)
+  id.n = length(x), id.cex=1, id.col=palette()[1], id.location="lr", ...)
      
 }
 %- maybe also 'usage' for other objects documented here.
@@ -38,6 +38,8 @@ Controls the size of the plotted labels.  The default is \code{1}.
 }
   \item{id.col}{
 Controls the color of the plotted labels. 
+}
+  \item{id.location}{ Where should the label be drawn?  The default is \code{"lr"} to draw the label to the left of the point for points in the right-half of the graph and to the right for points in the left-half.  The other option is \code{"ab"} for above the point for points below the middle of the graph and above the point below the middle.
 }
   \item{...}{additional arguments passed to \code{identify} or to \code{text}.}
 }

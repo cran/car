@@ -32,7 +32,8 @@
 #               and residual SS nonzero in Anova.lm(). John
 #   2015-01-27: KRmodcomp() and methods now imported from pbkrtest. John
 #   2015-02-03: Check for NULL df before 0 df in default method. John
-#---------------------------------------------------------------------------------------
+#   2016-06-29: added "value" and "vcov" attributes to returned object, print vcov when verbose. John
+#----------------------------------------------------------------------------------------------------
 
 vcov.default <- function(object, ...){
 	stop(paste("there is no vcov() method for models of class",
@@ -208,16 +209,22 @@ linearHypothesis.default <- function(model, hypothesis.matrix, rhs=NULL,
 		if (is.null(rhs)) rhs <- rep(0, nrow(L))
 	}
 	q <- NROW(L)
+	value.hyp <- L %*% b - rhs
+	vcov.hyp <- L %*% V %*% t(L)
 	if (verbose){
 		cat("\nHypothesis matrix:\n")
 		print(L)
 		cat("\nRight-hand-side vector:\n")
 		print(rhs)
 		cat("\nEstimated linear function (hypothesis.matrix %*% coef - rhs)\n")
-		print(drop(L %*% b - rhs))
+		print(drop(value.hyp))
+		cat("\n")
+		if (length(vcov.hyp) == 1) cat("\nEstimated variance of linear function\n")
+		else cat("\nEstimated variance/covariance matrix for linear function\n")
+		print(drop(vcov.hyp))
 		cat("\n")
 	}
-	SSH <- as.vector(t(L %*% b - rhs) %*% solve(L %*% V %*% t(L)) %*% (L %*% b - rhs))
+	SSH <- as.vector(t(value.hyp) %*% solve(vcov.hyp) %*% value.hyp)
 	test <- match.arg(test)
 	if (!(is.finite(df) && df > 0)) test <- "Chisq"
 	name <- try(formula(model), silent = TRUE)
@@ -241,9 +248,12 @@ linearHypothesis.default <- function(model, hypothesis.matrix, rhs=NULL,
 		rval[2, 2:4] <- c(q, SSH, p)
 	}
 	if (!(is.finite(df) && df > 0)) rval <- rval[,-1]
-	structure(as.data.frame(rval),
+	result <- structure(as.data.frame(rval),
 			heading = c(title, printHypothesis(L, rhs, names(b)), "", topnote, note),
 			class = c("anova", "data.frame"))
+	attr(result, "value") <- value.hyp
+	attr(result, "vcov") <- vcov.hyp
+	result
 }
 
 linearHypothesis.glm <- function(model, ...)
@@ -278,6 +288,8 @@ linearHypothesis.lm <- function(model, hypothesis.matrix, rhs=NULL,
 		rval2 <- cbind(rval, rval2)[,c(1, 5, 2, 6, 3, 4)]
 		class(rval2) <- c("anova", "data.frame")
 		attr(rval2, "heading") <- attr(rval, "heading")
+		attr(rval2, "value") <- attr(rval, "value")
+		attr(rval2, "vcov") <- attr(rval, "vcov")
 		rval <- rval2
 	}
 	rval

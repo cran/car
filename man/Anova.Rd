@@ -1,4 +1,4 @@
-%-------------------------------------------------------------------------------
+%-------------------------------------------------------------------------------------
 % Revision history:
 % checked in 2008-12-29 by J. Fox (corresponds to version 1.2-10 of car)
 %	2009-01-16 updated doc to correspond to changes in linearHypothesis. J. Fox
@@ -13,7 +13,9 @@
 %   2014-09-23: added Anova.rlm(). J. Fox
 %   2015-02-18: updated info about when Anova.default() works. J. Fox
 %   2015-09-04: added Anova.coxme(). J. Fox
-%-------------------------------------------------------------------------------
+%   2016-06-03: added SSP and SSPE arguments to print.summary.ANova.mlm(). J. Fox
+%   2016-06-25: provision to print univariate ANOVAs for a mlm. J. Fox
+%-------------------------------------------------------------------------------------
 
 \name{Anova}
 \alias{Anova}
@@ -32,6 +34,8 @@
 \alias{print.Anova.mlm}
 \alias{summary.Anova.mlm}
 \alias{print.summary.Anova.mlm}
+\alias{print.univaov}
+\alias{as.data.frame.univaov}
 \alias{Anova.coxph}
 \alias{Anova.svyglm}
 \alias{Anova.rlm}
@@ -87,10 +91,18 @@ Manova(mod, ...)
     
 \method{print}{Anova.mlm}(x, ...)
 
-\method{summary}{Anova.mlm}(object, test.statistic, univariate=TRUE, 
-    multivariate=TRUE, ...)
+\method{summary}{Anova.mlm}(object, test.statistic, univariate=object$repeated, 
+    multivariate=TRUE, p.adjust.method, ...)
     
-\method{print}{summary.Anova.mlm}(x, digits = getOption("digits"), ... )
+\method{print}{summary.Anova.mlm}(x, digits = getOption("digits"), 
+    SSP=TRUE, SSPE=SSP, ... )
+    
+\method{print}{univaov}(x, digits = max(getOption("digits") - 2L, 3L), 
+                          style=c("wide", "long"), 
+                          by=c("response", "term"),
+                          ...)
+    
+\method{as.data.frame}{univaov}(x, row.names, optional, by=c("response", "term"), ...)
     
 \method{Anova}{coxph}(mod, type=c("II", "III", 2, 3), 
 	test.statistic=c("LR", "Wald"), ...)
@@ -151,8 +163,13 @@ Manova(mod, ...)
     covariance matrix; the various values of the argument specify different corrections.
     See the documentation for \code{\link{hccm}} for details. If \code{white.adjust=TRUE}
     then the \code{"hc3"} correction is selected.} 
-  \item{SSPE}{The error sum-of-squares-and-products matrix; if missing, will be computed
-    from the residuals of the model.}
+  \item{SSPE}{For \code{Anova} for a multivariate linear model, the 
+    error sum-of-squares-and-products matrix; if missing, will be computed
+    from the residuals of the model; for the \code{print} method for the \code{summary} of
+    an \code{Anova} of a multivariate linear model, 
+    whether or not to print the error SSP matrix (defaults to \code{TRUE}).}
+  \item{SSP}{if \code{TRUE} (the default), print the sum-of-squares and 
+    cross-products matrix for the hypothesis and the response-transformation matrix.}
   \item{error.df}{The degrees of freedom for error; if missing, will be taken from the model.}
   \item{idata}{an optional data frame giving a factor or factors defining the
     intra-subject model for multivariate repeated-measures data. See 
@@ -173,8 +190,17 @@ Manova(mod, ...)
   	matrix for different terms must be mutually orthogonal.}
   \item{x, object}{object of class \code{"Anova.mlm"} to print or summarize.}
   \item{multivariate, univariate}{compute and print multivariate and univariate tests for a repeated-measures
-    ANOVA; the default is \code{TRUE} for both.}
+    ANOVA or multivariate linear model; the default is \code{TRUE} for both for repeated measures and \code{TRUE} 
+    for \code{multivariate} for a multivariate linear model.}
+  \item{p.adjust.method}{if given for a multivariate linear model when univariate tests are requested, the
+    univariate tests are corrected for simultaneous inference by term; if specified, should be one of the methods
+    recognized by \code{\link{p.adjust}} or \code{TRUE}, in which case the default (Holm) adjustment is used.}
   \item{digits}{minimum number of significant digits to print.}
+  \item{style}{for printing univariate tests if requested for a multivariate linear model; one of \code{"wide"}, 
+    the default, or \code{"long"}.}
+  \item{by}{if univariate tests are printed in \code{"long"} \code{style}, they can be ordered \code{by} 
+    \code{"response"}, the default, or by \code{"term"}.}
+  \item{row.names, optional}{not used.}
   \item{vcov.}{in the \code{default} method, an optional coefficient-covariance matrix or function
     to compute a covariance matrix, computed by default by applying the generic \code{vcov} function to the model object.
     A similar argument may be supplied to the \code{lm} method, and the default (\code{NULL}) is to ignore the argument;
@@ -221,6 +247,10 @@ Manova(mod, ...)
   can be specified directly via the \code{imatrix} argument.
   \code{Manova} is essentially a synonym for \code{Anova}
   for multivariate linear models.
+  
+  If univariate tests are requested for the \code{summary} of a multivariate linear model, the object returned
+  contains a \code{univaov} component of \code{"univaov"}; \code{print} and \code{as.data.frame} methods are
+  provided for the \code{"univaov"} class.
   
   For the default method to work, the model object must contain a standard
   \code{terms} element, and must respond to the \code{vcov}, \code{coef}, and \code{model.matrix} functions. 
@@ -280,6 +310,8 @@ summary(Anova(lm(cbind(Al, Fe, Mg, Ca, Na) ~ Site, data=Pottery)))
 soils.mod <- lm(cbind(pH,N,Dens,P,Ca,Mg,K,Na,Conduc) ~ Block + Contour*Depth, 
     data=Soils)
 Manova(soils.mod)
+summary(Anova(soils.mod), univariate=TRUE, multivariate=FALSE,
+    p.adjust.method=TRUE)
 
 ## a multivariate linear model for repeated-measures data
 ## See ?OBrienKaiser for a description of the data set used in this example.

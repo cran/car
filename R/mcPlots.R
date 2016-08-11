@@ -62,7 +62,7 @@ mcPlot.lm <- function(model, variable,
                       id.method = list(abs(residuals(model, type="pearson")), "x"),
                       labels, 
                       id.n = if(id.method[1]=="identify") Inf else 0,
-                      id.cex=1, id.col=palette()[1],
+                      id.cex=1, id.col=palette()[1], id.location="lr",
                       col.marginal="blue", col.conditional="red", col.arrows="gray",
                       pch = c(16,1), lwd = 2, grid=TRUE,   ###removed arg main
                       ellipse=FALSE, ellipse.args=list(levels=0.5), 
@@ -115,7 +115,7 @@ mcPlot.lm <- function(model, variable,
      }
      showLabels(res0[, 1],res0[, 2], labels=labels, 
               id.method=id.method, id.n=id.n, id.cex=id.cex, 
-              id.col=id.col)
+              id.col=id.col, id.location=id.location)
     colnames(res) <- c(var.names[var], responseName)
     rownames(res) <- rownames(mod.mat)
     invisible(res)} 
@@ -136,7 +136,7 @@ mcPlot.lm <- function(model, variable,
     }
     showLabels(res0[, 1],res0[, 2], labels=labels, 
                id.method=id.method, id.n=id.n, id.cex=id.cex, 
-               id.col=id.col)
+               id.col=id.col, id.location=id.location)
     colnames(res) <- c(var.names[var], responseName)
     rownames(res) <- rownames(mod.mat)    
     plot(res[, 1], res[, 2], xlab = xlab, ylab = ylab, type="n", 
@@ -153,7 +153,7 @@ mcPlot.lm <- function(model, variable,
      }
     showLabels(res[, 1],res[, 2], labels=labels, 
                 id.method=id.method, id.n=id.n, id.cex=id.cex, 
-                id.col=id.col)
+                id.col=id.col, id.location=id.location)
     invisible(res)}      
 }
 

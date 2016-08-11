@@ -46,7 +46,7 @@ residualPlot(model, ...)
                  labels,
                  id.method = "r",
                  id.n = if(id.method[1]=="identify") Inf else 0,
-                 id.cex=1, id.col=palette()[1],
+                 id.cex=1, id.col=palette()[1], id.location="lr",
                  col = palette()[1], col.quad = palette()[2],
                  pch=1,
                  xlab, ylab, lwd = 1, lty = 1,
@@ -157,7 +157,7 @@ number, or \code{k=-1} for the default used by \code{\link{gam}}.
 \item{col.smooth}{color for the smoother if groups missing, and ignored if
 groups is set.
 }
-\item{id.method,labels,id.n,id.cex,id.col}{Arguments for the labelling of
+\item{id.method,labels,id.n,id.cex,id.col,id.location}{Arguments for the labelling of
     points.  The default is \code{id.n=0} for labeling no points.  See
     \code{\link{showLabels}} for details of these arguments.
 }

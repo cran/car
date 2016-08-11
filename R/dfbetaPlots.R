@@ -10,7 +10,7 @@ dfbetasPlots.lm <- function(model, terms= ~ ., intercept=FALSE, layout=NULL, ask
 		main, xlab, ylab, labels=rownames(dfbeta), 
 		id.method="y",  
 		id.n=if(id.method[1]=="identify") Inf else 0, id.cex=1, 
-		id.col=palette()[1], col=palette()[1], grid=TRUE, ...){
+		id.col=palette()[1], id.location="lr", col=palette()[1], grid=TRUE, ...){
 	terms <- if(is.character(terms)) paste("~",terms) else terms
 	vform <- update(formula(model),terms)
 	if(any(is.na(match(all.vars(vform), all.vars(formula(model))))))
@@ -49,7 +49,7 @@ dfbetasPlots.lm <- function(model, terms= ~ ., intercept=FALSE, layout=NULL, ask
 		points(dfbs,  col=col, ...)
 		abline(h=c(-1, 0, 1), lty=2)
 		showLabels(seq(along=dfbs), dfbs, id.method=id.method, 
-				id.n=id.n, labels=labels, id.col=id.col,
+				id.n=id.n, labels=labels, id.col=id.col, id.location="lr",
 				id.cex=id.cex, ...)
 	}
 	mtext(side=3,outer=TRUE,main, cex=1.2)
@@ -64,7 +64,8 @@ dfbetaPlots.lm <- function(model, terms=~., intercept=FALSE, layout=NULL, ask,
 		main, xlab, ylab,
 		labels=rownames(dfbeta), id.method="y",
 		id.n=if(id.method[1]=="identify") Inf else 0, id.cex=1, 
-		id.col=palette()[1], col = palette()[1], grid=TRUE, ...){
+		id.col=palette()[1], id.location="lr",
+		col = palette()[1], grid=TRUE, ...){
 	terms <- if(is.character(terms)) paste("~",terms) else terms
 	vform <- update(formula(model),terms)
 	if(any(is.na(match(all.vars(vform), all.vars(formula(model))))))
@@ -103,7 +104,7 @@ dfbetaPlots.lm <- function(model, terms=~., intercept=FALSE, layout=NULL, ask,
 		points(dfb, col=col, ...)
 		abline(h=c(-se, 0, se), lty=2)
 		showLabels(seq(along=dfb), dfb, id.method=id.method, id.n=id.n, 
-				labels=labels, id.cex=id.cex, id.col=id.col, ...)
+				labels=labels, id.cex=id.cex, id.col=id.col, id.location=id.location, ...)
 	}
 	mtext(side=3,outer=TRUE,main, cex=1.2)
 	invisible(NULL)

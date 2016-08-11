@@ -23,7 +23,7 @@ with known or estimated covariance matrix.
 \usage{
 deltaMethod(object, ...)
 
-\method{deltaMethod}{default}(object, g, vcov., func=g, constants, ...)
+\method{deltaMethod}{default}(object, g, vcov., func=g, constants, level=0.95, ...)
 \method{deltaMethod}{lm} (object, g, vcov.=vcov, 
            parameterNames=names(coef(object)), ...)
 \method{deltaMethod}{nls}(object, g, vcov.=vcov, ...)
@@ -74,6 +74,7 @@ deltaMethod(object, ...)
   are used in the \code{f} argument.  This is needed only when the function is
   called from within another function to comply to R scoping rules.  See
   example below.}
+  \item{level}{level for confidence interval, default \code{0.95}.}
   \item{...}{Used to pass arguments to the generic method.}
 }
 

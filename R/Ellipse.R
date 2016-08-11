@@ -85,7 +85,7 @@ dataEllipse <- function(x, y, groups,
     pch=if (missing(groups)) 1 else seq(group.levels),
     lwd=2, fill=FALSE, fill.alpha=0.3, grid=TRUE,
     labels, id.method = "mahal", id.n = if(id.method[1]=="identify") Inf else 0,
-    id.cex=1, id.col=if (missing(groups)) palette()[1] else palette()(1:length(groups)), 
+    id.cex=1, id.col=if (missing(groups)) palette()[1] else palette()(1:length(groups)), id.location = "lr",
     ...) {
     label.ellipse <- function(ellipse, label, col, ...){
         # This sub-function from Michael Friendly
@@ -149,7 +149,8 @@ dataEllipse <- function(x, y, groups,
                 weights=weights[sel], log=log, levels=levels, center.pch=center.pch,
                 center.cex=center.cex, draw=draw, plot.points=plot.points, add=TRUE, segments=segments,
                 robust=robust, col=rep(col[lev], 2), pch=pch[lev], lwd=lwd, fill=fill, fill.alpha=fill.alpha, 
-                labels=labels[sel], id.method=id.method, id.n=id.n, id.cex=id.cex, id.col=col[lev], 
+                labels=labels[sel], id.method=id.method, id.n=id.n, id.cex=id.cex, 
+                id.col=col[lev], id.location=id.location,
                 ellipse.label=group.labels[lev], ...)
         }
         return(invisible(result))
@@ -193,7 +194,7 @@ dataEllipse <- function(x, y, groups,
     if (missing(labels)) labels <- seq(length(x))
     if (draw) showLabels(x, y, labels=labels,
         id.method=id.method, id.n=id.n, id.cex=id.cex,
-        id.col=id.col)
+        id.col=id.col, id.location = id.location)
     invisible(if (length(levels) == 1) result[[1]] else result)
 }
     

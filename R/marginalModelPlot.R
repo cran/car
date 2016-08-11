@@ -41,7 +41,7 @@ function (model, variable, sd = FALSE,
     col.line = palette()[c(4, 2)], col=palette()[1],
     labels, id.method="y",
     id.n=if(id.method[1]=="identify") Inf else 0,
-    id.cex=1, id.col=palette()[1], grid=TRUE, ...)
+    id.cex=1, id.col=palette()[1], id.location="lr", grid=TRUE, ...)
 {
     lwd <- match.call(expand.dots=TRUE)$lwd
     if(missing(pch)) pch <- 1
@@ -116,7 +116,7 @@ function (model, variable, sd = FALSE,
     }
     showLabels(u, resp, labels=labels,
            id.method=id.method, id.n=id.n, id.cex=id.cex,
-           id.col=id.col)
+           id.col=id.col, id.location=id.location)
     }
 
 mmp.glm <- function (model, variable, sd = FALSE,
@@ -125,7 +125,7 @@ mmp.glm <- function (model, variable, sd = FALSE,
     col.line = palette()[c(4, 2)], col=palette()[1],
     labels, id.method="y",
     id.n=if(id.method[1]=="identify") Inf else 0, 
-    id.cex=1, id.col=palette()[1], grid=TRUE, ...)
+    id.cex=1, id.col=palette()[1], id.location="lr", grid=TRUE, ...)
 {
     lwd <- match.call(expand.dots=TRUE)$lwd
     if(missing(pch)) pch <- 1
@@ -204,7 +204,7 @@ mmp.glm <- function (model, variable, sd = FALSE,
     }
     showLabels(u, model$model[, 1], labels=labels,
         id.method=id.method, id.n=id.n, id.cex=id.cex,
-        id.col=id.col)
+        id.col=id.col, id.location=id.location)
 }
 
 marginalModelPlots <- function(...) mmps(...)

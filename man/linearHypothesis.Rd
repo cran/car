@@ -16,7 +16,8 @@
 %   2013-06-20 added .merMod methods to linearHypothesis() and matchCoefs(). J. Fox
 %   2014-04-23 added aliases for makeHypothesis and printHypothesis
 %   2014-08-23 added linearHypothesis.rlm. J. Fox
-%-------------------------------------------------------------------------------
+%   2016-06-29 noted addition of "value" and "vcov" attributes, added example. J. Fox
+%------------------------------------------------------------------------------------
 
 \name{linearHypothesis}
 \alias{linearHypothesis}
@@ -270,6 +271,9 @@ matchCoefs(model, pattern, ...)
   which contains the residual degrees of freedom
   in the model, the difference in degrees of freedom, Wald statistic
   (either \code{"F"} or \code{"Chisq"}), and corresponding p value.
+  The value of the linear hypothesis and its covariance matrix are returned
+  respectively as \code{"value"} and \code{"vcov"} attributes of the object
+  (but not printed).
   
   For a multivariate linear model, an object of class 
   \code{"linearHypothesis.mlm"}, which contains sums-of-squares-and-product
@@ -350,6 +354,9 @@ linearHypothesis(mod.duncan.2, coefs[-1])
 ## test all interaction coefficients equal to 0
 linearHypothesis(mod.duncan.2, coefs[grep(":", coefs)], verbose=TRUE)
 linearHypothesis(mod.duncan.2, matchCoefs(mod.duncan.2, ":"), verbose=TRUE) # equivalent
+lh <- linearHypothesis(mod.duncan.2, coefs[grep(":", coefs)])
+attr(lh, "value") # value of linear function
+attr(lh, "vcov")  # covariance matrix of linear function
 
 ## a multivariate linear model for repeated-measures data
 ## see ?OBrienKaiser for a description of the data set used in this example.

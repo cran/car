@@ -16,13 +16,14 @@
 # 2013-06-20: tweaks for lme4. J. Fox
 # 2013-07-01: New 'constants' argument for use when called from within a function.
 # 2013-07-18: fixed a bug in passing the 'func' argument
+# 2016-03-31: added level argument and report CIs. J. Fox
 #-------------------------------------------------------------------------------
 
 deltaMethod <- function (object, ...) {
 	UseMethod("deltaMethod")
 }
 
-deltaMethod.default <- function (object, g, vcov., func = g, constants, ...) {
+deltaMethod.default <- function (object, g, vcov., func = g, constants, level=0.95, ...) {
 	if (!is.character(g)) 
 		stop("The argument 'g' must be a character string")
 	if ((exists.method("coef", object, default=FALSE) ||
@@ -47,7 +48,15 @@ deltaMethod.default <- function (object, g, vcov., func = g, constants, ...) {
 		gd[i] <- eval(D(g, names(para)[i]))
 	}
 	se.est <- as.vector(sqrt(t(gd) %*% vcov. %*% gd))
-	data.frame(Estimate = est, SE = se.est, row.names = c(func))
+	result <- data.frame(Estimate = est, SE = se.est, row.names = c(func))
+	p <- (1 - level)/2
+	z <- - qnorm(p)
+	lower <- est - z*se.est
+	upper <- est + z*se.est
+	pct <- paste(format(100*c(p, 1 - p), trim=TRUE, scientific=FALSE, digits=3), "%")
+	result <- cbind(result, lower, upper)
+	names(result)[3:4] <- pct
+	result
 }
 
 deltaMethod.lm <- function (object, g, vcov. = vcov, 

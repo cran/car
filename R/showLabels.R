@@ -7,24 +7,27 @@
 #   If a list of cases to be labelled is supplied, id.n is needed only
 #   if all n labels are to be printed.
 # 2014-03-12 added new id.method "r" that labels using order(abs(y), decreasing=TRUE)
+# 2016-05-16 added argument id.location = c("lr", "ab") for location of point labels
 
 
 showLabels <- function(x, y, labels=NULL, id.method="identify",
-  id.n = length(x), id.cex=1, id.col=palette()[1],  ...) {
+  id.n = length(x), id.cex=1, id.col=palette()[1], id.location="lr", ...) {
   res <- NULL
   id.method <- if(is.list(id.method)) id.method else list(id.method)
   for (meth in id.method)
      res <- c(res, showLabels1(x, y, labels, meth, id.n, id.cex,
-              id.col,  ...))
+              id.col, id.location, ...))
   return(if(is.null(res)) invisible(res) else res)
   }
 
 showLabels1 <- function(x, y, labels=NULL, id.method="identify",
-	id.n = length(x), id.cex=1, id.col=palette()[1], all=NULL, ...) {
+	id.n = length(x), id.cex=1, id.col=palette()[1], id.location="lr", all=NULL, ...) {
 # If labels are NULL, try to get the labels from x:
   if (is.null(labels)) labels <- names(x)
 	if (is.null(labels)) labels <- paste(seq_along(x))
 	if (is.null(id.col)) id.col <- palette()[1]
+	if (is.null(id.location)) id.location <- "lr"
+	id.location <- match.arg(id.location, c("lr", "ab"))
 # logged-axes?
   log.x <- par("xlog")
   log.y <- par("ylog")
@@ -101,10 +104,16 @@ showLabels1 <- function(x, y, labels=NULL, id.method="identify",
   if(id.n <= 0L) return(invisible(NULL))
 # criterion
   ind <-  order(id.var, decreasing=TRUE)[1L:min(length(id.var), id.n)]
-# position
+# position, now depends on id.location (as of 5/16/2016)
+  if(id.location %in% c("lr", "l", "r")){
   mid <- mean(if(par("xlog")==TRUE) 10^(par("usr")[1:2]) else
               par("usr")[1:2])
 	labpos <- c(4,2)[1+as.numeric(x > mid)]
+  } else {
+    mid <- mean(if(par("ylog")==TRUE) 10^(par("usr")[3:4]) else
+      par("usr")[3:4])
+    labpos <- c(3,1)[1+as.numeric(y > mid)]  
+  }
 # print
 	for (i in ind) {
 		text(x[i], y[i], labels[i], cex = id.cex, xpd = TRUE,

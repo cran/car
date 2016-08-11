@@ -65,7 +65,7 @@ ceresPlot.lm<-function(model, variable,
   id.method = list(abs(residuals(model, type="pearson")), "x"),
   labels, 
   id.n = if(id.method[1]=="identify") Inf else 0,
-  id.cex=1, id.col=palette()[1],
+  id.cex=1, id.col=palette()[1], id.location="lr",
   line=TRUE, smoother=loessLine, smoother.args=list(), smooth, span,
 	col=palette()[1], col.lines=palette()[-1],
   xlab, ylab, pch=1, lwd=2,  
@@ -161,7 +161,7 @@ ceresPlot.lm<-function(model, variable,
 	points(mod.mat[,var], partial.res, col=col, pch=pch) 
 	showLabels(mod.mat[,var], partial.res, labels=labels, 
             id.method=id.method, id.n=id.n, id.cex=id.cex,
-            id.col=id.col)
+            id.col=id.col, id.location=id.location)
 	if (line) abline(lm(partial.res~mod.mat[,var]), lty=2, lwd=lwd, 
             col=col.lines[1])
 	if (is.function(smoother)) {

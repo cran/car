@@ -94,7 +94,7 @@ scatterplot.default <- function(x, y, smoother=loessLine, smoother.args=list(), 
                                 lwd=1, lty=1,
                                 labels, id.method = "mahal", 
                                 id.n = if(id.method[1]=="identify") length(x) else 0, 
-                                id.cex = 1, id.col = palette()[1],
+                                id.cex = 1, id.col = palette()[1], id.location="lr",
                                 log="", jitter=list(), xlim=NULL, ylim=NULL,
                                 cex=par("cex"), cex.axis=par("cex.axis"), cex.lab=par("cex.lab"), 
                                 cex.main=par("cex.main"), cex.sub=par("cex.sub"), 
@@ -262,10 +262,11 @@ scatterplot.default <- function(x, y, smoother=loessLine, smoother.args=list(), 
             if (id.method[1] != "identify")
                 indices <- c(indices,
                      showLabels(.x[subs], .y[subs], labels=labels[subs], id.method=id.method,
-                     id.n=id.n, id.cex=id.cex, id.col=col[i], all=list(labels=labels, subs=subs)))
+                     id.n=id.n, id.cex=id.cex, id.col=col[i], id.location=id.location,
+                     all=list(labels=labels, subs=subs)))
 #            if (id.method[1] != "identify") indices <- c(indices,
-#                                                         showLabels(.x[subs], .y[subs], labels=labels[subs], id.method=id.method,
-#                                                                    id.n=id.n, id.cex=id.cex, id.col=col[i]))
+#                                             showLabels(.x[subs], .y[subs], labels=labels[subs], id.method=id.method,
+#                                             id.n=id.n, id.cex=id.cex, id.col=col[i], id.location=id.location))
         }}
     if (!by.groups){
         if (is.function(smoother)) smoother(.x, .y, col=col[2], 
@@ -280,7 +281,7 @@ scatterplot.default <- function(x, y, smoother=loessLine, smoother.args=list(), 
         }
         if (id.method[1] != "identify") indices <- showLabels(
             .x, .y, labels=labels, 
-            id.method=id.method, id.n=id.n, id.cex=id.cex, id.col=id.col)
+            id.method=id.method, id.n=id.n, id.cex=id.cex, id.col=id.col, id.location=id.location)
     }
     if (legend.plot) {
         xpd <- par(xpd=TRUE)
@@ -296,7 +297,7 @@ scatterplot.default <- function(x, y, smoother=loessLine, smoother.args=list(), 
                title=legend.title, bg="white", ncol=legend.columns)
     }
     if (id.method[1] == "identify") indices <- showLabels(.x, .y, labels, 
-                                                          id.method=id.method, id.n=length(.x), id.cex=id.cex, id.col=id.col)
+                        id.method=id.method, id.n=length(.x), id.cex=id.cex, id.col=id.col, id.location=id.location)
     if (is.null(indices)) invisible(indices) else if (is.numeric(indices)) sort(indices) else indices
 } 
 

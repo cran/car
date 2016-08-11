@@ -4,6 +4,7 @@
 # 2015-08-10: added estimateTransform as a generic function
 # 2015-08-24: made 'family' an explicit argument to powerTransformation to clairfy man page.
 
+
 ### Power families:
 basicPower <- function(U,lambda, gamma=NULL) {
  if(!is.null(gamma)) basicPower(t(t(as.matrix(U) + gamma)), lambda) else{

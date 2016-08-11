@@ -28,7 +28,7 @@ invTranPlot(x, ...)
         id.method = "x",
         labels, 
         id.n = if(id.method[1]=="identify") Inf else 0,
-        id.cex=1, id.col=palette()[1], grid=TRUE, ...)
+        id.cex=1, id.col=palette()[1], id.location="lr", grid=TRUE, ...)
 
 invTranEstimate(x, y, family="bcPower", confidence=0.95, robust=FALSE)
 }
@@ -64,7 +64,7 @@ Set to NULL to suppress the legend.}
   \item{xlab}{Label for the horizontal axis.}
 
   \item{ylab}{Label for the vertical axis.}
-  \item{id.method,labels,id.n,id.cex,id.col}{Arguments for the labelling of
+  \item{id.method,labels,id.n,id.cex,id.col,id.location}{Arguments for the labelling of
     points.  The default is \code{id.n=0} for labeling no points.  See
     \code{\link{showLabels}} for details of these arguments.
 }

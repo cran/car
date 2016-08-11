@@ -24,7 +24,7 @@ scatterplotMatrix(x, ...)
     ellipse=FALSE, levels=c(.5, .95), robust=TRUE,
     groups=NULL, by.groups=FALSE, 
     use=c("complete.obs", "pairwise.complete.obs"),
-    labels, id.method="mahal", id.n=0, id.cex=1, id.col=palette()[1],
+    labels, id.method="mahal", id.n=0, id.cex=1, id.col=palette()[1], id.location="lr",
     col=if (n.groups == 1) palette()[3:1] else rep(palette(), length=n.groups),
     pch=1:n.groups, lwd=1, lty=1, 
     cex=par("cex"), cex.axis=par("cex.axis"), cex.labels=NULL, 
@@ -42,7 +42,7 @@ spm(x, ...)
   \item{data}{for \code{scatterplotMatrix.formula},
     a data frame within which to evaluate the formula.}
   \item{subset}{expression defining a subset of observations.}
-  \item{labels,id.method,id.n,id.cex,id.col}{Arguments for the labelling of
+  \item{labels,id.method,id.n,id.cex,id.col,id.location}{Arguments for the labelling of
     points.  The default is \code{id.n=0} for labeling no points.  See
     \code{\link{showLabels}} for details of these arguments.  If the plot uses
     different colors for groups, then the \code{id.col} argument is ignored and

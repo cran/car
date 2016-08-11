@@ -23,13 +23,13 @@ dfbetasPlots(model, ...)
 	    main, xlab, ylab, labels=rownames(dfbeta), 
         id.method="y",  
         id.n=if(id.method[1]=="identify") Inf else 0, id.cex=1,
-        id.col=palette()[1], col=palette()[1], grid=TRUE, ...)
+        id.col=palette()[1], id.location="lr", col=palette()[1], grid=TRUE, ...)
 
 \method{dfbetasPlots}{lm}(model, terms=~., intercept=FALSE, layout=NULL, ask, 
 	    main, xlab, ylab,
         labels=rownames(dfbeta), id.method="y",
         id.n=if(id.method[1]=="identify") Inf else 0, id.cex=1, 
-        id.col=palette()[1], col=palette()[1], grid=TRUE, ...)
+        id.col=palette()[1], id.location="lr", col=palette()[1], grid=TRUE, ...)
 }
 	
 \arguments{
@@ -59,7 +59,7 @@ plots from two models in the same graphics window.
 \item{ask}{If \code{TRUE}, ask the user before drawing the next plot; if \code{FALSE}, the default, don't ask.
 }
 \item{\dots}{optional additional arguments to be passed to \code{\link{plot}}, \code{\link{points}}, and \code{\link{showLabels}}}. 
-  \item{id.method,labels,id.n,id.cex,id.col}{Arguments for the labelling of
+  \item{id.method,labels,id.n,id.cex,id.col,id.location}{Arguments for the labelling of
     points.  The default is \code{id.n=0} for labeling no points.  See
     \code{\link{showLabels}} for details of these arguments.
 }

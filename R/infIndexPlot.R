@@ -2,7 +2,8 @@
 # 21 Jan 10: added wrapper influenceIndexPlot(). J. Fox
 # 30 March 10: bug-fixes and changed arguments, S. Weisberg
 # 15 October 13:  Bug-fix on labelling x-axis
-
+# 25 April 2016:  For compatibility with Rcmdr, change na.action=exclude to na.action=na.omit SW.
+# 2016-07-23: add ... argument to call to lines(). J. Fox
 influenceIndexPlot <- function(model, ...)
 	{UseMethod("infIndexPlot")}
 
@@ -14,7 +15,10 @@ infIndexPlot.lm <- function(model,
      main="Diagnostic Plots",
      labels, id.method = "y", 
      id.n = if(id.method[1]=="identify") Inf else 0,
-     id.cex=1, id.col=palette()[1], grid=TRUE, ...) {
+     id.cex=1, id.col=palette()[1], id.location="lr", grid=TRUE, ...) {
+# Added for compatibility with Rcmdr
+  if(class(model$na.action) == "exclude") model <- update(model, na.action=na.omit)
+# End addition
    what <- pmatch(tolower(vars), 
                   tolower(c("Cook", "Studentized", "Bonf", "hat")))
    if(length(what) < 1) stop("Nothing to plot")
@@ -43,7 +47,7 @@ infIndexPlot.lm <- function(model,
         grid(lty=1, equilogs=FALSE)
         box()}
       if(j==3) {
-            for (k in which(y < 1)) lines(c(xaxis[k], xaxis[k]), c(1, y[k]))}
+            for (k in which(y < 1)) lines(c(xaxis[k], xaxis[k]), c(1, y[k]), ...)}
           else {
             points(xaxis, y, type="h", ...)}  
       points(xaxis, y, type="p", ...)  
@@ -51,7 +55,7 @@ infIndexPlot.lm <- function(model,
       axis(1, labels= ifelse(plotnum < nplots, FALSE, TRUE))
       showLabels(xaxis, y, labels=labels,
             id.method=id.method, id.n=id.n, id.cex=id.cex,
-            id.col=id.col)
+            id.col=id.col, id.location=id.location)
     }
     mtext(side=3, outer=TRUE ,main, cex=1.2, line=1)
     mtext(side=1, outer=TRUE, "Index", line=3)

@@ -19,7 +19,7 @@ influencePlot.lm <- function(model, scale=10,
                              xlab="Hat-Values", ylab="Studentized Residuals",
                              labels, id.method = "noteworthy",
                              id.n = if(id.method[1]=="identify") Inf else 0, 
-                             id.cex=1, id.col=palette()[1], ...){ 
+                             id.cex=1, id.col=palette()[1], id.location="lr", ...){ 
   hatval <- hatvalues(model)
   rstud <- rstudent(model)
   if (missing(labels)) labels <- names(rstud)
@@ -42,7 +42,7 @@ influencePlot.lm <- function(model, scale=10,
     id.method <- which.all
   }
   noteworthy <- showLabels(hatval, rstud, labels=labels, id.method=id.method, 
-                           id.n=id.n, id.cex=id.cex, id.col=id.col)
+                           id.n=id.n, id.cex=id.cex, id.col=id.col, id.location = id.location)
   if (length(noteworthy > 0)){
     result <- data.frame(StudRes=rstud[noteworthy], Hat=hatval[noteworthy],
                          CookD=cook[noteworthy]^2)
