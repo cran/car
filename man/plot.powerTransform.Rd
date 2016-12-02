@@ -50,8 +50,8 @@ Second Edition, Sage.
 \code{\link{powerTransform}}
 }
 \examples{
-summary(a3 <- powerTransform(cbind(len, ADT, trks, sigs1) ~ hwy, Highway1))
-with(Highway1, plot(a3, z=rate, col=as.numeric(hwy)))
+summary(a3 <- powerTransform(cbind(len, adt, trks, shld, sigs1) ~ 1, Highway1))
+with(Highway1, plot(a3, z=rate, col=as.numeric(htype)))
 }
 % Add one or more standard keywords, see file 'KEYWORDS' in the
 % R documentation directory.

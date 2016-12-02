@@ -12,13 +12,14 @@ An R Companion to Applied Regression, Second Edition, Sage, 2011.
 \details{
 \tabular{ll}{
 Package: \tab car\cr
-Version: \tab 2.1-3\cr
-Date: \tab 2016-07-23\cr
+Version: \tab 2.1-4\cr
+Date: \tab 2016-11-30\cr
 Depends: \tab R (>= 3.2.0)\cr
-Imports: \tab MASS, mgcv, nnet, pbkrtest (>= 0.3-2), quantreg, grDevices, utils, stats, graphics\cr
+LinkingTo: \tab Rcpp\cr
+Imports: \tab MASS, mgcv, nnet, pbkrtest (>= 0.3-2), quantreg, grDevices, utils, stats, graphics, Rcpp\cr
 Suggests: \tab  alr4, boot, leaps, lme4, lmtest, Matrix, MatrixModels, mgcv, nlme, rgl (>= 0.93.960), sandwich, SparseM, survival, survey\cr
 License: \tab GPL (>= 2)\cr
-URL: \tab \url{http://CRAN.R-project.org/package=car}, 
+URL: \tab \url{https://CRAN.R-project.org/package=car}, 
 	\url{http://socserv.socsci.mcmaster.ca/jfox/Books/Companion},
 	\url{https://r-forge.r-project.org/projects/car/} \cr
 }

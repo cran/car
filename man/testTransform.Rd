@@ -1,6 +1,8 @@
 \name{testTransform}
 \alias{testTransform}
 \alias{testTransform.powerTransform}
+\alias{testTransform.lmerModpowerTransform}
+\alias{testTransform.skewpowerTransformlmer}
 
 \title{Likelihood-Ratio Tests for Univariate or Multivariate Power Transformations
 to Normality}
@@ -12,6 +14,11 @@ based on \code{powerTransform} objects.
 testTransform(object, lambda)
 
 \S3method{testTransform}{powerTransform}(object, lambda=rep(1, dim(object$y)[2]))
+
+\S3method{testTransform}{lmerModpowerTransform}(object, lambda=1)
+
+\S3method{testTransform}{skewpowerTransformlmer}(object, lambda=1)
+
 }
 
 \arguments{
@@ -26,7 +33,7 @@ transformation for a univariate or multivariate sample or multiple linear
 regression problem, using the method of Box and Cox (1964).  It is usual to
 round the estimates to nearby convenient values, and this function is use to
 compulte a likelihood ratio test for values of the transformation parameter
-other than the ml estimate.
+other than the ml-type estimate.
 
 For one-parameter families of transformations, namely the Box-Cox power family \code{link{bcPower}} and the Yeo-Johnson power family \code{\link{yjPower}}, this function computes a test based on twice the difference in the log-likelihood between the maximum likelihood-like estimate and the log-likelihood evaluated at the value of \code{lambda} specified.
 
@@ -53,7 +60,7 @@ Weisberg, S. (2014) \emph{Applied Linear Regression}, Fourth Edition, Wiley.
 
 \seealso{\code{\link{powerTransform}} and \code{\link{skewPower}} for examples of the use of this function and other tests that might be of interest in some circumstances. }
 \examples{
-summary(a3 <- powerTransform(cbind(len, ADT, trks, sigs1) ~ hwy, Highway1))
+summary(a3 <- powerTransform(cbind(len, adt, trks, sigs1) ~ htype, Highway1))
 # test lambda = (0 0 0 -1)
 testTransform(a3, c(0, 0, 0, -1))
 }

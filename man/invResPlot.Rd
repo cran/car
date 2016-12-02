@@ -67,7 +67,7 @@ Statistics}.
 \author{Sanford Weisberg, \code{sandy@umn.edu}}
 
 \examples{
-m2 <- lm(rate ~ log(len) + log(ADT) + slim + shld + log(sigs1), Highway1)
+m2 <- lm(rate ~ log(len) + log(adt) + slim + shld + log(sigs1), Highway1)
 invResPlot(m2)
 }
 \keyword{ hplot }% at least one, from doc/KEYWORDS

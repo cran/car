@@ -1,9 +1,9 @@
 # checked in 26 December 2009 by J. Fox
 # 2012-12-12: Fixed Boxplot.default() so that it works properly when g is numeric. J. Fox
 # 2013-04-10: handles at argument properly, contribution of Steve Ellison. J. Fox
-
 # 2013-08-19: removed loading of stats package. J. Fox
-
+# 2016-09-30: added list, data.frame, and matrix methods, suggestion of Michael Friendly. J. Fox
+# 2016-10-01: tweaked data.frame and list methods. J. Fox
 Boxplot <- function(y, ...){
 	UseMethod("Boxplot")
 }
@@ -143,4 +143,20 @@ Boxplot.formula <- function(formula, data=NULL, subset, na.action=NULL, labels.,
 		Boxplot(mf[, -lab.var], labels=mf[[lab.var]], ylab=ylab, id.method=id.method, ...)
 	}
 	else stop("improper Boxplot formula")   
+}
+
+Boxplot.list <- function(y, xlab="", ylab="", ...){
+  if (is.null(names(y))) names(y) <- 1:length(y)
+  g <- factor(rep(names(y), sapply(y, length)), levels=names(y))
+  y <- do.call(c, y)
+  Boxplot(y, g, xlab=xlab, ylab=ylab, ...)
+}
+
+Boxplot.data.frame <-  function(y, labels=rownames(y), ...){
+  labels <- rep(labels, ncol(y))
+  Boxplot(as.list(y), labels=labels, ...)
+}
+
+Boxplot.matrix <- function(y, ...){
+  Boxplot(as.data.frame(y), ...)
 }

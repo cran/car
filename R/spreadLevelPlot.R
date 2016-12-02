@@ -67,7 +67,11 @@ spreadLevelPlot.lm <- function(x, robust.line=TRUE,
 	xlab="Fitted Values",
 	ylab="Absolute Studentized Residuals", las=par("las"),
 	main=paste("Spread-Level Plot for\n", deparse(substitute(x))),
-	pch=1, col=palette()[1], col.lines=palette()[2], col.smoother=palette()[3], lwd=2, grid=TRUE, ...){
+	pch=1, col=palette()[1], col.lines=palette()[2], col.smoother=palette()[3], lwd=2, grid=TRUE, 
+	labels, 
+	id.method = "mahal", 
+	id.n = if(id.method[1]=="identify") Inf else 0,
+	id.cex=1, id.col=palette()[1], id.location="lr", ...){
 	resid <- na.omit(abs(rstudent(x)))
 	fitval <- na.omit(fitted.values(x))
 	non.pos <- fitval <= 0
@@ -97,6 +101,13 @@ spreadLevelPlot.lm <- function(x, robust.line=TRUE,
 	    log.x=TRUE, log.y=TRUE, smoother.args=smoother.args)
 	p <- 1 - (coefficients(mod))[2]
 	names(p) <- NULL
+# point identification, added 11/20/2016
+	if(missing(labels)) 
+	  labels <- names(na.omit(residuals(x)))[!non.pos]
+	showLabels(fitval, resid, labels=labels, 
+	           id.method=id.method, id.n=id.n, id.cex=id.cex, 
+	           id.col=id.col, id.location=id.location)
+# end addition
 	result <- list(PowerTransformation=p)
 	class(result) <- "spreadLevelPlot"
 	result

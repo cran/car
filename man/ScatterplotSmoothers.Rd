@@ -10,8 +10,8 @@ Smoothers to Draw Lines on Scatterplots
 
 \description{
 These smoothers are used to draw nonparametric-regression lines on scatterplots produced by
-the \code{\link{scatterplot}}, \code{\link{scatterplotMatrix}} and other \code{car} functions. 
-The functions aren't meant to
+the \code{\link{scatterplot}}, \code{\link{scatterplotMatrix}} and several other \code{car} functions. 
+The functions are not meant to
 be called directly by the user, although the user can supply options via the \code{smoother.args} argument,
 the contents of which vary by the smoother (see \emph{Details} below). The \code{gamLine} smoother uses the
 \code{\link[mgcv]{gam}} function in the \pkg{mgcv} package, the \code{loessLine} smoother uses the
@@ -46,29 +46,28 @@ quantregLine(x, y, col, log.x, log.y, spread=FALSE, smoother.args, draw=TRUE, of
 
 \details{
 The function \code{loessLine} is a re-implementation of the \code{loess} smoother
-that was used in \code{car} prior to September 2012.  The only enhancement is the ability to
-set more arguments through the \code{smoother.args} argument.
+that was used in \code{car} prior to September 2012.  The main enhancement is the ability to
+set more arguments through the \code{smoother.args} argument.  
 
-The function \code{gamLine} is new and more general than the \code{loess} fitting
+The function \code{gamLine} is more general than the \code{loess} fitting
 because it allows fitting a generalized additive model using splines.  You can specify an error
 distribution and link function.  
 
 The function \code{quantregLine} fits an additive model using splines with estimation
-based on L1 regression and quantile regression if you ask for the spread.  It is
+based on L1 regression for the median and quantile regression if you ask for the spread.  It is
 likely to be more robust than the other smoothers.
 
 The argument \code{smoother.args} is a list of named elements used to pass 
-additional arguments to the smoother.
+additional arguments to the smoother.  As of November, 2016, the smoother is evaluated at an equally spaced grid of 50 points in the range of the horizontal variable.  With any of the smoothers you can change to say 100 evaluation points by using the argument \code{smoother.args=list(evaluation=100)}.
 
 For \code{loessLine} the default value is
-\code{smoother.args=list(lty=1, lwd=2, lty.spread=2, lwd.spread=1, span=0.5,
+\code{smoother.args=list(lty=1, lwd=2, lty.spread=2, lwd.spread=1, span=2/3 (prior to 11/2016, span was 1/2),
 degree=2, family="symmetric", iterations=4)}.  
 The arguments \code{lty} and \code{lwd} are the type and width 
 respectively of the mean or median smooth, \code{smooth.lty}
 and \code{smooth.lwd} are the type and color of the spread smooths if requested.
 The arguments \code{span}, \code{degree} and \code{family} are
-passed to the \code{\link{loess}} function, \code{iterations=0} by default
-specifies no robustness iterations.
+passed to the \code{\link{loess}} function, \code{iterations=4} robustness iterations.
 
 For \code{gamLine} the default is
 \code{smoother.args=list(lty=1, lwd=2, lty.spread=2, lwd.spread=1,

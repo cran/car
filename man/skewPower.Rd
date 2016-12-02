@@ -1,6 +1,7 @@
 \name{skewPower}
 \alias{skewPower}
 \alias{contour.skewpowerTransform}
+\alias{contour.skewpowerTransformlmer}
 
 \title{Skew Power Transformations}
 \description{
@@ -10,6 +11,9 @@ Transform the elements of a vector using, the skew power transformations.
 skewPower(U, lambda, jacobian.adjusted=FALSE, gamma)
 
 \method{contour}{skewpowerTransform}(x, ksds = 4, levels = c(0.5, 0.95, 0.99, 0.999), 
+                 main = "Skew Power Log-likelihood", ...)
+                 
+\method{contour}{skewpowerTransformlmer}(x, ksds = 4, levels = c(0.5, 0.95, 0.99, 0.999), 
                  main = "Skew Power Log-likelihood", ...)
 }
 \arguments{
@@ -57,8 +61,9 @@ The contour method allows drawing a contour plot for the two-dimensional log-lik
 Fox, J. and Weisberg, S. (2011) 
 \emph{An R Companion to Applied Regression}, Second Edition, Sage.
 
-Hawkins, D. and Weisberg, S. (2015)
-Combining the Box-Cox Power and Genralized Log Transformations to Accomodate Negative Responses,
+Hawkins, D. and Weisberg, S. (2016)
+Combining the Box-Cox Power and Generalized Log Transformations to Accomodate Negative Responses
+In Linear and Mixed-Effects Linear Models,
 submitted for publication.
   
 Weisberg, S. (2014)  \emph{Applied Linear Regression}, Fourth Edition, Wiley
@@ -68,53 +73,49 @@ Wiley, Chapter 7.
 
 \seealso{\code{\link{powerTransform}}, \code{\link{bcPower}}, \code{\link{boxCox}}}
 \examples{
-# Univariate Example from Hawkins and Weisberg (2015)
+# Univariate Example, from Hawkins and Weisberg (2016)
 m1 <- lm(I1L1 ~ pool, LoBD)
 p1 <- powerTransform(m1, family="skewPower")
 summary(p1)
 # summary prints estimate, se and conf.ints for both parameters
 # helper functions
-coef(p1)
-vcov(p1)
-p1$value # maximum value of log-likelihood surface
-
-# tests are for lambda, maximizing over gamma (profile log-likelihoods)
+c(p1$lambda, p1$gamma, LogLik=p1$llik)
+vcov(p1) # Estimated covarinace from inverse Hessian
+# tests are for lambda, maximizing over gamma (profile log-likelihoods
 testTransform(p1, lambda=0.5)
-
 # Contour plot of the log-likelihood
 contour(p1, main="", levels=c(.5, .95, .99))
-
 # the boxCox function can provide profile log-likelihoods for each of the two parameters:
 boxCox(m1, family="skewPower", param="lambda", lambda=seq(0.25, 1.1, length=100))
 boxCox(m1, family="skewPower", param="gamma", gamma=seq(3, 80, length=100))
 
-#  Create new variate corresponding to the transformation, then update the regression
-LoBD$z <- skewPower(LoBD$I1L1, lambda=p1$lambda, gamma=p1$gamma, jacobian.adjusted=FALSE)
-m1.t <- update(m1, z ~ . -1)
-#  The example in Hawkins and Weisberg(2015) requires computing the inverse of the skew power
-# transformation and certain summaries of the updated regression
-mu0 <- mean(coef(m1.t)[1:4])
-sd <- sigmaHat(m1.t)
-LoB <- mu0 + 1.645*sd
-LoD <- LoB + 1.645*sd
-skewPowerInverse <- function(z, lambda, gamma){
-  q <- if(abs(lambda) <= 1.e-9) {2 * log(z)} else {2*(z*lambda + 1) ^(1/lambda)}
-  (q^2 - gamma^2)/(2 * q)
-}
-y.untransformed <- round(skewPowerInverse(c(LoB, LoD), p1$lambda, p1$gamma), 2)
+# Fit with fixed gamma, in this case fixed at the estimate from p1
+p2 <- powerTransform(m1, family="skewPower", gamma=p1$gamma)
+# summary gives different tests because gamma is fixed rather than maximized over
+summary(p2)
 
 # Multivariate Response
-p3 <- powerTransform(update(m1, as.matrix(cbind(LoBD$I1L2, LoBD$I1L1)) ~ .), family="skewPower")
+p3 <- powerTransform(update(m1, as.matrix(cbind(LoBD$I1L2, LoBD$I1L1)) ~ .), 
+     family="skewPower")
 summary(p3)
-# Construct test for the same transformations for each response.  Get new data file by stacking
-d2 <- data.frame(assay = c(LoBD$I1L2, LoBD$I1L1), pool=factor(c(LoBD$pool, LoBD$pool)),
-                 set=factor(rep(c("A", "B"), c(84, 84))))
-# the following allows for different within set means, but common transformation parameters
-p5 <- powerTransform(lm(assay ~ pool*set, d2), family="skewPower") # allow grps to differ by set.
-c(df=(df <- length(coef(p3)) - length(coef(p5))),
-  test = (test <- -.5 * (p5$value - p3$value)),
-  pvalue = 1 - pchisq(test, df))
 
+# gamma fixed
+p4 <- powerTransform(update(m1, as.matrix(cbind(LoBD$I1L2, LoBD$I1L1)) ~ .), 
+     family="skewPower", gamma=p3$gamma)
+summary(p4)
+
+# mixed models fit with lmer - requires lmer and nloptr packages
+\dontrun{
+data <- reshape(LoBD[1:20,], varying=names(LoBD)[-1], direction="long", v.names="y")
+names(data) <- c("pool", "assay", "y", "id")
+data$assay <- factor(data$assay)
+require(lme4)
+m2 <- lmer(y ~ pool + (1|assay), data)
+f1 <- powerTransform(m2, family="skewPower")
+summary(f1)
+f2 <- powerTransform(m2, family="skewPower", gamma= 10)
+summary(f2)
+}
 }
 
 \keyword{regression}

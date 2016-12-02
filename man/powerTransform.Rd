@@ -3,13 +3,16 @@
 \alias{powerTransform.default}
 \alias{powerTransform.lm}
 \alias{powerTransform.formula}
+\alias{powerTransform.lmerMod}
 \alias{estimateTransform}
 \alias{estimateTransform.default}
+\alias{estimateTransform.lmerMod}
 \alias{estimateTransform.skewPower}
+\alias{estimateTransform.skewPowerlmer}
 
 \title{Finding Univariate or Multivariate Power Transformations}
 \description{
-  \code{powerTransform} uses the maximum likelihood-like approach of Box and Cox (1964) to select a transformatiion of a univariate or multivariate response for normality, linearity and/or constant variance.  Available families are the default Box-Cox power family, and the Yeo-Johnson and skew power familes that may be useful when a response is not strictly positive.  \code{powerTransform} passes information to \code{estimateTransform}, and only the former will be of interest for most users.
+  \code{powerTransform} uses the maximum likelihood-like approach of Box and Cox (1964) to select a transformatiion of a univariate or multivariate response for normality, linearity and/or constant variance.  Available families are the default Box-Cox power family, and the Yeo-Johnson and skew power familes that may be useful when a response is not strictly positive.  \code{powerTransform} passes arguments to \code{estimateTransform}, so you may need to include arguments to estimateTransform in a call to powerTransform.
 }
 \usage{
 powerTransform(object, ...)
@@ -18,8 +21,11 @@ powerTransform(object, ...)
 
 \S3method{powerTransform}{lm}(object, family="bcPower", ...)
 
-\S3method{powerTransform}{formula}(object, data, subset, weights, na.action, family="bcPower",
-  ...)
+\S3method{powerTransform}{formula}(object, data, subset, weights, na.action, 
+    family="bcPower", ...)
+  
+\S3method{powerTransform}{lmerMod}(object, family="bcPower", lambda=c(-3, 3), 
+    gamma=NULL, ...)
   
 estimateTransform(X, Y, weights=NULL, family="bcPower", start=NULL,
          method="L-BFGS-B", ...)
@@ -27,20 +33,29 @@ estimateTransform(X, Y, weights=NULL, family="bcPower", start=NULL,
 \method{estimateTransform}{default}(X, Y, weights=NULL, family="bcPower", start=NULL, 
          method="L-BFGS-B", ...)
          
-\method{estimateTransform}{skewPower}(X, Y, weights=NULL, ...)
+\S3method{estimateTransform}{skewPower}(X, Y, weights=NULL, lambda=c(-3, 3), 
+    gamma=NULL, ...)
+
+\S3method{estimateTransform}{lmerMod}(object, family="bcPower", lambda=c(-3, 3), 
+    start=NULL, method="L-BFGS-B", ...)
+
+\S3method{estimateTransform}{skewPowerlmer}(object, lambda=c(-3, +3), 
+    gamma=NULL, ...)
 }
 
 \arguments{
   \item{object}{This can either be an object of class
-\code{lm}, a formula, or a matrix or vector; see below.}
+\code{lm} or \code{lmerMod}, a formula, or a matrix or vector; see below.}
   \item{data}{A data frame or environment, as in \code{\link{lm}}.}
   \item{subset}{Case indices to be used, as in \code{\link{lm}}.}
   \item{weights}{Weights as in \code{\link{lm}}.}
   \item{na.action}{Missing value action, as in \sQuote{lm}.}
   \item{family}{The quoted name of a family of transformations.  The available options are \code{"bcPower"} the default for the Box-Cox power family; \code{"yjpower"} for the Yeo-Johnson family, and \code{"skewPower"} for the two-parameter skew power family.  The families are documented at \code{\link{bcPower}} and \code{\link{skewPower}}.}
+  \item{lambda}{The range to be considered for the estimate of the power parameter lambda, equal to \code{c(-3, +3)} by default.  Values of lambda outside the default range is unlikely to be useful in practice.}
+  \item{gamma}{The skewPower family has two parameters, adding a location parameter gamma  to the power parameter lambda present in most other transformation families.  If \code{gamma=NULL} then the location parameter will be estimated; if \code{gamma} is set to a numeric value, or a numeric vector of positive values equal in length to the number of responses, \code{gamma} will be fixed and only the power will be estimated.}
   \item{...}{Additional arguments that are passed to \code{estimateTransform}
   which does the actual computing, or to the \code{\link{optim}} 
-  function, which does the maximization.}
+  function, which does the maximization for all the methods except for \code{lmerMod} models with the \code{skewPower} family.  For this case, computing is done using the \code{\link[nloptr]{neldermead}}  function in the \code{noptr} package is used.}
   \item{X}{A matrix or data.frame giving the \dQuote{right-side variables}, including a column of ones if the intercept is present.}
   \item{Y}{A vector or matrix or data.frame giving the \dQuote{left-side
 variables.}}
@@ -92,6 +107,8 @@ If \code{family="skewPower"} then the skew power family of transformations sugge
 by Hawkins and Weisberg (2015) is used.  This is a two-parameter family that would
 generally be applied with a response with occasional negative values; see \code{\link{skewPower}}
 for the details and examples.  This family has a power parameter \eqn{\lambda}{lambda} and a non-negative start parameter \eqn{\gamma}{gamma}, with \eqn{\gamma = 0}{gamma=0} equal to the Box-Cox transformation.
+
+The same generally methodology can be applied for linear mixed models fit with the \code{\link[lme4]{lmer}} function in the \code{lme4} package.  A multivariate response is not permitted.
 
 The function \code{\link{testTransform}} is used to obtain likelihood ratio
 tests for
@@ -171,19 +188,19 @@ summary(p1 <- powerTransform(cycles ~ len + amp + load, Wool))
 coef(p1, round=TRUE)
 summary(m1 <- lm(bcPower(cycles, p1$roundlam) ~ len + amp + load, Wool))
 
-# Multivariate Box Cox
-summary(powerTransform(cbind(len, ADT, trks, sigs1) ~ 1, Highway1))
+# Multivariate Box Cox uses Highway1 data
+summary(powerTransform(cbind(len, adt, trks, sigs1) ~ 1, Highway1))
 
-# Multivariate transformation to normality within levels of 'hwy'
-summary(a3 <- powerTransform(cbind(len, ADT, trks, sigs1) ~ hwy, Highway1))
+# Multivariate transformation to normality within levels of 'htype'
+summary(a3 <- powerTransform(cbind(len, adt, trks, sigs1) ~ htype, Highway1))
 
 # test lambda = (0 0 0 -1)
 testTransform(a3, c(0, 0, 0, -1))
 
 # save the rounded transformed values, plot them with a separate
 # color for each highway type
-transformedY <- bcPower(with(Highway1, cbind(len, ADT, trks, sigs1)),
+transformedY <- bcPower(with(Highway1, cbind(len, adt, trks, sigs1)),
                 coef(a3, round=TRUE))
-\dontrun{pairs(transformedY, col=as.numeric(Highway1$hwy)) }
+\dontrun{scatterplotMatrix( ~ transformedY|htype, Highway1) }
 }
 \keyword{ regression}% at least one, from doc/KEYWORDS

@@ -144,7 +144,7 @@ estimateTransform.default <- function(X, Y, weights=NULL,
       start[j] <- res$minimum
     }
   }
-  res<-optim(start, llik, hessian=TRUE, method=method,  ...)
+  res <- optim(start, llik, hessian=TRUE, method=method,  ...)
   if(res$convergence != 0)
     warning(paste("Convergence failure: return code =", res$convergence))
   res$start<-start
@@ -161,6 +161,7 @@ estimateTransform.default <- function(X, Y, weights=NULL,
     roundlam[sel] <- val
   }
   res$roundlam <- roundlam
+  res$invHess <- solve(res$hessian)
   res$par <- NULL
   res$family<-family
   res$xqr <- xqr
@@ -203,9 +204,9 @@ summary.powerTransform<-function(object,...){
     one <- 1==length(object$lambda)
     label <- paste(object$family, 
        (if(one) "Transformation to Normality" else 
-                "Transformations to Multinormality"), "\n\n")
+                "Transformations to Multinormality"), "\n")
     lambda<-object$lambda
-    stderr<-sqrt(diag(solve(object$hessian)))
+    stderr<-sqrt(diag(object$invHess))
     df<-length(lambda) 
     result <- cbind(lambda, stderr, lambda - 1.96*stderr, lambda + 1.96*stderr)
     rownames(result)<-names(object$lambda)
@@ -232,7 +233,7 @@ coef.powerTransform <- function(object, round=FALSE, ...)
   if(round==TRUE) object$roundlam else object$lambda
   
 vcov.powerTransform <- function(object,...) {
-  ans <- solve(object$hessian)
+  ans <- object$invHess
   rownames(ans) <- names(coef(object))
   colnames(ans) <- names(coef(object))
   ans}

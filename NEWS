@@ -1,3 +1,19 @@
+Changes to Version 2.1-4
+
+  o The smoother functions loessLine, gamLine and quantregLine used in many car functions now evaluate the smoother at an equally spaced grid of points rather than at the observed values on the horizontal axis of a plot.
+  
+  o spreadLevelPlot.lm now accepts point marking as in most other graphical functions in car.
+  
+  o Bug fixed in one of the skewPower support functions; thans to Balazs Banfai
+  
+  o Added support for lmer objects in power transformations
+  
+  o Added support for skewPower family power transformations for lm and lmer objects
+  
+  o Added list, data.frame, and matrix methods for Boxplot(), suggestion of Michael Friendly
+  
+  o Added adaptiveKernel() density estimator, with option to use it in densityPlot().
+  
 Changes to Version 2.1-3
 
   o Corrected documentation for mcPlots

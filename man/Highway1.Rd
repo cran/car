@@ -17,7 +17,7 @@ the highway department, on accidents.
     \item{len}{
  length of the \code{Highway1} segment in miles
     }
-    \item{ADT}{
+    \item{adt}{
  average daily traffic count in thousands
     }
     \item{trks}{
@@ -45,14 +45,14 @@ of signals per mile of roadway, adjusted to have no zero values.
     \item{lwid}{
  lane width, in feet
     }
-    \item{hwy}{An indicator of the type of roadway or the source of funding
+    \item{htype}{An indicator of the type of roadway or the source of funding
     for the road, either MC, FAI, PA, or  MA
     }
  }
 }
 
-\source{Carl Hoffstedt.  This differs from the dataset \code{highway} in the
-\code{alr3} package only by transformation of some of the columns.}
+\source{Carl Hoffstedt.  This differs from the dataset \code{Highway} in the
+\code{alr4} package only by addition of transformation of some of the columns.}
 
 \references{
 Fox, J. and Weisberg, S. (2011) \emph{An R Companion to Applied

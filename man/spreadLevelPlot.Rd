@@ -33,7 +33,10 @@ slp(...)
 	ylab="Absolute Studentized Residuals", las=par("las"),
 	main=paste("Spread-Level Plot for\n", deparse(substitute(x))),
 	pch=1, col=palette()[1], col.lines=palette()[2], col.smoother=palette()[3],
-	lwd=2, grid=TRUE, ...)
+	lwd=2, grid=TRUE, 	labels, 
+	id.method = "mahal", 
+	id.n = if(id.method[1]=="identify") Inf else 0,
+	id.cex=1, id.col=palette()[1], id.location="lr", ...)
 	  
 \method{print}{spreadLevelPlot}(x, ...)
 }
@@ -75,6 +78,10 @@ slp(...)
   \item{lwd}{line width; default is \code{2} (see \code{\link[graphics]{par}}).}
   \item{grid}{If TRUE, the default, a light-gray background grid is put on the
 graph}
+  \item{id.method,labels,id.n,id.cex,id.col,id.location}{Arguments for the labelling of
+    points.  The default is \code{id.n=0} for labeling no points with the \code{lm} method.  See
+    \code{\link{showLabels}} for details of these arguments.
+}
   \item{\dots}{arguments passed to plotting functions.}
 }
 \details{
@@ -82,7 +89,7 @@ graph}
   of log(hinge-spread) vs. log(median) for the groups; fits a line to the plot; and calculates a
   spread-stabilizing transformation from the slope of the line. 
   
-  For linear models, plots log(abs(studentized residuals) vs. log(fitted values).
+  For linear models, plots log(abs(studentized residuals) vs. log(fitted values).  Point labeling was added in November, 2016.
   
   The function \code{slp} is an abbreviation for \code{spreadLevelPlot}.
 }

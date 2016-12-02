@@ -7,6 +7,8 @@
 # 2014-11-21: Added 'offset' argument with default 0:  offset= sigmaHat(model) for use with
 #             marginal model plots.  Fixed spread smooths as well
 # 2015-01-27: gam() and s() now imported from mgcv rqss(), qss(), and fitted.rqss() from quantreg. John
+# 2016-11-19: Added argument in smoother.args called 'evaluation'.  The smoother will be evaluated
+#             at evaluation equally spaced points in the range of the horizontal axis, with a default of 50.
 
 default.arg <- function(args.list, arg, default){
     if (is.null(args.list[[arg]])) default else args.list[[arg]]
@@ -18,28 +20,30 @@ loessLine <- function(x, y, col, log.x, log.y, spread=FALSE, smoother.args,
     lwd <- default.arg(smoother.args, "lwd", 2)
     lty.spread <- default.arg(smoother.args, "lty.spread", 2)
     lwd.spread <- default.arg(smoother.args, "lwd.spread", 1)
-    span <- default.arg(smoother.args, "span", 0.5)
+    span <- default.arg(smoother.args, "span", 2/3)
     family <- default.arg(smoother.args, "family", "symmetric")
-    degree <- default.arg(smoother.args, "degree", 2)
+    degree <- default.arg(smoother.args, "degree", 1)
     iterations <- default.arg(smoother.args, "iterations", 4)
-    if (log.x) x <- log(x)
-    if (log.y) y <- log(y)
+    evaluation <- default.arg(smoother.args, "evaluation", 50)
+    if (log.x){ x <- log(x) }
+    if (log.y){ y <- log(y) }
     valid <- complete.cases(x, y)
     x <- x[valid]
     y <- y[valid]
     ord <- order(x)
     x <- x[ord]
     y <- y[ord]
+    x.eval <- seq(min(x), max(x), length=evaluation)  
     warn <- options(warn=-1)
     on.exit(options(warn))
 # mean smooth
     fit <- try(loess(y ~ x, span=span, family=family, degree=degree,
                     control=loess.control(iterations=iterations)), silent=TRUE)
     if (class(fit)[1] != "try-error"){
-            if (log.x) x <- exp(x)
-            y <- if (log.y) exp(fitted(fit)) else fitted(fit)
-            if(draw)lines(x, y, lwd=lwd, col=col, lty=lty) else
-               out <- list(x=x, y=y)
+            y.eval <- predict(fit, newdata=data.frame(x=x.eval))
+            y.eval <- if(log.y) exp(y.eval) else y.eval
+            if(draw)lines(if(log.x) exp(x.eval) else x.eval, y.eval, lwd=lwd, col=col, lty=lty) else
+               out <- list(x=if(log.x) exp(x.eval) else x.eval, y=y.eval)
             }
     else{ options(warn)
           warning("could not fit smooth")
@@ -55,20 +59,20 @@ loessLine <- function(x, y, col, log.x, log.y, spread=FALSE, smoother.args,
                         control=loess.control(iterations=1)),
                         silent=TRUE)
         if(class(pos.fit)[1] != "try-error"){
-            y.pos <- if (log.y) exp(fitted(fit) + sqrt(offset^2 + predict(pos.fit, newdata=data.frame(x=x))))
-                     else fitted(fit) + sqrt(offset^2 + predict(pos.fit, newdata=data.frame(x=x)))
-            if(draw) {lines(x, y.pos, lwd=lwd.spread, lty=lty.spread, col=col)}
-                else {out$x.pos <- x
+            y.pos <- y.eval + sqrt(offset^2 + predict(pos.fit, newdata=data.frame(x=x.eval)))
+            y.pos <- if (log.y) exp(y.pos) else y.pos
+            if(draw) {lines(if(log.x) exp(x.eval) else x.eval, y.pos, lwd=lwd.spread, lty=lty.spread, col=col)}
+                else {out$x.pos <- if(log.x) exp(x.eval) else x.eval
                       out$y.pos <- y.pos}
-            }
+        }
         else{ options(warn)
             warning("could not fit positive part of the spread")
             }
         if(class(neg.fit)[1] != "try-error"){
-            y.neg <- if (log.y) exp(fitted(fit) - sqrt(offset^2 + predict(neg.fit, data.frame(x=x))))
-                     else fitted(fit) - sqrt(offset^2 + predict(neg.fit, data.frame(x=x)))
-            if(draw) lines(x, y.neg, lwd=lwd.spread, lty=lty.spread, col=col)
-                 else {out$x.neg <- x
+            y.neg <- y.eval - sqrt(offset^2 + predict(neg.fit, newdata=data.frame(x=x.eval)))
+            y.neg <- if (log.y) exp(y.neg) else y.neg
+            if(draw) lines(x.eval, y.neg, lwd=lwd.spread, lty=lty.spread, col=col)
+                 else {out$x.neg <- if(log.x) exp(x.eval) else x.eval
                       out$y.neg <- y.neg}
             }
         else {options(warn)
@@ -87,6 +91,7 @@ gamLine <- function(x, y, col, log.x, log.y, spread=FALSE, smoother.args,
     lwd.spread <- default.arg(smoother.args, "lwd.spread", 1)
     fam <- default.arg(smoother.args, "family", gaussian)
     link <- default.arg(smoother.args, "link", NULL)
+    evaluation <- default.arg(smoother.args, "evaluation", 50)
 # June 18, 2014
     fam <- if(is.character(fam)) eval(parse(text=fam)) else fam
     link <- if(is.character(link)) make.link(link) else link
@@ -104,6 +109,7 @@ gamLine <- function(x, y, col, log.x, log.y, spread=FALSE, smoother.args,
     ord <- order(x)
     x <- x[ord]
     y <- y[ord]
+    x.eval <- seq(min(x), max(x), length=evaluation)
     w <-if (is.null(weights)) rep(1, length(y))
     else weights[valid][ord]
     warn <- options(warn=-1)
@@ -113,11 +119,11 @@ gamLine <- function(x, y, col, log.x, log.y, spread=FALSE, smoother.args,
     fit <- try(gam(y ~ s(x, k=k, bs=bs), weights=w, family=fam1))
 # end bug fix.
     if (class(fit)[1] != "try-error"){
-            if (log.x) x <- exp(x)
-            y <- if (log.y) exp(fitted(fit)) else fitted(fit)
-            if (draw) lines(x, y, lwd=lwd, col=col, lty=lty) else
-               out <- list(x=x, y=y)
-            }
+      y.eval <- predict(fit, newdata=data.frame(x=x.eval))
+      y.eval <- if(log.y) exp(y.eval) else y.eval
+      if(draw)lines(if(log.x) exp(x.eval) else x.eval, y.eval, lwd=lwd, col=col, lty=lty) else
+        out <- list(x=if(log.x) exp(x.eval) else x.eval, y=y.eval)
+    }
     else{ options(warn)
           warning("could not fit smooth")
           return()}
@@ -127,22 +133,22 @@ gamLine <- function(x, y, col, log.x, log.y, spread=FALSE, smoother.args,
         pos.fit <- try(gam(I(res^2) ~ s(x, k=k, bs=bs), subset=pos), silent=TRUE)
         neg.fit <- try(gam(I(res^2) ~ s(x, k=k, bs=bs), subset=!pos), silent=TRUE)
         if(class(pos.fit)[1] != "try-error"){
-            y.pos <- if (log.y) exp(fitted(fit) + sqrt(offset^2 + predict(pos.fit, data.frame(x=x))))
-            else fitted(fit) + sqrt(offset^2 + predict(pos.fit, data.frame(x=x)))
-            if(draw) lines(x, y.pos, lwd=lwd.spread, lty=lty.spread, col=col)
-               else {out$x.pos <- x
-                     out$y.pos <- y.pos}
-            }
+          y.pos <- y.eval + sqrt(offset^2 + predict(pos.fit, newdata=data.frame(x=x.eval)))
+          y.pos <- if (log.y) exp(y.pos) else y.pos
+          if(draw) {lines(if(log.x) exp(x.eval) else x.eval, y.pos, lwd=lwd.spread, lty=lty.spread, col=col)}
+          else {out$x.pos <- if(log.x) exp(x.eval) else x.eval
+          out$y.pos <- y.pos}
+        }
         else{ options(warn)
             warning("could not fit positive part of the spread")
             }
-        if(class(neg.fit)[1] != "try-error"){
-            y.neg <- if (log.y) exp(fitted(fit) - sqrt(offset^2 + predict(neg.fit, data.frame(x=x))))
-            else fitted(fit) - sqrt(offset^2 + predict(neg.fit, data.frame(x=x)))
-            if(draw) lines(x, y.neg, lwd=lwd.spread, lty=lty.spread, col=col)
-               else {out$x.neg <- x
-                     out$y.neg <- y.neg}
-            }
+          if(class(neg.fit)[1] != "try-error"){
+            y.neg <- y.eval - sqrt(offset^2 + predict(neg.fit, newdata=data.frame(x=x.eval)))
+            y.neg <- if (log.y) exp(y.neg) else y.neg
+            if(draw) lines(x.eval, y.neg, lwd=lwd.spread, lty=lty.spread, col=col)
+            else {out$x.neg <- if(log.x) exp(x.eval) else x.eval
+            out$y.neg <- y.neg}
+          }
         else {options(warn)
             warning("could not fit negative part of the spread") }
         }
@@ -159,6 +165,7 @@ quantregLine <- function(x, y, col, log.x, log.y, spread=FALSE, smoother.args,
     lwd <- default.arg(smoother.args, "lwd", 2)
     lty.spread <- default.arg(smoother.args, "lty.spread", 2)
     lwd.spread <- default.arg(smoother.args, "lwd.spread", 1)
+    evaluation <- default.arg(smoother.args, "evaluation", 50)
     if (log.x) x <- log(x)
     if (log.y) y <- log(y)
     lambda <- default.arg(smoother.args, "lambda", IQR(x))
@@ -168,32 +175,35 @@ quantregLine <- function(x, y, col, log.x, log.y, spread=FALSE, smoother.args,
     ord <- order(x)
     x <- x[ord]
     y <- y[ord]
+    x.eval <- seq(min(x), max(x), length=evaluation) 
     if (!spread){
         fit <- rqss(y ~ qss(x, lambda=lambda))
-        if (log.x)  x <- exp(x)
-        y <-if (log.y) exp(fitted(fit)) else fitted(fit)
-        if(draw) lines(x, y, lwd=lwd, col=col, lty=lty)  else
-           out <- list(x=x, y=x)
+        y.eval <- predict(fit, newdata=data.frame(x=x.eval))
+        y.eval <- if(log.y) exp(y.eval) else y.eval
+        if(draw)lines(if(log.x) exp(x.eval) else x.eval, y.eval, lwd=lwd, col=col, lty=lty) else
+          out <- list(x=if(log.x) exp(x.eval) else x.eval, y=y.eval)
     }
     else{
         fit <- rqss(y ~ qss(x, lambda=lambda))
         q1fit <- rqss(y ~ qss(x, lambda=lambda), tau=0.25)
         q3fit <- rqss(y ~ qss(x, lambda=lambda), tau=0.75)
-        if (log.x) x <- exp(x)
-        y <- if(log.y) exp(fitted(fit)) else fitted(fit)
-        y.q1 <- if(log.y) exp(fitted(q1fit)) else fitted(q1fit)
-        y.q3 <- if(log.y) exp(fitted(q3fit)) else fitted(q3fit)
+        y.eval <- predict(fit, newdata=data.frame(x=x.eval))
+        y.eval.q1 <- predict(q1fit, newdata=data.frame(x=x.eval))
+        y.eval.q3 <- predict(q3fit, newdata=data.frame(x=x.eval))
+        y.eval <- if(log.y) exp(y.eval) else y.eval
+        y.eval.q1 <- if(log.y) exp(y.eval.q1) else y.eval.q1
+        y.eval.q3 <- if(log.y) exp(y.eval.q3) else y.eval.q3
 # 11/22/14:  adjust for offset
-        y.q1 <- y - sqrt( (y-y.q1)^2 + offset^2)
-        y.q3 <- y + sqrt( (y-y.q3)^2 + offset^2)
-        if(draw) lines(x, y, lwd=lwd, col=col, lty=lty) else
-           out <- list(x=x, y=y)
-        if(draw) lines(x, y.q1, lwd=lwd.spread, lty=lty.spread, col=col) else
-           {out$x.neg <- x
-            out$y.neg <- y.q1}
-        if(draw) lines(x, y.q3, lwd=lwd.spread, lty=lty.spread, col=col) else
-           {out$x.neg <- x
-            out$y.neg <- y.q1}
+        y.eval.q1 <- y.eval - sqrt( (y.eval-y.eval.q1)^2 + offset^2)
+        y.eval.q3 <- y.eval + sqrt( (y.eval-y.eval.q3)^2 + offset^2)
+        if(draw)lines(if(log.x) exp(x.eval) else x.eval, y.eval, lwd=lwd, col=col, lty=lty) else
+          out <- list(x=if(log.x) exp(x.eval) else x.eval, y=y.eval)
+        if(draw) lines(if(log.x) exp(x.eval) else x.eval, y.eval.q1, lwd=lwd.spread, lty=lty.spread, col=col) else
+           {out$x.neg <- if(log.x) exp(x.eval) else x.eval
+            out$y.neg <- y.eval.q1}
+        if(draw) lines(if(log.x) exp(x.eval) else x.eval, y.eval.q3, lwd=lwd.spread, lty=lty.spread, col=col) else
+           {out$x.neg <- x.eval
+            out$y.neg <- y.eval.q3}
     }
     if(!draw) return(out)
 }

@@ -4,6 +4,7 @@
 \alias{boxCox.default}
 \alias{boxCox.formula}
 \alias{boxCox.skewpowerTransform}
+\alias{boxCox.lmerMod}
 
 \title{
   Box-Cox Transformations for Linear Models 
@@ -28,11 +29,16 @@ boxCox(object, ...)
 \method{boxCox}{formula}(object, lambda = seq(-2, 2, 1/10), plotit = TRUE, ...)
   
 \method{boxCox}{lm}(object, lambda = seq(-2, 2, 1/10), plotit = TRUE, ...)
+
+\method{boxCox}{lmerMod}(object,
+          lambda = seq(-2, 2, 1/10), plotit = TRUE, interp = plotit, eps = 1/50,
+          xlab=NULL, ylab=NULL, family="bcPower", 
+          param=c("lambda", "gamma"), gamma=NULL, grid=TRUE, ...)
 }
 
 \arguments{
   \item{object}{
-    a formula or fitted model object of class \code{lm} or \code{aov}.
+    a formula or fitted model object of class \code{lm} or \code{aov} or \code{lmerMod}.
   }
   \item{lambda}{
     vector of values of \eqn{\lambda}{lambda}, with default (-2, 2) in steps of 0.1, where the profile
@@ -75,7 +81,7 @@ boxCox(object, ...)
 \details{
   This routine is an elaboration of the \code{\link{boxcox}} function in the
   \pkg{MASS} package.  The first 7 arguments are the same as in \code{boxcox}, and if the argument \code{family="bcPower"} is used, the result is essentially identical to the function in \pkg{MASS}.  Two additional families are the \code{yjPower} and \code{skewPower} families that allow a few values of the response to be non-positive. 
-The skew power family has two parameters a power \eqn{\lambda}{lambda} and a start or location parameter \eqn{\gamma}{gamma}, and this functin can be used to obtain a profile log-likelihood for either parameter.
+The skew power family has two parameters: a power \eqn{\lambda}{lambda} and a start or location parameter \eqn{\gamma}{gamma}, and this function can be used to obtain a profile log-likelihood for either parameter with \eqn{\lambda}{lambda} as the default.
 }
 
 \value{

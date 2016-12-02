@@ -1,4 +1,4 @@
-# last modified 2016-06-25 by J. Fox
+# last modified 2016-11-25 by J. Fox
 
 importFrom(MASS, cov.trob, polr, rlm)
 importFrom(nnet, multinom)
@@ -10,7 +10,7 @@ importFrom(graphics, abline, arrows, axis, box, boxplot, contour, hist, identify
     layout, legend, lines, locator, mtext, pairs, par, plot, points, polygon, 
     rug, segments, strheight, strwidth, text)
 importFrom(grDevices, boxplot.stats, col2rgb, gray, palette, rgb)
-importFrom(stats, D, IQR, alias, anova, as.formula, coef, coefficients, 
+importFrom(stats, D, IQR, alias, anova, as.formula, bw.nrd0, coef, coefficients, 
     complete.cases, confint, contrasts, "contrasts<-", cooks.distance, cor, 
     cov, cov.wt, cov2cor, density, deviance, df.residual, dfbeta, dnorm, 
     drop1, family, fitted, fitted.values, fivenum, formula, gaussian, getCall, 
@@ -102,6 +102,7 @@ export(
     quantregLine,
     mcPlot,
     mcPlots,
+    adaptiveKernel,
     
     # method explicitly exported for import in other packages
     linearHypothesis.default,
@@ -162,6 +163,8 @@ S3method(subsets, regsubsets)
 S3method(boxCox, default)
 S3method(boxCox, lm)
 S3method(boxCox, formula) 
+S3method(boxCox, lmerMod)
+S3method(boxCox, formula)
 S3method(Anova, aov)
 S3method(Anova, coxph)
 S3method(Anova, coxme)
@@ -187,6 +190,9 @@ S3method(bootCase, glm)
 S3method(bootCase, nls)
 S3method(Boxplot, default)
 S3method(Boxplot, formula)
+S3method(Boxplot, list)
+S3method(Boxplot, data.frame)
+S3method(Boxplot, matrix)
 S3method(nextBoot, lm)
 S3method(nextBoot, nls)
 S3method(boxTidwell, default)
@@ -213,6 +219,7 @@ S3method(durbinWatsonTest, default)
 S3method(durbinWatsonTest, lm)
 S3method(powerTransform, default)
 S3method(powerTransform, lm)
+S3method(powerTransform, lmerMod)
 S3method(influencePlot, lm)
 S3method(inverseResponsePlot, lm)
 S3method(invTranPlot, formula)
@@ -269,6 +276,7 @@ S3method(summary, powerTransform)
 S3method(plot, powerTransform)
 S3method(plot, skewpowerTransform)
 S3method(contour, skewpowerTransform)
+S3method(contour, skewpowerTransformlmer)
 S3method(coef, powerTransform)
 S3method(coef, skewpowerTransform)
 S3method(vcov, powerTransform)
@@ -303,5 +311,5 @@ S3method(print, confint.boot)
 # methods related to Box-Cox Transformations
 S3method(estimateTransform, default)
 S3method(estimateTransform, skewPower)
-
-
+S3method(estimateTransform, lmerMod)
+S3method(estimateTransform, skewPowerlmer)

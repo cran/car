@@ -1,10 +1,16 @@
-# Feb 11 2015.  skewPower family of transformations
+
+# Feb 11 2015.  skewPower family of transformations for lm objects
+# This file contains:  
+# (1) functions to define skewPower family
+# (2) functions to use skewPower with lm models
 #  skewPower:  Evaluate transformation at (lambda, gamma);
 #    Jacobian.adjustment optional
 #    U Univeriate or multivariate.
 #  skewPowerllik:  Evaluate the skew log-likelihood at (lambda, gamma)
-# April 15, 2015, corrected handling of invHess submatrices in estimateTransform.skewPower    
-
+# April 15, 2015, corrected handling of invHess submatrices in estimateTransform.skewPower
+# July 20, 2016:  Minor changes in error handling and formatting
+# August 17, 2016:  skewmle and testTransform.skewPower adapted to allow fixing gamma
+# Sept 27, 2016:  Fixed bug in handling vectors rather than data frames, thanks to Balazs Banfai
 
 ## ------------------------------------------------------------------------
 skewPower <- function(U, lambda, jacobian.adjusted=FALSE, gamma) { 
@@ -21,7 +27,7 @@ skewPower <- function(U, lambda, jacobian.adjusted=FALSE, gamma) {
       stop("First argument must be strictly positive if gamma = 0.")
     s <- sqrt(U^2 + gamma^2)
     z <- if (abs(lambda) <= 1.e-10) 
-              log(.5*(U + s)) else ((.5*(U + s))^lambda - 1)/lambda
+      log(.5*(U + s)) else ((.5*(U + s))^lambda - 1)/lambda
     if (jacobian.adjusted == TRUE) {
       Jn <- (.5^lambda) * 
         (exp((lambda - 1) * mean(log(U + s), na.rm=TRUE))) *
@@ -32,10 +38,10 @@ skewPower <- function(U, lambda, jacobian.adjusted=FALSE, gamma) {
   out <- U
   out <- if(is.matrix(out) | is.data.frame(out)){
     if(is.null(colnames(out))) 
-       colnames(out) <- paste("Z", 1:dim(out)[2], sep="")
+      colnames(out) <- paste("Z", 1:dim(out)[2], sep="")
     for (j in 1:ncol(out)) {out[, j] <- hc1(out[, j], lambda[j], gamma[j]) }
     colnames(out) <- paste(colnames(out), "(",round(lambda, 2), ",",round(gamma, 1),")", sep="")
-#    colnames(out) <- paste(colnames(out), round(lambda, 2), sep="^")
+    #    colnames(out) <- paste(colnames(out), round(lambda, 2), sep="^")
     out}  else
       hc1(out, lambda, gamma)
   out}
@@ -47,7 +53,7 @@ skewPowerllik <- function(X, Y, weights=NULL, lambda, gamma, xqr=NULL) {
   xqr <- if(is.null(xqr)){qr(w * as.matrix(X))} else xqr
   nr <- nrow(Y)
   f <- -(nr/2)*log(((nr - 1)/nr) *
-      det(as.matrix(var(qr.resid(xqr, w * skewPower(Y, lambda, jacobian.adjusted=TRUE, gamma=gamma))))))
+                     det(as.matrix(var(qr.resid(xqr, w * skewPower(Y, lambda, jacobian.adjusted=TRUE, gamma=gamma))))))
   list(lambda=lambda, gamma=gamma, llik=f)
 }
 
@@ -62,6 +68,141 @@ skewPowerllikprofile.lambda <- function(X, Y, weights=NULL, gamma, xqr=NULL){
     f <- optimize(f=fn, interval=c(-3, 3), maximum=TRUE)
     list(lambda=f$maximum, gamma=gamma, llik=f$objective, invHess=solve(-optimHess(f$maximum, fn)))
   } else {
+    # get starting values
+    par <- rep(0, length(gamma))
+    for (j in 1:dim(Y)[2]) par[j] <- 
+        skewPowerllikprofile.lambda(NULL, Y[, j, drop=FALSE], weights, gamma=gamma[j], xqr)$lambda
+    # optimize
+    f <- optim(par=par, fn=fn, method="L-BFGS-B",
+               lower=rep(-3, length(gamma)), upper=rep(3, length(gamma)),
+               control=list(fnscale=-1))
+    list(lambda=f$par, gamma=gamma, llik=f$value, invHess = solve(-optimHess(f$par, fn))) 
+  }  
+}
+
+##  maximize skewPowerllik for fixed lambda-------------------------------------
+skewPowerllikprofile.gamma <- function(X, Y, weights=NULL, lambda, xqr=NULL){ 
+  xqr <- if(is.null(xqr)){
+    w <- if(is.null(weights)) 1 else sqrt(weights)
+    qr(w * as.matrix(X))
+  } else xqr
+  fn <- function(gam) skewPowerllik(NULL, Y, weights, lambda=lambda, gamma=gam, xqr=xqr)$llik 
+  if(dim(as.matrix(Y))[2] == 1L){ 
+    f <- optimize(f=fn, interval=c(0.01, max(Y)), maximum=TRUE)
+    list(lambda=lambda, gamma=f$maximum, llik=f$objective, 
+         invHess=solve(-optimHess(f$maximum, fn))) 
+  } else {
+    # get starting values
+    par <- rep(0, length(lambda))
+    for (j in 1:dim(Y)[2])par[j] <- 
+        skewPowerllikprofile.gamma(NULL, Y[, j, drop=FALSE], weights, lambda=lambda[j], xqr)$gamma
+    # optimize
+    f <- optim(par=par, fn=fn, method="L-BFGS-B",
+               lower=rep(.001, length(gamma)), upper=rep(Inf, length(gamma)),
+               control=list(fnscale=-1))
+    list(lambda=lambda, gamma=f$par, llik=f$value,
+         invHess = solve(-optimHess(f$par, fn))) 
+  }  
+}
+
+## ------------------------------------------------------------------------
+skewmle <- function(X, Y, weights=NULL, lambda=c(-3, 3), gamma=NULL, control=list(maxit=1000)) {
+  if(!is.null(gamma)) skewmle1d(X, Y, weights, lambda, gamma, control) else
+    skewmle2d(X, Y, weights, lambda, gamma, control)
+}
+
+skewmle2d <- function(X, Y, weights=NULL, lambda=c(-3, 3), gamma=NULL, control=list(maxit=1000)) {
+  # Get a starting value for lambda by removing all negative rows 
+  # and doing Box-Cox Power:
+  Y <- as.matrix(Y)
+  sel <- apply(Y, 1, function(x) all(x > 0))
+  weights <- if(is.null(weights)) rep(1, length(sel)) else weights
+  lambda.start <- estimateTransform(as.matrix(X)[sel, ], Y[sel,], weights[sel])$lambda
+  # Get a starting value for gamma using profiling
+  xqr <- qr(sqrt(weights) * as.matrix(X))
+  nc <- length(lambda.start)
+  gamma.start <- skewPowerllikprofile.gamma(NULL, Y, weights, lambda.start, xqr=xqr)$gamma
+  # fnscale must be negative to maximize
+  control$fnscale <- if(is.null(control$fnscale)) -1 else -abs(control$fnscale)
+  fn <- function(param){
+    lam <- param[1:nc]
+    gam <- param[(nc+1):(2*nc)]
+    skewPowerllik(NULL, Y, weights, lam, gam, xqr=xqr)$llik
+  } 
+  res <- optim(c(lambda.start, gamma.start), fn, method="L-BFGS-B", 
+               lower=c(rep(lambda[1], nc), rep(.01, nc)), 
+               upper=c(rep(lambda[2], nc), rep(+Inf, nc)), 
+               control=control)
+  res$llik <- res$value
+  if(res$convergence != 0)
+    warning(paste("Convergence failure:", res$message))
+  invHess <- get.invHess(res$par, fn)
+  res$invHess <- invHess
+  res$ylabs <-  
+    if (is.null(colnames(Y))) paste("Y", 1:dim(Y)[2], sep="") else colnames(Y)
+  names(res$par) <- rownames(res$invHess) <- 
+    colnames(res$invHess) <- c(paste("lam",res$ylabs, sep="."), paste("gam", res$ylabs, sep="."))
+  res$xqr <- xqr
+  res$y <- Y
+  res$x <- X
+  res$weights <- weights
+  res$fix.gamma <- NULL
+  res
+}
+
+skewmle1d <- function(X, Y, weights=NULL, lambda=c(-3, 3), gamma, control=list(maxit=1000)) {
+  Y <- as.matrix(Y)
+  nc <- dim(Y)[2]
+  weights <- if(is.null(weights)) rep(1, dim(Y)[1]) else weights
+  xqr <- qr(sqrt(weights) * as.matrix(X))
+  res <- skewPowerllikprofile.lambda(X, Y, weights, gamma, xqr=xqr)
+  # change size of invHess 
+  invHess <- matrix(nrow=2*nc, ncol=2*nc)
+  invHess[1:nc, 1:nc] <- res$invHess
+  res$invHess <- invHess
+  res$ylabs <-  
+    if (is.null(colnames(Y))) paste("Y", 1:dim(Y)[2], sep="") else colnames(Y)
+  rownames(res$invHess) <- 
+    colnames(res$invHess) <- c(paste("lam",res$ylabs, sep="."), paste("gam", res$ylabs, sep="."))
+  res$xqr <- xqr
+  res$y <- Y
+  res$x <- X
+  res$par <- c(res$lambda, res$gamma)
+  res$weights <- weights
+  res$fix.gamma <- gamma
+  res
+}
+
+## Evaluate skew llik at (lambda, gamma)-----------------------------------
+skewPowerllik <- function(X, Y, weights=NULL, lambda, gamma, xqr=NULL) {
+  Y <- as.matrix(Y) # coerces Y to be a matrix.
+  w <- if(is.null(weights)) 1 else sqrt(weights)  
+  xqr <- if(is.null(xqr)){qr(w * as.matrix(X))} else xqr
+  nr <- nrow(Y)
+  f <- -(nr/2)*log(((nr - 1)/nr) *
+      det(as.matrix(var(qr.resid(xqr, w * skewPower(Y, lambda, 
+                                                    jacobian.adjusted=TRUE, gamma=gamma))))))
+  list(lambda=lambda, gamma=gamma, llik=f)
+}
+
+## convenience function to compute the inverse Hessian, if possible, else return NA
+get.invHess <- function(...){
+  hess <- try(optimHess(...))
+  if(class(hess) == "try-error") NA else solve(-hess)
+}
+
+## maximize skewPowerllik for fixed gamma--------------------------------------
+skewPowerllikprofile.lambda <- function(X, Y, weights=NULL, gamma, xqr=NULL){
+  xqr <- if(is.null(xqr)){
+    w <- if(is.null(weights)) 1 else sqrt(weights)
+    qr(w * as.matrix(X))
+  } else xqr
+  fn <- function(lam) skewPowerllik(NULL, Y, weights, lambda=lam, gamma=gamma, xqr=xqr)$llik
+  if(dim(as.matrix(Y))[2] ==1){  
+    f <- optimize(f=fn, interval=c(-3, 3), maximum=TRUE)
+    invHess <- get.invHess(f$maximum, fn)
+    list(lambda=f$maximum, gamma=gamma, llik=f$objective, invHess=invHess)
+  } else {
 # get starting values
     par <- rep(0, length(gamma))
     for (j in 1:dim(Y)[2]) par[j] <- 
@@ -70,7 +211,8 @@ skewPowerllikprofile.lambda <- function(X, Y, weights=NULL, gamma, xqr=NULL){
     f <- optim(par=par, fn=fn, method="L-BFGS-B",
                   lower=rep(-3, length(gamma)), upper=rep(3, length(gamma)),
                   control=list(fnscale=-1))
-    list(lambda=f$par, gamma=gamma, llik=f$value, invHess = solve(-optimHess(f$par, fn))) 
+    invHess <- get.invHess(f$par, fn)
+    list(lambda=f$par, gamma=gamma, llik=f$value, invHess = invHess) 
   }  
 }
 
@@ -83,61 +225,28 @@ skewPowerllikprofile.gamma <- function(X, Y, weights=NULL, lambda, xqr=NULL){
  fn <- function(gam) skewPowerllik(NULL, Y, weights, lambda=lambda, gamma=gam, xqr=xqr)$llik 
  if(dim(as.matrix(Y))[2] == 1L){ 
    f <- optimize(f=fn, interval=c(0.01, max(Y)), maximum=TRUE)
-   list(lambda=lambda, gamma=f$maximum, llik=f$objective, 
-        invHess=solve(-optimHess(f$maximum, fn))) 
+   invHess <- get.invHess(f$maximum, fn)
+   list(lambda=lambda, gamma=f$maximum, llik=f$objective, invHess=invHess) 
  } else {
 # get starting values
    par <- rep(0, length(lambda))
-   for (j in 1:dim(Y)[2])par[j] <- 
-      skewPowerllikprofile.gamma(NULL, Y[, j, drop=FALSE], weights, lambda=lambda[j], xqr)$gamma
+   for (j in 1:dim(Y)[2])
+     par[j] <- skewPowerllikprofile.gamma(NULL, Y[, j, drop=FALSE], weights, 
+                                          lambda=lambda[j], xqr)$gamma
 # optimize
    f <- optim(par=par, fn=fn, method="L-BFGS-B",
-              lower=rep(.001, length(gamma)), upper=rep(Inf, length(gamma)),
+              lower=rep(.Machine$double.eps^0.25, length(gamma)), 
+              upper=rep(Inf, length(gamma)),
               control=list(fnscale=-1))
-   list(lambda=lambda, gamma=f$par, llik=f$value,
-        invHess = solve(-optimHess(f$par, fn))) 
+   invHess <- get.invHess(f$par, fn)
+   list(lambda=lambda, gamma=f$par, llik=f$value, invHess = invHess) 
  }  
 }
 
-## skew lme, multivariate -----------------------------------------------------------
-skewmle <- function(X, Y, weights=NULL, lambda=c(-3, 3), control=list(maxit=1000)) {
-# Get a starting value for lambda by removing all negative rows 
-# and doing Box-Cox Power:
-  Y <- as.matrix(Y)
-  sel <- apply(Y, 1, function(x) all(x > 0))
-  weights <- if(is.null(weights)) rep(1, length(sel)) else weights
-  lambda.start <- estimateTransform(as.matrix(X[sel, ]), as.matrix(Y[sel,]), weights[sel])$lambda
-# Get a starting value for gamma using profiling
-  xqr <- qr(sqrt(weights) * as.matrix(X))
-  nc <- length(lambda.start)
-  gamma.start <- skewPowerllikprofile.gamma(NULL, Y, weights, lambda.start, xqr=xqr)$gamma
-# fnscale must be negative to maximize
-  control$fnscale <- if(is.null(control$fnscale)) -1 else -abs(control$fnscale)
-  fn <- function(param){
-    lam <- param[1:nc]
-    gam <- param[(nc+1):(2*nc)]
-    skewPowerllik(NULL, Y, weights, lam, gam, xqr=xqr)$llik
-  } 
-  res <- optim(c(lambda.start, gamma.start), fn, method="L-BFGS-B", 
-               lower=c(rep(lambda[1], nc), rep(.01, nc)), 
-               upper=c(rep(lambda[2], nc), rep(+Inf, nc)), 
-               control=control)
-  if(res$convergence != 0)
-    warning(paste("Convergence failure:", res$message))
-  res$invHess <- solve(-optimHess(res$par, fn))
-  res$ylabs <-  
-    if (is.null(colnames(Y))) paste("Y", 1:dim(Y)[2], sep="") else colnames(Y)
-  names(res$par) <- rownames(res$invHess) <- 
-    colnames(res$invHess) <- c(paste("lam",res$ylabs, sep="."), paste("gam", res$ylabs, sep="."))
-  res$xqr <- xqr
-  res$y <- Y
-  res$x <- X
-  res$weights <- weights
-  res
-}
+
 
 # Generic function is in powerTransform.R
-estimateTransform.skewPower <- function(X, Y, weights=NULL, ...){
+estimateTransform.skewPower <- function(X, Y, weights=NULL, lambda=c(-3, 3), gamma=NULL, ...){
   res <- skewmle(X, Y, weights, ...)
   nc <- dim(as.matrix(Y))[2]
   res$lambda <- res$par[1:nc]
@@ -158,19 +267,22 @@ estimateTransform.skewPower <- function(X, Y, weights=NULL, ...){
 }
 
 # generic is in powerTransform.R
-testTransform.skewpowerTransform <- function(object, 
-                      lambda=rep(1, dim(object$y)[2])){
+testTransform.skewpowerTransform <- function(object, lambda=rep(1, dim(object$y)[2])){
   nc <- length(object$lambda)
   lam <- if(length(lambda)==1) rep(lambda, nc) else lambda  
   val <- skewPowerllikprofile.gamma(NULL, object$y, object$weights, lam, xqr=object$xqr)
-  LR <- max(0, -2 * (val$llik - object$value))
+  val <- if(is.null(object$fix.gamma))
+    skewPowerllikprofile.gamma(NULL, object$y, object$weights, lam, xqr=object$xqr)$llik else{
+      skewPowerllik(NULL, object$y, object$weights, lam, object$gamma, xqr=object$xqr)$llik
+    }
+  LR <- max(0, -2 * (val - object$llik))
   df <- nc
   pval <- 1-pchisq(LR, df)
   out <- data.frame(LRT=LR, df=df, pval=pval)
   rownames(out) <- 
     c(paste("LR test, lambda = (",
             paste(round(lam, 2), collapse=" "), ")", sep=""))
-  out}   
+  out}
 
 # methods for skewpowerTransform objects
 
@@ -184,7 +296,7 @@ print.skewpowerTransform<-function(x, ...) {
 summary.skewpowerTransform<-function(object,...){
   nc <- length(object$lambda)
   label <- paste(if(nc==1) "Skew Power transformation to Normality" else 
-                   "Skew Power Transformations to Multinormality", "\n\n")
+                   "Skew Power Transformations to Multinormality", "\n")
   lambda <- object$lambda
   gamma <- object$gamma
   stderr <- sqrt(diag(object$invHess))
