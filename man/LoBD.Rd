@@ -45,7 +45,7 @@ and reagent lots L.
 \source{
 Used as an illustrative example for Box-Cox type transformations with 
 negative readings in Hawkins and Weisberg (2015).  
-For examples of its use, see \code{\link{skewPower}}.
+For examples of its use, see \code{\link{bcnPower}}.
 }
 \references{
 Hawkins, D. and Weisberg, S. (2015)

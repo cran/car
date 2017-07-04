@@ -9,6 +9,7 @@
 # 2015-01-27: gam() and s() now imported from mgcv rqss(), qss(), and fitted.rqss() from quantreg. John
 # 2016-11-19: Added argument in smoother.args called 'evaluation'.  The smoother will be evaluated
 #             at evaluation equally spaced points in the range of the horizontal axis, with a default of 50.
+# 2017-06-13: Fixed bug in gamLine to use predict(m, data.frame, type="response")
 
 default.arg <- function(args.list, arg, default){
     if (is.null(args.list[[arg]])) default else args.list[[arg]]
@@ -119,7 +120,7 @@ gamLine <- function(x, y, col, log.x, log.y, spread=FALSE, smoother.args,
     fit <- try(gam(y ~ s(x, k=k, bs=bs), weights=w, family=fam1))
 # end bug fix.
     if (class(fit)[1] != "try-error"){
-      y.eval <- predict(fit, newdata=data.frame(x=x.eval))
+      y.eval <- predict(fit, newdata=data.frame(x=x.eval), type="response")
       y.eval <- if(log.y) exp(y.eval) else y.eval
       if(draw)lines(if(log.x) exp(x.eval) else x.eval, y.eval, lwd=lwd, col=col, lty=lty) else
         out <- list(x=if(log.x) exp(x.eval) else x.eval, y=y.eval)
@@ -133,7 +134,8 @@ gamLine <- function(x, y, col, log.x, log.y, spread=FALSE, smoother.args,
         pos.fit <- try(gam(I(res^2) ~ s(x, k=k, bs=bs), subset=pos), silent=TRUE)
         neg.fit <- try(gam(I(res^2) ~ s(x, k=k, bs=bs), subset=!pos), silent=TRUE)
         if(class(pos.fit)[1] != "try-error"){
-          y.pos <- y.eval + sqrt(offset^2 + predict(pos.fit, newdata=data.frame(x=x.eval)))
+          y.pos <- y.eval + sqrt(offset^2 + predict(pos.fit, newdata=data.frame(x=x.eval), 
+                                                    type="response"))
           y.pos <- if (log.y) exp(y.pos) else y.pos
           if(draw) {lines(if(log.x) exp(x.eval) else x.eval, y.pos, lwd=lwd.spread, lty=lty.spread, col=col)}
           else {out$x.pos <- if(log.x) exp(x.eval) else x.eval
@@ -143,7 +145,8 @@ gamLine <- function(x, y, col, log.x, log.y, spread=FALSE, smoother.args,
             warning("could not fit positive part of the spread")
             }
           if(class(neg.fit)[1] != "try-error"){
-            y.neg <- y.eval - sqrt(offset^2 + predict(neg.fit, newdata=data.frame(x=x.eval)))
+            y.neg <- y.eval - sqrt(offset^2 + predict(neg.fit, newdata=data.frame(x=x.eval),
+                                                      type="response"))
             y.neg <- if (log.y) exp(y.neg) else y.neg
             if(draw) lines(x.eval, y.neg, lwd=lwd.spread, lty=lty.spread, col=col)
             else {out$x.neg <- if(log.x) exp(x.eval) else x.eval

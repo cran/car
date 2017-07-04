@@ -43,6 +43,7 @@
 # 2015-11-13: modify Anova.coxph() to take account of method/ties argument. John
 # 2016-06-03: added SSP and SSPE args to print.summary.Anova.mlm(). John
 # 2016-06-25: added code to optionally print univariate ANOVAs for a mlm. John
+# 2017-03-08: fixed bug in print.summary.Anova.mlm(). John
 #-------------------------------------------------------------------------------
 
 # Type II and III tests for linear, generalized linear, and other models (J. Fox)
@@ -1163,7 +1164,7 @@ as.data.frame.univaov <- function(x, row.names, optional, by=c("response", "term
     SS <- melt(t(x$SS[1:nt, -1, drop=FALSE]), varnames=vn, value.name="SS")	
     F <- melt(t(x$F), varnames=vn, value.name="F")
     p <- melt(t(x$p), varnames=vn, value.name="p")
-    if (!is.null(x$p.adjust)) p.adjust <- melt(x$p.adjust, varnames=vn, value.name="adjusted p")
+    if (!is.null(x$p.adjust)) p.adjust <- melt(t(x$p.adjust), varnames=vn, value.name="adjusted p")
   }
   
   result <- cbind(SS[,c(2,1,3)], df=c(df), F=F[,"F"], p=p[,"p"])

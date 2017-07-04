@@ -1,15 +1,18 @@
 \name{bcPower}
 \alias{bcPower}
+\alias{bcnPower}
 \alias{yjPower}
 \alias{basicPower}
 
-\title{Box-Cox, Yeo-Johnson and Basic Power Transformations}
+\title{Box-Cox, Box-Cox with Negatives Allowed, Yeo-Johnson and Basic Power Transformations}
 \description{
-Transform the elements of a vector using, the Box-Cox, 
+Transform the elements of a vector or columns of a matrix using, the Box-Cox, Box-Cox with negatives allowed,
 Yeo-Johnson, or simple power transformations.
 }
 \usage{
 bcPower(U, lambda, jacobian.adjusted=FALSE, gamma=NULL)
+
+bcnPower(U, lambda, jacobian.adjusted = FALSE, gamma)
 
 yjPower(U, lambda, jacobian.adjusted = FALSE)
 
@@ -17,46 +20,48 @@ basicPower(U,lambda, gamma=NULL)
 }
 \arguments{
   \item{U}{A vector, matrix or data.frame of values to be transformed}
-  \item{lambda}{The one-dimensional transformation parameter, usually in 
-  the range from \eqn{-2} to \eqn{2}, or if \code{U} is a matrix or data frame, a vector of length
-  \code{ncol(U)} of transformation parameters}
+  \item{lambda}{Power transformation parameter with one element for eacul column of U, usuallly in
+  the range from \eqn{-2} to \eqn{2}, or if \code{U}}
   \item{jacobian.adjusted}{If \code{TRUE}, the transformation is normalized to have
-  Jacobian equal to one.  The default is \code{FALSE}.}
-  \item{gamma}{For bcPower or basicPower, the transformation is of U + gamma, where gamma is a positive number called a start that must be large enough so that U + gamma is strictly positive.}
+  Jacobian equal to one.  The default \code{FALSE} is almost always appropriate}
+  \item{gamma}{For bcPower or basicPower, the transformation is of U + gamma, where gamma is a positive number called a start that must be large enough so that U + gamma is strictly positive.  For the bcnPower, Box-cox power with negatives allowed, see the details below.}
 }
 
 \details{
-  The Box-Cox family of \emph{scaled power transformations} 
-  equals \eqn{((U + \gamma)^{\lambda}-1)/\lambda}{(U^(lambda)-1)/lambda} 
-  for \eqn{\lambda \neq 0}{lambda not equal to zero}, and 
-  \eqn{\log(U)}{log(U)} if \eqn{\lambda =0}{lambda = 0}.  If \eqn{\gamma}{gamma} is not specified, it is set equal to zero.  \code{U + gamma} 
+  The Box-Cox family of \emph{scaled power transformations}
+  equals \eqn{((U + \gamma)^{\lambda}-1)/\lambda}{(U^(lambda)-1)/lambda}
+  for \eqn{\lambda \neq 0}{lambda not equal to zero}, and
+  \eqn{\log(U)}{log(U)} if \eqn{\lambda =0}{lambda = 0}.  If \eqn{\gamma}{gamma} is not specified, it is set equal to zero.  \code{U + gamma}
   must be strictly positive to use this family.
-  
-  If \code{family="yeo.johnson"} then the Yeo-Johnson transformations are used.  
-  This is the Box-Cox transformation of \eqn{U+1} for nonnegative values, 
-  and of \eqn{|U|+1} with parameter \eqn{2-\lambda}{2-lambda} for \eqn{U} negative.  An alternative family to the Yeo-Johnson family is the \code{\link{skewPower}} family that requires estimating both a power and an second parameter.
-  
-  The basic power transformation returns \eqn{U^{\lambda}} if \eqn{\lambda}
-  is not zero, and \eqn{\log(\lambda)} otherwise.
 
-  If \code{jacobian.adjusted} is \code{TRUE}, then the scaled transformations are divided by the 
-  Jacobian, which is a function of the geometric mean of \eqn{U} for skewPower and yjpower and of \eqn{U + gamma} for bcPower.  With this adjustment, the Jacobian of the transformation is always equal to 1.  
-  
+  The Box-Cox family with negatives allowed was proposed by Hawkins and Weisberg (2017).  It is the Box-Cox power transformation of \eqn{z = .5 * (y + (y^2 + \gamma^2)^{1/2})}, where \eqn{\gamma}{gamma} is strictly positive if \eqn{y}{y} includes negative values and non-negative otherwise.  The value of \eqn{z}{z} is always positive.  The bcnPower transformations behave very similarly to the bcPower transformations, including much less bias than is introduced by setting the parameter \eqn{\gamma}{gamma} to be non-zero in the Box-Cox family.
+
+  If \code{family="yeo.johnson"} then the Yeo-Johnson transformations are used.
+  This is the Box-Cox transformation of \eqn{U+1} for nonnegative values,
+  and of \eqn{|U|+1} with parameter \eqn{2-\lambda}{2-lambda} for \eqn{U} negative.
+
+  The basic power transformation returns \eqn{U^{\lambda}} if \eqn{\lambda}
+  is not zero, and \eqn{\log(\lambda)} otherwise for \eqn{U}{U} strictly positive.
+
+  If \code{jacobian.adjusted} is \code{TRUE}, then the scaled transformations are divided by the
+  Jacobian, which is a function of the geometric mean of \eqn{U} for \code{skewPower} and \code{yjPower} and of \eqn{U + gamma} for \code{bcPower}.  With this adjustment, the Jacobian of the transformation is always equal to 1.
+
   Missing values are permitted, and return \code{NA} where ever \code{U} is equal to \code{NA}.
-  
+
 }
 \value{
   Returns a vector or matrix of transformed values.
 }
 
 \references{
-Fox, J. and Weisberg, S. (2011) 
+Fox, J. and Weisberg, S. (2011)
 \emph{An R Companion to Applied Regression}, Second Edition, Sage.
 
-Hawkins, D. and Weisberg, S. (2015)
-Combining the Box-Cox Power and Genralized Log Transformations to Accomodate Negative Responses,
+Hawkins, D. and Weisberg, S. (2017)
+Combining the Box-Cox Power and Generalized Log Transformations to Accomodate Negative Responses
+In Linear and Mixed-Effects Linear Models,
 submitted for publication.
-  
+
 Weisberg, S. (2014)  \emph{Applied Linear Regression}, Fourth Edition, Wiley
 Wiley, Chapter 7.
 
@@ -66,7 +71,7 @@ transformations to improve normality or symmetry.  \emph{Biometrika}, 87,
 }
 \author{ Sanford Weisberg, <sandy@umn.edu> }
 
-\seealso{\code{\link{powerTransform}}, \code{\link{skewPower}}}
+\seealso{\code{\link{powerTransform}}, \code{\link{testTransform}}}
 \examples{
 U <- c(NA, (-3:3))
 \dontrun{bcPower(U, 0)}  # produces an error as U has negative values
