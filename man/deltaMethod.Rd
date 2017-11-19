@@ -24,22 +24,22 @@ with known or estimated covariance matrix.
 deltaMethod(object, ...)
 
 \method{deltaMethod}{default}(object, g, vcov., func=g, constants, level=0.95, ...)
-\method{deltaMethod}{lm} (object, g, vcov.=vcov, 
+\method{deltaMethod}{lm} (object, g, vcov.=vcov(object, complete=FALSE), 
            parameterNames=names(coef(object)), ...)
-\method{deltaMethod}{nls}(object, g, vcov.=vcov, ...)
+\method{deltaMethod}{nls}(object, g, vcov.=vcov(object, complete=FALSE), ...)
 \method{deltaMethod}{multinom} (object, g, vcov. = vcov, 
            parameterNames = if (is.matrix(coef(object))) 
            colnames(coef(object)) else names(coef(object)), ...) 
 \method{deltaMethod}{polr} (object, g, vcov.=vcov, ...)
-\method{deltaMethod}{survreg} (object, g, vcov. = vcov, 
+\method{deltaMethod}{survreg} (object, g, vcov. = vcov(object, complete=FALSE), 
            parameterNames = names(coef(object)), ...)
-\method{deltaMethod}{coxph} (object, g, vcov. = vcov, 
+\method{deltaMethod}{coxph} (object, g, vcov. = vcov(object, complete=FALSE), 
            parameterNames = names(coef(object)), ...)
-\method{deltaMethod}{mer} (object, g, vcov. = vcov,
+\method{deltaMethod}{mer} (object, g, vcov. = vcov(object, complete=FALSE),
            parameterNames = names(fixef(object)), ...)
-\method{deltaMethod}{merMod} (object, g, vcov. = vcov,
+\method{deltaMethod}{merMod} (object, g, vcov. = vcov(object, complete=FALSE),
            parameterNames = names(fixef(object)), ...)
-\method{deltaMethod}{lme} (object, g, vcov. = vcov,
+\method{deltaMethod}{lme} (object, g, vcov. = vcov(object, complete=FALSE),
            parameterNames = names(fixef(object)), ...)
 \method{deltaMethod}{lmList} (object, g,  ...)
 

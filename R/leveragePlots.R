@@ -9,6 +9,7 @@
 # 16 June 2011 allow layout=NA, in which case the layout is not set in this
 #  function, so it is the responsibility of the user
 # 25 April 2016:  checks na.action for compatibility with Rcmdr.  SW
+# 2017-11-09: make compatible with vcov() in R 2.5.0. J. Fox
 
 
 # these functions to be rewritten; simply renamed for now
@@ -67,7 +68,7 @@ leveragePlot.lm <- function(model, term.name,
 	intercept <- has.intercept(model)
 	assign <- model$assign
 	X <- model.matrix(model)
-	V <- vcov(model)
+	V <- vcov(model, complete=FALSE)
 	wt <- if (is.null(weights(model))) rep(1, length(X[,1]))
 			else weights(model)
 	subs <- which(assign==term-intercept)

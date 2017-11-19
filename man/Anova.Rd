@@ -15,6 +15,7 @@
 %   2015-09-04: added Anova.coxme(). J. Fox
 %   2016-06-03: added SSP and SSPE arguments to print.summary.ANova.mlm(). J. Fox
 %   2016-06-25: provision to print univariate ANOVAs for a mlm. J. Fox
+%   2017-11-09,13: update vcov. args. J. Fox
 %-------------------------------------------------------------------------------------
 
 \name{Anova}
@@ -75,7 +76,7 @@ Manova(mod, ...)
 \method{Anova}{glm}(mod, type=c("II","III", 2, 3), 
     test.statistic=c("LR", "Wald", "F"), 
     error, error.estimate=c("pearson", "dispersion", "deviance"), 
-    singular.ok, ...)
+    vcov.=NULL, singular.ok, ...)
     
 \method{Anova}{multinom}(mod, type = c("II","III", 2, 3), ...)
 
@@ -111,20 +112,20 @@ Manova(mod, ...)
     test.statistic=c("Wald", "LR"), ...)
 	
 \method{Anova}{lme}(mod, type=c("II","III", 2, 3),
-		vcov.=vcov(mod), singular.ok, ...)
+		vcov.=vcov(mod, complete=FALSE), singular.ok, ...)
 
 \method{Anova}{mer}(mod, type=c("II", "III", 2, 3), 
-	test.statistic=c("Chisq", "F"), vcov.=vcov(mod), singular.ok, ...)
+	test.statistic=c("Chisq", "F"), vcov.=vcov(mod, complete=FALSE), singular.ok, ...)
     
 \method{Anova}{merMod}(mod, type=c("II", "III", 2, 3), 
-    test.statistic=c("Chisq", "F"), vcov.=vcov(mod), singular.ok, ...)
+    test.statistic=c("Chisq", "F"), vcov.=vcov(mod, complete=FALSE), singular.ok, ...)
 		
 \method{Anova}{svyglm}(mod, ...)
 
 \method{Anova}{rlm}(mod, ...)
 	
 \method{Anova}{default}(mod, type=c("II", "III", 2, 3), 
-	test.statistic=c("Chisq", "F"), vcov.=vcov(mod), 
+	test.statistic=c("Chisq", "F"), vcov.=vcov(mod, complete=FALSE), 
 	singular.ok, ...)
 }
 
@@ -203,7 +204,7 @@ Manova(mod, ...)
   \item{row.names, optional}{not used.}
   \item{vcov.}{in the \code{default} method, an optional coefficient-covariance matrix or function
     to compute a covariance matrix, computed by default by applying the generic \code{vcov} function to the model object.
-    A similar argument may be supplied to the \code{lm} method, and the default (\code{NULL}) is to ignore the argument;
+    A similar argument may be supplied to the \code{lm} and \code{glm} methods, and the default (\code{NULL}) is to ignore the argument;
     if both \code{vcov.} and \code{white.adjust} are supplied to the \code{lm} method, the latter is used.}
   \item{\dots}{do not use.}
 }

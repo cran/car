@@ -9,6 +9,7 @@
 # 22 June 2013: tweaks for lme4. J. Fox
 # 26 Sept 2014: cleaned up printing of calls. J. Fox
 # 2016-07-20: added test for model classes. J. Fox
+# 2017-11-09: make compatible with vcov() in R 2.5.0. J. Fox
 
 compareCoefs <- function (..., se = TRUE, print = TRUE, digits = 3) {
   splitExpr <- function(expr, width=getOption("width") - 4, at="[ ,=]"){
@@ -85,8 +86,8 @@ compareCoefs <- function (..., se = TRUE, print = TRUE, digits = 3) {
   }
   getvar <- function(model) {
     if (inherits(model, "merMod") || inherits(model, "mer")) 
-      as.matrix(vcov(model))
-    else vcov(model)
+      as.matrix(vcov(model, complete=FALSE))
+    else vcov(model, complete=FALSE)
   }
   coef.names <- unique(unlist(lapply(models, getnames)))
   table <- matrix(NA, length(coef.names), n.models * (1 + se))

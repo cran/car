@@ -1,6 +1,7 @@
 # added 13 March 2010 by J. Fox
 # modified 2 Sept 2010 by J. Fox, made colors, axes lables, and
 # arguments more consistent with other functions; ... passes args to plot
+# 2017-11-09: make compatible with vcov() in R 2.5.0. J. Fox
 
 dfbetasPlots <- function(model, ...){
 	UseMethod("dfbetasPlots")
@@ -94,7 +95,7 @@ dfbetaPlots.lm <- function(model, terms=~., intercept=FALSE, layout=NULL, ask,
     on.exit(par(op))
     }
 	dfbeta <- dfbeta(model)
-	seb <- sqrt(diag(vcov(model)))
+	seb <- sqrt(diag(vcov(model, complete=FALSE)))
 	for (term in good) {
 		dfb <- dfbeta[, term]
 		se <- seb[term]
