@@ -40,7 +40,7 @@ hccm(model, ...)
 }
 
 \details{
-  The classical White-corrected coefficient covariance matrix (\code{"hc0"}) (for an unweighted model) is
+  The original White-corrected coefficient covariance matrix (\code{"hc0"}) for an unweighted model is
   \deqn{V(b)=(X^{\prime }X)^{-1}X^{\prime }diag(e_{i}^{2})X(X^{\prime }X)^{-1}}{V(b) = inv(X'X) X' diag(e^2) X inv(X'X)}
   where \eqn{e_{i}^{2}}{e^2} are the squared residuals, and \eqn{X} is the model
   matrix. The other methods represent adjustments to this formula. If there are weights, these are incorporated in the
@@ -52,12 +52,12 @@ hccm(model, ...)
   The heteroscedasticity-corrected covariance matrix for the model.
 }
 \references{
-  Fox, J. (2008)
+  Fox, J. (2016)
   \emph{Applied Regression Analysis and Generalized Linear Models},
-  Second Edition. Sage.  
+  Third Edition. Sage.  
   
-  Fox, J. and Weisberg, S. (2011) 
-  \emph{An R Companion to Applied Regression}, Second Edition, Sage.
+  Fox, J. and Weisberg, S. (2019) 
+  \emph{An R Companion to Applied Regression}, Third Edition, Sage.
 
   Cribari-Neto, F. (2004)
   Asymptotic inference under heteroskedasticity of unknown form.

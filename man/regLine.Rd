@@ -7,7 +7,7 @@
   between the minimum and maximum x-values.
 }
 \usage{
-regLine(mod, col=palette()[2], lwd=2, lty=1,...)
+regLine(mod, col=carPalette()[2], lwd=2, lty=1,...)
 }
 
 \arguments{
@@ -17,7 +17,7 @@ regLine(mod, col=palette()[2], lwd=2, lty=1,...)
     interpreted respectively as the
     intercept and slope of a regresison line.}
   \item{col}{color for points and lines; the default is the \emph{second} entry
-    in the current color palette (see \code{\link[grDevices]{palette}}
+    in the current \pkg{car} palette (see \code{\link{carPalette}}
     and \code{\link[graphics]{par}}).}
   \item{lwd}{line width; default is \code{2} (see \code{\link[graphics]{par}}).}
   \item{lty}{line type; default is \code{1}, a solid line (see \code{\link[graphics]{par}}).}

@@ -1,7 +1,8 @@
 # added 13 March 2010 by J. Fox
 # modified 2 Sept 2010 by J. Fox, made colors, axes lables, and
 # arguments more consistent with other functions; ... passes args to plot
-# 2017-11-09: make compatible with vcov() in R 2.5.0. J. Fox
+# 2017-11-09: made consistent with vcov() in R 2.5.0. J. Fox
+# 2017-11-30: substitute carPalette() for palette(). J. Fox
 
 dfbetasPlots <- function(model, ...){
 	UseMethod("dfbetasPlots")
@@ -11,7 +12,7 @@ dfbetasPlots.lm <- function(model, terms= ~ ., intercept=FALSE, layout=NULL, ask
 		main, xlab, ylab, labels=rownames(dfbeta), 
 		id.method="y",  
 		id.n=if(id.method[1]=="identify") Inf else 0, id.cex=1, 
-		id.col=palette()[1], id.location="lr", col=palette()[1], grid=TRUE, ...){
+		id.col=carPalette()[1], id.location="lr", col=carPalette()[1], grid=TRUE, ...){
 	terms <- if(is.character(terms)) paste("~",terms) else terms
 	vform <- update(formula(model),terms)
 	if(any(is.na(match(all.vars(vform), all.vars(formula(model))))))
@@ -65,8 +66,8 @@ dfbetaPlots.lm <- function(model, terms=~., intercept=FALSE, layout=NULL, ask,
 		main, xlab, ylab,
 		labels=rownames(dfbeta), id.method="y",
 		id.n=if(id.method[1]=="identify") Inf else 0, id.cex=1, 
-		id.col=palette()[1], id.location="lr",
-		col = palette()[1], grid=TRUE, ...){
+		id.col=carPalette()[1], id.location="lr",
+		col = carPalette()[1], grid=TRUE, ...){
 	terms <- if(is.character(terms)) paste("~",terms) else terms
 	vform <- update(formula(model),terms)
 	if(any(is.na(match(all.vars(vform), all.vars(formula(model))))))

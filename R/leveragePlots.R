@@ -9,8 +9,9 @@
 # 16 June 2011 allow layout=NA, in which case the layout is not set in this
 #  function, so it is the responsibility of the user
 # 25 April 2016:  checks na.action for compatibility with Rcmdr.  SW
-# 2017-11-09: make compatible with vcov() in R 2.5.0. J. Fox
-
+# 2017-02-12: consolidate id argument. J. Fox
+# 2017-11-09: made consistent with vcov() in R 2.5.0. J Fox
+# 2017-11-30: substitute carPalette() for palette(). J. Fox
 
 # these functions to be rewritten; simply renamed for now
 
@@ -48,15 +49,25 @@ leveragePlot <- function (model, ...) {
 }
 
 leveragePlot.lm <- function(model, term.name,
-		id.method = list(abs(residuals(model, type="pearson")), "x"),
-		labels, 
-		id.n = if(id.method[1]=="identify") Inf else 0,
-		id.cex=1, id.col=palette()[1], id.location = "lr",
-		col=palette()[1], col.lines=palette()[2], lwd=2, 
+		id=TRUE, col=carPalette()[1], col.lines=carPalette()[2], lwd=2, 
 		xlab, ylab, main="Leverage Plot", grid=TRUE, ...){
+    id <- applyDefaults(id, defaults=list(method=list(abs(residuals(model, type="pearson")), "x"), n=2, cex=1, col=carPalette()[1], location="lr"), type="id")
+    if (isFALSE(id)){
+        id.n <- 0
+        id.method <- "none"
+        labels <- id.cex <- id.col <- id.location <- NULL
+    }
+    else{
+        labels <- id$labels
+        if (is.null(labels)) labels <- names(na.omit(residuals(model)))
+        id.method <- id$method
+        id.n <- if ("identify" %in% id.method) Inf else id$n
+        id.cex <- id$cex
+        id.col <- id$col
+        id.location <- id$location
+    }
 	term.name <- if (is.character(term.name) & 1==length(term.name)) term.name
 			else deparse(substitute(term.name))
-	labels <- if(missing(labels)) labels <- names(residuals(model))
 	b <- coefficients(model)
 	e <- na.omit(residuals(model))
 	p <- length(b)
@@ -87,8 +98,8 @@ leveragePlot.lm <- function(model, term.name,
 	points(v.x, v.y, col=col, ...)	
 	abline(lsfit(v.x, v.y, wt=wt), col=col.lines, lwd=lwd)
 	showLabels(v.x, v.y, labels=labels, 
-			id.method=id.method, id.n=id.n, id.cex=id.cex, 
-			id.col=id.col, id.location=id.location)
+			method=id.method, n=id.n, cex=id.cex, 
+			col=id.col, location=id.location)
 }
 
 leveragePlot.glm <- function(model, ...){

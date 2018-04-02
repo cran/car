@@ -1,107 +1,35 @@
 \name{car-deprecated}
 \alias{car-deprecated}
-\alias{av.plot}
-\alias{av.plots}
-\alias{box.cox}
-\alias{bc}
-\alias{box.cox.powers}
-\alias{box.cox.var}
-\alias{box.tidwell}
-\alias{cookd}
-\alias{confidence.ellipse}
-\alias{ceres.plot}
-\alias{ceres.plots}
-\alias{cr.plot}
-\alias{cr.plots}
-\alias{data.ellipse}
-\alias{durbin.watson}
-\alias{levene.test}
-\alias{leverage.plot}
-\alias{leverage.plots}
-\alias{linear.hypothesis}
-\alias{outlier.test}
-\alias{ncv.test}
-\alias{qq.plot}
-\alias{scatterplot.matrix}
-\alias{spread.level.plot}
+\alias{bootCase}
+\alias{bootCase.lm}
+\alias{bootCase.glm}
+\alias{bootCase.nls}
+\alias{nextBoot}
+\alias{nextBoot.lm}
+\alias{nextBoot.nls}
 
-\title{Deprecated Functions in car Package}
-
+\title{Deprecated Functions in the car Package}
 \description{
-  These functions are provided for compatibility with older versions of the \pkg{car} package only, 
-  and may be removed eventually. Commands that worked in versions of the \pkg{car} package prior to version 2.0-0
-  will not necessarily work in version 2.0-0 and beyond, or may not work in the same manner.
+These functions are provided for compatibility with older versions of the \pkg{car} package only, and may be removed eventually. Commands that worked in versions of the \pkg{car} package prior to version 3.0-0 will not necessarily work in version 3.0-0 and beyond, or may not work in the same manner.
 }
-
 \usage{
-av.plot(...)
-av.plots(...)
-box.cox(...)
-bc(...)
-box.cox.powers(...)
-box.cox.var(...)
-box.tidwell(...)
-cookd(...)
-confidence.ellipse(...)
-ceres.plot(...)
-ceres.plots(...)
-cr.plot(...)
-cr.plots(...)
-data.ellipse(...)
-durbin.watson(...)
-levene.test(...)
-leverage.plot(...)
-leverage.plots(...)
-linear.hypothesis(...)
-ncv.test(...)
-outlier.test(...)
-qq.plot(...)
-scatterplot.matrix(...)
-spread.level.plot(...)
-}
 
+bootCase(...)
+
+nextBoot(...)
+
+}
 \arguments{
-  \item{\dots}{pass arguments down.}
+  \item{...}{arguments to pass to methods.}
 }
 
 \details{
-\code{av.plot} and \code{av.plots} are now synonyms for the \code{\link{avPlot}} and \code{\link{avPlots}} functions.
-
-\code{box.cox} and \code{bc} are now synonyms for \code{\link{bcPower}}.
-
-\code{box.cox.powers} is now a synonym for \code{\link{powerTransform}}.
-
-\code{box.cox.var} is now a synonym for \code{\link{boxCoxVariable}}.
-
-\code{box.tidwell} is now a synonym for \code{\link{boxTidwell}}.
-
-\code{cookd} is now a synonym for \code{\link[stats:influence.measures]{cooks.distance}} in the \pkg{stats} package.
-
-\code{confidence.ellipse} is now a synonym for \code{\link{confidenceEllipse}}.
-
-\code{ceres.plot} and \code{ceres.plots} are now synonyms for the \code{\link{ceresPlot}} and \code{\link{ceresPlots}} 
-functions.
-
-\code{cr.plot} and \code{cr.plots} are now synonyms for the \code{\link{crPlot}} and \code{\link{crPlots}} functions.
-
-\code{data.ellipse} is now a synonym for \code{\link{dataEllipse}}.
-
-\code{durbin.watson} is now a synonym for \code{\link{durbinWatsonTest}}.
-
-\code{levene.test} is now a synonym for \code{\link{leveneTest}} function.
-
-\code{leverage.plot} and \code{leverage.plots} are now synonyms for the \code{\link{leveragePlot}} and \code{\link{leveragePlots}} 
-functions.
-
-\code{linear.hypothesis} is now a synonym for the \code{\link{linearHypothesis}} function.
-
-\code{ncv.test} is now a synonym for \code{\link{ncvTest}}.
-
-\code{outlier.test} is now a synonym for \code{\link{outlierTest}}.
-
-\code{qq.plot} is now a synonym for \code{\link{qqPlot}}.
-
-\code{scatterplot.matrix} is now a synonym for \code{\link{scatterplotMatrix}}.
-
-\code{spread.level.plot} is now a synonym for \code{\link{spreadLevelPlot}}.
+These functions are replaced by \code{\link{Boot}}.
 }
+
+
+\seealso{See Also  \code{\link{Boot}}}
+
+
+
+\keyword{regression}

@@ -14,31 +14,29 @@
 \usage{
 ellipse(center, shape, radius, log="", center.pch=19, center.cex=1.5, 
   segments=51, draw=TRUE, add=draw, xlab="", ylab="", 
-   col=palette()[2], lwd=2, fill=FALSE, fill.alpha=0.3, grid=TRUE, ...)
+  col=carPalette()[2], lwd=2, fill=FALSE, fill.alpha=0.3, grid=TRUE, ...)
 
-dataEllipse(x, y, groups, group.labels = group.levels, ellipse.label, 
-    weights, log = "", levels = c(0.5, 0.95), center.pch = 19, 
-    center.cex = 1.5, draw = TRUE, plot.points = draw, add = !plot.points, 
-    segments = 51, robust = FALSE, xlab = deparse(substitute(x)), 
-    ylab = deparse(substitute(y)), 
-    col = if (missing(groups)) palette()[1:2] else palette()[1:length(group.levels)], 
-    pch = if (missing(groups)) 1 else seq(group.levels), lwd = 2, 
-    fill = FALSE, fill.alpha = 0.3, grid = TRUE, labels, id.method = "mahal", 
-    id.n = if (id.method[1] == "identify") Inf else 0, id.cex = 1, 
-    id.col = if (missing(groups)) palette()[1] else palette()(1:length(groups)), 
-    id.location="lr", ...) 
+dataEllipse(x, y, groups, group.labels=group.levels, ellipse.label,
+  weights, log="", levels=c(0.5, 0.95), center.pch=19, 
+  center.cex=1.5, draw=TRUE, plot.points=draw, add=!plot.points, segments=51, 
+  robust=FALSE, xlab=deparse(substitute(x)), ylab=deparse(substitute(y)), 
+  col=if (missing(groups)) carPalette()[1:2] else carPalette()[1:length(group.levels)],
+  pch=if (missing(groups)) 1 else seq(group.levels),
+  lwd=2, fill=FALSE, fill.alpha=0.3, grid=TRUE, id=FALSE, ...) 
 
 confidenceEllipse(model, ...)
 
-\method{confidenceEllipse}{lm}(model, which.coef, L, levels=0.95, Scheffe=FALSE, dfn,
+\method{confidenceEllipse}{lm}(model, which.coef, vcov.=vcov, 
+  L, levels=0.95, Scheffe=FALSE, dfn,
   center.pch=19, center.cex=1.5, segments=51, xlab, ylab, 
-  col=palette()[2], lwd=2, fill=FALSE, fill.alpha=0.3, draw=TRUE, add=!draw, ...)
+  col=carPalette()[2], lwd=2, fill=FALSE, fill.alpha=0.3, draw=TRUE, add=!draw, ...)
   
 \method{confidenceEllipse}{glm}(model, chisq, ...)
 
-\method{confidenceEllipse}{default}(model, which.coef, L, levels=0.95, Scheffe=FALSE,  dfn,
+\method{confidenceEllipse}{default}(model, which.coef, vcov.=vcov,
+  L, levels=0.95, Scheffe=FALSE,  dfn,
   center.pch=19, center.cex=1.5, segments=51, xlab, ylab, 
-  col=palette()[2], lwd=2, fill=FALSE, fill.alpha=0.3, draw=TRUE, add=!draw, ...)
+  col=carPalette()[2], lwd=2, fill=FALSE, fill.alpha=0.3, draw=TRUE, add=!draw, ...)
 }
 
 \arguments{
@@ -74,6 +72,9 @@ confidenceEllipse(model, ...)
   \item{which.coef}{2-element vector giving indices of coefficients to plot; 
     if missing, the first two coefficients (disregarding the regression constant)
     will be selected.}
+  \item{vcov.}{a coefficient-covariance matrix or a function (such as \code{\link{hccm}}) to 
+    compute the coefficent-covariance
+    matrix from \code{model}; the default is the \code{vcov} function.}
   \item{L}{As an alternative to selecting coefficients to plot, a transformation matrix can be specified to compute two
     linear combinations of the coefficients; if the \code{L} matrix is given, it takes precedence over the \code{which.coef}
     argument. \code{L} should have two rows and as many columns as there are coefficients. It can be given directly as a
@@ -90,7 +91,7 @@ confidenceEllipse(model, ...)
     based on the chisquare statistic, if \code{FALSE} on the $F$-statistic. This corresponds to using the default
     and linear-model methods respectively.}
   \item{col}{color for lines and ellipse center; the default is the \emph{second} entry
-    in the current color palette (see \code{\link[grDevices]{palette}}
+    in the current \pkg{car} palette (see \code{\link{carPalette}}
     and \code{\link[graphics]{par}}). For \code{dataEllipse}, two colors can be given, in
     which case the first is for plotted points and the second for lines and the ellipse center;
     if ellipses are plotted for \code{groups}, then this is a vector of colors for the groups.}
@@ -102,9 +103,11 @@ confidenceEllipse(model, ...)
   \item{fill.alpha}{transparency of fill (default = \code{0.3}).}
   \item{\dots}{other plotting parameters to be passed to \code{plot} and
     \code{line}.}
-  \item{labels,id.method,id.n,id.cex,id.col,id.location}{Arguments for the labelling of
-    points.  The default is \code{id.n=0} for labeling no points.  See
-    \code{\link{showLabels}} for details of these arguments.}
+  \item{id}{controls point identification; if \code{FALSE} (the default), no points are identified;
+    can be a list of named arguments to the \code{\link{showLabels}} function;
+    \code{TRUE} is equivalent to \code{list(method="mahal", n=2, cex=1, col=carPalette()[1], location="lr")}
+    (with the default \code{col} actually dependent on the number of groups),
+    which identifies the 2 points with the largest Mahalanobis distances from the center of the data.}
   \item{grid}{If TRUE, the default, a light-gray background grid is put on the
 graph}
 }
@@ -122,12 +125,12 @@ graph}
 }
 
 \references{ 
-  Fox, J. (2008)
+  Fox, J. (2016)
   \emph{Applied Regression Analysis and Generalized Linear Models},
-  Second Edition. Sage.  
+  Third Edition. Sage.  
   
-  Fox, J. and Weisberg, S. (2011) 
-  \emph{An R Companion to Applied Regression}, Second Edition, Sage.
+  Fox, J. and Weisberg, S. (2019) 
+  \emph{An R Companion to Applied Regression}, Third Edition, Sage.
   
   Monette, G. (1990)
   Geometry of multiple regression and 3D graphics.
@@ -142,7 +145,11 @@ graph}
 \examples{
 dataEllipse(Duncan$income, Duncan$education, levels=0.1*1:9, 
     ellipse.label=0.1*1:9, lty=2, fill=TRUE, fill.alpha=0.1)
+    
 confidenceEllipse(lm(prestige~income+education, data=Duncan), Scheffe=TRUE)
+
+confidenceEllipse(lm(prestige~income+education, data=Duncan), vcov.=hccm)
+
 confidenceEllipse(lm(prestige~income+education, data=Duncan), 
 	L=c("income + education", "income - education"))
 
@@ -150,14 +157,17 @@ wts <- rep(1, nrow(Duncan))
 wts[c(6, 16)] <- 0 # delete Minister, Conductor
 with(Duncan, {
 	dataEllipse(income, prestige, levels=0.68)
-	dataEllipse(income, prestige, levels=0.68, robust=TRUE, plot.points=FALSE, col="green3")
-	dataEllipse(income, prestige, weights=wts, levels=0.68, plot.points=FALSE, col="brown")
+	dataEllipse(income, prestige, levels=0.68, robust=TRUE, 
+	    plot.points=FALSE, col="green3")
+	dataEllipse(income, prestige, weights=wts, levels=0.68, 
+	    plot.points=FALSE, col="brown")
 	dataEllipse(income, prestige, weights=wts, robust=TRUE, levels=0.68, 
 		plot.points=FALSE, col="blue")
 	})
     
-with(Prestige, dataEllipse(income, education, type, id.n=2, pch=15:17,
-    labels=rownames(Prestige), xlim=c(0, 25000), center.pch="+",
+with(Prestige, dataEllipse(income, education, type, 
+    id=list(n=2, labels=rownames(Prestige)), pch=15:17,
+    xlim=c(0, 25000), center.pch="+",
     group.labels=c("Blue Collar", "Professional", "White Collar"),
     ylim=c(5, 20), level=.95, fill=TRUE, fill.alpha=0.1))
 }

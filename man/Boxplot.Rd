@@ -18,15 +18,14 @@ axis labels, and a formula interface for boxplots without a grouping variable.
 \usage{
 Boxplot(y, ...)
 
-\method{Boxplot}{default}(y, g, labels, id.method = c("y", "identify", "none"), 
-    id.n=10, xlab, ylab, ...)
+\method{Boxplot}{default}(y, g, id=TRUE, xlab, ylab, ...)
 
-\method{Boxplot}{formula}(formula, data = NULL, subset, na.action = NULL, labels., 
-    id.method = c("y", "identify", "none"), xlab, ylab, ...)
+\method{Boxplot}{formula}(formula, data=NULL, subset, na.action=NULL, 
+    id=TRUE, xlab, ylab, ...)
 
 \method{Boxplot}{list}(y, xlab="", ylab="", ...)
 
-\method{Boxplot}{data.frame}(y, labels=rownames(y), ...)
+\method{Boxplot}{data.frame}(y, id=TRUE, ...)
 
 \method{Boxplot}{matrix}(y, ...)
 }
@@ -36,11 +35,11 @@ Boxplot(y, ...)
     variables, each element of which will be treated as a group; a numeric data frame or a
     numeric matrix, each of whose columns will be treated as a group.}
   \item{g}{a grouping variable, usually a factor, for constructing parallel boxplots.}
-  \item{labels, labels.}{point labels; if not specified, \code{Boxplot} will use the row names of the \code{data}
-    argument, if one is given, or observation numbers, or row names if \code{y} is a data frame or matrix (that has row names).}
-  \item{id.method}{if \code{"y"} (the default), all outlying points are labeled; if \code{"identify"}, points
-    may be labeled interactive; if \code{"none"}, no point identification is performed.}
-  \item{id.n}{up to \code{id.n} high outliers and low outliers will be identified in each group, (default, 10).}
+  \item{id}{a list of named elements giving one or more specifications for labels of individual points ("outliers"):
+    \code{n}, the maximum number of points to label (default 10); \code{location}, \code{"lr"} (left or right) of points or 
+    \code{"avoid"} to try to avoid overplotting; \code{method}, one of \code{"y"} (automatic, the default), \code{"identify"} (interactive), or \code{"none"}; \code{col} for labels (default is the first color in \code{carPalette()} ); and \code{cex} size of labels (default is \code{1}).
+    Can be \code{FALSE} to suppress point identification or \code{TRUE} (the default) to use all defaults. This is similar to how \code{\link{showLabels}} handles point labels
+    for other functions in the \pkg{car} package, except that the usual default is \code{id=FALSE}.}
   \item{xlab, ylab}{text labels for the horizontal and vertical axes; if missing, \code{Boxplot} will use the
     variable names, or, in the case of a list, data frame, or matrix, empty labels.}
   \item{formula}{a `model' formula, of the form \code{~ y} to produce a boxplot for the variable \code{y}, or
@@ -55,8 +54,8 @@ Boxplot(y, ...)
     to handle \code{at} argument (see \code{\link{boxplot}}).}
 
 \references{
-  Fox, J. and Weisberg, S. (2011) 
-  \emph{An R Companion to Applied Regression}, Second Edition, Sage.
+  Fox, J. and Weisberg, S. (2019) 
+  \emph{An R Companion to Applied Regression}, Third Edition, Sage.
 }
 
 \seealso{
@@ -64,12 +63,12 @@ Boxplot(y, ...)
 }
 
 \examples{
-Boxplot(~income, data=Prestige, id.n=Inf) # identify all outliers
+Boxplot(~income, data=Prestige, id=list(n=Inf)) # identify all outliers
 Boxplot(income ~ type, data=Prestige)
 Boxplot(income ~ type, data=Prestige, at=c(1, 3, 2))
 Boxplot(k5 + k618 ~ lfp*wc, data=Mroz)
-with(Prestige, Boxplot(income, labels=rownames(Prestige)))
-with(Prestige, Boxplot(income, type, labels=rownames(Prestige)))
+with(Prestige, Boxplot(income, id=list(labels=rownames(Prestige))))
+with(Prestige, Boxplot(income, type, id=list(labels=rownames(Prestige))))
 Boxplot(scale(Prestige[, 1:4]))
 }
 

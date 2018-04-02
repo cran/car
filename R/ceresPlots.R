@@ -16,6 +16,8 @@
 # 14 Sept 2012 use the ScatterplotSmoothers in car
 # 18 Sept 2012 restore smooth and span args
 # 20 Aug 2013 replace residuals.glm() with residuals(). John
+# 2017-02-11: consolidated id and smooth arguments. John
+# 2017-11-30: substitute carPalette() for palette(). J. Fox
 
 ceresPlots<-function(model, terms= ~ ., layout=NULL, ask, main, ...){
   terms <- if(is.character(terms)) paste("~", terms) else terms
@@ -61,22 +63,31 @@ ceresPlot<-function (model, ...) {
 	UseMethod("ceresPlot")
 }
 
-ceresPlot.lm<-function(model, variable, 
-  id.method = list(abs(residuals(model, type="pearson")), "x"),
-  labels, 
-  id.n = if(id.method[1]=="identify") Inf else 0,
-  id.cex=1, id.col=palette()[1], id.location="lr",
-  line=TRUE, smoother=loessLine, smoother.args=list(), smooth, span,
-	col=palette()[1], col.lines=palette()[-1],
-  xlab, ylab, pch=1, lwd=2,  
-  grid=TRUE, ...){
-	# the lm method works with glm's too              
-	if(missing(labels)) labels <- names(residuals(model))
-    # smooth and span for backwards compatibility
-    if (!missing(smooth)) {
-        smoother <- if (isTRUE(smooth)) loessLine else FALSE
+ceresPlot.lm<-function(model, variable, id=FALSE,
+  line=TRUE,  smooth=TRUE, col=carPalette()[1], col.lines=carPalette()[-1],
+  xlab, ylab, pch=1, lwd=2,  grid=TRUE, ...){
+	# the lm method works with glm's too    
+    id <- applyDefaults(id, defaults=list(method=list(abs(residuals(model, type="pearson")), "x"), n=2, cex=1, col=carPalette()[1], location="lr"), type="id")
+    if (isFALSE(id)){
+        id.n <- 0
+        id.method <- "none"
+        labels <- id.cex <- id.col <- id.location <- NULL
     }
-    if (!missing(span)) smoother.args$span <- span
+    else{
+        labels <- id$labels
+        if (is.null(labels)) labels <- names(na.omit(residuals(model)))
+        id.method <- id$method
+        id.n <- if ("identify" %in% id.method) Inf else id$n
+        id.cex <- id$cex
+        id.col <- id$col
+        id.location <- id$location
+    }
+    smoother.args <- applyDefaults(smooth, defaults=list(smoother=loessLine), type="smooth")
+    if (!isFALSE(smoother.args)) {
+        smoother <- smoother.args$smoother 
+        smoother.args$smoother <- NULL
+    }
+    else smoother <- "none"
 	expand.model.frame <- function (model, extras, envir = environment(formula(model)),
 		na.expand = FALSE){  # modified version of R base function
 		f <- formula(model)
@@ -110,12 +121,6 @@ ceresPlot.lm<-function(model, variable,
 	}
 	if(!is.null(class(model$na.action)) && 
 		class(model$na.action) == 'exclude') class(model$na.action) <- 'omit'
-#	if (missing(iter)){
-#		iter<-if(("glm"==class(model)[1]) &&
-#				("gaussian"!=as.character(family(model))[1]))
-#				0
-#			else 3
-#	}    # use nonrobust smooth for non-gaussian glm
 	var<-if (is.character(variable) & 1==length(variable)) variable
 		else deparse(substitute(variable))
 	mod.mat<-model.matrix(model)
@@ -160,15 +165,13 @@ ceresPlot.lm<-function(model, variable,
     box()}
 	points(mod.mat[,var], partial.res, col=col, pch=pch) 
 	showLabels(mod.mat[,var], partial.res, labels=labels, 
-            id.method=id.method, id.n=id.n, id.cex=id.cex,
-            id.col=id.col, id.location=id.location)
+            method=id.method, n=id.n, cex=id.cex,
+            col=id.col, location=id.location)
 	if (line) abline(lm(partial.res~mod.mat[,var]), lty=2, lwd=lwd, 
             col=col.lines[1])
 	if (is.function(smoother)) {
     smoother(mod.mat[, var], partial.res, col=col.lines[2], log.x=FALSE,
        log.y=FALSE, spread=FALSE, smoother.args=smoother.args)
-#		lines(lowess(mod.mat[,var], partial.res, iter=iter, f=span), lwd=lwd,
-#          col=col.lines[2])
 	}
 }                    
 

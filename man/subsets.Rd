@@ -4,8 +4,7 @@
 \title{Plot Output from regsubsets Function in leaps package}
 \description{
   The \code{\link[leaps]{regsubsets}} function in the \pkg{leaps} package finds
-  optimal subsets of predictors. This function plots a measure of fit
-  (see the \code{statistic} argument below) against subset size.
+  optimal subsets of predictors based on some criterion statistic. This function plots a measure of fit against subset size.
 }
 \usage{
 subsets(object, ...)
@@ -54,12 +53,12 @@ subsets(object, ...)
 \author{John Fox}
 
 \references{
-  Fox, J. (2008)
+  Fox, J. (2016)
   \emph{Applied Regression Analysis and Generalized Linear Models},
-  Second Edition. Sage.  
+  Third Edition. Sage.  
   
-  Fox, J. and Weisberg, S. (2011) 
-  \emph{An R Companion to Applied Regression}, Second Edition, Sage.
+  Fox, J. and Weisberg, S. (2019) 
+  \emph{An R Companion to Applied Regression}, Third Edition, Sage.
 }
 
 \seealso{\code{\link[leaps]{regsubsets}}}

@@ -1,121 +1,75 @@
-# last modified 2009-11-11 by J. Fox
+# March 9, 2012 modified by SW as suggested by Derek Ogle to return an object
+# of class c("bootCase", "matrix").  
+# May 2012 added methods for 'bootCase'
+# 2012-12-10 replaced .GlobalEnv by car:::.carEnv to suppress warnings
+# 2013-01-28 Changed argument f to f.
+# 2013-07-08 Changed .carEnv to car:::.carEnv
+# 2015-01-27 .carEnv now in global environment. John
+# 2018-02-19 these functions now deprecated
 
-av.plot <- function (...) {
-	.Deprecated("avPlot", package="car")
-	avPlot(...)
+nextBoot <- function(...){
+  .Deprecated("Boot", package="car")
+  UseMethod("nextBoot")
+  }
+nextBoot.default <- function(object, sample, ...){
+   update(object, subset=sample)
+   }
+nextBoot.lm <- function(object, sample, ...) nextBoot.default(object, sample)
+nextBoot.nls <- function(object, sample, ...){
+# modify to assure resampling only rows in the original subset 9/1/2005
+   update(object,subset=sample,start=coef(object),
+    data=data.frame(update(object,model=TRUE)$model))}
+
+bootCase <- function(...){
+  .Deprecated("Boot", package="car")
+  UseMethod("bootCase")
+  }
+bootCase.lm <- function(object, f.=coef, B=999, ...) {
+    bootCase.default(object, f., B, names(resid(object)))
+#    bootCase.default(update(object, 
+#             data=na.omit(model.frame(object))), f, B)
+    }
+bootCase.glm <- function(object, f.=coef, B=999, ...) {
+    bootCase.lm(object, f., B)
+    }
+bootCase.nls <- function(object, f.=coef, B=999, ...) {
+    bootCase.default(object, f., B, seq(length(resid(object))))
+    }
+bootCase.default <- function (object, f.=coef, B = 999, rows, ...)
+{       
+    n <- length(resid(object))
+    opt<-options(show.error.messages = FALSE)
+    on.exit(options(opt))
+    pointEstimate <- f.(object)
+    coefBoot <- matrix(0, nrow=B, ncol=length(f.(object)))
+    colnames(coefBoot) <- names(pointEstimate)  # adds names if they exist
+    class(coefBoot) <- c("bootCase", "matrix")
+    count.error <- 0
+    i <- 0
+    while (i < B) {
+		assign(".boot.sample", sample(rows, replace=TRUE), envir=.carEnv)
+        obj.boot <- try(update(object, subset=get(".boot.sample", envir=.carEnv)))
+        if (is.null(class(obj.boot))) {
+            count.error <- 0
+            i <- i + 1
+            coefBoot[i, ] <- f.(obj.boot)
+        }
+        else {
+            if (class(obj.boot)[1] != "try-error") {
+                count.error <- 0
+                i <- i + 1
+                coefBoot[i, ] <- f.(obj.boot)
+            }
+            else {
+                count.error <- count.error + 1
+            }
+        }
+        if (count.error >= 25) {
+            options(show.error.messages = TRUE)
+            stop("25 consecutive bootstraps did not converge.  Bailing out.")}
+    }
+	remove(".boot.sample", envir=.carEnv)
+	attr(coefBoot, "pointEstimate") <- pointEstimate
+    return(coefBoot)
 }
 
-av.plots <- function (...) {
-	.Deprecated("avPlots", package="car")
-	avPlots(...)
-}
-
-box.cox <- function (...) {
-	.Deprecated("bcPower", package="car")
-	bcPower(...)
-}
-
-bc <- function (...) {
-	.Deprecated("bcPower", package="car")
-	bcPower(...)
-}
-
-box.cox.powers <- function (...) {
-	.Deprecated("powerTransform", package="car")
-	powerTransform(...)
-}
-
-box.cox.var <- function (...) {
-	.Deprecated("boxCoxVariable", package="car")
-	boxCoxVariable(...)
-}
-
-box.tidwell <- function (...) {
-	.Deprecated("boxTidwell", package="car")
-	boxTidwell(...)
-}
-
-ceres.plot <- function (...) {
-	.Deprecated("ceresPlot", package="car")
-	ceresPlot(...)
-}
-
-ceres.plots <- function (...) {
-	.Deprecated("ceresPlots", package="car")
-	ceresPlots(...)
-}
-
-confidence.ellipse <- function (...) {
-	.Deprecated("confidenceEllipse", package="car")
-	confidenceEllipse(...)
-}
-
-cookd <- function (...) {
-	.Deprecated("cooks.distance", package="stats")
-	cooks.distance(...)
-}
-
-cr.plot <- function (...) {
-	.Deprecated("crPlot", package="car")
-	crPlot(...)
-}
-
-cr.plots <- function (...) {
-	.Deprecated("crPlots", package="car")
-	crPlots(...)
-}
-
-data.ellipse <- function (...) {
-	.Deprecated("dataEllipse", package="car")
-	dataEllipse(...)
-}
-
-durbin.watson <- function (...) {
-	.Deprecated("durbinWatsonTest", package="car")
-	durbinWatsonTest(...)
-}
-
-levene.test <- function (...) {
-	.Deprecated("leveneTest", package="car")
-	leveneTest(...)
-}
-
-leverage.plot <- function (...) {
-	.Deprecated("leveragePlot", package="car")
-	leveragePlot(...)
-}
-
-leverage.plots <- function (...) {
-	.Deprecated("leveragePlots", package="car")
-	leveragePlots(...)
-}
-
-linear.hypothesis <- function (...) {
-	.Deprecated("linearHypothesis", package="car")
-	linearHypothesis(...)
-}
-
-outlier.test <- function (...) {
-	.Deprecated("outlierTest", package="car")
-	outlierTest(...)
-}
-
-ncv.test <- function (...) {
-	.Deprecated("ncvTest", package="car")
-	ncvTest(...)
-}
-
-qq.plot <- function (...) {
-	.Deprecated("qqPlot", package="car")
-	qqPlot(...)
-}
-
-scatterplot.matrix <- function (...) {
-	.Deprecated("scatterplotMatrix", package="car")
-	scatterplotMatrix(...)
-}
-
-spread.level.plot <- function (...) {
-	.Deprecated("spreadLevelPlot", package="car")
-	spreadLevelPlot(...)
-}

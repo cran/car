@@ -8,26 +8,33 @@
 #   if all n labels are to be printed.
 # 2014-03-12 added new id.method "r" that labels using order(abs(y), decreasing=TRUE)
 # 2016-05-16 added argument id.location = c("lr", "ab") for location of point labels
+# 2017-01-08 added "avoid" to id.location arg. J. Fox
+# 2017-01-08 removed ".id" from arg names for showLabels()
+# 2017-01-10 special handling for method="none".
+# 2017-02-13 fixed showLabels1() when location="avoid"
+# 2017-03-25: don't supply names if indexes are the same as labels. J. Fox
 
 
-showLabels <- function(x, y, labels=NULL, id.method="identify",
-  id.n = length(x), id.cex=1, id.col=palette()[1], id.location="lr", ...) {
+showLabels <- function(x, y, labels=NULL, method="identify",
+  n = length(x), cex=1, col=carPalette()[1], location=c("lr", "ab", "avoid"), ...) {
+  location <- match.arg(location)
   res <- NULL
-  id.method <- if(is.list(id.method)) id.method else list(id.method)
-  for (meth in id.method)
-     res <- c(res, showLabels1(x, y, labels, meth, id.n, id.cex,
-              id.col, id.location, ...))
+  method <- if(is.list(method)) method else list(method)
+  for (meth in method){
+     if (length(meth) == 1 && is.character(meth) && meth == "none") next
+     res <- c(res, showLabels1(x, y, labels, meth, n, cex,
+              col, location, ...))
+  }
   return(if(is.null(res)) invisible(res) else res)
   }
 
 showLabels1 <- function(x, y, labels=NULL, id.method="identify",
-	id.n = length(x), id.cex=1, id.col=palette()[1], id.location="lr", all=NULL, ...) {
+	id.n = length(x), id.cex=1, id.col=carPalette()[1], id.location="lr", all=NULL, ...) {
 # If labels are NULL, try to get the labels from x:
   if (is.null(labels)) labels <- names(x)
-	if (is.null(labels)) labels <- paste(seq_along(x))
-	if (is.null(id.col)) id.col <- palette()[1]
-	if (is.null(id.location)) id.location <- "lr"
-	id.location <- match.arg(id.location, c("lr", "ab"))
+  if (is.null(labels)) labels <- paste(seq_along(x))
+ if (is.null(id.col)) id.col <- carPalette()[1]
+  if (is.null(id.location)) id.location <- "lr"
 # logged-axes?
   log.x <- par("xlog")
   log.y <- par("ylog")
@@ -59,7 +66,7 @@ showLabels1 <- function(x, y, labels=NULL, id.method="identify",
 # use identify?
      if(idmeth == "identify"){
     	  result <- labels[identify(x, y, labels, n=length(x), cex=id.cex,
-                 col=id.col, ...)]
+                 col=id.col)]
     	  if(length(result) > 0) return(unique(result)) else return(NULL)
      }
 # missing values need to be removed
@@ -105,22 +112,27 @@ showLabels1 <- function(x, y, labels=NULL, id.method="identify",
 # criterion
   ind <-  order(id.var, decreasing=TRUE)[1L:min(length(id.var), id.n)]
 # position, now depends on id.location (as of 5/16/2016)
-  if(id.location %in% c("lr", "l", "r")){
-  mid <- mean(if(par("xlog")==TRUE) 10^(par("usr")[1:2]) else
-              par("usr")[1:2])
-	labpos <- c(4,2)[1+as.numeric(x > mid)]
-  } else {
-    mid <- mean(if(par("ylog")==TRUE) 10^(par("usr")[3:4]) else
-      par("usr")[3:4])
-    labpos <- c(3,1)[1+as.numeric(y > mid)]  
+  if (id.location != "avoid"){
+      if(id.location == "lr"){
+      mid <- mean(if(par("xlog")==TRUE) 10^(par("usr")[1:2]) else
+                  par("usr")[1:2])
+    	labpos <- c(4,2)[1+as.numeric(x > mid)]
+      } else {
+        mid <- mean(if(par("ylog")==TRUE) 10^(par("usr")[3:4]) else
+          par("usr")[3:4])
+        labpos <- c(3,1)[1+as.numeric(y > mid)]
+      }
+    # print
+    	for (i in ind) {
+    		text(x[i], y[i], labels[i], cex = id.cex, xpd = TRUE,
+    			col = id.col, pos = labpos[i], offset = 0.25)}
   }
-# print
-	for (i in ind) {
-		text(x[i], y[i], labels[i], cex = id.cex, xpd = TRUE,
-			col = id.col, pos = labpos[i], offset = 0.25, ...)}
-  names(ind) <- labels[ind]
+  else maptools::pointLabel(c(x[ind], x[ind]), c(y[ind], y[ind]),
+                            c(paste0(" ", labels[ind], " "), rep(" ", length(ind))),
+                            cex=id.cex, xpd=TRUE, col=id.col)
+  if (any(as.character(ind) != labels[ind])) names(ind) <- labels[ind]
   result <- ind
-	if (length(result) == 0) return(NULL) else return(result)
+  if (length(result) == 0) return(NULL) else return(result)
 }
 
 

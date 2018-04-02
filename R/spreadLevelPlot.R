@@ -3,6 +3,9 @@
 # 16 March 2010 by J. Fox: spreadLevelPlot.lm now deletes observations with negative fitted values
 # 25 May 2010 by J. Fox: corrected errors due to introduction of grid()
 # 2015-11-24: added smoother and related args to lm method. John
+# 2017-02-16: replace rlm() with MASS::rlm(). J. Fox
+# 2017-10-27: reformat warnings. J. Fox
+# 2017-11-30: substitute carPalette() for palette(). J. Fox
 
 slp <- function(...) spreadLevelPlot(...)
 
@@ -13,7 +16,7 @@ spreadLevelPlot <- function(x, ...) {
 spreadLevelPlot.default <- function(x, by, robust.line=TRUE, 
 	start=0, xlab="Median", ylab="Hinge-Spread", point.labels=TRUE, las=par("las"),
 	main=paste("Spread-Level Plot for", deparse(substitute(x)), 
-		"by", deparse(substitute(by))), col=palette()[1], col.lines=palette()[2],
+		"by", deparse(substitute(by))), col=carPalette()[1], col.lines=carPalette()[2],
     pch=1, lwd=2, grid=TRUE, ...){
 	good <- complete.cases(x, by)
 	if (sum(good) != length(x)) {
@@ -24,7 +27,7 @@ spreadLevelPlot.default <- function(x, by, robust.line=TRUE,
 	min.x <- min(x)
 	if (min.x <= -start){
 		start <- nice(-min.x + 0.05*diff(quantile(x, c(.25, .75))), direction="up")
-		warning(paste("Start =", start," added to avoid 0 or negative values."))
+		warning(paste("\nStart =", start," added to avoid 0 or negative values."))
 	}
 	if (start != 0) {
 		xlab <- paste(xlab, "+", signif(start, getOption("digits")))
@@ -48,7 +51,7 @@ spreadLevelPlot.default <- function(x, by, robust.line=TRUE,
 	pos <- ifelse(medians > median(medians), 2, 4)
 	if (point.labels) text(medians, spreads, as.character(values), pos=pos, ...)
 	mod <- if (robust.line)
-		rlm(log(spreads) ~ log(medians))
+		MASS::rlm(log(spreads) ~ log(medians))
 	else lm(log(spreads) ~ log(medians), ...)
 	ord <- order(medians)
 	first <- ord[1]
@@ -63,15 +66,35 @@ spreadLevelPlot.default <- function(x, by, robust.line=TRUE,
 }
 
 spreadLevelPlot.lm <- function(x, robust.line=TRUE, 
-    smoother=loessLine, smoother.args=list(),
 	xlab="Fitted Values",
 	ylab="Absolute Studentized Residuals", las=par("las"),
 	main=paste("Spread-Level Plot for\n", deparse(substitute(x))),
-	pch=1, col=palette()[1], col.lines=palette()[2], col.smoother=palette()[3], lwd=2, grid=TRUE, 
-	labels, 
-	id.method = "mahal", 
-	id.n = if(id.method[1]=="identify") Inf else 0,
-	id.cex=1, id.col=palette()[1], id.location="lr", ...){
+	pch=1, col=carPalette()[1], col.lines=carPalette()[2:3], lwd=2, grid=TRUE, 
+    id=FALSE, smooth=TRUE, ...){
+    id <- applyDefaults(id, defaults=list(method=list("x", "y"), n=2, cex=1, col=carPalette()[1], location="lr"), type="id")
+    if (isFALSE(id)){
+        id.n <- 0
+        id.method <- "none"
+        labels <- id.cex <- id.col <- id.location <- NULL
+    }
+    else{
+        labels <- id$labels
+        if (is.null(labels)) labels <- names(na.omit(residuals(x)))
+        id.method <- id$method
+        id.n <- if ("identify" %in% id.method) Inf else id$n
+        id.cex <- id$cex
+        id.col <- id$col
+        id.location <- id$location
+    }
+    smoother.args <- applyDefaults(smooth, defaults=list(smoother=loessLine), type="smooth")
+    if (!isFALSE(smoother.args)) {
+        smoother <- smoother.args$smoother 
+        smoother.args$smoother <- NULL
+    }
+    else {
+        smoother <- "none"
+        smoother.args <- list()
+    }
 	resid <- na.omit(abs(rstudent(x)))
 	fitval <- na.omit(fitted.values(x))
 	non.pos <- fitval <= 0
@@ -79,7 +102,7 @@ spreadLevelPlot.lm <- function(x, robust.line=TRUE,
 		fitval <- fitval[!non.pos]
 		resid <- resid[!non.pos]
 		n.non.pos <- sum(non.pos)
-		warning(n.non.pos, " negative", if(n.non.pos > 1) " fitted values" else " fitted value", " removed")
+		warning("\n", n.non.pos, " negative", if(n.non.pos > 1) " fitted values" else " fitted value", " removed")
 	}
 	min <- min(fitval)
 	plot(fitval, resid, log="xy", main=main, xlab=xlab, ylab=ylab, 
@@ -89,24 +112,23 @@ spreadLevelPlot.lm <- function(x, robust.line=TRUE,
     box()}
 	points(fitval, resid, col=col, pch=pch)
 	mod <- if (robust.line)
-			rlm(log(resid) ~ log(fitval))
+			MASS::rlm(log(resid) ~ log(fitval))
 		else lm(log(resid) ~ log(fitval), ...)
 	first <- which.min(fitval) 
 	last <- which.max(fitval) 
 	lines((fitval)[c(first, last)], exp(fitted.values(mod)[c(first, last)]), 
-		lwd=lwd, col=col.lines, ...)
-	if (is.null(smoother.args$lwd)) smoother.args$lwd <- lwd
-	if (is.null(smoother.args$lty)) smoother.args$lty <- 2
-	if (is.function(smoother)) smoother(fitval, resid, col=col.smoother,
+		lwd=lwd, lty=2, col=col.lines[1], ...)
+	if (is.null(smoother.args$lwd.smooth)) smoother.args$lwd.smooth <- lwd
+	if (is.null(smoother.args$lty.smooth)) smoother.args$lty.smooth <- 1
+	if (is.function(smoother)) smoother(fitval, resid, col=col.lines[2],
 	    log.x=TRUE, log.y=TRUE, smoother.args=smoother.args)
 	p <- 1 - (coefficients(mod))[2]
 	names(p) <- NULL
 # point identification, added 11/20/2016
-	if(missing(labels)) 
-	  labels <- names(na.omit(residuals(x)))[!non.pos]
+	labels <- labels[!non.pos]
 	showLabels(fitval, resid, labels=labels, 
-	           id.method=id.method, id.n=id.n, id.cex=id.cex, 
-	           id.col=id.col, id.location=id.location)
+	           method=id.method, n=id.n, cex=id.cex, 
+	           col=id.col, location=id.location)
 # end addition
 	result <- list(PowerTransformation=p)
 	class(result) <- "spreadLevelPlot"

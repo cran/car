@@ -16,6 +16,12 @@
 # 2015-01-27: .carEnv now lives in the global environment. John
 # 2015-09-04: added model.matrix.coxme() and alias.coxme(). John
 # 2015-09-11: added some support for VGAM::vglm objects. John
+# 2017-02-10: added isFALSE() and applyDefaults() to support plotting functions. John
+# 2017-04-14: added carPalette to the end of this file.  May require further work later.
+# 2017-11-30: new version of carPalette(). John
+# 2017-11-30: substitute carPalette() for palette(). J. Fox
+# 2017-12-28: rewrote termsToMf used by residualPlots.  It didn't work right.  SW
+# 2018-01-15: df.terms.multinom() now works with response matrix. JF
 
 #if (getRversion() >= "2.15.1") globalVariables(c(".boot.sample", ".boot.indices"))
 
@@ -46,7 +52,7 @@ has.intercept.multinom <- function(model, ...) {
   nms <- names(coef(model))
   any(grepl("\\(Intercept\\)", nms))
 }
-  
+
 term.names <- function (model, ...) {
 	UseMethod("term.names")
 }
@@ -104,7 +110,7 @@ df.terms.default <- function(model, term, ...){
 }
 
 df.terms.multinom <- function (model, term, ...){
-	nlev <- length(model$lev)
+	nlev <- if (is.null(model$lev)) ncol(model.response(model.frame(model))) else length(model$lev)
 	if (!missing(term) && 1 == length(term)) {
 		assign <- attr(model.matrix(model), "assign")
 		which.term <- which(term == labels(terms(model)))
@@ -180,21 +186,21 @@ coefnames2bs <- function(g, para.names, parameterPrefix="b"){
 	metas3 <- paste("\\\\", metas, sep="")
 	for (i in seq(along=metas))
 		para.names <- gsub(metas2[i], metas3[i], para.names) # fix up metacharacters
-	para.order <- order(nchar(para.names), decreasing=TRUE) 
+	para.order <- order(nchar(para.names), decreasing=TRUE)
 	para.names <- para.names[para.order] # avoid partial-name substitution
 	std.names <- if ("(Intercept)" %in% para.names)
 				paste(parameterPrefix, 0:(length(para.names) - 1), sep = "")
 			else paste(parameterPrefix, 1:length(para.names), sep = "")
 	std.names.ordered <- std.names[para.order]
 	for (i in seq(along=para.names)){
-		g <- gsub(para.names[i], std.names.ordered[i], g) 
+		g <- gsub(para.names[i], std.names.ordered[i], g)
 	}
 	list(g=g, std.names=std.names)
 }
 
 
 showLabelsScatter <- function(x, y, labels, id.var = NULL,
-	id.method = c("mahal", "identify", "none"), log="", id.cex=.75, id.n=3, id.col=palette()[1], 
+	id.method = c("mahal", "identify", "none"), log="", id.cex=.75, id.n=3, id.col=carPalette()[1],
 	range.x=range(.x), show=TRUE) {
 	id.method <- match.arg(id.method)
 	if (id.method == "none" || id.n == 0 || !show) return(invisible(NULL))
@@ -216,12 +222,12 @@ showLabelsScatter <- function(x, y, labels, id.var = NULL,
 		x <- x[valid]
 		y <- y[valid]
 		labels <- labels[valid]
-		if (length(id.var) == length(valid)) 
+		if (length(id.var) == length(valid))
 			id.var <- id.var[valid]
 		.x <- if (logged("x")) log(x) else x
 		.y <- if (logged("y")) log(y) else y
 		ind <- if (!is.null(id.var)) {
-				if (length(id.var) == length(x)) order(-abs(id.var))[1L:id.n] 
+				if (length(id.var) == length(x)) order(-abs(id.var))[1L:id.n]
 				else if(is.character(id.var)) match(id.var, labels) else id.var
 			}
 			else switch(id.method,
@@ -236,7 +242,7 @@ showLabelsScatter <- function(x, y, labels, id.var = NULL,
 		text(x[ind], y[ind], labels[ind], cex = id.cex, xpd = TRUE,
 			pos = labpos[ind], offset = 0.25, col=id.col)
 		return(labels[ind])
-	} 
+	}
 }
 
 
@@ -263,7 +269,7 @@ outerLegend <- function(..., margin=3, offset=0, adjust=FALSE){
    }
    legend(x0, y0, ... , xpd=TRUE)
    }
-   
+
 # added by J. Fox 18 Nov 2010
 
 squeezeBlanks <- function(text){
@@ -285,7 +291,7 @@ has.intercept.mer <- function(model){
 has.intercept.merMod <- function(model){
     any(names(fixef(model))=="(Intercept)")
 }
-	
+
 model.matrix.lme <- function(object, ...){
 	model.matrix(formula(object), eval(object$call$data))
 }
@@ -300,7 +306,7 @@ exists.method <- function(generic, object, default=TRUE, strict=FALSE){
 					as.character(methods(generic)))
 }
 
-     
+
 # Used by marginalModelPlots, residualPlots added 2012-09-24
 plotArrayLegend <- function(
       location=c("top", "none", "separate"),
@@ -328,45 +334,41 @@ plotArrayLegend <- function(
   }
 }
 
-termsToMf <- function(model, terms){ 
+termsToMf <- function(model, terms){
   gform <- function(formula) {
-    if (is.null(formula)){
-        return(list(vars=formula, groups=NULL))
-    }
-    has.response <- length(formula) == 3
-    rhs <- if(has.response) formula[[3]] else formula[[2]]
-# either a single variable or '.' on the RHS
-    if (length(rhs) == 1){
-        return(list(vars=formula, groups=NULL))
-    }
-    if (length(rhs) != 3) stop("incorrectly formatted 'terms' argument")
-# check for "|", indicating grouping
-    if(deparse(rhs[[1]] == "|")) {
-      if(length(rhs[[3]]) > 1) stop("Only one conditioning variable is permitted")
-      groups <- as.formula(paste("~", deparse(rhs[[3]])))
-      rhs <- rhs[[2]]
-    } else groups <- NULL 
-    vars <- as.formula(paste("~ ", deparse(rhs)))
+    if (is.null(formula))
+      return(list(vars=formula, groups=NULL))
+    # is formula one-sided?
+    if(length(formula) == 3) stop("terms must be a one-sided formula")
+    rhs <- formula[[2]]
+    # is '|' present in the formula?
+    if("|" %in% all.names(rhs)){
+      if(length(rhs[[3]]) > 1) stop("only one conditional variable permitted")
+      groups <- as.formula(paste("~ ", deparse(rhs[[3]])))
+      vars <- as.formula(paste("~", deparse(rhs[[2]])))} else{
+        groups <- NULL
+        vars <- formula
+      }
     list(vars=vars, groups=groups)
   }
   terms <- gform(as.formula(terms))
   mf.vars <- try(update(model, terms$vars, method="model.frame"),
-     silent=TRUE)
-# This second test is used for models like m1 <- lm(longley) which
-# fail the first test because update doesn't work
+                 silent=TRUE)
+  # This second test is used for models like m1 <- lm(longley) which
+  # fail the first test because update doesn't work
   if(class(mf.vars) == "try-error")
-       mf.vars <- try(update(model, terms$vars,
-               method="model.frame", data=model.frame(model)), silent=TRUE)
+    mf.vars <- try(update(model, terms$vars,
+                          method="model.frame", data=model.frame(model)), silent=TRUE)
   if(class(mf.vars) == "try-error") stop("argument 'terms' not interpretable.")
   if(!is.null(terms$groups)){
-     mf.groups <- try(update(model, terms$groups, method="model.frame"), silent=TRUE)
-     if(class(mf.groups) == "try-error")
-       mf.groups <- try(update(model, terms$groups,
-               method="model.frame", data=model.frame(model)), silent=TRUE)
-     if(class(mf.groups) == "try-error") stop("argument 'terms' not interpretable.")
+    mf.groups <- try(update(model, terms$groups, method="model.frame"), silent=TRUE)
+    if(class(mf.groups) == "try-error")
+      mf.groups <- try(update(model, terms$groups,
+                              method="model.frame", data=model.frame(model)), silent=TRUE)
+    if(class(mf.groups) == "try-error") stop("argument 'terms' not interpretable.")
   } else {mf.groups <- NULL}
   list(mf.vars=mf.vars, mf.groups=mf.groups)
-  }
+}
 
 # the following function isn't exported, tests for existance of a package:
 
@@ -389,7 +391,7 @@ alias.coxme <- function(model){
     else list()
 }
 
-# to make linearHypothesis() work again and to make Anova() work with VGAM:"vglm" objects 
+# to make linearHypothesis() work again and to make Anova() work with VGAM:"vglm" objects
 
 # df.residual.vglm <- function(object, ...) object@df.residual
 
@@ -403,3 +405,48 @@ has.intercept.vlm <- function(model, ...) any(grepl("^\\(Intercept\\)", names(co
 
 # model.matrix.vglm <- function(object, ...) model.matrixvlm(object, ...)
 
+# for plotting functions, not exported:
+
+isFALSE <- function(x) length(x) == 1 && is.logical(x) && !isTRUE(x)
+
+applyDefaults <- function(args, defaults, type=""){
+    if (isFALSE(args)) return(FALSE)
+    names <- names(args)
+    names <- names[names != ""]
+    if (!isTRUE(args) && !is.null(args) && length(names) != length(args)) warning("unnamed ", type, " arguments, will be ignored")
+    if (isTRUE(args) || is.null(names)) defaults
+    else defaults[names] <- args[names]
+    as.list(defaults)
+}
+
+# carPalette <- function(palette){
+#   default <- c("black", "blue", "magenta", "cyan", "orange", "gray", "green3", "red")
+#   if(is.null(options()$carPalette)) options(carPalette = default)
+#   if(missing(palette)) options()$carPalette  else{
+#     if(palette[1] == "default") {
+#       options(carPalette=default)
+#       default} else {
+#         options(carPalette=palette)
+#         options()$carPalette
+#       }
+#   }
+# }
+
+carPal <- function(){
+    car.palette <- default <- c("black", "blue", "magenta", "cyan", "orange", "gray", "green3", "red")
+    function(palette){
+        if (missing(palette)) return(car.palette)
+        else{
+            previous <- car.palette
+            car.palette <<- if( palette[1] == "default") default else palette
+            return(invisible(previous))
+        }
+    }
+}
+
+carPalette <- carPal()
+
+# the following function borrowed from stats:::format.perc(), not exported
+format.perc <- function (probs, digits){
+  paste(format(100 * probs, trim = TRUE, scientific = FALSE, digits = digits), "%")
+}

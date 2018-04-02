@@ -19,12 +19,8 @@ leveragePlots(model, terms = ~., layout = NULL, ask,
 leveragePlot(model, ...)
 
 \method{leveragePlot}{lm}(model, term.name,
-    id.method = list(abs(residuals(model, type="pearson")), "x"),
-    labels, 
-    id.n = if(id.method[1]=="identify") Inf else 0,
-    id.cex=1, id.col=palette()[1], id.location="lr", 
-    col=palette()[1], col.lines=palette()[2], lwd=2, 
-    xlab, ylab, main="Leverage Plot", grid=TRUE, ...)
+		id=TRUE, col=carPalette()[1], col.lines=carPalette()[2], lwd=2, 
+		xlab, ylab, main="Leverage Plot", grid=TRUE, ...)
 
 \method{leveragePlot}{glm}(model, ...)
 }
@@ -32,12 +28,12 @@ leveragePlot(model, ...)
 \arguments{
   \item{model}{model object produced by \code{lm}
 }
-  \item{terms}{ A one-sided formula that specifies a subset of the predictors. 
-One added-variable plot is drawn for each term.  The default
-\code{~.} is to plot against all numeric predictors.  For example, the
+  \item{terms}{ A one-sided formula that specifies a subset of the numeric regressors, factors and interactions.
+One added-variable plot is drawn for each term, either a main effect or an interactions.  The default
+\code{~.} is to plot against all terms in the model.  For example, the
 specification \code{terms = ~ . - X3} would plot against all predictors
 except for \code{X3}.  If this argument is a quoted name of one of the predictors, the 
-added-variable plot is drawn for that predictor only.
+added-variable plot is drawn for that predictor only.  The plots for main effects with interactions present violate the marginality principle and may not be easily interpreted.
 }
   \item{layout}{ 
 If set to a value like \code{c(1, 1)} or \code{c(4, 3)}, the layout
@@ -58,10 +54,11 @@ user to select the term(s) to plot.
   \item{\dots}{arguments passed down to method functions.}
   \item{term.name}{Quoted name of term in the model to be plotted; this argument 
 is omitted for \code{leveragePlots}.}
-  \item{id.method,labels,id.n,id.cex,id.col,id.location}{Arguments for the labelling of
-    points.  The default is \code{id.n=0} for labeling no points.  See
-    \code{\link{showLabels}} for details of these arguments.
-}
+  \item{id}{controls point identification; if \code{FALSE}, no points are identified;
+    can be a list of named arguments to the \code{\link{showLabels}} function;
+    \code{TRUE}, the default, is equivalent to \code{list(method=list(abs(residuals(model, type="pearson")), "x"), n=2, 
+    cex=1, col=carPalette()[1], location="lr")},
+    which identifies the 2 points with the largest residuals and the 2 points with the greatest partial leverage.}
 \item{col}{color(s) of points}
 \item{col.lines}{color of the fitted line
 }
@@ -91,12 +88,12 @@ Regression. In Stahel, W. and Weisberg, S. (eds.),
 \emph{Directions in Robust Statistics and Diagnostics}.
 Springer, 47-60.
 
-  Fox, J. (2008)
+  Fox, J. (2016)
   \emph{Applied Regression Analysis and Generalized Linear Models},
-  Second Edition. Sage.  
+  Third Edition. Sage.  
   
-  Fox, J. and Weisberg, S. (2011) 
-  \emph{An R Companion to Applied Regression}, Second Edition, Sage.
+  Fox, J. and Weisberg, S. (2019) 
+  \emph{An R Companion to Applied Regression}, Third Edition, Sage.
   
   Sall, J. (1990)
   Leverage plots for general linear hypotheses.

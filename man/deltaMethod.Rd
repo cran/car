@@ -27,10 +27,10 @@ deltaMethod(object, ...)
 \method{deltaMethod}{lm} (object, g, vcov.=vcov(object, complete=FALSE), 
            parameterNames=names(coef(object)), ...)
 \method{deltaMethod}{nls}(object, g, vcov.=vcov(object, complete=FALSE), ...)
-\method{deltaMethod}{multinom} (object, g, vcov. = vcov, 
+\method{deltaMethod}{multinom} (object, g, vcov. = vcov(object, complete=FALSE), 
            parameterNames = if (is.matrix(coef(object))) 
            colnames(coef(object)) else names(coef(object)), ...) 
-\method{deltaMethod}{polr} (object, g, vcov.=vcov, ...)
+\method{deltaMethod}{polr} (object, g, vcov.=vcov(object, complete=FALSE), ...)
 \method{deltaMethod}{survreg} (object, g, vcov. = vcov(object, complete=FALSE), 
            parameterNames = names(coef(object)), ...)
 \method{deltaMethod}{coxph} (object, g, vcov. = vcov(object, complete=FALSE), 
@@ -72,7 +72,7 @@ deltaMethod(object, ...)
   details below.}
   \item{constants}{This argument is a named vector whose elements are constants that
   are used in the \code{f} argument.  This is needed only when the function is
-  called from within another function to comply to R scoping rules.  See
+  called from within another function to comply to R scoping rules.  See an
   example below.}
   \item{level}{level for confidence interval, default \code{0.95}.}
   \item{...}{Used to pass arguments to the generic method.}
@@ -142,7 +142,7 @@ For example,
 \code{m2 <- nls(y ~ theta/(1 + gamma * x), start = list(theta=2, gamma=3))} will
 have parameters named  \code{c("theta", "gamma")}.   
 In many other familiar regression methods, such as lm and glm, the names of
-the coefficient estimates are the corresponding variable names, not
+the coefficient estimates are the corresponding regressor names, not
 parameter names. 
 
 For mixed-effects models fit with \code{lmer} and \code{nlmer} from the 
@@ -169,12 +169,12 @@ The value of \code{g} is given as a row label.
 by the function \code{\link{D}}.}
 
 \references{
-  Fox, J. (2008)
+  Fox, J. (2016)
   \emph{Applied Regression Analysis and Generalized Linear Models},
-  Second Edition. Sage.  
+  Third Edition. Sage.  
   
-  Fox, J. and Weisberg, S. (2011) 
-  \emph{An R Companion to Applied Regression}, Second Edition, Sage.
+  Fox, J. and Weisberg, S. (2019) 
+  \emph{An R Companion to Applied Regression}, Third Edition, Sage.
 
   Weisberg, S. (2014) \emph{Applied
   Linear Regression}, Fourth Edition, Wiley, Section 6.1.2.

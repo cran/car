@@ -37,33 +37,33 @@ powerTransform(object, ...)
   \item{subset}{Case indices to be used, as in \sQuote{\link{lm}}.}
   \item{weights}{Weights as in \sQuote{\link{lm}}.}
   \item{na.action}{Missing value action, as in \sQuote{lm}.}
-  \item{...}{Additional arguments that used in the interative algorithm; defaults are generally adequate.}
+  \item{...}{Additional arguments that used in the interative algorithm; defaults are generally adequate.  For use with the \code{bcnPower} family, a convergence criterion can be set with \code{conv=.0001} the default, and a minimum positive value of the location parameter can be set, with default \code{gamma.min=.1}.}
 }
 
 \details{This function implements the Box and Cox (1964) method of selecting a power transformation of a variable toward normality, and its generalization by Velilla (1993) to a multivariate response.  Cook and Weisberg (1999) and Weisberg (2014) suggest the usefulness of transforming a set of predictors \code{z1, z2, z3} for multivariate normality.  It also includes two additional families that allow for negative values.
 
-If the \sQuote{object} argument is of class \sQuote{lm} or \sQuote{lmerMod}, the Box-Cox procedure is applied to the conditional distribution of the response given the predictors.  For \sQuote{lm} objects, the respose may be multivariate, and each column will have its own transformation.  With \sQuote{lmerMod} the response must be univariate.
+If the \code{object} argument is of class \sQuote{lm} or \sQuote{lmerMod}, the Box-Cox procedure is applied to the conditional distribution of the response given the predictors.  For \sQuote{lm} objects, the respose may be multivariate, and each column will have its own transformation.  With \sQuote{lmerMod} the response must be univariate.
 
-The \sQuote{object} argument may also be a formula.  For example, \code{z ~ x1 + x2 + x3} will estimate a transformation for the response \code{z} from a family after fitting a linear model with the given formula.  \code{cbind(y1, y2, y3) ~ 1} specifies transformations
-to multivariate normality with no predictors.  A vector value for \sQuote{object}, for example
+The \code{object} argument may also be a formula.  For example, \code{z ~ x1 + x2 + x3} will estimate a transformation for the response \code{z} from a family after fitting a linear model with the given formula.  \code{cbind(y1, y2, y3) ~ 1} specifies transformations
+to multivariate normality with no predictors.  A vector value for \code{object}, for example
 \code{powerTransform(ais$LBM)}, is equivalent to\code{powerTransform(LBM ~ 1, ais)}.  Similarly, \code{powerTransform(cbind(ais$LBM, ais$SSF))}, where the first argument is a matrix rather than a formula is equivalent to specification of a mulitvariate linear model \code{powerTransform(cbind(LBM, SSF) ~ 1, ais)}.
 
 Three families of power transformations are available. The default Box-Cox power family (\code{family="bcPower"}) of power transformations effectively replaces a vector by that vector raised to a power, generally in the range from -3 to 3.  For powers close to zero, the log-transformtion is suggested.  In practical situations, after estimating a power using the \code{powerTransform} function, a variable would be replaced by a simple power transformation of it, for example, if \eqn{\lambda\approx 0.5}{lamba is about 0.5}, then the correspoding variable would be replaced by its square root; if \eqn{\lambda}{\lambda} is close enough to zero, the the variable would be replaced by its natural logarithm.  The Box-Cox family requires the responses to be strictly positive.
 
-The \code{family="bcnPower"}, or Box-Cox with negatives, family proposed by Hawkins and Weisberg (2017)  allows for (a few) non-positive values, while allowing for the transformed data to be interpreted similarly to the interpretation of Box-Cox transformed values.  This family is the Box-Cox transformation of \eqn{z = .5 * (y + (y^2 + \gamma^2)^{1/2})} that depends on a location parameter \eqn{\gamma}{gamma}.  The quantity \eqn{z} is positive for all values of \eqn{y}.  If \eqn{\gamma = 0}{gamma=0} and \eqn{y} is strictly positive, then the Box-Cox and the bcnPower transformations are identical.  When fitting the Box-Cox with negatives family, \code{lambda} is restricted to the range [-3, 3], and gamma is restricted to the range from .01 to the largest positive value of the variable, since values outside these ranges are unreasonable in practice.
+The \code{family="bcnPower"}, or Box-Cox with negatives, family proposed by Hawkins and Weisberg (2017)  allows for (a few) non-positive values, while allowing for the transformed data to be interpreted similarly to the interpretation of Box-Cox transformed values.  This family is the Box-Cox transformation of \eqn{z = .5 * (y + (y^2 + \gamma^2)^{1/2})} that depends on a location parameter \eqn{\gamma}.  The quantity \eqn{z} is positive for all values of \eqn{y}.  If \eqn{\gamma = 0} and \eqn{y} is strictly positive, then the Box-Cox and the bcnPower transformations are identical.  When fitting the Box-Cox with negatives family, \code{lambda} is restricted to the range [-3, 3], and \code{gamma} is restricted to the range from \code{gamma.min=.1} to the largest positive value of the variable, since values outside these ranges are unreasonable in practice.  The value of \code{gamma.min} can be changed with an argument to \code{powerTransform}.
 
 The final family \code{family="yjPower"} uses the Yeo-Johnson transformation, which is the Box-Cox transformation of \eqn{U+1} for nonnegative values, and of \eqn{|U|+1} with parameter \eqn{2-\lambda}{2-lambda} for \eqn{U} negative and thus it provides a family for fitting when (a few) observations are negative.  Because of the unusual constraints on the powers for positive and negative data, this transformation is not used very often, as results are difficult to interpret.  In practical problems, a variable would be replaced by its Yeo-Johnson transformation computed using the \code{\link{yjPower}} function.
 
 The function \code{\link{testTransform}} is used to obtain likelihood ratio tests for any specified value for the transformation parameter(s).
 
-Computations maimize the likelihood-like functions described by Box and Cox (1964) and by Velilla (2000).  For univariate responses, the computations are very stable and problems are unlikely, although for \sQuote{lmer} models computations may be very slow because the model is refit many times. For multivariate responses with the \code{bcnPower} family, the computing algorithm may fail.  In this case we recommend adding the argument \code{itmax = 1} to the call to \code{powerTransform}.  This will return the starting value estimates of the transformation parameters, fitting a d-dimensional response as if all the d responses were independent.
+Computations maximize the likelihood-like functions described by Box and Cox (1964) and by Velilla (2000).  For univariate responses, the computations are very stable and problems are unlikely, although for \sQuote{lmer} models computations may be very slow because the model is refit many times. For multivariate responses with the \code{bcnPower} family, the computing algorithm may fail.  In this case we recommend adding the argument \code{itmax = 1} to the call to \code{powerTransform}.  This will return the starting value estimates of the transformation parameters, fitting a d-dimensional response as if all the d responses were independent.
 
 }
 \value{
 An object of class \code{powerTransform} or class \code{bcnPowerTransform} if \code{family="bcnPower"} that
 inherits from \code{powerTransform} is returned, including the components listed below.
 
-A \code{summary} method presents estimated values for the transformation power \sQuote{lambda} and for the \sQuote{bcnPower} family the location paramter \sQuote{gamma} as well.  Standard errors and Wald 95\% confidence intervals based on the standard errors are computed from the inverse of the sample  Hessian matrix evaluted at the estimates.  The interval estimates for the \sQuote{gamma} parameters will generally be very wide, reflecting little information available about the location parameter.  Likelihood ratio type tests are also provided.  For the \sQuote{bcnPower} family these are based on the profile loglikelihood for \sQuote{lambda} alone; that is, we treat \sQuote{gamma} as a nusiance parameter and average over it.
+A \code{summary} method presents estimated values for the transformation power \code{lambda} and for the \sQuote{bcnPower} family the location parameter \code{gamma} as well.  Standard errors and Wald 95\% confidence intervals based on the standard errors are computed from the inverse of the sample Hessian matrix evaluted at the estimates.  The interval estimates for the \code{gamma} parameters will generally be very wide, reflecting little information available about the location parameter.  Likelihood ratio type tests are also provided.  For the \sQuote{bcnPower} family these are based on the profile loglikelihood for \code{lambda} alone; that is, we treat \code{gamma} as a nusiance parameter and average over it.
 
 The components of the returned object includes
 \item{lambda}{Estimated transformation parameter}
@@ -83,13 +83,11 @@ Cook, R. D. and Weisberg, S. (1999)  \emph{Applied Regression Including
 Computing
 and Graphics}.  Wiley.
 
-Fox, J. and Weisberg, S. (2011)
-\emph{An R Companion to Applied Regression}, Second Edition, Sage.
+Fox, J. and Weisberg, S. (2019)
+\emph{An R Companion to Applied Regression}, Third Edition, Sage.
 
 Hawkins, D. and Weisberg, S. (2017)
-Combining the Box-Cox Power and Generalized Log Transformations to Accomodate Negative Responses
-In Linear and Mixed-Effects Linear Models,
-submitted for publication.
+Combining the Box-Cox Power and Generalized Log Transformations to Accomodate Nonpositive  Responses In Linear and Mixed-Effects Linear Models \emph{South African Statistics Journal}, 51, 317-328.
 
 Velilla, S. (1993)  A note on the multivariate Box-Cox transformation to
 normality.  \emph{Statistics and Probability Letters}, 17, 259-263.

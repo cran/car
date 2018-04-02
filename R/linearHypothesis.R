@@ -33,8 +33,8 @@
 #   2015-01-27: KRmodcomp() and methods now imported from pbkrtest. John
 #   2015-02-03: Check for NULL df before 0 df in default method. John
 #   2016-06-29: added "value" and "vcov" attributes to returned object, print vcov when verbose. John
-#   2017-11-09: make compatible with vcov() in R 3.5.0. J. Fox
-#   2017-11-13: further fixes for vcov(). J. Fox
+#   2017-02-16: replaced KRmodcomp() with pbkrtest::KRmodcomp(). John
+#   2017-11-07: added complete=FALSE to vcov() calls. John
 #----------------------------------------------------------------------------------------------------
 
 vcov.default <- function(object, ...){
@@ -191,7 +191,7 @@ linearHypothesis.default <- function(model, hypothesis.matrix, rhs=NULL,
 	if (is.null(df)) df <- Inf ## if no residual df available
     if (df == 0) stop("residual df = 0")
 	V <- if (is.null(vcov.)) vcov(model, complete=FALSE)
-			else if (is.function(vcov.)) vcov.(model)  else vcov.
+			else if (is.function(vcov.)) vcov.(model) else vcov.
 	b <- coef.
 	if (any(aliased <- is.na(b)) && !singular.ok)
 		stop("there are aliased coefficients in the model")
@@ -572,7 +572,7 @@ linearHypothesis.mer <- function(model, hypothesis.matrix, rhs=NULL,
                                  vcov.=NULL, test=c("Chisq", "F"), singular.ok=FALSE, verbose=FALSE, ...){
     test <- match.arg(test)
     V <- as.matrix(if (is.null(vcov.))vcov(model, complete=FALSE)
-                   else if (is.function(vcov.)) vcov.(model)  else vcov.)
+                   else if (is.function(vcov.)) vcov.(model) else vcov.)
     b <- fixef(model)
     if (any(aliased <- is.na(b)) && !singular.ok)
         stop("there are aliased coefficients in the model")
@@ -605,11 +605,9 @@ linearHypothesis.mer <- function(model, hypothesis.matrix, rhs=NULL,
     }
     else {
         if (!requireNamespace("lme4")) stop("lme4 package is missing")
-#        if (!require("pbkrtest") || packageVersion("pbkrtest") < "0.3.2") stop("pbkrtest package version >= 0.3.2 required for F-test on linear mixed model")
         if (!lme4::isREML(model)) 
             stop("F test available only for linear mixed model fit by REML")
-#        res <- pbkrtest::KRmodcomp(model, L)$test
-        res <- KRmodcomp(model, L)$test
+        res <- pbkrtest::KRmodcomp(model, L, rhs)$test
         df <- res["Ftest", "ddf"]
         F <- res["Ftest", "stat"]
         p <- res["Ftest", "p.value"]
@@ -644,7 +642,7 @@ linearHypothesis.mer <- function(model, hypothesis.matrix, rhs=NULL,
 linearHypothesis.lme <- function(model, hypothesis.matrix, rhs=NULL,
 		vcov.=NULL, singular.ok=FALSE, verbose=FALSE, ...){
 	V <- as.matrix(if (is.null(vcov.))vcov(model, complete=FALSE)
-					else if (is.function(vcov.)) vcov.(model)  else vcov.)
+					else if (is.function(vcov.)) vcov.(model) else vcov.)
 	b <- fixef(model)
 	if (any(aliased <- is.na(b)) && !singular.ok)
 		stop("there are aliased coefficients in the model")

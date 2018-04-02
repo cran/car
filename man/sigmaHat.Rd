@@ -17,7 +17,7 @@ sigmaHat(object)
 }
 \details{
 For an lm or nls object, the returned quantity is the square root of the
-estimate of \eqn{\sigma}{sigma}.  For a glm object, the returned quantity is
+estimate of \eqn{\sigma^2}{sigma^2}.  For a glm object, the returned quantity is
 the square root of the estimated dispersion parameter.
 }
 \value{

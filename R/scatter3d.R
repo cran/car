@@ -14,22 +14,25 @@
 # 2014-09-04: J. Fox: empty groups produce warning rather than error
 # 2015-12-12: Added axis.ticks argument and code contributed by David Winsemius to add tick labels to axes. J. Fox
 # 2016-02-06: Changed call to rgl.clear() to next3d() for compatibility with embedding in HTML. J. Fox
+# 2017-06-27: introduced id argument replacing several arguments. J. Fox
+# 2017-11-30: use carPalette(), avoid red and green. J. Fox
 
 scatter3d <- function(x, ...){
     if (!requireNamespace("rgl")) stop("rgl package missing")
     UseMethod("scatter3d")
 }
 
-scatter3d.formula <- function(formula, data, subset, radius, xlab, ylab, zlab, labels, ...){
+scatter3d.formula <- function(formula, data, subset, radius, xlab, ylab, zlab, id=FALSE, ...){
     na.save <- options(na.action=na.omit)
     on.exit(options(na.save))
     m <- match.call(expand.dots=FALSE)
     if (is.matrix(eval(m$data, sys.frame(sys.parent())))) 
         m$data <- as.data.frame(data)
     m$na.action <- na.pass
-    m$labels <- m$xlab <- m$ylab <- m$zlab <- m$... <- NULL
+    m$id <- m$xlab <- m$ylab <- m$zlab <- m$... <- NULL
     m[[1]] <- as.name("model.frame")
-    formula <- as.character(c(formula))
+    formula <- as.character(formula)
+    formula <- paste(formula[2], formula[1], formula[3])
     formula <- as.formula(sub("\\|", "+", formula))
     m$formula <- formula
     X <- eval(m, parent.frame())
@@ -39,14 +42,15 @@ scatter3d.formula <- function(formula, data, subset, radius, xlab, ylab, zlab, l
     }
     else radius <- 1
     names <- names(X)
+    id <- applyDefaults(id, defaults=list(method="mahal", n=2,
+        labels=rownames(X), offset = ((100/nrow(X))^(1/3))*0.02), type="id")
     if (missing(xlab)) xlab <- names[2]
     if (missing(ylab)) ylab <- names[1]
     if (missing(zlab)) zlab <- names[3]
-    if (missing(labels)) labels <- rownames(X)
     if (ncol(X) == 3) 
-        scatter3d(X[,2], X[,1], X[,3], xlab=xlab, ylab=ylab, zlab=zlab, labels=labels, radius=radius, ...)
+        scatter3d(X[,2], X[,1], X[,3], xlab=xlab, ylab=ylab, zlab=zlab, radius=radius, id=id, ...)
     else if (ncol(X) == 4) 
-        scatter3d(X[,2], X[,1], X[,3], groups=X[,4], xlab=xlab, ylab=ylab, zlab=zlab, labels=labels, radius=radius, ...)
+        scatter3d(X[,2], X[,1], X[,3], groups=X[,4], xlab=xlab, ylab=ylab, zlab=zlab, radius=radius, id=id, ...)
     else stop("incorrect scatter3d formula")
 }
 
@@ -56,9 +60,9 @@ scatter3d.default <- function(x, y, z,
     revolutions=0, bg.col=c("white", "black"),
     axis.col=if (bg.col == "white") c("darkmagenta", "black", "darkcyan")
     else c("darkmagenta", "white", "darkcyan"),
-    surface.col=c("blue", "green", "orange", "magenta", "cyan", "red", "yellow", "gray"),
+    surface.col=carPalette()[-1],
     surface.alpha=0.5,
-    neg.res.col="red", pos.res.col="green",
+    neg.res.col="magenta", pos.res.col="cyan",
     square.col=if (bg.col == "white") "black" else "gray", point.col="yellow",
     text.col=axis.col, grid.col=if (bg.col == "white") "black" else "gray",
     fogtype=c("exp2", "linear", "exp", "none"),
@@ -66,13 +70,29 @@ scatter3d.default <- function(x, y, z,
     df.smooth=NULL, df.additive=NULL,
     sphere.size=1, radius=1, threshold=0.01, speed=1, fov=60, 
     fit="linear", groups=NULL, parallel=TRUE, ellipsoid=FALSE, level=0.5, ellipsoid.alpha=0.1,
-    id.method=c("mahal", "xz", "y", "xyz", "identify", "none"), 
-    id.n=if (id.method == "identify") Inf else 0,
-    labels=as.character(seq(along=x)), offset = ((100/length(x))^(1/3)) * 0.02,
-    model.summary=FALSE, ...){
+    # id.method=c("mahal", "xz", "y", "xyz", "identify", "none"), 
+    # id.n=if (id.method == "identify") Inf else 0,
+    # labels=as.character(seq(along=x)), offset = ((100/length(x))^(1/3)) * 0.02,
+    id=FALSE, model.summary=FALSE, ...){
     if (!requireNamespace("rgl")) stop("rgl package missing")
     if (!requireNamespace("mgcv")) stop("mgcv package missing")
-    id.method <- match.arg(id.method)
+  
+    id <- applyDefaults(id, defaults=list(method="mahal", n=2,
+        labels=as.character(seq(along=x)), offset = ((100/length(x))^(1/3))*0.02), type="id")
+    if (isFALSE(id)){
+      id.n <- 0
+      id.method <- "mahal"
+      labels <- NULL
+    }
+    else{
+      labels <- id$labels
+      id.method <- id$method
+      id.n <- if ("identify" %in% id.method) Inf else id$n
+      offset <- id$offset
+    }
+  
+  
+#    id.method <- match.arg(id.method)
     if (residuals == "squares"){
         residuals <- TRUE
         squares <- TRUE

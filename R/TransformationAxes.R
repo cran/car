@@ -1,6 +1,6 @@
 # Axes for transformations (J. Fox)
 
-# last modified 27 December 2009 by J. Fox
+# last modified 2018-02-01 by J. Fox
 
 # functions to add untransformed axis to right or top of a plot
 #  for power, Box-Cox,  or Yeo-Johnson transformations
@@ -47,6 +47,26 @@ bcPowerAxis <- function(power, side=c("right", "above", "left", "below"),
 	if (grid && (side %% 2 == 0)) abline(h=ticks.trans, lty=grid.lty, col=grid.col)
 	if (grid && (side %% 2 == 1)) abline(v=ticks.trans, lty=grid.lty, col=grid.col)
 	mtext(axis.title, side=side, line=3, cex=cex)
+}
+
+bcnPowerAxis <- function(power, shift, side=c("right", "above", "left", "below"), 
+                        at, start=0, lead.digits=1, n.ticks, grid=FALSE, grid.col=gray(0.50), grid.lty=2,
+                        axis.title="Untransformed Data", cex=1, las=par("las")) {
+  side <- if (is.numeric(side)) side 
+  else which(match.arg(side) == c("below", "left", "above", "right"))
+  axp <- if (side %% 2 == 1) par("xaxp") else par("yaxp")
+  if (missing(n.ticks)) n.ticks <- axp[3] + 1
+  ticks <- nice(seq(from=axp[1], to=axp[2], length=n.ticks), lead.digits=lead.digits)
+  ticks.x <- if (power != 0) nice(bcnPowerInverse(ticks[ticks > 0], lambda=power, gamma=shift), lead.digits=lead.digits)
+  else nice(bcnPowerInverse(ticks, lambda=0, gamma=shift), lead.digits=lead.digits)
+  ticks.x <- if (missing(at)) ticks.x
+  else at
+  ticks.text <- as.character(ticks.x - start)
+  ticks.trans <- bcnPower(ticks.x, lambda=power, gamma=shift)
+  axis(side, labels=ticks.text, at=ticks.trans, las=las)
+  if (grid && (side %% 2 == 0)) abline(h=ticks.trans, lty=grid.lty, col=grid.col)
+  if (grid && (side %% 2 == 1)) abline(v=ticks.trans, lty=grid.lty, col=grid.col)
+  mtext(axis.title, side=side, line=3, cex=cex)
 }
 	
 yjPowerAxis <- function(power, side=c("right", "above", "left", "below"), 

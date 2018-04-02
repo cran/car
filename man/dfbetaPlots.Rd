@@ -23,13 +23,13 @@ dfbetasPlots(model, ...)
 	    main, xlab, ylab, labels=rownames(dfbeta), 
         id.method="y",  
         id.n=if(id.method[1]=="identify") Inf else 0, id.cex=1,
-        id.col=palette()[1], id.location="lr", col=palette()[1], grid=TRUE, ...)
+        id.col=carPalette()[1], id.location="lr", col=carPalette()[1], grid=TRUE, ...)
 
 \method{dfbetasPlots}{lm}(model, terms=~., intercept=FALSE, layout=NULL, ask, 
 	    main, xlab, ylab,
         labels=rownames(dfbeta), id.method="y",
         id.n=if(id.method[1]=="identify") Inf else 0, id.cex=1, 
-        id.col=palette()[1], id.location="lr", col=palette()[1], grid=TRUE, ...)
+        id.col=carPalette()[1], id.location="lr", col=carPalette()[1], grid=TRUE, ...)
 }
 	
 \arguments{
@@ -59,11 +59,11 @@ plots from two models in the same graphics window.
 \item{ask}{If \code{TRUE}, ask the user before drawing the next plot; if \code{FALSE}, the default, don't ask.
 }
 \item{\dots}{optional additional arguments to be passed to \code{\link{plot}}, \code{\link{points}}, and \code{\link{showLabels}}}. 
-  \item{id.method,labels,id.n,id.cex,id.col,id.location}{Arguments for the labelling of
+  \item{id.method, labels, id.n, id.cex, id.col, id.location}{Arguments for the labelling of
     points.  The default is \code{id.n=0} for labeling no points.  See
     \code{\link{showLabels}} for details of these arguments.
 }
-\item{col}{color for points; defaults to the first entry in the color \code{\link{palette}}.}
+\item{col}{color for points; defaults to the first entry in the color \code{\link{carPalette}}.}
    \item{grid}{If \code{TRUE}, the default, a light-gray background grid is put on the
 graph}
 }
@@ -75,15 +75,15 @@ graph}
 }
 
 \references{
-  Fox, J. (2008)
+  Fox, J. (2016)
   \emph{Applied Regression Analysis and Generalized Linear Models},
-  Second Edition. Sage.  
+  Third Edition. Sage.  
   
-  Fox, J. and Weisberg, S. (2011) 
-  \emph{An R Companion to Applied Regression}, Second Edition, Sage.
+  Fox, J. and Weisberg, S. (2019) 
+  \emph{An R Companion to Applied Regression}, Third Edition, Sage.
 }
 
-\author{John Fox \email{jfox@mcmaster.ca}, Sanford Weisberg \email{sandy@umn.edu}}
+\author{John Fox \email{jfox@mcmaster.ca}}
 
 \seealso{\code{\link{dfbeta}} ,\code{\link{dfbetas}}}
 

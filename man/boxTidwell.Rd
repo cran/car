@@ -21,7 +21,7 @@ boxTidwell(y, ...)
 \method{boxTidwell}{default}(y, x1, x2=NULL, max.iter=25, tol=0.001, 
   verbose=FALSE, ...)
   
-\method{print}{boxTidwell}(x, digits, ...)
+\method{print}{boxTidwell}(x, digits=getOption("digits") - 2, ...)
 }
 
 \arguments{
@@ -63,12 +63,12 @@ boxTidwell(y, ...)
   Transformation of the independent variables.
   \emph{Technometrics} \bold{4}, 531-550.
 
-  Fox, J. (2008)
+  Fox, J. (2016)
   \emph{Applied Regression Analysis and Generalized Linear Models},
-  Second Edition. Sage.  
+  Third Edition. Sage.  
   
-  Fox, J. and Weisberg, S. (2011) 
-  \emph{An R Companion to Applied Regression}, Second Edition, Sage.
+  Fox, J. and Weisberg, S. (2019) 
+  \emph{An R Companion to Applied Regression}, Third Edition, Sage.
 }
 
 \author{John Fox \email{jfox@mcmaster.ca}}

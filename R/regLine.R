@@ -1,9 +1,10 @@
 # draw regression line from model to extremes of fit (J. Fox)
 
 # last modified 2 October 2009 by J. Fox
+# 2017-11-30: substitute carPalette() for palette(). J. Fox
 
  
-regLine <- function(mod, col=palette()[2], lwd=2, lty=1, ...){
+regLine <- function(mod, col=carPalette()[2], lwd=2, lty=1, ...){
 	if(!is.null(class(mod$na.action)) && class(mod$na.action) == "exclude") 
 		class(mod$na.action) <-"omit"
 	coef <- coefficients(mod)

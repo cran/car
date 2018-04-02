@@ -1,12 +1,14 @@
-
-
-#2009-09-16: added ... argument to print.summary.powerTransform. J. Fox
+# 2009-09-16: added ... argument to print.summary.powerTransform. J. Fox
 # 2015-02-02: added 'gamma' argument to get transformation of (U + gamma)
 # 2015-08-10: added estimateTransform as a generic function
 # 2015-08-24: made 'family' an explicit argument to powerTransformation to clairfy man page.
 # 2017-01-28: bug-fix in yjPower
 # 2017-05-02: function updates to accomodate bcnPower family.  S. Weisberg
 # 2017-05-19: Changed summary.powerTransform; deleted invalid test; added roundlam to output
+# 2017-07-17:  Added family object in return of estimateTransform.default; changed print function of summary.powerTransform B. Price
+# 2017-10-25: modified print.powerTransform() and print.summary.powerTransform()
+#             so that singular words are used for 1 parameter (e.g., "is" vs "are"). J. Fox
+# 2017-12-01: removed plot.powerTransform
 
 
 ### Power families:
@@ -94,8 +96,8 @@ powerTransform.lm <- function(object, family="bcPower", ...) {
   estimateTransform(x, y, w, family=family, ...)
   }
 
-powerTransform.formula <- function(object, data, subset, weights, na.action, family="bcPower",
-  ...) {
+powerTransform.formula <- function(object, data, subset, weights,
+              na.action, family="bcPower", ...) {
     mf <- match.call(expand.dots = FALSE)
     m <- match(c("object", "data", "subset", "weights", "na.action"),
          names(mf), 0L)
@@ -114,14 +116,6 @@ powerTransform.formula <- function(object, data, subset, weights, na.action, fam
         x <- model.matrix(mt, mf)   }
   estimateTransform(x, y, w, family=family, ...)
   }
-
-# estimateTransform, revised 5/2/2017
-#estimateTransform <- function(X, Y, weights=NULL,
-#                              family="bcPower", start=NULL, method="L-BFGS-B", ...) {
-#  if(family == "skewPower")
-#    estimateTransform.skewPower(X, Y, weights,  ...) else
-#      estimateTransform.default(X, Y, weights, family, start, method, ...)
-#}
 
 estimateTransform <- function(X, Y, weights=NULL, family="bcPower", ...) {
   Y <- as.matrix(Y)
@@ -182,6 +176,7 @@ estimateTransform.default <- function(X, Y, weights=NULL,
   res$y <- Y
   res$x <- as.matrix(X)
   res$weights <- weights
+  res$family<-family
   class(res) <- "powerTransform"
   res
 }
@@ -203,14 +198,16 @@ testTransform.powerTransform <- function(object, lambda=rep(1, dim(object$y)[2])
    LR <- 2 * (llik(lambda) - object$value)
    df <- length(object$lambda)
    pval <- 1-pchisq(LR, df)
-   out <- data.frame(LRT=LR, df=df, pval=pval)
+   out <- data.frame(LRT=LR, df=df, pval=format.pval(pval))
    rownames(out) <-
      c(paste("LR test, lambda = (",
              paste(round(lam, 2), collapse=" "), ")", sep=""))
    out}
 
 print.powerTransform<-function(x, ...) {
-   cat("Estimated transformation parameters \n")
+   lambda <- x$lambda
+   if (length(lambda) > 1) cat("Estimated transformation parameters \n")
+   else cat("Estimated transformation parameter \n")
    print(x$lambda)
    invisible(x)}
 
@@ -227,23 +224,43 @@ summary.powerTransform<-function(object,...){
     result <- cbind(lambda, roundlam, lambda - 1.96*stderr, lambda + 1.96*stderr)
     rownames(result)<-names(object$lambda)
 #    colnames(result)<-c("Est Power", "Rnd Pwr", "Std Err", "Lwr bnd", "Upr Bnd")
-    colnames(result)<-c("Est Power", "Rounded Pwr", "Wald Lwr bnd", "Wald Upr Bnd")
+    colnames(result)<-c("Est Power", "Rounded Pwr", "Wald Lwr Bnd", "Wald Upr Bnd")
     tests <- testTransform(object, 0)
     tests <- rbind(tests, testTransform(object, 1))
 #    if ( !(all(object$roundlam==0) | all(object$roundlam==1) |
 #        length(object$roundlam)==1 ))
 #           tests <- rbind(tests, testTransform(object, object$roundlam))
-    out <-  list(label=label, result=result, tests=tests)
+    family<-object$family
+    out <-  list(label=label, result=result, tests=tests,family=family)
     class(out) <- "summary.powerTransform"
     out
     }
 
-print.summary.powerTransform <- function(x,digits=4, ...) {
+print.summary.powerTransform <- function(x, digits=4, ...) {
+    n.trans <- nrow(x$result)
     cat(x$label)
     print(round(x$result, digits))
-    cat("\nLikelihood ratio tests about transformation parameters\n")
-    print(x$tests)
+   if(!is.null(x$family)){
+    if(x$family=="bcPower" || x$family=="bcnPower"){
+      if (n.trans > 1) cat("\nLikelihood ratio test that transformation parameters are equal to 0\n (all log transformations)\n")
+      else cat("\nLikelihood ratio test that transformation parameter is equal to 0\n (log transformation)\n")
+      print(x$tests[1,])
+      if (n.trans > 1) cat("\nLikelihood ratio test that no transformations are needed\n")
+      else cat("\nLikelihood ratio test that no transformation is needed\n")
+      print(x$tests[2,])
     }
+     if(x$family=="yjPower"){
+         if (n.trans > 1) cat("\n Likelihood ratio test that all transformation parameters are equal to 0\n")
+         else cat("\n Likelihood ratio test that transformation parameter is equal to 0\n")
+       print(x$tests[1,])
+     }
+
+   }else{
+       if (n.trans > 1) cat("\nLikelihood ratio tests about transformation parameters \n")
+       else cat("\nLikelihood ratio test about transformation parameter \n")
+     print(x$tests)
+   }
+}
 
 coef.powerTransform <- function(object, round=FALSE, ...)
   if(round==TRUE) object$roundlam else object$lambda
@@ -254,14 +271,7 @@ vcov.powerTransform <- function(object,...) {
   colnames(ans) <- names(coef(object))
   ans}
 
-plot.powerTransform <- function(x, z=NULL, round=TRUE, plot=pairs, ...){
-  y <- match.fun(x$family)(x$y, coef(x, round=round))
-  if (is.null(z)) plot(y, ...) else
-   if (is.matrix(z) | is.data.frame(z)) plot(cbind(y, z), ...) else {
-    y <- cbind(y,z)
-    colnames(y)[dim(y)[2]] <- deparse(substitute(z))
-    plot(y, ...) }
-    }
+
 
 
 

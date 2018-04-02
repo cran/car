@@ -7,9 +7,8 @@
 \title{Bonferroni Outlier Test}
 
 \description{
-  Reports the Bonferroni p-values for Studentized residuals in
-  linear and generalized linear models, based on a t-test for
-  linear models and normal-distribution test for generalized linear models.
+  Reports the Bonferroni p-values for testing each observation in turn to be a mean-shift outliner, based Studentized residuals in
+  linear (t-tests) and generalized linear models (normal tests).
 }
 
 \usage{
@@ -52,14 +51,14 @@ outlierTest(model, ...)
 
 \references{
   Cook, R. D. and Weisberg, S. (1982)
-  \emph{Residuals and Influence in Regression.} Chapman and Hall.
+  \emph{Residuals and Influence in Regression.} Chapman and Hall, \url{https://conservancy.umn.edu/handle/11299/37076}.
   
-  Fox, J. (2008)
+  Fox, J. (2016)
   \emph{Applied Regression Analysis and Generalized Linear Models},
-  Second Edition. Sage.  
+  Third Edition. Sage.  
   
-  Fox, J. and Weisberg, S. (2011) 
-  \emph{An R Companion to Applied Regression}, Second Edition, Sage.
+  Fox, J. and Weisberg, S. (2019) 
+  \emph{An R Companion to Applied Regression}, Third Edition, Sage.
   
   Weisberg, S. (2014) \emph{Applied Linear Regression}, Fourth Edition, Wiley.
   

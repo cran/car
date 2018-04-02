@@ -57,16 +57,16 @@ boxTidwell.default <- function(y, x1, x2=NULL, max.iter=25, tol=.001, verbose=FA
 		if (verbose) cat(" iter =", iter, "    powers =", powers, "\n")
 	}
 	if (iter > max.iter) warning("maximum iterations exceeded")
-	result <- cbind( t.vals, pvalues, powers)
-	colnames(result) <- c("Score Statistic","p-value","MLE of lambda")
+	result <- cbind(powers, t.vals, pvalues)
+	colnames(result) <- c("MLE of lambda", "Score Statistic (z)", "Pr(>|z|)")
 	rownames(result) <- if (nrow(result) == 1) "" else var.names
 	result <- list(result=result, iterations=iter)
 	class(result)<-"boxTidwell"
 	result
 }
 
-print.boxTidwell <- function(x, digits=getOption("digits"), ...){ 
-	print(round(x$result, digits))
+print.boxTidwell <- function(x, digits=getOption("digits") - 2, ...){ 
+	printCoefmat(x$result, digits=digits, has.Pvalue=TRUE)
 	cat("\niterations = ", x$iterations,"\n")
 }
 

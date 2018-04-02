@@ -1,25 +1,88 @@
-# last modified 2016-11-25 by J. Fox
-# modified 2017-05-06 by S. Weisberg
+# last modified 2018-02-23 by J. Fox
 
-importFrom(MASS, cov.trob, polr, rlm)
-importFrom(nnet, multinom)
-importFrom(pbkrtest, KRmodcomp, # KRmodcomp.lmerMod, KRmodcomp.mer, 
-           vcovAdj) #, vcovAdj.lmerMod, vcovAdj.mer)
-importFrom(mgcv, gam, s)
-importFrom(quantreg, rqss, qss, fitted.rqss)
-importFrom(graphics, abline, arrows, axis, box, boxplot, contour, hist, identify, 
-    layout, legend, lines, locator, mtext, pairs, par, plot, points, polygon, 
+# additions for car 3.0-0, started 2016-12-27
+
+export(Import, Export, Predict, bcnPowerAxis)
+import("rio")
+export(Confint, S, carPalette, poTest, brief)
+S3method(Confint, lm)
+S3method(Confint, glm)
+S3method(Confint, multinom)
+S3method(Confint, polr)
+S3method(Confint, default)
+S3method(Confint, boot)
+S3method(Confint, lme)
+S3method(Confint, lmerMod)
+S3method(Confint, glmerMod)
+S3method(S, lm)
+S3method(S, glm)
+S3method(S, multinom)
+S3method(S, polr)
+S3method(S, lme)
+S3method(S, lmerMod)
+S3method(S, glmerMod)
+S3method(S, default)
+S3method(print, S.lm)
+S3method(print, S.glm)
+S3method(print, S.multinom)
+S3method(print, S.polr)
+S3method(print, S.lme)
+S3method(print, S.lmerMod)
+S3method(print, S.glmerMod)
+S3method(print, poTest)
+S3method(brief, default)
+S3method(brief, lm)
+S3method(brief, glm)
+S3method(brief, multinom)
+S3method(brief, polr)
+S3method(qqPlot, formula)
+S3method(Predict, lm)
+S3method(poTest, polr)
+S3method(brief, data.frame)
+S3method(brief, matrix)
+S3method(brief, numeric)
+S3method(brief, character)
+S3method(brief, integer)
+S3method(brief, factor)
+S3method(brief, list)
+S3method(brief, "function")
+S3method(brief, default)
+S3method(influence, merMod)
+S3method(influence, lme)
+S3method(cooks.distance, influence.merMod)
+S3method(cooks.distance, influence.lme)
+S3method(dfbeta, influence.merMod)
+S3method(dfbeta, influence.lme)
+S3method(dfbetas, influence.merMod)
+S3method(dfbetas, influence.lme)
+S3method(infIndexPlot, influence.merMod)
+S3method(infIndexPlot, influence.lme)
+S3method(whichNames, data.frame)
+S3method(whichNames, default)
+
+import("carData")
+importFrom("abind", "abind")
+importFrom("stats", "naprint", "symnum", ".checkMFClasses",
+           "delete.response", "napredict", "influence", "dfbetas",
+            "AIC", "BIC")
+importFrom("utils", "download.file", "capture.output")
+
+
+#  from earlier versions car package
+
+importFrom(graphics, abline, arrows, axis, box, boxplot, contour, hist, identify,
+    layout, legend, lines, locator, mtext, pairs, par, plot, points, polygon,
     rug, segments, strheight, strwidth, text)
 importFrom(grDevices, boxplot.stats, col2rgb, gray, palette, rgb)
-importFrom(stats, D, IQR, alias, anova, as.formula, bw.nrd0, coef, coefficients, 
-    complete.cases, confint, contrasts, "contrasts<-", cooks.distance, cor, 
-    cov, cov.wt, cov2cor, density, deviance, df.residual, dfbeta, dnorm, 
-    drop1, family, fitted, fitted.values, fivenum, formula, gaussian, getCall, 
-    glm, glm.fit, hatvalues, is.empty.model, lm, lm.fit, loess, loess.control, 
-    logLik, lowess, lsfit, make.link, median, model.frame, model.matrix, 
-    model.matrix.default, model.response, model.weights, na.omit, na.pass, 
-    naresid, optim, optimize, p.adjust, pchisq, pf, pnorm, ppoints, predict, printCoefmat, 
-    pt, qchisq, qf, qnorm, qqline, qqnorm, qt, quantile, resid, residuals, rnorm, 
+importFrom(stats, D, IQR, alias, anova, as.formula, binomial, bw.nrd0, coef, coefficients,
+    complete.cases, confint, contrasts, "contrasts<-", cooks.distance, cor,
+    cov, cov.wt, cov2cor, density, deviance, df.residual, dfbeta, dnorm,
+    drop1, family, fitted, fitted.values, fivenum, formula, gaussian, getCall,
+    glm, glm.fit, hatvalues, is.empty.model, lm, lm.fit, loess, loess.control,
+    logLik, lowess, lsfit, make.link, median, model.frame, model.matrix,
+    model.matrix.default, model.response, model.weights, na.omit, na.pass,
+    naresid, optim, optimize, p.adjust, pchisq, pf, pnorm, ppoints, predict, printCoefmat,
+    pt, qchisq, qf, qnorm, qqline, qqnorm, qt, quantile, resid, residuals, rnorm,
     rstandard, rstudent, sd, setNames, spline, summary.lm, terms, update, var, vcov, weights,
     optimHess)
 importFrom(utils, browseURL, head, methods)
@@ -27,7 +90,7 @@ importFrom(utils, browseURL, head, methods)
 
 export(
     .carEnv,
-    
+
     basicPowerAxis,
     bcPowerAxis,
     Boxplot,
@@ -48,7 +111,7 @@ export(
     Recode,
     regLine,
     scatter3d,
-    scatterplot, 
+    scatterplot,
     scatterplotMatrix,
     sigmaHat,
     slp,
@@ -60,8 +123,10 @@ export(
     which.names, whichNames,
     yjPowerAxis,
     Anova,
-    basicPower, bcPower, yjPower, powerTransform, bcnPower,
-    boxCox, boxCox2d,
+    basicPower, bcPower, yjPower, powerTransform,
+    bcnPower, bcnPowerInverse,
+    boxCox,
+    boxCox2d,
     boxCoxVariable,
     boxTidwell,
     ceresPlot,
@@ -74,7 +139,7 @@ export(
     dfbetasPlots,
     dwt,
     durbinWatsonTest,
-    testTransform,	
+    testTransform,
     hccm,
     Identify3d,
     infIndexPlot,
@@ -104,10 +169,11 @@ export(
     mcPlot,
     mcPlots,
     adaptiveKernel,
-    
+    Tapply,
+
     # method explicitly exported for import in other packages
     linearHypothesis.default,
-    
+
     # deprecated functions
     av.plot,
     av.plots,
@@ -131,39 +197,39 @@ export(
     outlier.test,
     ncv.test,
     qq.plot,
-    scatterplot.matrix,
+#    scatterplot.matrix,
+    skewPower,
     spread.level.plot,
     wcrossprod
-)    
+)
 
 # methods
 
-S3method(confidenceEllipse, default)    
-S3method(confidenceEllipse, glm)    
-S3method(confidenceEllipse, lm)     
-S3method(print, spreadLevelPlot)   
-S3method(qqPlot, default)           
-S3method(qqPlot, glm)               
-S3method(qqPlot, lm)    
+S3method(confidenceEllipse, default)
+S3method(confidenceEllipse, glm)
+S3method(confidenceEllipse, lm)
+S3method(print, spreadLevelPlot)
+S3method(qqPlot, default)
+S3method(qqPlot, glm)
+S3method(qqPlot, lm)
 S3method(scatter3d, default)
 S3method(scatter3d, formula)
-S3method(scatterplot, default)       
-S3method(scatterplot, formula)       
+S3method(scatterplot, default)
+S3method(scatterplot, formula)
 S3method(scatterplotMatrix, default)
 S3method(scatterplotMatrix, formula)
 S3method(sigmaHat, default)
 S3method(sigmaHat, lm)
 S3method(sigmaHat, glm)
-S3method(some, data.frame)           
-S3method(some, default)              
-S3method(some, matrix)      
-S3method(spreadLevelPlot, default) 
-S3method(spreadLevelPlot, formula) 
-S3method(spreadLevelPlot, lm)     
-S3method(subsets, regsubsets)  
+S3method(some, data.frame)
+S3method(some, default)
+S3method(some, matrix)
+S3method(spreadLevelPlot, default)
+S3method(spreadLevelPlot, formula)
+S3method(spreadLevelPlot, lm)
+S3method(subsets, regsubsets)
 S3method(boxCox, default)
 S3method(boxCox, lm)
-S3method(boxCox, formula) 
 S3method(boxCox, formula)
 S3method(Anova, aov)
 S3method(Anova, coxph)
@@ -186,7 +252,6 @@ S3method(Anova, svyglm)
 S3method(avPlot, lm)
 S3method(avPlot, glm)
 S3method(bootCase, lm)
-S3method(vcov, boot)
 S3method(bootCase, glm)
 S3method(bootCase, nls)
 S3method(Boxplot, default)
@@ -198,9 +263,9 @@ S3method(nextBoot, lm)
 S3method(nextBoot, nls)
 S3method(boxTidwell, default)
 S3method(boxTidwell, formula)
-S3method(ceresPlot, glm)            
+S3method(ceresPlot, glm)
 S3method(ceresPlot, lm)
-S3method(crPlot, lm)              
+S3method(crPlot, lm)
 S3method(deltaMethod, default)
 S3method(deltaMethod, lm)
 S3method(deltaMethod,multinom)
@@ -232,8 +297,8 @@ S3method(hccm, lm)
 S3method(leveneTest, formula)
 S3method(leveneTest, lm)
 S3method(leveneTest, default)
-S3method(leveragePlot, glm)         
-S3method(leveragePlot, lm)     
+S3method(leveragePlot, glm)
+S3method(leveragePlot, lm)
 S3method(linearHypothesis, default)
 S3method(linearHypothesis, glm)
 S3method(linearHypothesis, lm)
@@ -265,23 +330,23 @@ S3method(print, chisqTest)
 S3method(print, durbinWatsonTest)
 S3method(print, outlierTest)
 S3method(print, powerTransform)
+S3method(print, bcnPowerTransform)
 S3method(print, summary.powerTransform)
+S3method(print, summary.bcnPowerTransform)
 S3method(summary, Anova.mlm)
 S3method(print, summary.Anova.mlm)
 S3method(print, powerTransform)
-S3method(print, summary.powerTransform)
-S3method(print, summary.bcnPowerTransform)
-S3method(print, bcnPowerTransform)
-S3method(summary, bcnPowerTransform)
 S3method(summary, powerTransform)
-S3method(plot, powerTransform)
-S3method(plot, bcnPowerTransform)
+S3method(summary, bcnPowerTransform)
+S3method(summary, bcnPowerTransformlmer)
 S3method(coef, powerTransform)
 S3method(coef, bcnPowerTransform)
 S3method(vcov, powerTransform)
 S3method(vcov, bcnPowerTransform)
 S3method(testTransform, powerTransform)
 S3method(testTransform, bcnPowerTransform)
+S3method(testTransform, bcnPowerTransformlmer)
+S3method(testTransform, lmerModpowerTransform)
 S3method(residualPlots, lm)
 S3method(residualPlots, glm)
 S3method(residualPlot, default)
@@ -291,6 +356,7 @@ S3method(summary, powerTransform)
 S3method(coef, powerTransform)
 S3method(vcov, powerTransform)
 S3method(vif, default)
+S3method(vif, merMod)
 S3method(symbox, formula)
 S3method(symbox, default)
 # added with bcnPower
@@ -306,4 +372,4 @@ S3method(confint, boot)
 S3method(summary, boot)
 S3method(print, summary.boot)
 S3method(print, confint.boot)
-
+S3method(vcov, boot)

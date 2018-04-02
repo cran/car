@@ -9,7 +9,7 @@
  with packages, such as \pkg{Hmisc}, that have a \code{recode} function.
 }
 \usage{
-recode(var, recodes, as.factor.result, as.numeric.result=TRUE, levels)
+recode(var, recodes, as.factor, as.numeric=TRUE, levels)
 
 Recode(...)
 }
@@ -18,9 +18,9 @@ Recode(...)
   \item{var}{numeric vector, character vector, or factor.}
   \item{recodes}{character string of recode specifications:
     see below.}
-  \item{as.factor.result}{return a factor; default is \code{TRUE} if 
+  \item{as.factor}{return a factor; default is \code{TRUE} if 
     \code{var} is a factor, \code{FALSE} otherwise.}
-  \item{as.numeric.result}{if \code{TRUE} (the default), and \code{as.factor.result} is \code{FALSE}, 
+  \item{as.numeric}{if \code{TRUE} (the default), and \code{as.factor} is \code{FALSE}, 
   	then the result will be coerced to numeric
   	if all values in the result are numerals---i.e., represent numbers.}
   \item{levels}{an optional argument specifying the order of the
@@ -46,7 +46,7 @@ Recode(...)
       For example, \code{else=NA}. Note that \code{else} matches \emph{all} otherwise
       unspecified values on input, including \code{NA}.}
     }
-  If all of the output values are numeric, and if \code{as.factor.result} is 
+  If all of the output values are numeric, and if \code{as.factor} is 
   \code{FALSE}, then a numeric result is returned; if \code{var} is a factor,
   then by default so is the result.
 }
@@ -58,8 +58,8 @@ Recode(...)
 \author{John Fox \email{jfox@mcmaster.ca}}
 
 \references{
-  Fox, J. and Weisberg, S. (2011) 
-  \emph{An R Companion to Applied Regression}, Second Edition, Sage.
+  Fox, J. and Weisberg, S. (2019) 
+  \emph{An R Companion to Applied Regression}, Third Edition, Sage.
 }
 
 \seealso{\code{\link[base]{cut}}, \code{\link[base]{factor}}}

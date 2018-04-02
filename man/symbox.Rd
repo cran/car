@@ -34,12 +34,12 @@ symbox(x, ...)
 
 \value{as returned by \code{boxplot}.}
 
-\author{Gregor Gorjanc, John Fox \email{jfox@mcmaster.ca}, and Sanford Weisberg.}
+\author{Gregor Gorjanc, John Fox \email{jfox@mcmaster.ca}.}
 
 \references{
 
-	Fox, J. and Weisberg, S. (2011)
-    \emph{An R Companion to Applied Regression}, Second Edition. Sage.
+	Fox, J. and Weisberg, S. (2019)
+    \emph{An R Companion to Applied Regression}, Third Edition. Sage.
 	
 }
     

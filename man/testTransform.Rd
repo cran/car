@@ -50,8 +50,8 @@ of the Royal Statisistical Society, Series B}. 26 211-46.
 Cook, R. D. and Weisberg, S. (1999)  \emph{Applied Regression Including Computing
 and Graphics}.  Wiley.
 
-Fox, J. and Weisberg, S. (2011)
-\emph{An R Companion to Applied Regression}, Second Edition, Sage.
+Fox, J. and Weisberg, S. (2019)
+\emph{An R Companion to Applied Regression}, Third Edition, Sage.
 
 Weisberg, S. (2014) \emph{Applied Linear Regression}, Fourth Edition, Wiley.
 }

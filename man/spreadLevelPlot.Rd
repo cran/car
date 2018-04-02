@@ -22,21 +22,18 @@ slp(...)
     "by", varnames[-response]), ...)
 
 \method{spreadLevelPlot}{default}(x, by, robust.line=TRUE, 
-	start=0, xlab="Median", ylab="Hinge-Spread", point.labels=TRUE, las=par("las"),
+	start=0, xlab="Median", ylab="Hinge-Spread", 
+	point.labels=TRUE, las=par("las"),
 	main=paste("Spread-Level Plot for", deparse(substitute(x)), 
-		"by", deparse(substitute(by))), col=palette()[1], col.lines=palette()[2],
+		"by", deparse(substitute(by))), 
+	col=carPalette()[1], col.lines=carPalette()[2],
     pch=1, lwd=2, grid=TRUE, ...)
 
 \method{spreadLevelPlot}{lm}(x, robust.line=TRUE, 
-    smoother=loessLine, smoother.args=list(),
-	xlab="Fitted Values",
-	ylab="Absolute Studentized Residuals", las=par("las"),
+	xlab="Fitted Values", ylab="Absolute Studentized Residuals", las=par("las"),
 	main=paste("Spread-Level Plot for\n", deparse(substitute(x))),
-	pch=1, col=palette()[1], col.lines=palette()[2], col.smoother=palette()[3],
-	lwd=2, grid=TRUE, 	labels, 
-	id.method = "mahal", 
-	id.n = if(id.method[1]=="identify") Inf else 0,
-	id.cex=1, id.col=palette()[1], id.location="lr", ...)
+	pch=1, col=carPalette()[1], col.lines=carPalette()[2:3], lwd=2, grid=TRUE, 
+    id=FALSE, smooth=TRUE, ...)
 	  
 \method{print}{spreadLevelPlot}(x, ...)
 }
@@ -53,13 +50,6 @@ slp(...)
   \item{by}{a factor, numeric vector, or character vector defining groups.}
   \item{robust.line}{if \code{TRUE} a robust line is fit using the \code{rlm} function in
     the \code{MASS} package; if \code{FALSE} a line is fit using \code{lm}.}
-  \item{smoother}{a function to draw a nonparametric-regression smooth; the default is \code{\link{loessLine}},
-    which does loess smoothing.  The function \code{\link{gamLine}} fits a generalized additive model and
-    allows including a link and error function.
-    See \code{\link{ScatterplotSmoothers}}.
-    Setting this argument to something other than a function, e.g., \code{FALSE} suppresses the smoother.}
-  \item{smoother.args}{a list of named values to be passed to the smoother function; the specified elements of the
-    list depend upon the smoother (see \code{\link{ScatterplotSmoothers}}).}
   \item{start}{add the constant \code{start} to each data value.}
   \item{main}{title for the plot.}
   \item{xlab}{label for horizontal axis.}
@@ -68,20 +58,26 @@ slp(...)
   \item{las}{if \code{0}, ticks labels are drawn parallel to the
     axis; set to \code{1} for horizontal labels (see \code{\link[graphics]{par}}).}
   \item{col}{color for points; the default is the first entry
-    in the current color palette (see \code{\link[grDevices]{palette}}
+    in the current \pkg{car} palette (see \code{\link{carPalette}}
     and \code{\link[graphics]{par}}).}
-  \item{col.lines}{color for lines; default is the second entry in the current
-    palette}
-  \item{col.smoother}{color for smooth line; default is third entry in the current palette.}
+  \item{col.lines}{for the default method, the line color, defaulting to the second entry in the \pkg{car} color palette; 
+    for the \code{"lm"} method, a vector of two colors for, respectively, the fitted straight line and a nonparametric regression smooth line,
+    default to the second and third entries in the \pkg{car} color palette.}
   \item{pch}{plotting character for points; default is \code{1} 
     (a circle, see \code{\link[graphics]{par}}).}
   \item{lwd}{line width; default is \code{2} (see \code{\link[graphics]{par}}).}
   \item{grid}{If TRUE, the default, a light-gray background grid is put on the
 graph}
-  \item{id.method,labels,id.n,id.cex,id.col,id.location}{Arguments for the labelling of
-    points.  The default is \code{id.n=0} for labeling no points with the \code{lm} method.  See
-    \code{\link{showLabels}} for details of these arguments.
-}
+    \item{id}{controls point identification; if \code{FALSE} (the default), no points are identified;
+        can be a list of named arguments to the \code{\link{showLabels}} function;
+        \code{TRUE} is equivalent to \code{list(method=list("x", "y"), n=2, 
+        cex=1, col=carPalette()[1], location="lr")},
+        which identifies the 2 points the most extreme horizontal ("X", absolute studentized residual) values and the 2 points
+        with the most extreme horizontal ("Y", fitted values) values.}
+    \item{smooth}{specifies the smoother to be used along with its arguments; if \code{FALSE}, no smoother is shown;
+        can be a list giving the smoother function and its named arguments; \code{TRUE}, the default, is equivalent to
+        \code{list(smoother=loessLine)}. See \code{\link{ScatterplotSmoothers}} for the smoothers supplied by the
+        \pkg{car} package and their arguments.}
   \item{\dots}{arguments passed to plotting functions.}
 }
 \details{
@@ -101,12 +97,12 @@ graph}
     of the line fit to the plot.}
 }
 \references{ 
-  Fox, J. (2008)
+  Fox, J. (2016)
   \emph{Applied Regression Analysis and Generalized Linear Models},
-  Second Edition. Sage.  
+  Third Edition. Sage.  
   
-  Fox, J. and Weisberg, S. (2011) 
-  \emph{An R Companion to Applied Regression}, Second Edition, Sage.
+  Fox, J. and Weisberg, S. (2019) 
+  \emph{An R Companion to Applied Regression}, Third Edition, Sage.
   
   Hoaglin, D. C., Mosteller, F. and Tukey, J. W. (Eds.) (1983)
   \emph{Understanding Robust and Exploratory Data Analysis.} Wiley.

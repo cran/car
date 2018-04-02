@@ -15,9 +15,9 @@
 \usage{
 some(x, ...)
 
-\method{some}{data.frame}(x, n=10, ...)
+\method{some}{data.frame}(x, n=10, cols=NULL, ...)
 
-\method{some}{matrix}(x, n=10, ...)
+\method{some}{matrix}(x, n=10, cols=NULL, ...)
 
 \method{some}{default}(x, n=10, ...)
 }
@@ -25,28 +25,30 @@ some(x, ...)
 \arguments{
   \item{x}{the object to be sampled.}
   \item{n}{number of elements to sample.}
+  \item{cols}{if \code{NULL}, use all columns, if a vector of column names or numbers, use only the columns indicated}
   \item{\dots}{arguments passed down.}
 }
 
 \value{
-    Sampled elements or rows. 
+    Sampled elements or rows.
 }
 
 \author{John Fox \email{jfox@mcmaster.ca}}
 
 \references{
-  Fox, J. and Weisberg, S. (2011) 
-  \emph{An R Companion to Applied Regression}, Second Edition, Sage.
+  Fox, J. and Weisberg, S. (2019)
+  \emph{An R Companion to Applied Regression}, Third Edition, Sage.
 }
 
-\note{These functions are adapted from \code{head} and \code{tail} 
+\note{These functions are adapted from \code{head} and \code{tail}
 in the \code{utils} package.
 }
 
 
-\seealso{\code{\link[utils]{head}}, \code{\link[utils]{tail}}.}
+\seealso{\code{\link[utils]{head}}, \code{\link[utils]{tail}}, \code{\link{brief}}.}
 
 \examples{
 some(Duncan)
+some(Duncan, cols=names(Duncan)[1:3])
 }
 \keyword{utilities}

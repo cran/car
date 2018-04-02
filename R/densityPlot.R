@@ -2,26 +2,37 @@
 # 2014-09-04: J. Fox: empty groups produce warning rather than error
 # 2016-10-16: J. Fox: add option for adaptive kernel.
 # 2016-11-26: J. Fox: rejig for pure-R adaptive kernel
+# 2017-02-12: J. Fox: make adaptive kernel the default, consolidate legend args.
+# 2017-11-30: substitute carPalette() for palette(). J. Fox
 
 densityPlot <- function(x, ...){
     UseMethod("densityPlot")
 }
 
-densityPlot.default <- function (x, g, method=c("kernel", "adaptive"), 
+densityPlot.default <- function (x, g, method=c("adaptive", "kernel"), 
     bw=if (method == "adaptive") bw.nrd0 else "SJ", adjust=1,
     kernel,
     xlim,
     ylim,
     normalize=FALSE,
-    xlab=deparse(substitute(x)), ylab="Density", 
-    col=palette(), lty=seq_along(col), lwd=2, grid=TRUE,
-    legend.location="topright", legend.title=deparse(substitute(g)), show.bw=FALSE,
+    xlab=deparse(substitute(x)), ylab="Density", main="",
+    col=carPalette(), lty=seq_along(col), lwd=2, grid=TRUE,
+    legend=TRUE, show.bw=FALSE,
     rug=TRUE, ...) {
     norm <- function(x, y){
         n <- length(x)
         x0 <- diff(range(x))/(n - 1)
         y0 <- (y[1:(n-1)] + y[2:n])/2
         exp(log(y) - log(sum(y0*x0)))
+    }
+    legend <- applyDefaults(legend, defaults=list(location="topright", title=deparse(substitute(g))), type="legend")
+    if (isFALSE(legend)){
+        legend.title <- ""
+        legend.location <- "topleft"
+    }
+    else{
+        legend.title <- legend$title
+        legend.location <- legend$location
     }
     method <- match.arg(method)
     if (method == "kernel"){
@@ -43,7 +54,7 @@ densityPlot.default <- function (x, g, method=c("kernel", "adaptive"),
         if (missing(xlim)) xlim <- range(density$x)
         if (missing(ylim)) ylim <- c(0, max(density$y))
         if (show.bw) xlab <- paste(xlab, " (bandwidth = ", format(density$bw), ")", sep="")
-        plot(xlim, ylim, xlab=xlab, ylab=ylab, main="", type="n")
+        plot(xlim, ylim, xlab=xlab, ylab=ylab, main=main, type="n")
         if (rug) rug(x)
         if (grid) grid()
         lines(density, col=col[1], lwd=lwd, lty=lty[1], xlim=xlim, ylim=ylim)
@@ -56,7 +67,6 @@ densityPlot.default <- function (x, g, method=c("kernel", "adaptive"),
             warning("the following groups are empty: ", paste(levels[counts == 0], collapse=", "))
             g <- factor(g, levels=levels[counts != 0])
         }
-        legend.title
         valid <- complete.cases(x, g)
         x <- x[valid]
         g <- g[valid]
@@ -80,17 +90,17 @@ densityPlot.default <- function (x, g, method=c("kernel", "adaptive"),
         if (missing(ylim)){
             ylim <- c(0, max(sapply(densities, function(den) max(den$y))))
         }
-        plot(xlim, ylim, xlab=xlab, ylab=ylab, type="n")
+        plot(xlim, ylim, xlab=xlab, ylab=ylab, main=main, type="n")
         if (grid) grid()
         for (i in 1:length(levels)){
             lines(densities[[i]]$x, densities[[i]]$y, lty=lty[i], col=col[i], lwd=lwd)
         }
         if (show.bw){
             bws <- sapply(densities, function(den) den$bw)
-            legend <- paste(levels, " (bw = ", format(bws), ")", sep="")
+            legend.values <- paste(levels, " (bw = ", format(bws), ")", sep="")
         }
-        else legend <- levels
-        legend(legend.location, legend=legend, col=col[1:length(levels)], 
+        else legend.values <- levels
+        if (!isFALSE(legend)) legend(legend.location, legend=legend.values, col=col[1:length(levels)], 
                lty=lty, title=legend.title, inset=0.02)
         abline(h=0, col="gray")
         if (rug){
@@ -100,24 +110,34 @@ densityPlot.default <- function (x, g, method=c("kernel", "adaptive"),
     return(invisible(if (missing(g)) density else densities))
 }
 
-densityPlot.formula <- function(formula, data=NULL, subset, na.action=NULL, xlab, ylab, ...){
+densityPlot.formula <- function(formula, data=NULL, subset, na.action=NULL, xlab, ylab, main="", legend=TRUE, ...){
     m <- match.call(expand.dots = FALSE)
     if (is.matrix(eval(m$data, parent.frame()))) 
         m$data <- as.data.frame(data)
-    m$xlab <- m$ylab <- m$... <- NULL
+    m$legend <- m$xlab <- m$ylab <-m$main <- m$... <- NULL
     m$na.action <- na.action
     m[[1]] <- as.name("model.frame")
     mf <- eval(m, parent.frame())
     if (missing(ylab)) ylab <- "Density"
+    response <- attr(attr(mf, "terms"), "response")
     if (length(formula) == 3){
-        response <- attr(attr(mf, "terms"), "response")
+        legend <- applyDefaults(legend, defaults=list(location="topright", title=names(mf)[-response]), type="legend")
+        if (isFALSE(legend)){
+            legend.title <- ""
+            legend.location <- "topleft"
+        }
+        else{
+            legend.title <- legend$title
+            legend.location <- legend$location
+        }
         if (missing(xlab)) xlab <- names(mf)[response]
         g <- mf[, -response]
-        densityPlot(mf[[response]], g, xlab=xlab, ylab=ylab, legend.title=names(mf)[-response], ...)
+        densityPlot(mf[[response]], g, xlab=xlab, ylab=ylab, main=main,
+                    legend=if (isFALSE(legend)) FALSE else list(title=legend.title, location=legend.location), ...)
     }
     else if (length(formula) == 2){
         if (missing(xlab)) xlab <- names(mf)
-        densityPlot(mf[[1]], xlab=xlab, ylab=ylab,  ...)
+        densityPlot(mf[[1]], xlab=xlab, ylab=ylab, main=main, ...)
     }
     else stop("improper densityPlot formula")   
 }

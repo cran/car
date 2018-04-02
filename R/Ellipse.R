@@ -22,9 +22,11 @@
 # 16 July 2012 added showLabels to dataEllipse
 # 2014-02-16: prevent dataEllipse() from opening a graphics device when draw=FALSE (fixing bug reported by Rafael Laboissiere).
 # 2015-09-04: throw error if there are too few colors for groups (fixing bug reported by Ottorino Pantani). J. Fox
+# 2016-02-16: replace cov.trob() call with MASS::cov.trob(). J. Fox
+# 2017-11-30: substitute carPalette() for palette(). J. Fox
 
 ellipse <- function(center, shape, radius, log="", center.pch=19, center.cex=1.5, segments=51, draw=TRUE, add=draw, 
-		xlab="", ylab="", col=palette()[2], lwd=2, fill=FALSE, fill.alpha=0.3,
+		xlab="", ylab="", col=carPalette()[2], lwd=2, fill=FALSE, fill.alpha=0.3,
 		grid=TRUE, ...) {
 	trans.colors <- function(col, alpha=0.5, names=NULL) {
 		# this function by Michael Friendly
@@ -81,12 +83,9 @@ dataEllipse <- function(x, y, groups,
     center.cex=1.5, draw=TRUE,
     plot.points=draw, add=!plot.points, segments=51, robust=FALSE, 
     xlab=deparse(substitute(x)), ylab=deparse(substitute(y)), 
-    col=if (missing(groups)) palette()[1:2] else palette()[1:length(group.levels)],
+    col=if (missing(groups)) carPalette()[1:2] else carPalette()[1:length(group.levels)],
     pch=if (missing(groups)) 1 else seq(group.levels),
-    lwd=2, fill=FALSE, fill.alpha=0.3, grid=TRUE,
-    labels, id.method = "mahal", id.n = if(id.method[1]=="identify") Inf else 0,
-    id.cex=1, id.col=if (missing(groups)) palette()[1] else palette()(1:length(groups)), id.location = "lr",
-    ...) {
+    lwd=2, fill=FALSE, fill.alpha=0.3, grid=TRUE, id=FALSE, ...) {
     label.ellipse <- function(ellipse, label, col, ...){
         # This sub-function from Michael Friendly
         if (cor(ellipse)[1,2] >= 0){         # position label above top right
@@ -102,6 +101,22 @@ dataEllipse <- function(x, y, groups,
             adj <- c(0, 1) 
         }
         text(x, y, label, adj=adj, col=col, ...)
+    }
+    default.col <- if (missing(groups)) carPalette()[1] else carPalette()[1:length(groups)]
+    id <- applyDefaults(id, defaults=list(method="mahal", n=2, cex=1, col=default.col, location="lr"), type="id")
+    if (isFALSE(id)){
+        id.n <- 0
+        id.method <- "none"
+        labels <- id.cex <- id.col <- id.location <- NULL
+    }
+    else{
+        labels <- id$labels
+        if (is.null(labels)) labels <- seq(along=y)
+        id.method <- id$method
+        id.n <- if ("identify" %in% id.method) Inf else id$n
+        id.cex <- id$cex
+        id.col <- id$col
+        id.location <- id$location
     }
     if(missing(y)){
         if (is.matrix(x) && ncol(x) == 2) {
@@ -142,15 +157,19 @@ dataEllipse <- function(x, y, groups,
                 }
             }
         }
+        id.lev <- list(method=id.method, n=id.n, cex=id.cex, col=NULL, labels=NULL, location=id.location)
         for (lev in 1:length(group.levels)){
             level <- group.levels[lev]
             sel <- groups == level
+            id.lev$labels <- labels[sel]
+            id.lev$col <- rep(id.col[lev], 2)
             result[[lev]] <- dataEllipse(x[sel], y[sel],
                 weights=weights[sel], log=log, levels=levels, center.pch=center.pch,
                 center.cex=center.cex, draw=draw, plot.points=plot.points, add=TRUE, segments=segments,
-                robust=robust, col=rep(col[lev], 2), pch=pch[lev], lwd=lwd, fill=fill, fill.alpha=fill.alpha, 
-                labels=labels[sel], id.method=id.method, id.n=id.n, id.cex=id.cex, 
-                id.col=col[lev], id.location=id.location,
+                robust=robust, col=rep(col[lev], 2), pch=pch[lev], lwd=lwd, fill=fill, fill.alpha=fill.alpha,
+                id=id.lev,
+                # labels=labels[sel], id.method=id.method, id.n=id.n, id.cex=id.cex, 
+                # id.col=col[lev], id.location=id.location,
                 ellipse.label=group.labels[lev], ...)
         }
         return(invisible(result))
@@ -169,7 +188,7 @@ dataEllipse <- function(x, y, groups,
     dfd <- length(x) - 1
     if (robust) {
         use <- weights > 0
-        v <- cov.trob(cbind(x[use], y[use]), wt=weights[use])
+        v <- MASS::cov.trob(cbind(x[use], y[use]), wt=weights[use])
         shape <- v$cov
         center <- v$center
     }
@@ -193,8 +212,8 @@ dataEllipse <- function(x, y, groups,
     }
     if (missing(labels)) labels <- seq(length(x))
     if (draw) showLabels(x, y, labels=labels,
-        id.method=id.method, id.n=id.n, id.cex=id.cex,
-        id.col=id.col, id.location = id.location)
+        method=id.method, n=id.n, cex=id.cex,
+        col=id.col, location = id.location)
     invisible(if (length(levels) == 1) result[[1]] else result)
 }
     
@@ -203,11 +222,12 @@ confidenceEllipse <- function (model, ...) {
 }
 
 
-confidenceEllipse.lm <- function(model, which.coef, L, levels=0.95, Scheffe=FALSE, dfn,
+confidenceEllipse.lm <- function(model, which.coef, vcov.=vcov, L, levels=0.95, Scheffe=FALSE, dfn,
 		center.pch=19, center.cex=1.5, segments=51, xlab, ylab, 
-		col=palette()[2], lwd=2, fill=FALSE, fill.alpha=0.3, draw=TRUE, add=!draw, ...){
+		col=carPalette()[2], lwd=2, fill=FALSE, fill.alpha=0.3, draw=TRUE, add=!draw, ...){
 	if (missing(dfn)) dfn <- if (Scheffe) sum(df.terms(model)) else 2
 	dfd <- df.residual(model)
+	if (is.function(vcov.)) vcov. <- vcov.(model)
 	if (missing(L)){
 		which.coef <- if(length(coefficients(model)) == 2) c(1, 2)
 				else{
@@ -218,10 +238,10 @@ confidenceEllipse.lm <- function(model, which.coef, L, levels=0.95, Scheffe=FALS
 		coef <- coefficients(model)[which.coef]
 		if (missing(xlab)) xlab <- paste(names(coef)[1], "coefficient")
 		if (missing(ylab)) ylab <-  paste(names(coef)[2], "coefficient")
-		shape <- vcov(model)[which.coef, which.coef]
+		shape <- vcov.[which.coef, which.coef]
 	}
 	else {
-		res <- makeLinearCombinations(L, coef(model), vcov(model))
+		res <- makeLinearCombinations(L, coef(model), vcov.)
 		coef <- res$coef
 		xlab <- res$xlab
 		ylab <- res$ylab
@@ -242,9 +262,10 @@ confidenceEllipse.lm <- function(model, which.coef, L, levels=0.95, Scheffe=FALS
 }
 
 
-confidenceEllipse.default <- function(model, which.coef, L, levels=0.95, Scheffe=FALSE, dfn,
+confidenceEllipse.default <- function(model, which.coef, vcov.=vcov, L, levels=0.95, Scheffe=FALSE, dfn,
 		center.pch=19, center.cex=1.5, segments=51, xlab, ylab,
-		col=palette()[2], lwd=2, fill=FALSE, fill.alpha=0.3, draw=TRUE, add=!draw, ...){
+		col=carPalette()[2], lwd=2, fill=FALSE, fill.alpha=0.3, draw=TRUE, add=!draw, ...){
+  if (is.function(vcov.)) vcov. <- vcov.(model)
 	if (missing(L)){
 		which.coef <- if(length(coefficients(model)) == 2) c(1, 2)
 				else{
@@ -253,12 +274,12 @@ confidenceEllipse.default <- function(model, which.coef, L, levels=0.95, Scheffe
 					} else which.coef
 				}
 		coef <- coefficients(model)[which.coef]
-		shape <- vcov(model)[which.coef, which.coef]
+		shape <- vcov.[which.coef, which.coef]
 		xlab <- if (missing(xlab)) paste(names(coef)[1], "coefficient")
 		ylab <- if (missing(ylab)) paste(names(coef)[2], "coefficient")
 	}
 	else {
-		res <- makeLinearCombinations(L, coef(model), vcov(model))
+		res <- makeLinearCombinations(L, coef(model), vcov.)
 		coef <- res$coef
 		xlab <- res$xlab
 		ylab <- res$ylab

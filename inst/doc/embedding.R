@@ -136,13 +136,7 @@ confint(b1)
 
 
 ###################################################
-### code chunk number 15: embedding.Rnw:159-160
-###################################################
-car:::.carEnv
-
-
-###################################################
-### code chunk number 16: embedding.Rnw:163-206 (eval = FALSE)
+### code chunk number 15: embedding.Rnw:160-203 (eval = FALSE)
 ###################################################
 ## Boot.default <- function(object, f=coef, labels=names(coef(object)),
 ##                      R=999, method=c("case", "residual")) {

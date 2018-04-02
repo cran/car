@@ -3,37 +3,37 @@
 
 \title{ Access to the R Companion to Applied Regression website }
 \description{
-  This function will access the website for \emph{An R Companion to Applied Regression}.} 
+  This function will access the website for \emph{An R Companion to Applied Regression}, or setup files or data.}
 
 \usage{
-carWeb(page = c("webpage", "errata", "taskviews"), script, data)
+carWeb(page = c("webpage", "errata", "taskviews"), script, data, setup)
 
 }
 \arguments{
-  \item{page}{ A character string indicating what page to open. The default 
+  \item{page}{ A character string indicating what page to open. The default
           \code{"webpage"} will open the main web page, \code{"errata"} displays the
-          errata sheet for the book, and \code{"taskviews"} fetches and displays
+          errata sheet for the book, \code{"taskviews"} fetches and displays
           a list of available task views from CRAN.
  }
-  \item{script}{The quoted name of a chapter in \emph{An R Companion to Applied 
-         Regression}, like \code{"chap-1"}, \code{"chap-2"}, up to \code{"chap-8"}.  All the R
+  \item{script}{The quoted name of a chapter in \emph{An R Companion to Applied
+         Regression}, like \code{"chap-1"}, \code{"chap-2"}, up to \code{"chap-10"}.  All the R
          commands used in that chapter will be displayed in your browser, where
-         you can save them as a text file.  
+         you can save them as a text file.
   }
-  \item{data}{The quoted name of a data file in \emph{An R Companion to Applied 
+  \item{data}{The quoted name of a data file in \emph{An R Companion to Applied
          Regression}, like \code{"Duncan.txt"} or \code{"Prestige.txt"}.  The file will be
          opened in your web browser.  You do not need to specify the extension \code{.txt}
   }
+  \item{setup}{If not missing this command will download a number of files to your computer that are discussed in Fox and Weisberg (2019), beginning in Chapter 1.}
 }
 
 \value{
-  Either a web page or a PDF document is displayed.  Only one of the three 
-  arguments \code{page}, \code{rfile}, or \code{data}, should be used. 
+  Either displays a web page or a PDF document or downloads files to your working directory.
 }
 
 \references{
-  Fox, J. and Weisberg, S. (2011) 
-  \emph{An R Companion to Applied Regression}, Second Edition, Sage.
+  Fox, J. and Weisberg, S. (2019)
+  \emph{An R Companion to Applied Regression}, Third Edition, Sage.
 }
 
 \author{ Sanford Weisberg, based on the function \code{UsingR} in the \pkg{UsingR}

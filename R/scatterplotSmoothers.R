@@ -2,25 +2,34 @@
 
 # Sept 17, 2012 moved from scatterplot.R to scatterplotSmoothers.R
 # June 18, 2014 Fixed bug in gamLine so the smoother.arg link="linkname" works; thanks to Hani Christoph
-# 2014-08-19: Make sure that Matrix and MatrixModels packages are available to quantregLine(). 
+# 2014-08-19: Make sure that Matrix and MatrixModels packages are available to quantregLine().
 #             Can't substitute requireNamespace() for require() for gam and quantreg packages. John
 # 2014-11-21: Added 'offset' argument with default 0:  offset= sigmaHat(model) for use with
 #             marginal model plots.  Fixed spread smooths as well
 # 2015-01-27: gam() and s() now imported from mgcv rqss(), qss(), and fitted.rqss() from quantreg. John
 # 2016-11-19: Added argument in smoother.args called 'evaluation'.  The smoother will be evaluated
 #             at evaluation equally spaced points in the range of the horizontal axis, with a default of 50.
-# 2017-06-13: Fixed bug in gamLine to use predict(m, data.frame, type="response")
+# 2017-02-16: explicitly copy mgcv::gam() and mgcv::s(), quantreg::qss() and quantreg::rqss(). John
+# 2017-04-17: fixed passing of arguments and use of default.arg.  Changed default lwd and lty's
+#             and names of args  see scatterplot.Rd details
+# 2017-05-15: fixed spread=TRUE when log="xy".  in quantregLine, changed IQR(x) to IQR(x, na.rm=TRUE)
+# 2017-06-29: Added defaults for col, log.x, and log.y arguments, and an empty smoother.args.
+# 2017-06-30: Changed default line widths and types for smoothers to make them more visible.
+# 2017-10-27: Change default lty.smooth to 1 as advertized in docs. 
+# 2017-11-30: substitute carPalette() for palette(). J. Fox
 
 default.arg <- function(args.list, arg, default){
     if (is.null(args.list[[arg]])) default else args.list[[arg]]
 }
 
-loessLine <- function(x, y, col, log.x, log.y, spread=FALSE, smoother.args,
+loessLine <- function(x, y, col=carPalette()[1], log.x=FALSE, log.y=FALSE, spread=FALSE, smoother.args=NULL,
                draw=TRUE, offset=0) {
-    lty <- default.arg(smoother.args, "lty", 1)
-    lwd <- default.arg(smoother.args, "lwd", 2)
-    lty.spread <- default.arg(smoother.args, "lty.spread", 2)
-    lwd.spread <- default.arg(smoother.args, "lwd.spread", 1)
+    lty.smooth <- default.arg(smoother.args, "lty.smooth", 1)
+    lwd.smooth <- default.arg(smoother.args, "lwd.smooth", 2)
+    col.smooth <- default.arg(smoother.args, "col.smooth", col)
+    lty.spread <- default.arg(smoother.args, "lty.spread", 4)
+    lwd.spread <- default.arg(smoother.args, "lwd.spread", 2)
+    col.spread <- default.arg(smoother.args, "col.spread", col)
     span <- default.arg(smoother.args, "span", 2/3)
     family <- default.arg(smoother.args, "family", "symmetric")
     degree <- default.arg(smoother.args, "degree", 1)
@@ -34,7 +43,7 @@ loessLine <- function(x, y, col, log.x, log.y, spread=FALSE, smoother.args,
     ord <- order(x)
     x <- x[ord]
     y <- y[ord]
-    x.eval <- seq(min(x), max(x), length=evaluation)  
+    x.eval <- seq(min(x), max(x), length=evaluation)
     warn <- options(warn=-1)
     on.exit(options(warn))
 # mean smooth
@@ -42,9 +51,11 @@ loessLine <- function(x, y, col, log.x, log.y, spread=FALSE, smoother.args,
                     control=loess.control(iterations=iterations)), silent=TRUE)
     if (class(fit)[1] != "try-error"){
             y.eval <- predict(fit, newdata=data.frame(x=x.eval))
-            y.eval <- if(log.y) exp(y.eval) else y.eval
-            if(draw)lines(if(log.x) exp(x.eval) else x.eval, y.eval, lwd=lwd, col=col, lty=lty) else
-               out <- list(x=if(log.x) exp(x.eval) else x.eval, y=y.eval)
+            if(draw)lines(if(log.x) exp(x.eval) else x.eval,
+                          if(log.y) exp(y.eval) else y.eval,
+                          lwd=lwd.smooth, col=col.smooth, lty=lty.smooth) else
+               out <- list(x=if(log.x) exp(x.eval) else x.eval,
+                           y=if(log.y) exp(y.eval) else y.eval)
             }
     else{ options(warn)
           warning("could not fit smooth")
@@ -62,7 +73,8 @@ loessLine <- function(x, y, col, log.x, log.y, spread=FALSE, smoother.args,
         if(class(pos.fit)[1] != "try-error"){
             y.pos <- y.eval + sqrt(offset^2 + predict(pos.fit, newdata=data.frame(x=x.eval)))
             y.pos <- if (log.y) exp(y.pos) else y.pos
-            if(draw) {lines(if(log.x) exp(x.eval) else x.eval, y.pos, lwd=lwd.spread, lty=lty.spread, col=col)}
+            if(draw) {lines(if(log.x) exp(x.eval) else x.eval, y.pos,
+                            lwd=lwd.spread, lty=lty.spread, col=col.spread)}
                 else {out$x.pos <- if(log.x) exp(x.eval) else x.eval
                       out$y.pos <- y.pos}
         }
@@ -72,7 +84,8 @@ loessLine <- function(x, y, col, log.x, log.y, spread=FALSE, smoother.args,
         if(class(neg.fit)[1] != "try-error"){
             y.neg <- y.eval - sqrt(offset^2 + predict(neg.fit, newdata=data.frame(x=x.eval)))
             y.neg <- if (log.y) exp(y.neg) else y.neg
-            if(draw) lines(x.eval, y.neg, lwd=lwd.spread, lty=lty.spread, col=col)
+            if(draw) lines(if(log.x) exp(x.eval) else x.eval, y.neg,
+                           lwd=lwd.spread, lty=lty.spread, col=col.spread)
                  else {out$x.neg <- if(log.x) exp(x.eval) else x.eval
                       out$y.neg <- y.neg}
             }
@@ -83,13 +96,16 @@ loessLine <- function(x, y, col, log.x, log.y, spread=FALSE, smoother.args,
     }
 
 
-gamLine <- function(x, y, col, log.x, log.y, spread=FALSE, smoother.args,
+gamLine <- function(x, y, col=carPalette()[1], log.x=FALSE, log.y=FALSE, spread=FALSE, smoother.args=NULL,
               draw=TRUE, offset=0) {
-#    if (!require("mgcv")) stop("mgcv package missing")
-    lty <- default.arg(smoother.args, "lty", 1)
-    lwd <- default.arg(smoother.args, "lwd", 2)
-    lty.spread <- default.arg(smoother.args, "lty.spread", 2)
-    lwd.spread <- default.arg(smoother.args, "lwd.spread", 1)
+    gam <- mgcv::gam
+    s <- mgcv::s
+    lty.smooth <- default.arg(smoother.args, "lty.smooth", 1)
+    lwd.smooth <- default.arg(smoother.args, "lwd.smooth", 2)
+    col.smooth <- default.arg(smoother.args, "col.smooth", col)
+    lty.spread <- default.arg(smoother.args, "lty.spread", 4)
+    lwd.spread <- default.arg(smoother.args, "lwd.spread", 2)
+    col.spread <- default.arg(smoother.args, "col.spread", col)
     fam <- default.arg(smoother.args, "family", gaussian)
     link <- default.arg(smoother.args, "link", NULL)
     evaluation <- default.arg(smoother.args, "evaluation", 50)
@@ -120,37 +136,39 @@ gamLine <- function(x, y, col, log.x, log.y, spread=FALSE, smoother.args,
     fit <- try(gam(y ~ s(x, k=k, bs=bs), weights=w, family=fam1))
 # end bug fix.
     if (class(fit)[1] != "try-error"){
-      y.eval <- predict(fit, newdata=data.frame(x=x.eval), type="response")
-      y.eval <- if(log.y) exp(y.eval) else y.eval
-      if(draw)lines(if(log.x) exp(x.eval) else x.eval, y.eval, lwd=lwd, col=col, lty=lty) else
-        out <- list(x=if(log.x) exp(x.eval) else x.eval, y=y.eval)
+      y.eval <- predict(fit, newdata=data.frame(x=x.eval))
+      if(draw)lines(if(log.x) exp(x.eval) else x.eval,
+                    if(log.y) exp(y.eval) else y.eval,
+                    lwd=lwd.smooth, col=col.smooth, lty=lty.smooth) else
+        out <- list(x=if(log.x) exp(x.eval) else x.eval,
+                    y=if(log.y) exp(y.eval) else y.eval)
     }
     else{ options(warn)
           warning("could not fit smooth")
           return()}
-    if(spread) { 
+    if(spread) {
         res <- residuals(fit)
         pos <- res > 0
         pos.fit <- try(gam(I(res^2) ~ s(x, k=k, bs=bs), subset=pos), silent=TRUE)
         neg.fit <- try(gam(I(res^2) ~ s(x, k=k, bs=bs), subset=!pos), silent=TRUE)
         if(class(pos.fit)[1] != "try-error"){
-          y.pos <- y.eval + sqrt(offset^2 + predict(pos.fit, newdata=data.frame(x=x.eval), 
-                                                    type="response"))
-          y.pos <- if (log.y) exp(y.pos) else y.pos
-          if(draw) {lines(if(log.x) exp(x.eval) else x.eval, y.pos, lwd=lwd.spread, lty=lty.spread, col=col)}
+          y.pos <- y.eval + sqrt(offset^2 + predict(pos.fit, newdata=data.frame(x=x.eval)))
+          if(draw) {lines(if(log.x) exp(x.eval) else x.eval,
+                          if(log.y) exp(y.pos) else y.pos,
+                          lwd=lwd.spread, lty=lty.spread, col=col.spread)}
           else {out$x.pos <- if(log.x) exp(x.eval) else x.eval
-          out$y.pos <- y.pos}
+          out$y.pos <- if(log.y) exp(y.pos) else y.pos}
         }
         else{ options(warn)
             warning("could not fit positive part of the spread")
             }
-          if(class(neg.fit)[1] != "try-error"){
-            y.neg <- y.eval - sqrt(offset^2 + predict(neg.fit, newdata=data.frame(x=x.eval),
-                                                      type="response"))
-            y.neg <- if (log.y) exp(y.neg) else y.neg
-            if(draw) lines(x.eval, y.neg, lwd=lwd.spread, lty=lty.spread, col=col)
+        if(class(neg.fit)[1] != "try-error"){
+            y.neg <- y.eval - sqrt(offset^2 + predict(neg.fit, newdata=data.frame(x=x.eval)))
+            if(draw) {lines(if(log.x) exp(x.eval) else x.eval,
+                            if(log.y) exp(y.neg) else y.neg,
+                            lwd=lwd.spread, lty=lty.spread, col=col.spread)}
             else {out$x.neg <- if(log.x) exp(x.eval) else x.eval
-            out$y.neg <- y.neg}
+                  out$y.neg <- if(log.y) exp(y.neg) else y.neg}
           }
         else {options(warn)
             warning("could not fit negative part of the spread") }
@@ -158,32 +176,36 @@ gamLine <- function(x, y, col, log.x, log.y, spread=FALSE, smoother.args,
     if(!draw) return(out)
     }
 
-quantregLine <- function(x, y, col, log.x, log.y, spread=FALSE, smoother.args,
+quantregLine <- function(x, y, col=carPalette()[1], log.x=FALSE, log.y=FALSE, spread=FALSE, smoother.args=NULL,
                    draw=TRUE, offset=0) {
-#    if (!require("quantreg")) stop("quantreg package missing")
     if (!package.installed("Matrix")) stop("the Matrix package is missing")
     if (!package.installed("MatrixModels")) stop("the MatrixModels package is missing")
     if (!package.installed("SparseM")) stop("the SparseM package is missing")
-    lty <- default.arg(smoother.args, "lty", 1)
-    lwd <- default.arg(smoother.args, "lwd", 2)
-    lty.spread <- default.arg(smoother.args, "lty.spread", 2)
-    lwd.spread <- default.arg(smoother.args, "lwd.spread", 1)
+    qss <- quantreg::qss
+    rqss <- quantreg::rqss
+    lty.smooth <- default.arg(smoother.args, "lty.smooth", 1)
+    lwd.smooth <- default.arg(smoother.args, "lwd.smooth", 2)
+    col.smooth <- default.arg(smoother.args, "col.smooth", col)
+    lty.spread <- default.arg(smoother.args, "lty.spread", 4)
+    lwd.spread <- default.arg(smoother.args, "lwd.spread", 2)
+    col.spread <- default.arg(smoother.args, "col.spread", col)
     evaluation <- default.arg(smoother.args, "evaluation", 50)
     if (log.x) x <- log(x)
     if (log.y) y <- log(y)
-    lambda <- default.arg(smoother.args, "lambda", IQR(x))
+    lambda <- default.arg(smoother.args, "lambda", IQR(x, na.rm=TRUE))
     valid <- complete.cases(x, y)
     x <- x[valid]
     y <- y[valid]
     ord <- order(x)
     x <- x[ord]
     y <- y[ord]
-    x.eval <- seq(min(x), max(x), length=evaluation) 
+    x.eval <- seq(min(x), max(x), length=evaluation)
     if (!spread){
         fit <- rqss(y ~ qss(x, lambda=lambda))
         y.eval <- predict(fit, newdata=data.frame(x=x.eval))
         y.eval <- if(log.y) exp(y.eval) else y.eval
-        if(draw)lines(if(log.x) exp(x.eval) else x.eval, y.eval, lwd=lwd, col=col, lty=lty) else
+        if(draw)lines(if(log.x) exp(x.eval) else x.eval, y.eval, lwd=lwd.smooth,
+                      col=col, lty=lty.smooth) else
           out <- list(x=if(log.x) exp(x.eval) else x.eval, y=y.eval)
     }
     else{
@@ -199,12 +221,15 @@ quantregLine <- function(x, y, col, log.x, log.y, spread=FALSE, smoother.args,
 # 11/22/14:  adjust for offset
         y.eval.q1 <- y.eval - sqrt( (y.eval-y.eval.q1)^2 + offset^2)
         y.eval.q3 <- y.eval + sqrt( (y.eval-y.eval.q3)^2 + offset^2)
-        if(draw)lines(if(log.x) exp(x.eval) else x.eval, y.eval, lwd=lwd, col=col, lty=lty) else
+        if(draw)lines(if(log.x) exp(x.eval) else x.eval, y.eval,
+                      lwd=lwd.smooth, col=col.smooth, lty=lty.smooth) else
           out <- list(x=if(log.x) exp(x.eval) else x.eval, y=y.eval)
-        if(draw) lines(if(log.x) exp(x.eval) else x.eval, y.eval.q1, lwd=lwd.spread, lty=lty.spread, col=col) else
+        if(draw) lines(if(log.x) exp(x.eval) else x.eval, y.eval.q1,
+                       lwd=lwd.spread, lty=lty.spread, col=col.spread) else
            {out$x.neg <- if(log.x) exp(x.eval) else x.eval
             out$y.neg <- y.eval.q1}
-        if(draw) lines(if(log.x) exp(x.eval) else x.eval, y.eval.q3, lwd=lwd.spread, lty=lty.spread, col=col) else
+        if(draw) lines(if(log.x) exp(x.eval) else x.eval, y.eval.q3,
+                       lwd=lwd.spread, lty=lty.spread, col=col.spread) else
            {out$x.neg <- x.eval
             out$y.neg <- y.eval.q3}
     }

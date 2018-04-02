@@ -7,13 +7,15 @@
 \alias{boxCox.bcnPowerTransform}
 
 \title{
-Graph the profile log-likelihood for Box-Cox transformations in 1D or in 2D with the bcnPower family.
+Graph the profile log-likelihood for Box-Cox transformations in 1D, or in 2D with the bcnPower family.
 }
 \description{
   Computes and optionally plots profile log-likelihoods for the parameter of the
-  Box-Cox power family, the Yeo-Johnson power family, or for either of the parameters in a skew power family.   This is a slight generalization of the
-  \code{boxcox} function in the \pkg{MASS} package that allows for families of transformations
-  other than the Box-Cox power family.
+  Box-Cox power family, the Yeo-Johnson power family, or for either of the parameters in a bcnPower family.   This is a slight generalization of the
+  \code{boxcox} function in the \pkg{MASS} package that allows for families of 
+  transformations other than the Box-Cox power family.  the \code{boxCox2d} function
+  produces a  contour
+  plot of the two-dimensional likelihood profile for the bcnPower family.
 }
 \usage{
 boxCox(object, ...)
@@ -98,9 +100,9 @@ The bcnPower family has two parameters: a power \eqn{\lambda}{lambda} and a star
 }
 
 \value{
-  Both functions ae designed for their side effects of drawing a graph.  The \code{boxCox} functin returns a list of the lambda (or possibly, gamma) vector and the computed profile log-likelihood vector,
+  Both functions ae designed for their side effects of drawing a graph.  The \code{boxCox} function returns a list of the lambda (or possibly, gamma) vector and the computed profile log-likelihood vector,
   invisibly if the result is plotted.  If \code{plotit=TRUE} plots log-likelihood vs
-  lambda and indicates a 95% confidence interval about the maximum observed value of
+  lambda and indicates a 95\% confidence interval about the maximum observed value of
   lambda. If \code{interp=TRUE}, spline interpolation is used to give a smoother plot.
 
 }
@@ -114,16 +116,15 @@ The bcnPower family has two parameters: a power \eqn{\lambda}{lambda} and a star
                                              Computing
                                              and Graphics}.  Wiley.
 
-  Fox, J. (2008)
+  Fox, J. (2016)
   \emph{Applied Regression Analysis and Generalized Linear Models},
-  Second Edition. Sage.
+  Third Edition. Sage.
 
-  Fox, J. and Weisberg, S. (2011)
-  \emph{An R Companion to Applied Regression}, Second Edition, Sage.
+  Fox, J. and Weisberg, S. (2019)
+  \emph{An R Companion to Applied Regression}, Third Edition, Sage.
 
-  Hawkins, D. and Weisberg, S. (2015)
-  Combining the Box-Cox Power and Genralized Log Transformations to Accomodate Negative Responses,
-  submitted for publication.
+Hawkins, D. and Weisberg, S. (2017)
+Combining the Box-Cox Power and Generalized Log Transformations to Accomodate Nonpositive  Responses In Linear and Mixed-Effects Linear Models \emph{South African Statistics Journal}, 51, 317-328.
 
   Weisberg, S. (2014) \emph{Applied Linear Regression}, Fourth Edition, Wiley.
 

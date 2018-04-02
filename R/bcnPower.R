@@ -1,6 +1,9 @@
 # 05-02-2017:  bcnPower family, replacing skewPower.  S. Weisberg
 # 2017-05-18: Changed summary.powerTransform; deleted invalid test; added roundlam to output
-
+# 2017-12-19: Deleted plot method
+# 2017-12-19: Improved handling of gamma small case, still not great for the
+#             multivariate extenstion.  Works for lm and lmer
+# 2017-12-25: bug fix with multivariace bcnPower
 
 bcnPower <- function(U, lambda, jacobian.adjusted=FALSE, gamma) {
   if(is.matrix(U)){
@@ -29,63 +32,87 @@ bcnPower <- function(U, lambda, jacobian.adjusted=FALSE, gamma) {
     if(is.null(colnames(out)))
       colnames(out) <- paste("Z", 1:dim(out)[2], sep="")
     for (j in 1:ncol(out)) {out[, j] <- hc1(out[, j], lambda[j], gamma[j]) }
-    colnames(out) <- paste(colnames(out), "(",round(lambda, 2), ",",round(gamma, 1),")", sep="")
+    colnames(out) <- paste(colnames(out), "(",
+                           round(lambda, 2), ",",round(gamma, 1),")", sep="")
     #    colnames(out) <- paste(colnames(out), round(lambda, 2), sep="^")
     out}  else
       hc1(out, lambda, gamma)
   out}
 
+bcnPowerInverse <- function(z, lambda, gamma){
+  q <- if(abs(lambda) < 1.e-7) 2 * exp(z) else 2 * (lambda*z + 1)^(1/lambda)
+  (q^2 - gamma^2)/(2 * q)
+}
+
 ###############################################################################
 # estimateTransform and methods
 #
 
-bcn.sv <- function(X, Y, weights, itmax=100, conv=.0001, verbose=FALSE, start=TRUE){
+# multivariate box-cox with negatives starting values, given X and Y
+bcn.sv <- function(X, Y, weights, itmax=100, conv=.0001, verbose=FALSE,
+                   start=TRUE, gamma.min=.1){
   Y <- as.matrix(Y)
   d <- dim(Y)[2]
-  if(d > 1) stop("bcn.sv requires univariate response")
+  if(d > 1) stop("bcn.sv requires a univariate response")
   lambda.1d <- function(Y, weights, lambda, gamma, xqr){
-    fn <- function(lam) bcnPowerllik(NULL, Y, weights, lambda=lam, gamma=gamma, xqr=xqr)$llik
+    fn <- function(lam) bcnPowerllik(NULL, Y, weights, lambda=lam,
+                                     gamma=gamma, xqr=xqr)$llik
     f <- optimize(f=fn, interval=c(-3, 3), maximum=TRUE)
     list(lambda=f$maximum, gamma=gamma, llik=f$objective)
   }
   gamma.1d <- function(Y, weights, lambda, gamma, xqr){
-    fn <- function(gam) bcnPowerllik(NULL, Y, weights, lambda=lambda, gamma=gam, xqr=xqr)$llik
-    f <- optimize(f=fn, interval=c(0.01, max(Y)), maximum=TRUE)
+    fn1 <- function(gam) bcnPowerllik(NULL, Y, weights, lambda=lambda,
+                                     gamma=gam, xqr=xqr)$llik
+    f <- optimize(f=fn1, interval=c(0.01, max(Y)), maximum=TRUE)
     list(lambda=lambda, gamma=f$maximum, llik=f$objective)
   }
   # get qr decomposition
   w <- if(is.null(weights)) 1 else sqrt(weights)
   xqr <- qr(w * as.matrix(X))
   # get starting value for gamma
-  gamma <- if(min(Y) <= 0) min(Y[Y>0]) else 0
+  gamma <- if(min(Y) <= 0) max(min(Y[Y>0]), 5*gamma.min) else 0
   res <- lambda.1d(Y, weights, lambda=1, gamma=gamma, xqr)
+  res <- gamma.1d(Y, weights, lambda=res$lambda, gamma=res$gamma, xqr)
   # set iteration counter
   i <- 0
   crit <- 1
-  while( (crit > conv) & (i < itmax)) {
+  gamma.ok <- TRUE
+  while( (crit > conv) & (i < itmax) & gamma.ok) {
     i <- i+1
     last.value <- res
-    res <- gamma.1d(Y, weights, res$lambda, res$gamma, xqr)
     res <- lambda.1d(Y, weights, res$lambda, res$gamma, xqr)
+    res <- gamma.1d(Y, weights, res$lambda, res$gamma, xqr)
+    if(res$gamma < 1.5 * gamma.min){
+      gamma.ok <- FALSE
+      res <- lambda.1d(Y, weights, res$lambda, gamma.min, xqr)
+    }
     crit <- (res$llik - last.value$llik)/abs(res$llik)
     if(verbose)
-      print(paste("Iter:", i, "llik=", res$llik, "Crit:", crit, collapse=" "))
+      print(data.frame(Iter=i, gamma=res$gamma,
+            lambda=res$gamma, llik=res$llik, crit=crit))
   }
   if(i==itmax & conv > crit)
     warning(paste("No convergence in", itmax, "iterations, criterion =", crit, collapse=" "))
-  if(start == TRUE)  return(res) else {
-    # compute the Hessian
-    fn <- function(param){
+#  if(!gamma.ok) warning(paste("gamma too close to zero, set to", gamma.min, collapse=" "))
+  if(start == TRUE)  return(c(res, gamma.estimated=gamma.ok)) else {
+# compute the Hessian -- depends on gamma.ok
+  if(gamma.ok){
+    fn2 <- function(param){
       lam <- param[1]
       gam <- param[2]
       bcnPowerllik(NULL, Y, weights, lam, gam, xqr=xqr)$llik
     }
-    hess <- try(optimHess(c(res$lambda, res$gamma), fn))
-    if(class(hess) == "try-error"){
-      res$invHess <- NULL} else {
-        res$invHess <- solve(-hess)
-        rownames(res$invHess) <- colnames(res$invHess) <- c("lambda", "gamma")
+    hess <- optimHess(c(res$lambda, res$gamma), fn2)
+    res$invHess <- solve(-hess)} else{
+# gamma.ok == FALSE
+      fn3 <- function(lam){
+        lam
+        bcnPowerllik(NULL, Y, weights, lam, gamma.min, xqr=xqr)$llik
       }
+      hess <- optimHess(res$lambda, fn3)
+      res$invHess <- matrix(c(-1/hess, NA, NA, NA), ncol=2)}
+# end computing of invHess
+    rownames(res$invHess) <- colnames(res$invHess) <- c("lambda", "gamma")
     roundlam <- res$lambda
     stderr <- sqrt(diag(res$invHess[1, 1, drop=FALSE]))
     stderr.gam <- sqrt(diag(res$invHess[2, 2, drop=FALSE]))
@@ -102,38 +129,45 @@ bcn.sv <- function(X, Y, weights, itmax=100, conv=.0001, verbose=FALSE, start=TR
     res$y <- as.matrix(Y)
     res$x <- as.matrix(X)
     res$weights <- weights
-    res$fix.gamma <- NULL
     res$family <- "bcnPowerTransform"
     res$y
+    res$gamma.estimated <- gamma.ok
     class(res) <- c("bcnPowerTransform", "powerTransform")
     res}
 }
 
-estimateTransform.bcnPower <- function(X, Y, weights, itmax=100, conv=.0001, verbose=FALSE){
+estimateTransform.bcnPower <- function(X, Y, weights,
+          itmax=100, conv=.0001, verbose=FALSE, gamma.min=.1){
   d <- dim(as.matrix(Y))[2]
   skf.lambda <- function(Y, weights, lambda, gamma, xqr){
-    fn <- function(lam) bcnPowerllik(NULL, Y, weights, lambda=lam, gamma=gamma, xqr=xqr)$llik
-    f <- optim(par=lambda, fn=fn, method="L-BFGS-B",
+    fn3a <- function(lam) bcnPowerllik(NULL, Y, weights, lambda=lam,
+                                     gamma=gamma, xqr=xqr)$llik
+    f <- optim(par=lambda, fn=fn3a, method="L-BFGS-B",
                  lower=rep(-3, d), upper=rep(3, d),
                  control=list(fnscale=-1))
     list(lambda=f$par, gamma=gamma, llik=f$value, conv=f$convergence, message=f$message)
   }
   skf.gamma <- function(Y, weights, lambda, gamma, xqr){
-    fn <- function(gam) bcnPowerllik(NULL, Y, weights, lambda=lambda, gamma=gam, xqr=xqr)$llik
-    f <- optim(par=gamma, fn=fn, method="L-BFGS-B",
-                 lower=rep(.Machine$double.eps^0.25, d),
+    fn3b <- function(gam) bcnPowerllik(NULL, Y, weights, lambda=lambda,
+                                     gamma=gam, xqr=xqr)$llik
+    f <- optim(par=gamma, fn=fn3b, method="L-BFGS-B",
+                 lower=rep(gamma.min, d),
                  upper=rep(Inf, d),
                  control=list(fnscale=-1))
-      list(lambda=lambda, gamma=f$par, llik=f$value, conv=f$convergence, message=f$message)
+      list(lambda=lambda, gamma=f$par, llik=f$value,
+           conv=f$convergence, message=f$message)
   }
 # get qr decomposition once
   w <- if(is.null(weights)) 1 else sqrt(weights)
   xqr <- qr(w * as.matrix(X))
 # if d = 1 call bcn.sv and return, else call bcn.sv to get starting values.
   if(d == 1) bcn.sv(X, Y, weights, start=FALSE) else{
+# The rest of this code is for the multivariate case
 # get starting values for gamma
   sv <- apply(Y, 2, function(y) unlist(bcn.sv(X, y, weights, start=TRUE)))
   res <- as.list(as.data.frame(t(sv))) # output to a list
+# gamma.estimated converted to numeric, so fixup
+  res$gamma.estimated <- ifelse(res$gamma.estimated==1, TRUE, FALSE)
   res$llik <- -Inf
 # set iteration counter
   i <- 0
@@ -149,16 +183,25 @@ estimateTransform.bcnPower <- function(X, Y, weights, itmax=100, conv=.0001, ver
       print(paste("Iter:", i, "llik=", res$llik, "Crit:", crit, collapse=" "))
   }
   if(itmax == 1) warning("One iteration only, results assume responses are uncorrelated")
-  if(i==itmax & conv > crit)
-    warning(paste("No convergence in", itmax, "iterations, criterion =", crit, collapse=" "))
-  # compute the Hessian
-  fn <- function(param){
+#  if(i==itmax & conv > crit)
+#    warning(paste("No convergence in", itmax, "iterations, criterion =", crit, collapse=" "))
+  fn4 <- function(param){
     lam <- param[1:d]
     gam <- param[(d+1):(2*d)]
     bcnPowerllik(NULL, Y, weights, lam, gam, xqr=xqr)$llik
   }
-  hess <- try(optimHess(c(res$lambda, res$gamma), fn))
-  res$invHess <- if(class(hess) == "try-error") NA else solve(-hess)
+# check gamma
+  gamma.ok <- ifelse(res$gamma > 1.5*gamma.min, TRUE, FALSE)
+  res$gamma[!gamma.ok] <- gamma.min
+  if(all(gamma.ok)){
+     hess <- try(optimHess(c(res$lambda, res$gamma), fn4))
+     res$invHess <- if(class(hess) == "try-error") NA else solve(-hess)
+  } else {
+    fn4a <- function(lam) fn4(c(lam, res$gamma))
+    hess <- try(optimHess(res$lambda, fn4a)) # hessian for lambda only
+    res$invHess <- matrix(NA, nrow=2*d, ncol=2*d)
+    res$invHess[1:d, 1:d] <- solve(-hess)
+    }
   roundlam <- res$lambda
   stderr <- sqrt(diag(res$invHess[1:d, 1:d, drop=FALSE]))
   stderr.gam <- sqrt(diag(res$invHess[(d+1):(2*d), (d+1):(2*d), drop=FALSE]))
@@ -179,10 +222,10 @@ estimateTransform.bcnPower <- function(X, Y, weights, itmax=100, conv=.0001, ver
   res$y <- as.matrix(Y)
   res$x <- as.matrix(X)
   res$weights <- weights
-  res$fix.gamma <- NULL
   res$family <- "bcnPowerTransform"
   res$y
   class(res) <- c("bcnPowerTransform", "powerTransform")
+  res$gamma.estimated <- gamma.ok
   res
 }}
 
@@ -200,23 +243,23 @@ bcnPowerllik <- function(X, Y, weights=NULL, lambda, gamma, xqr=NULL) {
   list(lambda=lambda, gamma=gamma, llik=f)
 }
 
-
-
 ###############################################################################
 # testTransform
 testTransform.bcnPowerTransform <- function(object, lambda=rep(1, dim(object$y)[2])){
   d <- length(object$lambda)
   lam <- if(length(lambda)==1) rep(lambda, d) else lambda
   skf.gamma <- function(Y, weights, lambda, gamma, xqr){
-    fn <- function(gam) bcnPowerllik(NULL, Y, weights, lambda=lam, gamma=gamma, xqr=xqr)$llik
-    f <- optim(par=gamma, fn=fn, method="L-BFGS-B",
+    fn5 <- function(gam) bcnPowerllik(NULL, Y, weights, lambda=lam,
+                                     gamma=gamma, xqr=xqr)$llik
+    f <- optim(par=gamma, fn=fn5, method="L-BFGS-B",
                lower=rep(.Machine$double.eps^0.25, d),
                upper=rep(Inf, d),
                control=list(fnscale=-1))
-    list(lambda=lambda, gamma=f$par, llik=f$value, conv=f$convergence, message=f$message)
+    list(lambda=lambda, gamma=f$par, llik=f$value, conv=f$convergence,
+         message=f$message)
   }
   val <- skf.gamma(object$y, object$weights, lam,
-                                   gamma=object$gamma, xqr=object$xqr)$llik
+         gamma=object$gamma, xqr=object$xqr)$llik
   LR <- max(0, -2 * (val - object$llik))
   df <- d
   pval <- 1-pchisq(LR, df)
@@ -229,14 +272,18 @@ testTransform.bcnPowerTransform <- function(object, lambda=rep(1, dim(object$y)[
 print.bcnPowerTransform<-function(x, ...) {
   cat("Estimated transformation power, lambda\n")
   print(x$lambda)
-  cat("Estimated transformation location, gamma\n")
+# temporary code
+  if(is.null(x$gamma.estimated)) x$gamma.estimated=TRUE
+  if(any(x$gamma.estimated)){
+    cat("\nEstimated location, gamma\n")} else{
+    cat("\nLocation gamma was fixed at its lower bound\n")}
   print(x$gamma)
   invisible(x)}
 
 summary.bcnPowerTransform <- function(object, ...){
   nc <- length(object$lambda)
-  label <- paste(if(nc==1) "Skew Power transformation to Normality" else
-                   "Skew Power Transformations to Multinormality", "\n")
+  label <- paste(if(nc==1) "bcnPower transformation to Normality" else
+                   "bcnPower transformation to Multinormality", "\n")
   lambda <- object$lambda
   roundlam <- round(object$roundlam, 3)
   gamma <- object$gamma
@@ -254,7 +301,9 @@ summary.bcnPowerTransform <- function(object, ...){
 #  if ( !(all(object$roundlam==0) | all(object$roundlam==1) |
 #           length(object$roundlam)==1 | all(object$roundlam == object$lambda)))
 #    tests <- rbind(tests, testTransform(object, object$roundlam))
-  out <-  list(label=label, result=result, result.gamma=result.gamma, tests=tests)
+  out <-  list(label=label, result=result, result.gamma=result.gamma,
+               tests=tests, gamma.estimated=object$gamma.estimated)
+  if(is.null(out$gamma.estimated)) out$gamma.estimated <- TRUE
   class(out) <- "summary.bcnPowerTransform"
   out
 }
@@ -263,7 +312,9 @@ print.summary.bcnPowerTransform <- function(x,digits=4, ...) {
   cat(x$label)
   cat("\nEstimated power, lambda\n")
   print(round(x$result, digits))
-  cat("\nEstimated location, gamma\n")
+  if(any(x$gamma.estimated)){
+     cat("\nEstimated location, gamma\n")} else{
+     cat("\nLocation gamma was fixed at its lower bound\n")}
   print(round(x$result.gamma, digits))
   cat("\nLikelihood ratio tests about transformation parameters\n")
   print(x$tests)
@@ -285,62 +336,79 @@ vcov.bcnPowerTransform <- function(object, param=c("both", "lambda", "gamma"), .
          both=object$invHess)
 }
 
-plot.bcnPowerTransform <- function(x, z=NULL, round=TRUE, plot=pairs, ...){
-  y <- bcnPower(x$y, lambda=coef(x, param="lambda"),
-                 jacobian.adjusted=FALSE, gamma=coef(x, param="gamma"))
-  if (is.null(z)) plot(y, ...) else
-    if (is.matrix(z) | is.data.frame(z)) plot(cbind(y, z), ...) else {
-      y <- cbind(y, z)
-      colnames(y)[dim(y)[2]] <- deparse(substitute(z))
-      plot(y, ...) }
-}
+
 
 
 
 ##########################################################################################
 #  bcnPower for lmer models
-#
-estimateTransform.bcnPowerlmer <- function(object, verbose=FALSE, conv=.001, itmax=100, ...) {
+#  Modified 12/19/2017 to handle gamma-at-the boundary gracefully
+estimateTransform.bcnPowerlmer <- function(object, verbose=FALSE,
+            conv=.001, itmax=100, gamma.min=.1, ...) {
   data <- model.frame(object)
   y <- (object@resp)$y
   lambda.1d <- function(lambda, gamma){
-    fn <- function(lam){
+    fn6 <- function(lam){
       data$y1 <- bcnPower(y, lambda=lam, jacobian.adjusted=TRUE, gamma)
       logLik(update(object, y1 ~ ., data=data))}
-    f <- optimize(f=fn, interval=c(-3, 3), maximum=TRUE)
+    f <- optimize(f=fn6, interval=c(-3, 3), maximum=TRUE)
     list(lambda=f$maximum, gamma=gamma, llik=f$objective)
   }
   gamma.1d <- function(lambda=lambda, gamma=gamma){
-    fn <- function(gam){
+    fn7 <- function(gam){
       data$y1 <- bcnPower(y, lambda, jacobian.adjusted=TRUE, gamma=gam)
       logLik(update(object, y1 ~ ., data=data))}
-    f <- optimize(f=fn, interval=c(1.e-5, max(y)), maximum=TRUE)
+    f <- optimize(f=fn7, interval=c(.5*gamma.min, max(y)), maximum=TRUE)
     list(lambda=lambda, gamma=f$maximum, llik=f$objective)
   }
   # starting values for lambda, gamma
   lambda <- gamma <- 1
+  gamma.ok <- TRUE
   res <- lambda.1d(lambda, gamma)
+  res <- gamma.1d(res$lambda, res$gamma)
+  if(res$gamma < 1.5 * gamma.min){
+    gamma.ok <- FALSE
+    res <- lambda.1d(res$lambda, gamma.min)
+  } else{
+  # iteration is needed only if gamma is not on the boundary
   # set iteration counter
   i <- 0
   crit <- 1
-  while( (crit > conv) & (i < itmax)) {
+  while( (crit > conv) & (i < itmax) & gamma.ok) {
     i <- i+1
     last.value <- res
-    res <-  gamma.1d(res$lambda, res$gamma)
     res <- lambda.1d(res$lambda, res$gamma)
+    res <- gamma.1d(res$lambda, res$gamma)
+    if(res$gamma < 1.5 * gamma.min){
+      gamma.ok <- FALSE
+      res <- lambda.1d(res$lambda, gamma.min)
+    }
     crit <- (res$llik - last.value$llik)/abs(res$llik)
     if(verbose)
-      print(paste("Iter:", i, "llik=", res$llik, "Crit:", crit, collapse=" "))
-  }
+      print(data.frame(Inter=i, gamma=res$gamma, lambda=res$lambda,
+                       llik=res$llik, crit=crit))
+  }}
   if(i==itmax & conv > crit)
-    warning(paste("No convergence in", itmax, "iterations, criterion =", crit, collapse=" "))
+    warning(paste("No convergence in", itmax, "iterations, criterion =",
+                  crit, collapse=" "))
+#  if(!gamma.ok) warning(paste("gamma too close to zero, set to",gamma.min, collapse=" "))
   # optimize does not give the Hessian, so run optimHess
-  llikfn <- function(par){
-    data$y1 <- bcnPower(y, par[1], jacobian.adjusted=TRUE, par[2])
-    mf <- update(object, y1 ~ ., data=data)
-    logLik(mf)
-  }
-  res$invHess <- solve(-optimHess(unlist(res[1:2]), llikfn))
+  if(gamma.ok){
+    llikfn <- function(par){
+       data$y1 <- bcnPower(y, par[1], jacobian.adjusted=TRUE, par[2])
+       mf <- update(object, y1 ~ ., data=data)
+       logLik(mf)
+    }
+    res$invHess <- solve(-optimHess(unlist(res[1:2]), llikfn))
+    if(any(diag(res$invHess) < 0)) res$invHess <- matrix(NA, nrow=2, ncol=2)
+    } else
+    {
+    llikfn1 <- function(lam){
+       data$y1 <- bcnPower(y, lambda=lam, jacobian.adjusted=TRUE, gamma=res$gamma)
+       logLik(update(object, y1 ~ ., data=data))}
+    v1 <- -1/optimHess(res$lambda, llikfn1)
+    res$invHess <- matrix(c(v1, NA, NA, NA), ncol=2)
+    }
   roundlam <- res$lambda
   stderr <- sqrt(res$invHess[1,1])
   lamL <- roundlam - 1.96 * stderr
@@ -352,6 +420,7 @@ estimateTransform.bcnPowerlmer <- function(object, verbose=FALSE, conv=.001, itm
   res$model <- object
   res$roundlam <- roundlam
   res$family<-family
+  res$gamma.estimated <- gamma.ok
   class(res) <- c("bcnPowerTransformlmer", "bcnPowerTransform")
   res
 }
@@ -381,7 +450,7 @@ testTransform.bcnPowerTransformlmer <- function(object, lambda=1){
 
 summary.bcnPowerTransformlmer<-function(object,...){
   nc <- length(object$lambda)
-  label <- "bcn - Box-Cox Power transformation to Normality\nallowing for negative values, lmer fit\n\n"
+  label <- "bcn - Box-Cox Power transformation to Normality\nallowing for negative values, lmer fit\n"
   lambda <- object$lambda
   gamma <- object$gamma
   stderr <- sqrt(diag(object$invHess))
@@ -399,13 +468,12 @@ summary.bcnPowerTransformlmer<-function(object,...){
   if ( !(all(object$roundlam==0) | all(object$roundlam==1) |
          length(object$roundlam)==1 ))
     tests <- rbind(tests, testTransform(object, object$roundlam))
-  out <-  list(label=label, result=result, result.gamma=result.gamma, tests=tests)
+  out <-  list(label=label, result=result, result.gamma=result.gamma,
+               gamma.estimated=object$gamma.estimated,tests=tests)
   class(out) <- "summary.bcnPowerTransform"
   out
 }
 
-plot.bcnPowerTransformlmer <- function(x, z, round=TRUE, plot=pairs, ...){
-  cat("plot not supported for mixed models\n") }
 
 
 

@@ -28,17 +28,27 @@
 #             set labels=names(f(object)) with f() rather than coef()
 #             simplified and avoid bug in computation of 'out' and check for $qr in Boot.default
 #             do not rely on $model to be available
-#             instead set up empty dummy data with right number of rows (either via nobs or 
+#             instead set up empty dummy data with right number of rows (either via nobs or
 #             NROW(residuals(...)))
-#             optionally use original estimates as starting values in update(object, ...) 
+#             optionally use original estimates as starting values in update(object, ...)
 #             within Boot.default
 # 2017-06-25: modified bca confidence intervals to default to 'perc' if adjustment is out of range
 # 2017-06-26: consistently use inherits(..., "try-error") rather than class(...) == "try-error"
+# 2017-09-16:  Changed to vcov.boot method to pass arguments to cov.  In
+#  particular, if some of the bootstrap reps are NA, then the argument
+#  use="complete.obs" may be desirable.
+# 2017-10-06:  Corrected bug that put the wrong estimates in t0 if missing values were
+#             present with case resampling.
+# 2017-10-19:  Added "norm" as an option on histograms
+# 2017-11-30: Use carPalette() for colors in hist.boot()
+# 2017-12-24: Removed parallel argument that was added. If ncores<=1, no parallel processing is used.  If ncores>1
+# selects the correct parallel environment, and implements with that number of cores. 
+# 2018-01-28: Changed print.summary.boot to print R once only if it is constant
 
-Boot <- function(object, f=coef, labels=names(f(object)), R=999, method=c("case", "residual"), ...){UseMethod("Boot")}
+Boot <- function(object, f=coef, labels=names(f(object)), R=999, method=c("case", "residual"), ncores=1, ...){UseMethod("Boot")}
 
 Boot.default <- function(object, f=coef, labels=names(f(object)),
-                     R=999, method=c("case", "residual"), start=FALSE, ...) {
+                     R=999, method=c("case", "residual"), ncores=1, start=FALSE,...) {
   if(!(requireNamespace("boot"))) stop("The 'boot' package is missing")
 
   ## original statistic
@@ -77,13 +87,13 @@ Boot.default <- function(object, f=coef, labels=names(f(object)),
       mod <- if(identical(start, FALSE)) {
         update(object, get(".y.boot", envir=.carEnv) ~ .)
       } else {
-        update(object, get(".y.boot", envir=.carEnv) ~ ., start=start)      
+        update(object, get(".y.boot", envir=.carEnv) ~ ., start=start)
       }
       out <- if(!is.null(object$qr) && (mod$qr$rank != object$qr$rank)) f0 * NA else .fn(mod)
       out
       }
   }
-  
+
   ## try to determine number of observations and set up empty dummy data
   nobs0 <- function(x, ...) {
     rval <- try(stats::nobs(x, ...), silent = TRUE)
@@ -92,11 +102,22 @@ Boot.default <- function(object, f=coef, labels=names(f(object)),
   }
   n <- nobs0(object)
   dd <- data.frame(.zero = rep.int(0L, n))
-  
+
+  if(ncores<=1){
+    parallel_env="no"
+    ncores=getOption("boot.ncpus",1L)
+  }else{
+    if(.Platform$OS.type=="unix"){
+      parallel_env="multicore"
+    }else{
+      parallel_env="snow"
+    }
+  }
+
   ## call boot() but set nice labels
-  b <- boot::boot(dd, boot.f, R, .fn=f, ...)
+  b <- boot::boot(dd, boot.f, R, .fn=f,parallel=parallel_env,ncpus=ncores, ...)
   colnames(b$t) <- labels
-  
+
   ## clean up and return
   if(exists(".y.boot", envir=.carEnv))
      remove(".y.boot", envir=.carEnv)
@@ -106,13 +127,17 @@ Boot.default <- function(object, f=coef, labels=names(f(object)),
   }
 
 Boot.lm <- function(object, f=coef, labels=names(f(object)),
-                     R=999, method=c("case", "residual"), ...)
-   Boot.default(object, f, labels, R, method, ...)
+                     R=999, method=c("case", "residual"), ncores=1, ...){
+   obj <- update(object, data=model.frame(object)) # removes missing data, if any
+   Boot.default(obj, f, labels, R, method,ncores, ...)
+   }
 
 Boot.glm <- function(object, f=coef, labels=names(f(object)),
-                     R=999, method=c("case", "residual"), ...) {
+                     R=999, method=c("case", "residual"), ncores=1, ...) {
   method <- match.arg(method, c("case", "residual"))
-  if(method=="case") { Boot.default(object, f, labels, R, method, ...)
+  if(method=="case") {
+    obj <- update(object, data=model.frame(object))
+    Boot.default(obj, f, labels, R, method,ncores, ...)
     } else {
     stop("Residual bootstrap not implemented in the 'car' function 'Boot'.
   Use the 'boot' function in the 'boot' package to write
@@ -121,19 +146,24 @@ Boot.glm <- function(object, f=coef, labels=names(f(object)),
   }
 
 Boot.nls <- function(object, f=coef, labels=names(f(object)),
-                     R=999, method=c("case", "residual"), ...) {
+                     R=999, method=c("case", "residual"),ncores=1, ...) {
+  f0 <- f(obj)
+### Remove rows with missing data from the data object
+  all.names <- all.vars(object$m$formula())
+  param.names <- names(object$m$getPars())
+  vars <- all.names[!(all.names %in% param.names)]
+  obj <- update(object, data = na.omit(eval(object$data)[,vars]), start=coef(object))
   if(!(requireNamespace("boot"))) stop("The 'boot' package is missing")
-  f0 <- f(object)
   if(length(labels) != length(f0)) labels <- paste("V", seq(length(f0)), sep="")
   method <- match.arg(method)
   opt<-options(show.error.messages = FALSE)
   if(method=="case") {
      boot.f <- function(data, indices, .fn) {
          assign(".boot.indices", indices, envir=.carEnv)
-         mod <- try(update(object, subset=get(".boot.indices", envir=.carEnv),
-                 start=coef(object)))
+         mod <- try(update(obj, subset=get(".boot.indices", envir=.carEnv),
+                 start=coef(obj)))
          if(inherits(mod, "try-error")){
-            out <- .fn(object)
+            out <- .fn(obj)
             out <- rep(NA, length(out)) } else  {out <- .fn(mod)}
      out
      }
@@ -155,8 +185,20 @@ Boot.nls <- function(object, f=coef, labels=names(f(object)),
             out <- rep(NA, length(out)) } else  {out <- .fn(mod)}
       out
       }
+    }
+
+  if(ncores<=1){
+    parallel_env="no"
+    ncores=getOption("boot.ncpus",1L)
+  }else{
+    if(.Platform$OS.type=="unix"){
+      parallel_env="multicore"
+    }else{
+      parallel_env="snow"
+    }
   }
-  b <- boot::boot(data.frame(update(object, model=TRUE)$model), boot.f, R, .fn=f, ...)
+
+  b <- boot::boot(data.frame(update(object, model=TRUE)$model), boot.f, R, .fn=f,parallel = parallel_env,ncpus = ncores, ...)
   colnames(b$t) <- labels
   if(exists(".y.boot", envir=.carEnv))
      remove(".y.boot", envir=.carEnv)
@@ -167,10 +209,18 @@ Boot.nls <- function(object, f=coef, labels=names(f(object)),
   if(d != R)
    cat( paste("\n","Number of bootstraps was", d, "out of", R, "attempted", "\n"))
   b
-  }
+}
+
+Confint.boot <- function(object, parm, level = 0.95,
+  type = c("bca", "norm", "basic", "perc"), ...){
+  ci <- confint(object, parm, level, type, ...)
+  co <- object$t0
+  co <- co[names(co) %in% rownames(ci)]
+  cbind(Estimate=co, ci)
+}
 
 confint.boot <- function(object, parm, level = 0.95,
-    type = c("bca", "norm", "basic", "perc", "all"), ...){
+    type = c("bca", "norm", "basic", "perc"), ...){
   if (!requireNamespace("boot")) "boot package is missing"
   cl <- match.call()
   type <- match.arg(type)
@@ -249,16 +299,19 @@ summary.boot <- function (object, parm, high.moments = FALSE,
     return(stats[parm , use])
 }
 print.summary.boot <-
-   function(x, digits = max(getOption("digits") - 2, 3), ...)
-{
-    print.data.frame(x, digits=digits, ...)
-}
+   function(x, digits = max(getOption("digits") - 2, 3), ...) {
+    if(dim(x)[1] == 1L){print.data.frame(x, digits=digits, ...)} else{
+      if(sd(x[, 1]) < 1.e-8 ) {
+        cat(paste("\nNumber of bootstrap replications R =", x[1, 1], "\n", sep=" "))
+        print.data.frame(x[, -1], digits=digits, ...)} else
+      print.data.frame(x, digits=digits, ...)
+}}
 
 hist.boot <- function(x, parm, layout=NULL, ask, main="", freq=FALSE,
-      estPoint = TRUE, point.col="black", point.lty=2, point.lwd=2,
-      estDensity = !freq, den.col="blue", den.lty=1, den.lwd=2,
-      estNormal = !freq,  nor.col="red",   nor.lty=2, nor.lwd=2,
-      ci=c("bca", "none", "perc"), level=0.95,
+      estPoint = TRUE, point.col=carPalette()[1], point.lty=2, point.lwd=2,
+      estDensity = !freq, den.col=carPalette()[2], den.lty=1, den.lwd=2,
+      estNormal = !freq,  nor.col=carPalette()[3],   nor.lty=2, nor.lwd=2,
+      ci=c("bca", "none", "perc", "norm"), level=0.95,
       legend=c("top", "none", "separate"), box=TRUE, ...){
   not.aliased <- which(!is.na(x$t0))
   ci <- match.arg(ci)
@@ -338,7 +391,7 @@ hist.boot <- function(x, parm, layout=NULL, ask, main="", freq=FALSE,
   invisible(NULL)
   }
 
-vcov.boot <- function(object, ...){cov(object$t)}
+vcov.boot <- function(object, ...){cov(object$t, ...)}
 
 
 

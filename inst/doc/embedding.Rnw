@@ -155,10 +155,7 @@ The \code{Boot} function would have scoping problems even without the user embed
 <<eval=FALSE>>=
 .carEnv <- new.env(parent=emptyenv())
 @
-and then evaluate the model in the environment \code{.carEnv}.  This environment is not exported, so to see that it exists you would need to enter
-<<>>=
-car:::.carEnv
-@
+and then evaluate the model in the environment \code{.carEnv}.  This environment is not exported, so to see that it exists you would need to enter \code{car:::.carEnv}.
 We use this same trick in the \code{Boot.default} function so that \code{.carEnv} is globally visible. Here is a copy of \code{Boot.default} to show how this works.
 <<eval=FALSE>>=
 Boot.default <- function(object, f=coef, labels=names(coef(object)),

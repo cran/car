@@ -1,3 +1,37 @@
+Changes to Version 3.0-0
+
+  o This version of the package corresponds to the third edition of Fox and Weisberg, An R Companion to Applied Regression (Sage, forthcoming).
+
+  o Reorganized plotting functions.
+
+  o Functions deprecated in 2009 are now defunct.
+  
+  o bootCase(), nextBoot(), and their methods are now deprecated in favor of Boot().
+
+  o All data sets moved to the carData package.
+
+  o Improved handling of imports (suggestion of Jonathon Love).
+
+  o Changed as.factor.result argument in recode() to as.factor, and as.numeric.result to as.numeric.
+
+  o New brief(), Confint(), Predict(), Tapply(), S() functions.
+
+  o New poTest() function for testing for proportional odds in "polr" models.
+
+  o New deletion diagnostics for mixed-effects models, e.g., influence.merMod().
+
+  o Fixed bug in LinearHypothesis.merMod() when rhs of "F" test is specified (reported by Patrick Forscher).
+  
+  o Anova.lm() now computes SSs by model comparison for models with aliased coefficients (response to problem reported by Ruchi Mahadeshwar).
+
+  o Introduced carPalette() for color selection.
+  
+  o new bcnPowerAxis() function for bcnPower() transformations.
+  
+  o New vif.merMod() method.
+
+  o Various small improvements and fixes.
+
 Changes to Version 2.1-6
 
   o Made several functions compatible with vcov() in R-devel (3.5.0).

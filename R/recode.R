@@ -1,13 +1,13 @@
 # recode function (J. Fox)
-# last modified 2014-08-04 by J. Fox
+# last modified 2017-04-27 by J. Fox
 
-recode <- function(var, recodes, as.factor.result, as.numeric.result=TRUE, levels){
+recode <- function(var, recodes, as.factor, as.numeric=TRUE, levels){
   lo <- -Inf
   hi <- Inf
 	recodes <- gsub("\n|\t", " ", recodes)
 	recode.list <- rev(strsplit(recodes, ";")[[1]])
 	is.fac <- is.factor(var)
-	if (missing(as.factor.result)) as.factor.result <- is.fac
+	if (missing(as.factor)) as.factor <- is.fac
 	if (is.fac) var <- as.character(var)
 	result <- var
 	for (term in recode.list){
@@ -55,11 +55,11 @@ recode <- function(var, recodes, as.factor.result, as.numeric.result=TRUE, level
 			}
 		}
 	}
-	if (as.factor.result) {
+	if (as.factor) {
 		result <- if (!missing(levels)) factor(result, levels=levels) 
 			else as.factor(result)
 	}
-	else if (as.numeric.result && (!is.numeric(result))) {
+	else if (as.numeric && (!is.numeric(result))) {
 		result.valid <- na.omit(result)
 		opt <- options("warn"=-1)
 		result.valid <- as.numeric(result.valid)
