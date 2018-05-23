@@ -19,7 +19,7 @@ influence.merMod <- function(model, groups, data, maxfun=1000, ...){
     }
     else if (length(groups) > 1){
         del.var <- paste0(groups, collapse=".")
-        data[, del.var] <- apply(data, 1, function (row) paste0(row, collapse="."))
+        data[, del.var] <- apply(data[, groups], 1, function (row) paste0(row, collapse="."))
         groups <- del.var
     }
     unique.del <- unique(data[, groups])
