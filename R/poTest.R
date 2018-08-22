@@ -55,7 +55,7 @@ poTest.polr <- function(model, ...){
     b <- cbind(b, matrix(beta, ncol = k - 1))
     colnames(b) <- c("b[polr]", paste0("b[>", levels[1:(k - 1)], "]"))
     result <- list(call=model$call, coef.names=coef.names, b=b,
-                   vcov=vcov, D=D, chisq=as.vector(chisq), df=df, 
+                   vcov=vcov, D=D, chisq=as.vector(chisq), df=df,
                    D.p=D.p, chisq.p=chisq.p, df.p = k - 2)
     class(result) <- "poTest"
     result
@@ -64,6 +64,7 @@ poTest.polr <- function(model, ...){
 print.poTest <- function(x, digits=3, ...){
     cat("\nTests for Proportional Odds\n")
     print(x$call)
+    cat("\n")
     names <- c("Overall", x$coef.names)
     chisq <- c(x$chisq, x$chisq.p)
     df <- c(x$df, rep(x$df.p, length(x$chisq.p)))

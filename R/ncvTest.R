@@ -5,6 +5,7 @@
 # 2013-07-09 Works correctly if data arg is not set in the model
 #            works correctly if the formula in 'lm' is an argument
 # 2014-11-06 Fixed conflicts with objects in base package. J. Fox
+# 2018-06-07 format p-value. J. Fox
 #-------------------------------------------------------------------------------
 
 # score test of nonconstant variance (J. Fox)
@@ -52,12 +53,12 @@ ncvTest.glm <- function(model, ...){
     stop("requires lm object")
 }
 
-print.chisqTest <- function(x, ...){
+print.chisqTest <- function(x, digits=getOption("digits"), ...){
     title <- if (!is.null(x$test)) x$test else "Chisquare Test"
     cat(title,"\n")
     if (!is.null(x$formula)) cat(x$formula.name, 
         "formula:", as.character(x$formula), "\n")
-    cat("Chisquare =", x$ChiSquare,"   Df =", x$Df,
-        "    p =", x$p, "\n")
+    cat(paste0("Chisquare = ", format(x$ChiSquare, digits=digits), ", Df = ", x$Df,
+        ", p = ", format.pval(x$p, digits=max(1, digits - 2)), "\n"))
     invisible(x)
 }

@@ -2,6 +2,8 @@
 # 2017-12-14: improved recovery of model data
 #             removed faulty one-step approximations
 # 2018-01-28: fix computation of Cook's D for lme models
+# 2018-05-23: fixed bug when more than one grouping variable (reported by Maarten Jung)
+# 2018-06-07: skip plot of "sigma^2" in GLMM if dispersion fixed to 1; improved labelling for covariance components
 
 # influence diagnostics for mixed models
 
@@ -19,7 +21,7 @@ influence.merMod <- function(model, groups, data, maxfun=1000, ...){
     }
     else if (length(groups) > 1){
         del.var <- paste0(groups, collapse=".")
-        data[, del.var] <- apply(data, 1, function (row) paste0(row, collapse="."))
+        data[, del.var] <- apply(data[, groups], 1, function (row) paste0(row, collapse="."))
         groups <- del.var
     }
     unique.del <- unique(data[, groups])
@@ -42,8 +44,8 @@ influence.merMod <- function(model, groups, data, maxfun=1000, ...){
     for (i in 1:length(Vs)){
         V <- Vs[[i]]
         c.names <- colnames(V)
-        e.names <- outer(c.names, c.names, function(a, b) paste0(a, ".", b))
-        diag(e.names) <- c.names
+        e.names <- outer(c.names, c.names, function(a, b) paste0("C[", a, ",", b, "]"))
+        diag(e.names) <- paste0("v[", c.names, "]")
         v <- V[lower.tri(V, diag=TRUE)]
         names(v) <- paste0(nms[i], sep, e.names[lower.tri(e.names, diag=TRUE)])
         vc <- c(vc, v)
@@ -154,7 +156,7 @@ influence.lme <- function(model, groups, data, ...){
     }
     else if (length(groups) > 1){
         del.var <- paste0(groups, collapse=".")
-        data[, del.var] <- apply(data, 1, function (row) paste0(row, collapse="."))
+        data[, del.var] <- apply(data[, groups], 1, function (row) paste0(row, collapse="."))
         groups <- del.var
     }
     unique.del <- unique(data[, groups])
@@ -225,16 +227,23 @@ infIndexPlot.influence.merMod <- function(model, vars=c("dfbeta", "dfbetas", "va
     if (4 %in% what) colnames(X)[ncol(X)] <- "Cook's D"
     names <- colnames(X)
     # check for row.names, and use them if they are numeric.
-    op <- par(mfrow=c(ncol(X), 1), mar=c(1, 4, 0, 2) + .0,
-              mgp=c(2, 1, 0), oma=c(6, 0, 6, 0))
     oldwarn <- options()$warn
     options(warn=-1)
     xaxis <- as.numeric(row.names(model[[2]]))
     options(warn=oldwarn)
     if (any (is.na(xaxis))) xaxis <- 1:length(xaxis)
-    on.exit(par(op))
     plotnum <- 0
     nplots <- ncol(X)
+    if ("sigma^2" %in% names){
+        if (all(X[, "sigma^2"] == 0)){ # check for fixed dispersion
+            X <- X[, names != "sigma^2", drop=FALSE]
+            names <- names[names != "sigma^2"]
+            nplots <- nplots - 1
+        }
+    }
+    op <- par(mfrow=c(nplots, 1), mar=c(1, 4, 0, 2) + .0,
+              mgp=c(2, 1, 0), oma=c(6, 0, 6, 0))
+    on.exit(par(op))
     for (j in 1:nplots){
         plotnum <- plotnum + 1
         plot(xaxis, X[, j], type="n", ylab=names[j], xlab="", xaxt="n", tck=0.1, ...)

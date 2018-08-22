@@ -6,7 +6,7 @@
 
 \title{Enhanced Scatterplots with Marginal Boxplots, Point Marking, Smoothers, and More}
 \description{
-This function uses basic R graphics to draw a two-dimensional scatterplot, with options to allow for plot enhancements that are often helpful with regression problems.  Enhancements include adding marginal boxplots, estimated mean and variance functions using either parametric or nonparametric methods, point identification, jittering, setting characteristics of points and lines like color, size and symbol, fitting conditional on a grouping variable, and other enhancements.
+This function uses basic R graphics to draw a two-dimensional scatterplot, with options to allow for plot enhancements that are often helpful with regression problems.  Enhancements include adding marginal boxplots, estimated mean and variance functions using either parametric or nonparametric methods, point identification, jittering, setting characteristics of points and lines like color, size and symbol, marking points and fitting lines conditional on a grouping variable, and other enhancements.
 \code{sp} is an abbreviation for \code{scatterplot}.
 }
 \usage{
@@ -42,10 +42,10 @@ sp(x, ...)
     if \code{"y"} a marginal boxplot for vertical \code{y}-axis is drawn to the left of the plot;
     if \code{"xy"} both marginal boxplots are drawn; set to \code{""} or \code{FALSE} to
     suppress both boxplots.}
-  \item{regLine}{controls adding a fitted regression line to the plot.  if 
-       \code{regLine=FALSE}, no line is drawn.  If \code{TRUE}, the default, an ols 
+  \item{regLine}{controls adding a fitted regression line to the plot.  if
+       \code{regLine=FALSE}, no line is drawn.  If \code{TRUE}, the default, an OLS
        line is fit.  This argument can also be a list.  The default of \code{TRUE} is
-       equivalent to \code{refLine=list(method=lm, lty=1, lwd=2, col=col)}, which specifies
+       equivalent to \code{regLine=list(method=lm, lty=1, lwd=2, col=col)}, which specifies
        using the \code{lm} function to estimate the fitted line, to draw a solid line
        (\code{lty=1}) of width 2 times the nominal width (\code{lwd=2}) in the color given by
        the first element of the \code{col} argument described below.
@@ -54,59 +54,58 @@ sp(x, ...)
        and properties of a
        legend; if \code{FALSE}, the legend is suppressed. Can be a list of
        named arguments, as follows: \code{title} for the legend; \code{inset}, giving space
-      as a proportion of the axes to offset the legend from the axes; \code{coords} 
-      specifying the position of the legend in any form acceptable to the 
-      \code{\link{legend}} function or, if not given, the legend is placed \emph{above} 
+      as a proportion of the axes to offset the legend from the axes; \code{coords}
+      specifying the position of the legend in any form acceptable to the
+      \code{\link{legend}} function or, if not given, the legend is placed \emph{above}
       the plot in the upper margin; \code{columns} for the legend, determined automatically
-      to prefer a horizontal layout if not given explicitly; \code{cex} giving the 
-      relative size of the legend. \code{TRUE} (the default) is equivalent to
+      to prefer a horizontal layout if not given explicitly; \code{cex} giving the
+      relative size of the legend symbols and text. \code{TRUE} (the default) is equivalent to
       \code{list(title=deparse(substitute(groups)), inset=0.02, cex=1)}.}
   \item{id}{controls point identification; if \code{FALSE} (the default), no points are
       identified; can be a list of named arguments to the \code{\link{showLabels}} function;
-      \code{TRUE} is equivalent to 
+      \code{TRUE} is equivalent to
       \code{list(method="mahal", n=2, cex=1, col=carPalette()[-1], location="lr")},
       which identifies the 2 points (in each group) with the largest Mahalanobis distances
       from the center of the data.  See \code{\link{showLabels}} for a description of the
       other arguments.  The default behavior of \code{id} is not the same in all graphics
       functions in \pkg{car}, as the \code{method} used depends on the type of plot.}
-  \item{ellipse}{controls plotting data-concentration ellipses. If \code{FALSE}     
-      (the default), no ellipses are plotted.  Can be a list of named values giving 
+  \item{ellipse}{controls plotting data-concentration ellipses. If \code{FALSE}
+      (the default), no ellipses are plotted.  Can be a list of named values giving
       \code{levels}, a vector of one or more bivariate-normal probability-contour levels at
-      which to plot the ellipses; \code{robust}, a logical value determing whether to use 
-      the \code{\link{cov.trob}} function in the \pkg{MASS} package to calculate the center 
+      which to plot the ellipses; \code{robust}, a logical value determing whether to use
+      the \code{\link{cov.trob}} function in the \pkg{MASS} package to calculate the center
       and covariance matrix for the data ellipses; and \code{fill} and \code{fill.alpha},
-      which control whether the ellipse is filled and the transparency of the fill. 
+      which control whether the ellipse is filled and the transparency of the fill.
       \code{TRUE} is equivalent to
       \code{list(levels=c(.5, .95), robust=TRUE, fill=TRUE, fill.alpha=0.2)}.}
   \item{grid}{If TRUE, the default, a light-gray background grid is put on the graph}
   \item{smooth}{specifies a nonparametric estimate of the mean or median
     function of the vertical axis variable given the
-    horizontal axis variable and optionally a nonparametric estimate of the spread or 
-    variance function.  If
-    \code{smooth=FALSE} neither function is drawn.  If \code{smooth=TRUE}, then both the mean     function
-    and variance funtions are drawn for ungrouped data, and the mean function only is drawn 
+    horizontal axis variable and optionally a nonparametric estimate of the conditional variance.  If
+    \code{smooth=FALSE} neither function is drawn.  If \code{smooth=TRUE}, then both the mean function
+    and variance funtions are drawn for ungrouped data, and the mean function only is drawn
     for grouped
-    data.  The default smoother is \code{\link{loessLine}}, which uses the 
+    data.  The default smoother is \code{\link{loessLine}}, which uses the
     \code{\link{loess}} function from
-    the \pkg{stats} package.  This smoother is fast and reliable.  See the details below 
+    the \pkg{stats} package.  This smoother is fast and reliable.  See the details below
     for changing
-    the smoother, line type, width and color, of the added lines, and adding arguments 
+    the smoother, line type, width and color, of the added lines, and adding arguments
     for the smoother.}
   \item{groups}{a factor or other variable dividing the data into groups; groups are
-    plotted with different colors, plotting characters, fits and smooths.  Using this 
+    plotted with different colors, plotting characters, fits, and smooths.  Using this
     argument is equivalent to specifying the grouping variable in the formula.}
-  \item{by.groups}{if \code{TRUE}, regression lines are fit by groups.}
+  \item{by.groups}{if \code{TRUE} (the default when there are groups), regression lines are fit by groups.}
   \item{xlab}{label for horizontal axis.}
   \item{ylab}{label for vertical axis.}
   \item{log}{same as the \code{log} argument to \code{\link{plot}}, to produce log axes.}
   \item{jitter}{a list with elements \code{x} or \code{y} or both, specifying jitter factors
     for the horizontal and vertical coordinates of the points in the scatterplot. The
     \code{\link[base]{jitter}} function is used to randomly perturb the points; specifying a
-    factor of \code{1} produces the default jitter. 
+    factor of \code{1} produces the default jitter.
     Fitted lines are unaffected by the jitter.}
-  \item{col}{with no grouping, this specifies a color for plotted points; 
-    with grouping this argument  must be a vector
-    of colors of length at least equal to the number of groups. The default is 
+  \item{col}{with no grouping, this specifies a color for plotted points;
+    with grouping, this argument  should be a vector
+    of colors of length at least equal to the number of groups. The default is
     value returned by \code{\link{carPalette}[-1]}.}
   \item{pch}{plotting characters for points; default is the plotting characters in
     order (see \code{\link[graphics]{par}}).}
@@ -123,15 +122,15 @@ sp(x, ...)
 }
 
 \details{
-   Many arguments to scatterplot were changed with verions 3 of \pkg{car} that we hope simplifies use of
+   Many arguments to \code{scatterplot} were changed in version 3 of \pkg{car} to simplify use of
    this function.
 
-   The \code{smooth} argument is usually either equal to \code{TRUE} or \code{FALSE} to draw, or omit,
-   the smoother.  Alternatively \code{smooth} can equal a list of arguments.  The default behavior of
-   \code{smooth=TRUE} is equivalent to \code{smooth=list(smoother=loessLine, spread=!by.groups, lty.smooth=2, lty.spread=4)}, specifying the smoother to be used, including the spread or variance smooth,
-   and the line widths and types for the curves.  You can also specify the colors you want to use for the mean and variance smooths with the arguments \code{col.smooth} and \code{col.spread}. Alternative smoothers are \code{gamline} that uses the
-   \code{\link{gam}} function from the \pkg{mgcv} package, and \code{quantregLine} that uses quantile regression to
-   estimate the median and quartile functiona using \code{\link{rqss}} frm the \pkg{quantreg} package.  All of these
+   The \code{smooth} argument is usually either set to \code{TRUE} or \code{FALSE} to draw, or omit,
+   the smoother.  Alternatively \code{smooth} can be set to a list of arguments.  The default behavior of
+   \code{smooth=TRUE} is equivalent to \code{smooth=list(smoother=loessLine, var=!by.groups, lty.var=2, lty.var=4)}, specifying the smoother to be used, including the variance smooth,
+   and the line widths and types for the curves.  You can also specify the colors you want to use for the mean and variance smooths with the arguments \code{col.smooth} and \code{col.var}. Alternative smoothers are \code{gamline} which uses the
+   \code{\link{gam}} function from the \pkg{mgcv} package, and \code{quantregLine} which uses quantile regression to
+   estimate the median and quartile functions using \code{\link{rqss}} from the \pkg{quantreg} package.  All of these
    smoothers have one or more arguments described on their help pages, and these arguments can be added to the
    \code{smooth} argument; for example, \code{smooth = list(span=1/2)} would use the default
    \code{loessLine} smoother,
@@ -144,8 +143,10 @@ sp(x, ...)
    comnditional variabiliity at each value on the horizontal axis.  Because smoothing is done separately for
    positive and negative residuals, the variation shown will generally not be symmetric about the fitted mean
    function.  For the \code{quantregLine} method, the center estimates the median for each value on the
-   horizontal axis, and the spread estimates the lower and upper quartiles of the estimated conditional
+   horizontal axis, and the variability estimates the lower and upper quartiles of the estimated conditional
    distribution for each value of the horizontal axis.
+
+   The sub-arguments \code{spread}, \code{lty.spread} and \code{col.spread} of the \code{smooth} argument are equivalent to the newer \code{var}, \code{col.var} and \code{lty.var}, respectively, recognizing that the spread is a measuure of conditional variability.
 }
 
 \value{
@@ -155,7 +156,7 @@ sp(x, ...)
 \author{John Fox \email{jfox@mcmaster.ca}}
 
 \references{
-  Fox, J. and Weisberg, S. (2019) 
+  Fox, J. and Weisberg, S. (2019)
   \emph{An R Companion to Applied Regression}, Third Edition, Sage.
 }
 
@@ -172,7 +173,7 @@ scatterplot(prestige ~ income, data=Prestige, smooth=list(smoother=quantregLine)
 
 # use quantile regression for median and quartile fits
 scatterplot(prestige ~ income | type, data=Prestige,
-            smooth=list(smoother=quantregLine, spread=TRUE, span=1, lwd=4, lwd.spread=2))
+            smooth=list(smoother=quantregLine, var=TRUE, span=1, lwd=4, lwd.var=2))
 
 scatterplot(prestige ~ income | type, data=Prestige, legend=list(coords="topleft"))
 

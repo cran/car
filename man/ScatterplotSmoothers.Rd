@@ -20,13 +20,13 @@ the contents of which vary by the smoother (see \emph{Details} below). The \code
 }
 
 \usage{
-gamLine(x, y, col=carPalette()[1], log.x=FALSE, log.y=FALSE, spread=FALSE, 
+gamLine(x, y, col=carPalette()[1], log.x=FALSE, log.y=FALSE, var=FALSE, spread=var,
     smoother.args=NULL, draw=TRUE, offset=0)
 
-loessLine(x, y, col=carPalette()[1], log.x=FALSE, log.y=FALSE, spread=FALSE, 
+loessLine(x, y, col=carPalette()[1], log.x=FALSE, log.y=FALSE, var=FALSE, spread=var,
     smoother.args=NULL, draw=TRUE, offset=0)
 
-quantregLine(x, y, col=carPalette()[1], log.x=FALSE, log.y=FALSE, spread=FALSE, 
+quantregLine(x, y, col=carPalette()[1], log.x=FALSE, log.y=FALSE, var=FALSE, spread=var,
     smoother.args=NULL, draw=TRUE, offset=0)
 }
 
@@ -36,8 +36,8 @@ quantregLine(x, y, col=carPalette()[1], log.x=FALSE, log.y=FALSE, spread=FALSE,
   \item{col}{line color.}
   \item{log.x}{should be set to \code{TRUE} (default is \code{FALSE}) if the horizontal axis is logged.}
   \item{log.y}{should be set to \code{TRUE} (default is \code{FALSE}) if the vertical axis is logged.}
-  \item{spread}{the default is to plot only an estimated mean or median function.  If this
-  argument is TRUE, then a measure of spread is also plotted.}
+  \item{spread, var}{the default is to plot only an estimated mean or median function.  If either of
+  these arguments is TRUE, then a measure of variability is also plotted.}
   \item{smoother.args}{additional options accepted by the smoother, in the form of a list of
     named values (see \emph{Details} below).}
   \item{draw}{if TRUE, the default, draw the smoother on the currently active graph.
@@ -61,7 +61,7 @@ based on L1 regression for the median and quantile regression if you ask for the
 likely to be more robust than the other smoothers.
 
 The argument \code{smoother.args} is a list of named elements used to pass
-additional arguments to the smoother.  As of November, 2016, the smoother is evaluated at an equally spaced grid of 50 points in the range of the horizontal variable.  With any of the smoothers you can change to say 100 evaluation points by using the argument \code{smoother.args=list(evaluation=100)}.
+additional arguments to the smoother.  As of November, 2016, the smoother is evaluated at an equally spaced grid of 50 points in the range of the horizontal variable.  With any of the smoothers you can change to say 100 evaluation points by using the argument \code{smoother.args=list(evaluation=100)}.  As of version 3.0-1, the arguments in \code{smoother.args} \code{col.var}, \code{lty.var} and \code{lwd.var} are equivalent to \code{col.spread}, \code{lty.spread} and \code{lwd.spread}, respectively.
 
 For \code{loessLine} the default value is
 \code{smoother.args=list(lty.smooth=1, lwd.smooth=2, lty.spread=4, lwd.spread=2, span=2/3 (prior to 11/2016, span was 1/2),

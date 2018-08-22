@@ -88,7 +88,7 @@ make any sense. }
 can be a list giving the smoother function and its named arguments; \code{TRUE}, the default, is equivalent to
 \code{list(smoother=loessLine, span=2/3)} for linear models and \code{list(smoother=gamLine, k=3)} for generalized linear models.
 See \code{\link{ScatterplotSmoothers}} for the smoothers supplied by the
-\pkg{car} package and their arguments.}
+\pkg{car} package and their arguments; the \code{spread} argument is not supported for marginal model plots.}
 \item{groups}{The name of a vector that specifies a grouping variable for
 separate colors/smoothers.  This can also be specified as a conditioning
 argument on the \code{terms} argument.}

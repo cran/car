@@ -24,8 +24,8 @@ Plotted horizontal coordinates.
 Plotted vertical coordinates.
 }
   \item{labels}{
-Plotting labels.  If \code{NULL}, case numbers will be used.  If labels are long, the
-\code{\link{substr}} or \code{\link{abbreviate}} functions can be used to shorten them.
+Plotting labels.  When called from within a \pkg{car} plotting function, the labels are automatically obtained from the row names in the data frame used to create the modeling object. If \code{labels=NULL}, case numbers will be used.  If labels are long, the
+\code{\link{substr}} or \code{\link{abbreviate}} functions can be used to shorten them. Users may supply their own labels as a character vector of length equal to the number of plotted points.  For use with \pkg{car} plotting functions, the number of plotted points is equal to the number of rows of data that have neither missing values nor are excluded using the `subset' argument.  When called directly, the length of labels shoud equal the length of x.
 }
   \item{method}{
 How points are to be identified.  See Details below.

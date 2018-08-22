@@ -16,7 +16,8 @@
 
 
 showLabels <- function(x, y, labels=NULL, method="identify",
-  n = length(x), cex=1, col=carPalette()[1], location=c("lr", "ab", "avoid"), ...) {
+     n = length(x), cex=1, col=carPalette()[1], 
+     location=c("lr", "ab", "avoid"), ...) {
   location <- match.arg(location)
   res <- NULL
   method <- if(is.list(method)) method else list(method)
@@ -29,11 +30,12 @@ showLabels <- function(x, y, labels=NULL, method="identify",
   }
 
 showLabels1 <- function(x, y, labels=NULL, id.method="identify",
-	id.n = length(x), id.cex=1, id.col=carPalette()[1], id.location="lr", all=NULL, ...) {
+	   id.n = length(x), id.cex=1, id.col=carPalette()[1], 
+	   id.location="lr", all=NULL, ...) { 
 # If labels are NULL, try to get the labels from x:
   if (is.null(labels)) labels <- names(x)
   if (is.null(labels)) labels <- paste(seq_along(x))
- if (is.null(id.col)) id.col <- carPalette()[1]
+  if (is.null(id.col)) id.col <- carPalette()[1]
   if (is.null(id.location)) id.location <- "lr"
 # logged-axes?
   log.x <- par("xlog")
@@ -44,11 +46,13 @@ showLabels1 <- function(x, y, labels=NULL, id.method="identify",
 #    --- a vector of n numbers
 #    --- a text string:  'identify', 'x', 'y', 'mahal', 'r'
   idmeth <- pmatch(id.method[1], c("x", "y", "mahal", "identify", "r"))
-  if(!is.na(idmeth)) idmeth <- c("x", "y", "mahal", "identify", "r")[idmeth]
-# if idmeth is NA, then it must be <= n numbers or row names
+  if(!is.na(idmeth)) 
+    idmeth <- c("x", "y", "mahal", "identify", "r")[idmeth]
+# if idmeth is NA, then id.method must be <= n numbers or labels
   id.var <- NULL
   if(is.na(idmeth)){
-    if(is.null(all)) all <- list(labels=labels, subs=rep(TRUE, length(labels)))
+    if(is.null(all)) 
+      all <- list(labels=labels, subs=rep(TRUE, length(labels)))
     names(all$labels) <- all$labels
     if(length(id.method) >= length(x)){
       id.var <- id.method[which(all$subs)]
@@ -64,11 +68,11 @@ showLabels1 <- function(x, y, labels=NULL, id.method="identify",
   }
   else {
 # use identify?
-     if(idmeth == "identify"){
-    	  result <- labels[identify(x, y, labels, n=length(x), cex=id.cex,
-                 col=id.col)]
+  if(idmeth == "identify"){
+    	  result <- labels[identify(x, y, labels, n=length(x), 
+    	                            cex=id.cex, col=id.col)]
     	  if(length(result) > 0) return(unique(result)) else return(NULL)
-     }
+  }
 # missing values need to be removed
 	ismissing <- is.na(x) | is.na(y) | is.na(labels)
 	if( any(ismissing) ) {
@@ -77,35 +81,35 @@ showLabels1 <- function(x, y, labels=NULL, id.method="identify",
 		labels <- labels[!ismissing]
 	}
 # other methods:
-    id.var <- switch(id.method,
-					x = if(log.x==TRUE)
-                 suppressWarnings(if(all(x) > 0)
-								    abs(log(x) - mean(log(x))) else
-                    return(invisible(NULL)))  else
-                 abs(x - mean(x)),
-					y = if(log.y==TRUE)
-                 suppressWarnings(if(all(y) > 0)
-								    abs(log(y) - mean(log(y))) else
-                    return(invisible(NULL)))  else
-                 abs(y - mean(y)),
-					r = if(log.y==TRUE)
-					       suppressWarnings(if(all(y) > 0)
-					          abs(log(y)) else
-					          return(invisible(NULL)))  else
-					          abs(y),
-          mahal = if(log.x == TRUE & log.y == TRUE) {
-                   suppressWarnings(if(all(x) > 0 & all(y) > 0)
-								      rowSums( qr.Q(qr(cbind(1, log(x), log(y))))^2 ) else
-                      return(invisible(NULL))) } else {
-                  if(log.x == TRUE) {
-                   suppressWarnings(if(all(x) > 0 )
-								      rowSums( qr.Q(qr(cbind(1, log(x), y)))^2 ) else
-                      return(invisible(NULL))) } else {
-                  if(log.y == TRUE) {
-                     suppressWarnings(if(all(y) > 0 )
-								      rowSums( qr.Q(qr(cbind(1, x, log(y))))^2 ) else
-                      return(invisible(NULL)))  } else {
-                  rowSums( qr.Q(qr(cbind(1, x, y)))^2 ) }}})
+  id.var <- switch(id.method,
+		x = if(log.x==TRUE)
+          suppressWarnings(if(all(x) > 0)
+				   abs(log(x) - mean(log(x))) else
+           return(invisible(NULL)))  else
+           abs(x - mean(x)),
+		y = if(log.y==TRUE)
+          suppressWarnings(if(all(y) > 0)
+					 abs(log(y) - mean(log(y))) else
+           return(invisible(NULL)))  else
+           abs(y - mean(y)),
+		r = if(log.y==TRUE)
+					suppressWarnings(if(all(y) > 0)
+					 abs(log(y)) else
+					 return(invisible(NULL)))  else
+					 abs(y),
+    mahal = if(log.x == TRUE & log.y == TRUE) {
+          suppressWarnings(if(all(x) > 0 & all(y) > 0)
+					 rowSums( qr.Q(qr(cbind(1, log(x), log(y))))^2 ) else
+           return(invisible(NULL))) } else {
+            if(log.x == TRUE) {
+             suppressWarnings(if(all(x) > 0 )
+						 rowSums( qr.Q(qr(cbind(1, log(x), y)))^2 ) else
+             return(invisible(NULL))) } else {
+            if(log.y == TRUE) {
+             suppressWarnings(if(all(y) > 0 )
+							rowSums( qr.Q(qr(cbind(1, x, log(y))))^2 ) else
+              return(invisible(NULL)))  } else {
+              rowSums( qr.Q(qr(cbind(1, x, y)))^2 ) }}})
      }
 # require id.n positive
   if(id.n <= 0L) return(invisible(NULL))
@@ -128,12 +132,14 @@ showLabels1 <- function(x, y, labels=NULL, id.method="identify",
     			col = id.col, pos = labpos[i], offset = 0.25)}
   }
   else maptools::pointLabel(c(x[ind], x[ind]), c(y[ind], y[ind]),
-                            c(paste0(" ", labels[ind], " "), rep(" ", length(ind))),
-                            cex=id.cex, xpd=TRUE, col=id.col)
+                c(paste0(" ", labels[ind], " "), rep(" ", length(ind))),
+                cex=id.cex, xpd=TRUE, col=id.col)
   if (any(as.character(ind) != labels[ind])) names(ind) <- labels[ind]
   result <- ind
   if (length(result) == 0) return(NULL) else return(result)
 }
+
+
 
 
 

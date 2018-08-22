@@ -25,6 +25,10 @@
 # 2017-11-30: substitute carPalette() for palette(). J. Fox
 # 2017-12-07: J. Fox: added fill, fill.alpha subargs to ellipse arg, suggestion of Michael Friendly.
 # 2018-03-23: J. Fox: fix ellipses when log-axes used by groups; fix interactive point identification by groups.
+# 2018-04-02: J. Fox: warning rather than error for too few colors.
+# 2018-04-12: J. Fox: fixed error produced when groups not a factor, reported by Alexandre Courtiol.
+# 2018-05-19: J. Fox: fixed bug when legend=FALSE, reported by Castor Guisande.
+# 2018-06-25: S. Weisberg  made the argument 'var' an alias of 'spread'
 
 reg <- function(reg.line, x, y, col, lwd, lty, log.x, log.y){
   if(log.x) x <- log(x)
@@ -111,7 +115,7 @@ scatterplot.formula <- function (formula, data, subset, xlab, ylab,
 
 scatterplot.default <- function(x, y, boxplots=if (by.groups) "" else "xy",
                                 regLine=TRUE, legend=TRUE, id=FALSE, ellipse=FALSE, grid=TRUE,
-                                smooth=TRUE, #spread=!by.groups,
+                                smooth=TRUE,
                                 groups, by.groups=!missing(groups),
                                 xlab=deparse(substitute(x)), ylab=deparse(substitute(y)),
                                 log="", jitter=list(), cex=par("cex"),
@@ -121,8 +125,10 @@ scatterplot.default <- function(x, y, boxplots=if (by.groups) "" else "xy",
   id <- applyDefaults(id, defaults=list(method="mahal", n=2, cex=1, col=carPalette()[-1], location="lr"), type="id")
   legend <- applyDefaults(legend, defaults=list(title=deparse(substitute(groups)), inset=0.02, cex=1))
   legend.plot <- !(isFALSE(legend) || missing(groups))
-  legend.title <- if (legend.plot) legend$title else ""
-  legend.cex <- legend$cex
+  if (legend.plot){
+    legend.title <- legend$title
+    legend.cex <- legend$cex
+  }
   if (isFALSE(id)){
     id.n <- 0
     id.method <- "mahal"
@@ -138,6 +144,9 @@ scatterplot.default <- function(x, y, boxplots=if (by.groups) "" else "xy",
   }
   smoother.args <- applyDefaults(smooth, defaults=list(smoother=loessLine, spread=!by.groups, lty.smooth=2, lty.spread=4), type="smooth")
   if (!isFALSE(smoother.args)) {
+# check for an argument 'var' in smoother.args.
+    if(!is.null(smoother.args$var)) smoother.args$spread <- smoother.args$var
+# end change
     smoother <- smoother.args$smoother
     spread <- if(is.null(smoother.args$spread)) TRUE else smoother.args$spread
     smoother.args$smoother <- NULL
@@ -151,12 +160,17 @@ scatterplot.default <- function(x, y, boxplots=if (by.groups) "" else "xy",
     fill <- ellipse.args$fill
     fill.alpha <- ellipse.args$fill.alpha
   }
-  n.groups <- if(by.groups) length(levels(groups)) else 1
+  n.groups <- if (by.groups) {
+    if (!is.factor(groups)) groups <- as.factor(groups)
+    length(levels(groups))
+    }
+    else 1
   regLine.args <- applyDefaults(regLine, defaults=list(method=lm, lty=1, lwd=2,
-                                                       col=col, type="regLine"))
+                                                       col=rep(col, n.groups), type="regLine"))
   if(!isFALSE(regLine.args)) {
-#    if(!by.groups) regLine.args$col <- palette()[3]
-    if(length(regLine.args$col) < n.groups) stop("argument 'col' must have as many elements as the number of groups")
+    if(length(regLine.args$col) < n.groups){
+      regLine.args$col <- rep(regLine.args$col, n.groups)
+    }
   }
   logged <- function(axis=c("x", "y")){
     axis <- match.arg(axis)
@@ -214,7 +228,7 @@ scatterplot.default <- function(x, y, boxplots=if (by.groups) "" else "xy",
     lines(c(.5, .5), c(Q3, UW))
     if (!is.null(res$out)) points(rep(.5, length(res$out)), res$out, cex=cex)
   }
-  force(by.groups)
+#  force(by.groups)
   id <- as.list(id)
   if (is.null(labels)){
     labels <- if (is.null(names(y)))
@@ -232,8 +246,8 @@ scatterplot.default <- function(x, y, boxplots=if (by.groups) "" else "xy",
   if( FALSE == boxplots) boxplots <- ""
   if (!missing(groups)){
     data <- na.omit(data.frame(groups, x, y, labels, stringsAsFactors=FALSE))
-    groups <- data[,1]
-    if (!is.factor(groups)) groups <- as.factor(groups)
+    groups <- data[ , 1]
+#    if (!is.factor(groups)) groups <- as.factor(groups)
     .x <- data[,2]
     .y <- data[,3]
     labels <- data[,4]
@@ -274,13 +288,15 @@ scatterplot.default <- function(x, y, boxplots=if (by.groups) "" else "xy",
   par(mar=c(0, mar[2], 0, mar[4]))
   if (xbox > 0) hbox(.x)
   par(mar=c(mar[1:2], top, mar[4]))
-  plot(.x, .y, xlab=xlab, ylab=ylab, log=log, cex=cex, #las=las,
-       #        cex.axis=cex.axis, cex.lab=cex.lab, cex.main=cex.main, cex.sub=cex.sub,
+  plot(.x, .y, xlab=xlab, ylab=ylab, log=log, cex=cex,
        type="n", ...)
   if(grid){
     grid(lty=1, equilogs=FALSE)
     box()}
-  if (n.groups > length(col)) stop("number of groups exceeds number of available colors")
+  if (n.groups > length(col)) {
+    warning("number of groups exceeds number of available colors\n  colors are recycled")
+    col <- rep(col, n.groups)
+  }
   if (length(col) == 1) col <- rep(col, 3)
   indices <- NULL
   range.x <- if (logged("x")) range(log(.x), na.rm=TRUE) else range(.x, na.rm=TRUE)

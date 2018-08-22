@@ -170,6 +170,8 @@ qqPlot.lm <- function(x, xlab=paste(distribution, "Quantiles"),
     else{
         labels <- id$labels
         if (is.null(labels)) labels <- names(residuals(x))
+        if (length(labels) != length(residuals(x))) 
+            stop("the number of labels, ", length(labels), ", differs from the number of cases, ", length(residuals(x)))
         id.method <- id$method
         id.n <- if ("identify" %in% id.method) Inf else id$n
         id.cex <- id$cex

@@ -44,11 +44,17 @@
 # 2017-12-24: Removed parallel argument that was added. If ncores<=1, no parallel processing is used.  If ncores>1
 # selects the correct parallel environment, and implements with that number of cores. 
 # 2018-01-28: Changed print.summary.boot to print R once only if it is constant
+# 2018-04-02: John fixed error in Boot.nlm() reported by Derek Ogle.
+# 2018-05-16: John modified Confint.boot() to return a "confint.boot" object.
+# 2018-08-03: Sandy corrected bug in Boot.lm and Boot.glm that caused failure
+#             with transformed predictors.  Also added test to missing values.
+#             If missing values are present, Boot returns an error.
 
-Boot <- function(object, f=coef, labels=names(f(object)), R=999, method=c("case", "residual"), ncores=1, ...){UseMethod("Boot")}
+Boot <- function(object, f=coef, labels=names(f(object)), R=999, 
+            method=c("case", "residual"), ncores=1, ...){UseMethod("Boot")}
 
 Boot.default <- function(object, f=coef, labels=names(f(object)),
-                     R=999, method=c("case", "residual"), ncores=1, start=FALSE,...) {
+            R=999, method=c("case", "residual"), ncores=1, start=FALSE,...) {
   if(!(requireNamespace("boot"))) stop("The 'boot' package is missing")
 
   ## original statistic
@@ -68,7 +74,8 @@ Boot.default <- function(object, f=coef, labels=names(f(object)),
       } else {
         update(object, subset=get(".boot.indices", envir=.carEnv), start=start)
       }
-      out <- if(!is.null(object$qr) && (mod$qr$rank != object$qr$rank)) f0 * NA else .fn(mod)
+      out <- if(!is.null(object$qr) && (mod$qr$rank != object$qr$rank)) 
+               f0 * NA else .fn(mod)
       out
      }
     } else {
@@ -89,7 +96,8 @@ Boot.default <- function(object, f=coef, labels=names(f(object)),
       } else {
         update(object, get(".y.boot", envir=.carEnv) ~ ., start=start)
       }
-      out <- if(!is.null(object$qr) && (mod$qr$rank != object$qr$rank)) f0 * NA else .fn(mod)
+      out <- if(!is.null(object$qr) && (mod$qr$rank != object$qr$rank)) 
+                f0 * NA else .fn(mod)
       out
       }
   }
@@ -128,26 +136,34 @@ Boot.default <- function(object, f=coef, labels=names(f(object)),
 
 Boot.lm <- function(object, f=coef, labels=names(f(object)),
                      R=999, method=c("case", "residual"), ncores=1, ...){
-   obj <- update(object, data=model.frame(object)) # removes missing data, if any
-   Boot.default(obj, f, labels, R, method,ncores, ...)
+# check for missing values:
+  if(!is.null(object$na.action))
+    stop("The Boot function in the 'car' package does not currently allow
+  missing values for lm or glm models.  Refit your model with rows 
+  with missing values removed.  If you have a data frame called 'd', 
+  then the argument data=na.omit(d) is likely to work.")
+  Boot.default(object, f, labels, R, method, ncores, ...)
    }
 
 Boot.glm <- function(object, f=coef, labels=names(f(object)),
                      R=999, method=c("case", "residual"), ncores=1, ...) {
   method <- match.arg(method, c("case", "residual"))
-  if(method=="case") {
-    obj <- update(object, data=model.frame(object))
-    Boot.default(obj, f, labels, R, method,ncores, ...)
-    } else {
-    stop("Residual bootstrap not implemented in the 'car' function 'Boot'.
+  if(method != "case") 
+    stop("Residual bootstrap is not implemented in the 'car' function 'Boot'.
   Use the 'boot' function in the 'boot' package to write
   your own version of residual bootstrap for a glm.")
-   }
-  }
+  # check for missing values:
+  if(!is.null(object$na.action))
+    stop("The Boot function in the 'car' package does not currently allow
+  missing values for lm or glm models.  Refit your model with rows 
+  with missing values removed.  If you have a data frame called 'd', 
+  then the argument data=na.omit(d) is likely to work.")  
+    Boot.default(object, f, labels, R, method,ncores, ...)
+}
 
 Boot.nls <- function(object, f=coef, labels=names(f(object)),
-                     R=999, method=c("case", "residual"),ncores=1, ...) {
-  f0 <- f(obj)
+                     R=999, method=c("case", "residual"), ncores=1, ...) {
+  f0 <- f(object)
 ### Remove rows with missing data from the data object
   all.names <- all.vars(object$m$formula())
   param.names <- names(object$m$getPars())
@@ -214,9 +230,14 @@ Boot.nls <- function(object, f=coef, labels=names(f(object)),
 Confint.boot <- function(object, parm, level = 0.95,
   type = c("bca", "norm", "basic", "perc"), ...){
   ci <- confint(object, parm, level, type, ...)
+  typelab <- attr(ci, "type")
+  class <- class(ci)
   co <- object$t0
   co <- co[names(co) %in% rownames(ci)]
-  cbind(Estimate=co, ci)
+  ci <- cbind(Estimate=co, ci)
+  attr(ci, "type") <- typelab
+  class(ci) <- class
+  ci
 }
 
 confint.boot <- function(object, parm, level = 0.95,
@@ -224,7 +245,7 @@ confint.boot <- function(object, parm, level = 0.95,
   if (!requireNamespace("boot")) "boot package is missing"
   cl <- match.call()
   type <- match.arg(type)
-  if(type=="all") stop("Use 'boot::boot.ci' if you want to see 'all' types")
+#  if(type=="all") stop("Use 'boot::boot.ci' if you want to see 'all' types") # has no effect
   types <-   c("bca", "norm", "basic", "perc")
   typelab <- c("bca", "normal",   "basic", "percent")[match(type, types)]
   nn <- colnames(object$t)
@@ -253,7 +274,7 @@ confint.boot <- function(object, parm, level = 0.95,
   ints
 }
 print.confint.boot <- function(x, ...) {
-  cat("Bootstrap quantiles, type = ", attr(x, "type"), "\n\n")
+  cat("Bootstrap", attr(x, "type"), "confidence intervals\n\n")
   print(as.data.frame(x), ...)
   }
 

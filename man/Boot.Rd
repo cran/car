@@ -78,7 +78,7 @@ generalized linear models has several competing approaches, but none are
 without problems.  If you want to do a residual bootstrap for a glm, you
 will need to write your own call to \code{boot}.
 
-For the default object to work with other types of regression models, the model must have methods for the the following generic functions:  \code{residuals(object, type="pearson")} must return Pearson residuals; \code{fitted(object)} must return fitted values; \code{hatvalues(object)} should return the leverages, or perhaps the value 1 which will effectively ignore setting the hatvalues.  In addition, the \code{data} argument should contain no missing values among the columns actually used in fitting the model, as the resampling may incorrectly attempt to include cases with missing values.  For \code{lm}, \code{glm} and \code{nls}, missing values are handled correctly.
+For the default object to work with other types of regression models, the model must have methods for the the following generic functions:  \code{residuals(object, type="pearson")} must return Pearson residuals; \code{fitted(object)} must return fitted values; \code{hatvalues(object)} should return the leverages, or perhaps the value 1 which will effectively ignore setting the hatvalues.  In addition, the \code{data} argument should contain no missing values among the columns actually used in fitting the model, as the resampling may incorrectly attempt to include cases with missing values.  For \code{lm}, \code{glm} and \code{nls}, missing values cause the return of an error message.
 
 An attempt to fit using a bootstrap sample may fail.  In a \code{lm} or
 \code{glm} fit, the bootstrap sample could have a different rank from the original

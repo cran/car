@@ -3,12 +3,15 @@
 \alias{densityPlot.default}
 \alias{densityPlot.formula}
 \alias{adaptiveKernel}
+\alias{depan}
+\alias{dbiwt}
 
 \title{
 Nonparametric Density Estimates
 }
 \description{
 \code{densityPlot} contructs and graphs nonparametric density estimates, possibly conditioned on a factor, using the standard \R{} \code{\link{density}} function or by default \code{adaptiveKernel}, which computes an adaptive kernel density estimate.
+\code{depan} provides the Epanechnikov kernel and \code{dbiwt} provides the biweight kernel.
 }
 
 \usage{
@@ -26,11 +29,15 @@ densityPlot(x, ...)
 
 adaptiveKernel(x, kernel=dnorm, bw=bw.nrd0, adjust=1.0, n=500,
     from, to, cut=3, na.rm=TRUE)
+    
+depan(x)
+dbiwt(x)
 }
 
 
 \arguments{
-  \item{x}{a numeric variable, the density of which is estimated.}
+  \item{x}{a numeric variable, the density of which is estimated; for 
+    \code{depan} and \code{dbiwt}, the argument of the kernel function.}
   \item{g}{an optional factor to divide the data.}
   \item{formula}{an \R{} model formula, of the form \code{~ variable} to estimate the unconditional
     density of \code{variable}, or \code{variable ~ factor} to estimate the density of \code{variable}
@@ -73,6 +80,14 @@ adaptiveKernel(x, kernel=dnorm, bw=bw.nrd0, adjust=1.0, n=500,
   \item{\dots}{arguments to be passed down.}
 }
 
+\details{
+If you use a different kernel function than the default \code{dnorm} that has a
+standard deviation different from 1 along with an automatic rule
+like the default function \code{bw.nrd0}, you can attach an attribute to the kernel
+function named \code{"scale"} that gives its standard deviation. This is true for
+the two supplied kernels, \code{depan} and \code{dbiwt}
+}
+
 \value{
 \code{densityPlot} invisibly returns the \code{"density"} object computed (or list of \code{"density"} objects) and draws a graph.
 \code{adaptiveKernel} returns an object of class \code{"density"}
@@ -106,8 +121,8 @@ densityPlot(~ income, show.bw=TRUE, method="kernel", data=Prestige)
 densityPlot(~ income, show.bw=TRUE, data=Prestige)
 densityPlot(~ income, from=0, normalize=TRUE, show.bw=TRUE, data=Prestige)
 
-densityPlot(income ~ type, data=Prestige)
-densityPlot(income ~ type, legend=list(location="top"), data=Prestige)
+densityPlot(income ~ type, kernel=depan, data=Prestige)
+densityPlot(income ~ type, kernel=depan, legend=list(location="top"), data=Prestige)
 
 plot(adaptiveKernel(UN$infantMortality, from=0, adjust=0.75), col="magenta")
 lines(density(na.omit(UN$infantMortality), from=0, adjust=0.75), col="blue")

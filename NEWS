@@ -1,3 +1,35 @@
+Changes to Version 3.0-1
+
+  o Fix a bug in 'Boot' so lm and glm models work with transformed predictors like log(x) or I(x-34).
+  
+  o For 'smooth' argument to scatterplot and scatterPlot matrix, the 'smooth' subargument is replaced by a new argument 'var', and 'lty.smooth', 'col.smooth', 'lwd.smooth' are replaced by 'lty.var', 'col.var' and 'lwd.var', respectively, although the old arguments are still allowed.
+
+  o Mofidied man page for showLabels to clarify setting the labels argument
+
+  o Too few colors in scatterplot() and scatterplotMatrix() now produces a warning rather than an error (suggestion of John Maindonald).
+
+  o Bug fix to Boot.nlm() (reported by Derek Ogle).
+
+  o Fixed bug in linearHypothesis() for lmer() models using pbkrtest (following report by Francois Piraux). This bug indirectly affected Anova().
+
+  o Fixed bug in scatterplot() when groups variable is not a factor (reported by Alexandre Courtiol).
+
+  o Fixed bug in scatterplot() when legend=FALSE (reported by Castor Guisande).
+
+  o Fixed bug in influence.merMod() and influence.lme() when there is more than one grouping variable (reported by Maarten Jung).
+
+  o Make model.matrix.lme() more bullet proof (following report by Peter Grossmann).
+  
+  o Anova.lm() now doesn't permit non-standard coefficient covariance matrix for model with aliased coefficients (following report by Ariel Muldoon).
+  
+  o Added kernel functions depan() and dbiwt() for use with adaptiveKernel().
+
+  o Updated carWeb().
+
+  o Small improvements.
+
+  o Small edits to docs.
+
 Changes to Version 3.0-0
 
   o This version of the package corresponds to the third edition of Fox and Weisberg, An R Companion to Applied Regression (Sage, forthcoming).
@@ -5,7 +37,7 @@ Changes to Version 3.0-0
   o Reorganized plotting functions.
 
   o Functions deprecated in 2009 are now defunct.
-  
+
   o bootCase(), nextBoot(), and their methods are now deprecated in favor of Boot().
 
   o All data sets moved to the carData package.
@@ -21,13 +53,13 @@ Changes to Version 3.0-0
   o New deletion diagnostics for mixed-effects models, e.g., influence.merMod().
 
   o Fixed bug in LinearHypothesis.merMod() when rhs of "F" test is specified (reported by Patrick Forscher).
-  
+
   o Anova.lm() now computes SSs by model comparison for models with aliased coefficients (response to problem reported by Ruchi Mahadeshwar).
 
   o Introduced carPalette() for color selection.
-  
+
   o new bcnPowerAxis() function for bcnPower() transformations.
-  
+
   o New vif.merMod() method.
 
   o Various small improvements and fixes.
@@ -39,47 +71,47 @@ Changes to Version 2.1-6
 Changes to Version 2.1-5
 
   o Fixed bug in boot.hist, and made Boot.default more general.  Added a vcov method for boot objects
-  
+
   o Fixed bug in gamLine with non-dentity links.
-  
+
   o Removed the skewPower transformation functions, and added bcnPower transformation family. Same transformation, new name, new computational algorithms, improved documentation.
-  
+
   o Fixed bug (reported by Bruno Hebling Vieira) in print.summary.Anova.mlm() that could cause adjusted p-values to be incorrectly ordered.
 
 Changes to Version 2.1-4
 
   o The smoother functions loessLine, gamLine and quantregLine used in many car functions now evaluate the smoother at an equally spaced grid of points rather than at the observed values on the horizontal axis of a plot.
-  
+
   o spreadLevelPlot.lm now accepts point marking as in most other graphical functions in car.
-  
+
   o Bug fixed in one of the skewPower support functions; thans to Balazs Banfai
-  
+
   o Added support for lmer objects in power transformations
-  
+
   o Added support for skewPower family power transformations for lm and lmer objects
-  
+
   o Added list, data.frame, and matrix methods for Boxplot(), suggestion of Michael Friendly
-  
+
   o Added adaptiveKernel() density estimator, with option to use it in densityPlot().
-  
+
 Changes to Version 2.1-3
 
   o Corrected documentation for mcPlots
-  
+
   o added id.location argument to showLabels to vary location of labels
-  
+
   o added fix for compatiblity with Rcmdr with missing data in several plotting functions.
-  
+
   o deltaMethod() now reports confidence intervals.
-  
+
   o print.summary.Anova.mlm() has new SSP and SSPE arguments to determine whether the corresponding matrices are printed (suggestion of Michael Friendly).
-  
+
   o summary() and print() methods for Anova.mlm() can now report univariate ANOVAs (suggestion and some code by Michael Friendly).
-  
+
   o added "value" and "vcov" attributes to objects returned by linearHypothesis() (after suggestions by Liviu Andronic and Steven Yen).
-  
-  o compareCoefs() now checks classes of models. 
-  
+
+  o compareCoefs() now checks classes of models.
+
   o small fixes/changes.
 
 Changes to Version 2.1-2
@@ -89,37 +121,37 @@ Changes to Version 2.1-2
 Changes to Version 2.1-1
 
   o influencePlot now returns Cook's distance, not its square root.
-    
+
   o Anova() now supports "coxme" objects (produced by coxme() in coxme package) (request of Philipp Sprenger).
-    
+
   o Anova() now works via its default method with "vglm" objects produced by functions in the VGAM package; and the default method of linearHypothesis() again works with these objects (problem reported by Michael Friendly).
-    
+
   o Fixed Anova.coxph() so that it takes account of method (ties) argument (bug reported by Karl Ove Hufthammer).
-    
+
   o Improvements to Anova.default() so that a wider variety of model classes are accommodated (following request of Liviu Andronic.)
-    
+
   o dataEllipse() now throws an error if there are too few colors for the number of groups (fixing bug reported by Ottorino Pantani).
-    
+
   o spreadLevelPlot.lm() now includes an optional smoother in addition to the fitted straight line (suggestion of Michael Friendly).
-    
+
   o No longer import methods (as opposed to generics) directly from pbkrtest.
-    
+
   o Added axis.ticks argument to scatter3d() (code contributed by David Winsemius).
 
 Changes to Version 2.1-0
 
   o New power family called skewPower has been added that can be used with the Box Cox method with a few negative responses (joint work with Doug Hawkins).  Several functions modified to accomodate two-parameter power families.
-    
+
   o Fixed bug in Anova() for coxph models with clusters (reported by Jesus Humberto Gomez ), due apparently to a change in coxph().
 
 Changes to Version 2.0-26
 
   o Anova() F-tests for binomial and Poisson GLMs now changes error.estimate="dispersion" to "pearson" as advertized (bug reported by Will Petry).
-    
+
   o Improved behavior of above-plot legends in scatterplot().
-    
+
   o Fixed sp() (bug reported by Cesar Rabak).
-    
+
   o Conforms to new CRAN requirements for package imports.
 
 Changes to Version 2.0-25
@@ -127,7 +159,7 @@ Changes to Version 2.0-25
   o Fixed df check in linearHypothesis.default() (bug report by Pierre Chausse).
 
   o Fixed bug when vcov. argument to Anova() is a function (reported by Liviu Andronic).
-    
+
   o Now export .carEnv to avoid problem with update() in Boot() (reported by Alan T. Arnholt).
 
 Changes to Version 2.0-24
@@ -140,7 +172,7 @@ Changes to Version 2.0-24
 
 Changes to Version 2.0-23
 
-  o Modified ScatterplotSmoothers to add an 'offset' to the vertical axis of spread smooths.  This is required in the marginal model plot functions.  
+  o Modified ScatterplotSmoothers to add an 'offset' to the vertical axis of spread smooths.  This is required in the marginal model plot functions.
 
   o Fixed labels on mcPlot with overlay=FALSE
 
@@ -335,17 +367,17 @@ Changes to Version 2.0-12
   o fixed bug in deltaMethod.surveg and deltaMethod.coxph to all use of the 'parameterNames' argument.
 
 	o compareCoefs:  added an argument 'print' to suppress printing output.  Added support for 'lme' objects.
-	
+
 	o fixed xlab, ylab arguments and added dfn argument to confidenceEllipse() (suggestions of Michael Friendly).
-	
+
 	o moved survival from Depends to Suggests (request of Michael Friendly); added survey to Suggests.
-	
+
 	o added Anova.svyglm and linearHypothesis.svyglm.
-	
+
 	o fixed bug in linearHypothesis() that affected printing of some hypotheses (reported by Arne Henningsen).
-	
+
 	o fixed bug in Anova() for GLMs when F-test used with na.exclude.
-	
+
 	o package now byte-compiled.
 
 Changes to Version 2.0-11
@@ -363,11 +395,11 @@ Changes to Version 2.0-11
   	o  dataEllipse() now allows combination of add=FALSE and plot.points=FALSE (suggested by Michael Friendly, with contributed code); the ellipse functions have acquired a "draw" argument, which can be used to suppress graphical output (suggestion of Benoit Bruneau).
 
 	o  ellipse(), confidenceEllipse(), and dataEllipse() return coordinates invisibly (suggested by Michael Friendly, with contributed code).
-	
+
 	o  fixed bug in printed representation of hypotheses with numbers starting with "-1" or "+1" (e.g., "-10") by linearHypothesis() (reported by Vincent Arel-Bundock).
-	
+
 	o  local version of fixef() to avoid lme4/nlme conflicts that surfaced in some situations with Anova().
-	
+
 	o  changed order of columns in ANOVA tables for mixed models to make them consistent with other models.
 
 Changes to Version 2.0-10
@@ -392,7 +424,7 @@ Changes to Version 2.0-10
 Changes to Version 2.0-9
 
 	o  added Anova and linearHypothesis methods for mixed-effects model objects created by lmer in lme4 and lme in nlme.
-	
+
 	o  added matchCoefs, convenience function to use with linearHypothesis.
 
   o  scatterplot makes parallel boxplots, calling Boxplot, when x is a factor.
@@ -408,15 +440,15 @@ Changes to Version 2.0-9
 Changes to Version 2.0-8
 
 	o  added optional argument legend.coords to scatterplot to place legend (after question by Blaine Maley).
-	
+
 	o  bug fixes to powerTransform and residualPlots.
 
 Changes to Version 2.0-7
 
 	o  added fill and fill.alpha arguments to ellipse, etc., for translucent filled ellipses (suggested by Michael Friendly).
-	
+
 	o  fixed bug in recode, when a legitimate string includes the characters "else" (reported by Gustaf Rydevik).
-	
+
 	o  carWeb() now works with web site for the R Companion, Second Edition.
 
 Changes to Version 2.0-6
@@ -458,21 +490,21 @@ Changes to Version 2.0-1
 Changes to Version 2.0-0
 
 	o  Functions renamed to camel case.
-	
+
 	o  New functions: bootCase(), Boxplot(), deltaMethod(), inverseResponsePlot(), invTranPlot(), various transformation functions
-	
+
 	o  Reworked (or renamed): Anova(), avPlots(), boxCoxVariable(), boxTidwell(), ceresPlots(), crPlots(), durbinWatsonTest(), hccm(), influencePlot(), leveneTest(), leveragePlots(), linearHypothesis(), ncvTest(), outlierTest(), qqPlot(), regLine(), scatterplot(), scatterplotMatrix(), spreadLevelPlot(), transformation-axis functions, vif().
-	
+
 	o  Removed: Ask(), box.cox.powers(), box.cox(), cookd(), n.bins().
-	
+
 	o  Added WeightLoss data set (courtesy of Michael Friendly).
-	
+
 	o  Utility functions no longer exported; some removed.
-	
+
 	o  Most moved, renamed, removed functions retained as deprecated functions.
-	
+
 	o  Improvements to linearHypothesis(), thanks to Achim Zeileis.
-	
+
 	o  Small changes.
 
 Changes to Version 1.0-0
@@ -728,33 +760,33 @@ Changes to Version 1.2-8
 Changes to Version 1.2-9
 
 	o  Fixed bug in scatterplot() that left room for a legend even when legend.plot=FALSE (reported by David Carlson).
-	
+
 	o  Allowed colours in col argument to scatterplot() to recycle (suggested by David Carlson).
-	
+
 	o  verbose=TRUE in linear.hypothesis() now prints (in addition to previous output) the estimated value of the hypothesis (Oleksandr Perekhozhuk).
-	
+
 Changes to Version 1.2-10
 
 	o  Reworked Anova(), including adding default method and method for coxph objects.
-	
+
 Changes to Version 1.2-11
 
 	o  Bug fix to Anova().
-	
+
 	o  Small changes.
-	
+
 Changes to Version 1.2-12
 
 	o  Anova() now works properly with coxph objects with clusters.
-	
+
 	o  Fixed bug in ncv.test.lm() that could cause the function to fail.
-	
+
 	o  Small changes.
-	
+
 Changes to Version 1.2-13
 
 	o  influencePlot() optionally automatically identifies points with large Cook's Ds (suggested by Michael Friendly).
-	
+
 	o  Fixed bug in recode() (reported by Andrew McFadden).
 
   o  Small changes.
@@ -762,7 +794,7 @@ Changes to Version 1.2-13
 Changes to Version 1.2-14
 
 	o  Small correction to Chile data set.
-	
+
 Changes to Version 1.2-15
 
   o  Small changes.

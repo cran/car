@@ -56,7 +56,7 @@ The final family \code{family="yjPower"} uses the Yeo-Johnson transformation, wh
 
 The function \code{\link{testTransform}} is used to obtain likelihood ratio tests for any specified value for the transformation parameter(s).
 
-Computations maximize the likelihood-like functions described by Box and Cox (1964) and by Velilla (2000).  For univariate responses, the computations are very stable and problems are unlikely, although for \sQuote{lmer} models computations may be very slow because the model is refit many times. For multivariate responses with the \code{bcnPower} family, the computing algorithm may fail.  In this case we recommend adding the argument \code{itmax = 1} to the call to \code{powerTransform}.  This will return the starting value estimates of the transformation parameters, fitting a d-dimensional response as if all the d responses were independent.
+Computations maximize the likelihood-like functions described by Box and Cox (1964) and by Velilla (1993).  For univariate responses, the computations are very stable and problems are unlikely, although for \sQuote{lmer} models computations may be very slow because the model is refit many times. For multivariate responses with the \code{bcnPower} family, the computing algorithm may fail.  In this case we recommend adding the argument \code{itmax = 1} to the call to \code{powerTransform}.  This will return the starting value estimates of the transformation parameters, fitting a d-dimensional response as if all the d responses were independent.
 
 }
 \value{
@@ -128,13 +128,18 @@ m2 <- lm(I1L1 ~ pool, LoBD)
 summary(p2 <- powerTransform(m2, family="bcnPower"))
 testTransform(p2, .5)
 summary(powerTransform(update(m2, cbind(LoBD$I1L2, LoBD$I1L1) ~ .), family="bcnPower"))
-# multivariate bcnPower, with 8 responses
-summary(powerTransform(update(m2, as.matrix(LoBD[, -1]) ~ .), family="bcnPower"))
-# multivariate bcnPower, fit with one iteration using starting values as estimates
-summary(powerTransform(update(m2, as.matrix(LoBD[, -1]) ~ .), family="bcnPower", itmax=1))
+
+\dontrun{ 
+  # tajes a few seconds:
+  # multivariate bcnPower, with 8 responses
+  summary(powerTransform(update(m2, as.matrix(LoBD[, -1]) ~ .), family="bcnPower"))
+  # multivariate bcnPower, fit with one iteration using starting values as estimates
+  summary(powerTransform(update(m2, as.matrix(LoBD[, -1]) ~ .), family="bcnPower", itmax=1))
+}
 
 # mixed effects model
 \dontrun{
+  # uses the lme4 package
   data <- reshape(LoBD[1:20, ], varying=names(LoBD)[-1], direction="long", v.names="y")
   names(data) <- c("pool", "assay", "y", "id")
   data$assay <- factor(data$assay)

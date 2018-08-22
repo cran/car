@@ -1,6 +1,6 @@
 Package: car
-Version: 3.0-0
-Date: 2018-03-23
+Version: 3.0-1
+Date: 2018-08-03
 Title: Companion to Applied Regression
 Authors@R: c(person("John", "Fox", role = c("aut", "cre"), email = "jfox@mcmaster.ca"),
 	person("Sanford", "Weisberg", role = "aut", email = "sandy@umn.edu"),
@@ -41,8 +41,6 @@ License: GPL (>= 2)
 URL: https://r-forge.r-project.org/projects/car/,
         https://CRAN.R-project.org/package=car,
         http://socserv.socsci.mcmaster.ca/jfox/Books/Companion/index.html
-NeedsCompilation: no
-Packaged: 2018-03-27 23:49:48 UTC; John
 Author: John Fox [aut, cre],
   Sanford Weisberg [aut],
   Brad Price [aut],
@@ -70,4 +68,9 @@ Author: John Fox [aut, cre],
   R-Core [ctb]
 Maintainer: John Fox <jfox@mcmaster.ca>
 Repository: CRAN
-Date/Publication: 2018-04-02 12:16:58 UTC
+Repository/R-Forge/Project: car
+Repository/R-Forge/Revision: 553
+Repository/R-Forge/DateTimeStamp: 2018-08-03 15:41:20
+Date/Publication: 2018-08-22 16:00:03 UTC
+NeedsCompilation: no
+Packaged: 2018-08-03 15:50:30 UTC; rforge

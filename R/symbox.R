@@ -1,5 +1,6 @@
 # 2010-09-05: J. Fox: allow xlab argument, pass through ...
 # 2013-08-19: J. Fox: remove loading of stats package
+# 2018--7-27: J. Fox: automatically generate start
 
 symbox <- function(x, ...){
 	UseMethod("symbox")
@@ -19,11 +20,26 @@ symbox.formula <- function(formula, data=NULL, subset, na.action=NULL, ylab, ...
 	symbox(as.vector(mf[[1]]), ylab=ylab, ...)
 }
 
-symbox.default <- function(x, powers = c(-1, -0.5, 0, 0.5, 1), start=0, trans=bcPower, 
+symbox.default <- function(x, powers = c(-1, -0.5, 0, 0.5, 1), start, trans=bcPower, 
 		xlab="Powers", ylab, ...) {
     if (!(is.vector(x) && is.numeric(x))) stop("x should be a numeric vector.")
 	if (missing(ylab)) ylab <- deparse(substitute(x))
-    x <- x + start
+	trans.name <- deparse(substitute(trans))
+	if (missing(start)){
+	  if (trans.name %in% c("bcPower", "bcnPower")){
+	    if ((min.x <- min(x, na.rm=TRUE)) <= 0){
+	      max.x <- max(x, na.rm=TRUE)
+	      start <- abs(min.x) + 0.01*(max.x - min.x)
+	      warning("start set to ", format(start))
+	    } else {
+	      start <- 0
+	    }
+	  } else {
+	    start <- 0
+	  }
+	}
+  x <- x + start
+  if (trans.name == "bcnPower") trans <- function(x, lambda) bcnPower(x, lambda, gamma=start)
 	result <- lapply(powers, function(lambda) trans(x, lambda))
 	names <- as.character(powers)
 	names[powers == 0] <- "log"

@@ -143,7 +143,7 @@ Combining the Box-Cox Power and Generalized Log Transformations to Accomodate No
          lambda = seq(-0.25, 0.25, length = 10)))
 
   data("quine", package = "MASS")
-  with(quine, boxCox(Days ~ Eth*Sex*Age*Lrn, data = quine,
+  with(quine, boxCox(Days ~ Eth*Sex*Age*Lrn, 
          lambda = seq(-0.05, 0.45, len = 20), family="yjPower"))
 }
 \keyword{ regression}

@@ -51,6 +51,7 @@
 # 2017-11-29: further fixed to vcov() and vcov.() calls. John
 # 2018-01-15: Anova.multinom() now works with response matrix. JF
 # 2018-02-11: If there are aliased coefs in lm object, treat as GLM. JF
+# 2018-04-04: pass ... arguments through print() methods. Follows comments by Egor Katkov. JF
 #-------------------------------------------------------------------------------
 
 # Type II and III tests for linear, generalized linear, and other models (J. Fox)
@@ -115,6 +116,8 @@ Anova.lm <- function(mod, error, type=c("II","III", 2, 3),
     warning("the model contains only an intercept: Type III test substituted")
   }
   if (any(is.na(coef(mod))) && singular.ok){
+    if ((white.adjust != "FALSE") || (!is.null(vcov.)))
+      stop("non-standard coefficient covariance matrix\n  may not be used for model with aliased coefficients")
     message("Note: model has aliased coefficients\n      sums of squares computed by model comparison")
     result <- Anova(lm2glm(mod), type=type, singular.ok=TRUE, test.statistic="F", ...)
     heading <- attributes(result)$heading
@@ -957,14 +960,10 @@ print.Anova.mlm <- function(x, ...){
                      heading = paste("\nType ", x$type, if (repeated) " Repeated Measures",
                                      " MANOVA Tests: ", test, " test statistic", sep=""), 
                      class = c("anova", "data.frame"))
-  print(tests)      
+  print(tests, ...)      
   invisible(x)
 }
 
-# path <-  "D:/R-package-sources/car/R"
-# files <- list.files(path, pattern=".*\\.R")
-# files <- paste(path, files, sep="/")
-# for (file in files) source(file)
 
 # summary.Anova.mlm and print.summary.Anova.mlm methods
 #  with contributions from Gabriel Baud-Bovy
@@ -1100,7 +1099,7 @@ print.summary.Anova.mlm <- function(x, digits = getOption("digits"), SSP=TRUE, S
       " Repeated Measures", " MANOVA Tests:\n", sep = ""))
     if ((!x$repeated) && SSPE) {
       cat("\nSum of squares and products for error:\n")
-      print(x$SSPE, digits = digits)
+      print(x$SSPE, digits = digits, ...)
     }
     for (term in 1:length(x$multivariate.tests)) {
       cat(paste("\n------------------------------------------\n", 
@@ -1118,11 +1117,11 @@ print.summary.Anova.mlm <- function(x, digits = getOption("digits"), SSP=TRUE, S
           "for Departure from Sphericity\n\n")
       table <- x$pval.adjustments[, 1:2, drop = FALSE]
       class(table) <- "anova"
-      print(table)
+      print(table, ...)
       cat("\n")
       table <- x$pval.adjustments[, 3:4, drop = FALSE]
       class(table)
-      print(table)
+      print(table, ...)
     }
   }
   if (!is.null(x$univaov)){

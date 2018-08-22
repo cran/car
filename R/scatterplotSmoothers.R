@@ -15,21 +15,29 @@
 # 2017-05-15: fixed spread=TRUE when log="xy".  in quantregLine, changed IQR(x) to IQR(x, na.rm=TRUE)
 # 2017-06-29: Added defaults for col, log.x, and log.y arguments, and an empty smoother.args.
 # 2017-06-30: Changed default line widths and types for smoothers to make them more visible.
-# 2017-10-27: Change default lty.smooth to 1 as advertized in docs. 
+# 2017-10-27: Change default lty.smooth to 1 as advertized in docs.
 # 2017-11-30: substitute carPalette() for palette(). J. Fox
+# 2018-06-25: The argument 'spread' has an alias 'var', with 'var' having precedence.  S. Weisberg
+#             Similarly, col.var, lty.var, lwd.var override col.spread, lty.spread, lwd.spread
 
 default.arg <- function(args.list, arg, default){
     if (is.null(args.list[[arg]])) default else args.list[[arg]]
 }
 
-loessLine <- function(x, y, col=carPalette()[1], log.x=FALSE, log.y=FALSE, spread=FALSE, smoother.args=NULL,
-               draw=TRUE, offset=0) {
+
+loessLine <- function(x, y, col=carPalette()[1], log.x=FALSE, log.y=FALSE,
+                      var=FALSE, spread=var, smoother.args=NULL, draw=TRUE, offset=0) {
     lty.smooth <- default.arg(smoother.args, "lty.smooth", 1)
     lwd.smooth <- default.arg(smoother.args, "lwd.smooth", 2)
     col.smooth <- default.arg(smoother.args, "col.smooth", col)
     lty.spread <- default.arg(smoother.args, "lty.spread", 4)
     lwd.spread <- default.arg(smoother.args, "lwd.spread", 2)
     col.spread <- default.arg(smoother.args, "col.spread", col)
+# arg '*.spread' and '*.var' are aliased.  Use the latter if present
+    lty.spread <- default.arg(smoother.args, "lty.var", lty.spread)
+    lwd.spread <- default.arg(smoother.args, "lwd.var", lwd.spread)
+    col.spread <- default.arg(smoother.args, "col.var", col.spread)
+# end of change
     span <- default.arg(smoother.args, "span", 2/3)
     family <- default.arg(smoother.args, "family", "symmetric")
     degree <- default.arg(smoother.args, "degree", 1)
@@ -96,8 +104,8 @@ loessLine <- function(x, y, col=carPalette()[1], log.x=FALSE, log.y=FALSE, sprea
     }
 
 
-gamLine <- function(x, y, col=carPalette()[1], log.x=FALSE, log.y=FALSE, spread=FALSE, smoother.args=NULL,
-              draw=TRUE, offset=0) {
+gamLine <- function(x, y, col=carPalette()[1], log.x=FALSE, log.y=FALSE,
+                    var=FALSE, spread=var, smoother.args=NULL, draw=TRUE, offset=0) {
     gam <- mgcv::gam
     s <- mgcv::s
     lty.smooth <- default.arg(smoother.args, "lty.smooth", 1)
@@ -106,6 +114,11 @@ gamLine <- function(x, y, col=carPalette()[1], log.x=FALSE, log.y=FALSE, spread=
     lty.spread <- default.arg(smoother.args, "lty.spread", 4)
     lwd.spread <- default.arg(smoother.args, "lwd.spread", 2)
     col.spread <- default.arg(smoother.args, "col.spread", col)
+    # arg '*.spread' and '*.var' are aliased.  Use the latter if present
+    lty.spread <- default.arg(smoother.args, "lty.var", lty.spread)
+    lwd.spread <- default.arg(smoother.args, "lwd.var", lwd.spread)
+    col.spread <- default.arg(smoother.args, "col.var", col.spread)
+    # end of change
     fam <- default.arg(smoother.args, "family", gaussian)
     link <- default.arg(smoother.args, "link", NULL)
     evaluation <- default.arg(smoother.args, "evaluation", 50)
@@ -176,8 +189,8 @@ gamLine <- function(x, y, col=carPalette()[1], log.x=FALSE, log.y=FALSE, spread=
     if(!draw) return(out)
     }
 
-quantregLine <- function(x, y, col=carPalette()[1], log.x=FALSE, log.y=FALSE, spread=FALSE, smoother.args=NULL,
-                   draw=TRUE, offset=0) {
+quantregLine <- function(x, y, col=carPalette()[1], log.x=FALSE, log.y=FALSE,
+                         var=FALSE, spread=var, smoother.args=NULL, draw=TRUE, offset=0) {
     if (!package.installed("Matrix")) stop("the Matrix package is missing")
     if (!package.installed("MatrixModels")) stop("the MatrixModels package is missing")
     if (!package.installed("SparseM")) stop("the SparseM package is missing")
@@ -189,6 +202,11 @@ quantregLine <- function(x, y, col=carPalette()[1], log.x=FALSE, log.y=FALSE, sp
     lty.spread <- default.arg(smoother.args, "lty.spread", 4)
     lwd.spread <- default.arg(smoother.args, "lwd.spread", 2)
     col.spread <- default.arg(smoother.args, "col.spread", col)
+    # arg '*.spread' and '*.var' are aliased.  Use the latter if present
+    lty.spread <- default.arg(smoother.args, "lty.var", lty.spread)
+    lwd.spread <- default.arg(smoother.args, "lwd.var", lwd.spread)
+    col.spread <- default.arg(smoother.args, "col.var", col.spread)
+    # end of change
     evaluation <- default.arg(smoother.args, "evaluation", 50)
     if (log.x) x <- log(x)
     if (log.y) y <- log(y)

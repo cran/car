@@ -22,6 +22,7 @@
 # 2017-11-30: substitute carPalette() for palette(). J. Fox
 # 2017-12-28: rewrote termsToMf used by residualPlots.  It didn't work right.  SW
 # 2018-01-15: df.terms.multinom() now works with response matrix. JF
+# 2018-05-23: make model.matrix.lme() more bullet proof, following report by Peter Grossmann. JF
 
 #if (getRversion() >= "2.15.1") globalVariables(c(".boot.sample", ".boot.indices"))
 
@@ -293,7 +294,11 @@ has.intercept.merMod <- function(model){
 }
 
 model.matrix.lme <- function(object, ...){
-	model.matrix(formula(object), eval(object$call$data))
+    data <- object$data
+    if (is.null(data)){
+	    model.matrix(formula(object), eval(object$call$data))
+    }
+    else model.matrix(formula(object), data)
 }
 
 # added by J. Fox 2012-04-08 to use in deltaMethod.default()

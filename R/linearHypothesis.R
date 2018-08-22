@@ -607,7 +607,8 @@ linearHypothesis.mer <- function(model, hypothesis.matrix, rhs=NULL,
         if (!requireNamespace("lme4")) stop("lme4 package is missing")
         if (!lme4::isREML(model)) 
             stop("F test available only for linear mixed model fit by REML")
-        res <- pbkrtest::KRmodcomp(model, L, rhs)$test
+        if (!all(rhs == 0)) warning("rhs of hypothesis ignored, set to 0")
+        res <- pbkrtest::KRmodcomp(model, L)$test
         df <- res["Ftest", "ddf"]
         F <- res["Ftest", "stat"]
         p <- res["Ftest", "p.value"]

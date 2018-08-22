@@ -17,6 +17,7 @@
 %   2014-04-23 added aliases for makeHypothesis and printHypothesis
 %   2014-08-23 added linearHypothesis.rlm. J. Fox
 %   2016-06-29 noted addition of "value" and "vcov" attributes, added example. J. Fox
+%   2018-04-11 rhs suppressed using pbkrtest for lmer model. J.Fox
 %------------------------------------------------------------------------------------
 
 \name{linearHypothesis}
@@ -123,7 +124,7 @@ matchCoefs(model, pattern, ...)
   \item{rhs}{right-hand-side vector for hypothesis, with as many entries as
     rows in the hypothesis matrix; can be omitted, in which case it defaults
     to a vector of zeroes. For a multivariate linear model, \code{rhs} is a
-    matrix, defaulting to 0.}
+    matrix, defaulting to 0. This argument isn't available for F-tests for linear mixed models.}
   \item{singular.ok}{if \code{FALSE} (the default), a model with aliased
     coefficients produces an error; if \code{TRUE}, the aliased coefficients
     are ignored, and the hypothesis matrix should not have columns for them.

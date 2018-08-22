@@ -18,9 +18,9 @@ scatterplotMatrix(x, ...)
 \method{scatterplotMatrix}{default}(x, smooth = TRUE,
     id = FALSE, legend = TRUE, regLine = TRUE,
     ellipse = FALSE, var.labels = colnames(x), diagonal = TRUE,
-    plot.points = TRUE, groups = NULL, by.groups = TRUE, 
-    use = c("complete.obs", "pairwise.complete.obs"), col = 
-    carPalette()[-1], pch = 1:n.groups, cex = par("cex"), 
+    plot.points = TRUE, groups = NULL, by.groups = TRUE,
+    use = c("complete.obs", "pairwise.complete.obs"), col =
+    carPalette()[-1], pch = 1:n.groups, cex = par("cex"),
     cex.axis = par("cex.axis"), cex.labels = NULL,
     cex.main = par("cex.main"), row1attop = TRUE, ...)
 
@@ -93,15 +93,15 @@ spm(x, ...)
 }
 
 \details{
-   Many arguments to scatterplotMatrix were changed with verions 3 of \pkg{car} that we hope simplifies use of
+   Many arguments to \code{scatterplotMatrix} were changed in version 3 of \pkg{car}, to simplify use of
    this function.
 
-   The \code{smooth} argument is usually either equal to \code{TRUE} or \code{FALSE} to draw, or omit,
-   the smoother.  Alternatively \code{smooth} can equal a list of arguments.  The default behavior of
+   The \code{smooth} argument is usually either set to \code{TRUE} or \code{FALSE} to draw, or omit,
+   the smoother.  Alternatively \code{smooth} can be set to a list of arguments.  The default behavior of
    \code{smooth=TRUE} is equivalent to \code{smooth=list(smoother=loessLine, spread=TRUE, lty.smooth=1, lwd.smooth=1.5, lty.spread=3, lwd.spread=1)}, specifying the smoother to be used, including the spread or variance smooth,
-   and the line widths and types for the curves.  You can also specify the colors you want to use for the mean and variance smooths with the arguments \code{col.smooth} and \code{col.spread}. Alternative smoothers are \code{gamline} that uses the
-   \code{\link{gam}} function from the mgcv package, and \code{quantregLine} that uses quantile regression to
-   estimate the median and quartile functiona using \code{\link{rqss}} frm the quantreg package.  All of these
+   and the line widths and types for the curves.  You can also specify the colors you want to use for the mean and variance smooths with the arguments \code{col.smooth} and \code{col.spread}. Alternative smoothers are \code{gamline} which uses the
+   \code{\link{gam}} function from the \pkg{mgcv} package, and \code{quantregLine} which uses quantile regression to
+   estimate the median and quartile functions using \code{\link{rqss}} from the \pkg{quantreg} package.  All of these
    smoothers have one or more arguments described on their help pages, and these arguments can be added to the
    \code{smooth} argument; for example, \code{smooth = list(span=1/2)} would use the default
    \code{loessLine} smoother,
@@ -117,25 +117,27 @@ spm(x, ...)
    horizontal axis, and the spread estimates the lower and upper quartiles of the estimated conditional
    distribution for each value of the horizontal axis.
 
+      The sub-arguments \code{spread}, \code{lty.spread} and \code{col.spread} of the \code{smooth} argument are equivalent to the newer \code{var}, \code{col.var} and \code{lty.var}, respectively, recognizing that the spread is a measuure of conditional variability.
+
    By default the diagonal argument is used to draw kernel density estimates of the
    variables by setting \code{diagonal=TRUE}, which is equivalent to setting \code{diagonal =
-   list(method="adaptiveDensity", bw=bw.nrd0, adjust=1, kernel=dnorm, na.rm=TRUE)}.  The additional argument
+   list(method="adaptiveDensity", bw=bw.nrd0, adjust=1, kernel=dnorm, na.rm=TRUE)}.  The additional arguments
    shown are descibed at \code{\link{adaptiveKernel}}.  The other methods avaliable, with their default
-   arguments, are \code{diagonal=list(method="denisty", bw="nrd0", adjust=1, kernel="gaussian", na.rm=TRUE)}
-   that uses \code{\link{density}} for nonadaptive kernel density estimation; \code{diagonal=list(method
+   arguments, are \code{diagonal=list(method="density", bw="nrd0", adjust=1, kernel="gaussian", na.rm=TRUE)}
+   which uses \code{\link{density}} for nonadaptive kernel density estimation; \code{diagonal=list(method
    ="histogram", breaks="FD")}
-   that uses \code{\link{hist}} for drawing a histogram that ignores grouping, if present;
-   \code{diagonal=list(method="boplot")} with no additional arguments that draws (parallel) boxplots;
-   \code{diagonal=list(method="qqplot")} with no additional arguments that draws a normal QQplot; and
-   \code{diagonal=list(method="oned")} with no additional arguments that draws a rug plot tilted to the
+   which uses \code{\link{hist}} for drawing a histogram that ignores grouping, if present;
+   \code{diagonal=list(method="boxplot")} with no additional arguments which draws (parallel) boxplots;
+   \code{diagonal=list(method="qqplot")} with no additional arguments which draws a normal QQ plot; and
+   \code{diagonal=list(method="oned")} with no additional arguments which draws a rug plot tilted to the
    diagonal, as suggested by Richard Heiberger.
-   
-   Earlier versions of \code{scatterplotMatrix} included arguments \code{transform} and \code{famiy} to estimate power transformations using the \code{\link{powerTransform}} function before drawing the plot.  The sample functionality can be achieved by calling \code{powerTransform} directly to estimate a transformation, saving the transformed variables, and then plotting.
+
+   Earlier versions of \code{scatterplotMatrix} included arguments \code{transform} and \code{family} to estimate power transformations using the \code{\link{powerTransform}} function before drawing the plot.  The same functionality can be achieved by calling \code{powerTransform} directly to estimate a transformation, saving the transformed variables, and then plotting.
 }
 
 \value{
-  \code{NULL}. This function is used for its side effect: producing
-  a plot.  If point identification is used, a list of identified points is returned.
+  \code{NULL}, returned invisibly. This function is used for its side effect: producing
+  a plot.  If point identification is used, a vector of identified points is returned.
 }
 
 \author{John Fox \email{jfox@mcmaster.ca}}

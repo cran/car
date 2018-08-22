@@ -1,7 +1,7 @@
 \name{carWeb}
 \alias{carWeb}
 
-\title{ Access to the R Companion to Applied Regression website }
+\title{ Access to the R Companion to Applied Regression Website }
 \description{
   This function will access the website for \emph{An R Companion to Applied Regression}, or setup files or data.}
 
@@ -24,7 +24,7 @@ carWeb(page = c("webpage", "errata", "taskviews"), script, data, setup)
          Regression}, like \code{"Duncan.txt"} or \code{"Prestige.txt"}.  The file will be
          opened in your web browser.  You do not need to specify the extension \code{.txt}
   }
-  \item{setup}{If not missing this command will download a number of files to your computer that are discussed in Fox and Weisberg (2019), beginning in Chapter 1.}
+  \item{setup}{If \code{TRUE} this command will download a number of files to your computer that are discussed in Fox and Weisberg (2019), beginning in Chapter 1.}
 }
 
 \value{
@@ -42,6 +42,9 @@ package by John Verzani }
 
 \examples{
 
-\dontrun{carWeb()}
+\dontrun{
+carWeb()
+carWeb(setup=TRUE)
+}
 }
 \keyword{ interface }
