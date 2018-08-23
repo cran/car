@@ -1,3 +1,7 @@
+Changes to Version 3.0-2
+
+  o This version deals with a technical problem (reported by Don van den Bergh), implementing a solution suggested by Brian Ripley: Rather than importing utils::askYesNo(), which is unavailable before R 3.5.0, a local unexported copy is supplied in the car package, to be removed after version 3.0-2.
+
 Changes to Version 3.0-1
 
   o Fix a bug in 'Boot' so lm and glm models work with transformed predictors like log(x) or I(x-34).
