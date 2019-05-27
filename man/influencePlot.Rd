@@ -1,6 +1,7 @@
 \name{influencePlot}
 \alias{influencePlot}
 \alias{influencePlot.lm}
+\alias{influencePlot.lmerMod}
 \alias{influence.plot}
 
 \title{Regression Influence Plot}
@@ -16,11 +17,12 @@ influencePlot(model, ...)
 
 \method{influencePlot}{lm}(model, scale=10,  
  xlab="Hat-Values", ylab="Studentized Residuals", id=TRUE, ...)
+
+\method{influencePlot}{lmerMod}(model, ...)
 }
 
 \arguments{
-  \item{model}{a linear or generalized-linear model.
-  }
+  \item{model}{a linear, generalized-linear, or linear mixed model; the \code{"lmerMod"} method calls the \code{"lm"} method and can take the same arguments.}
   \item{scale}{a factor to adjust the size of the circles.
   }
   \item{xlab, ylab}{axis labels.

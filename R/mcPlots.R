@@ -9,6 +9,7 @@
 # This plot would benefit from animation.
 # 2017-02-13: consolidated id and ellipse arguments. J. Fox
 # 2017-11-30: substitute carPalette() for palette(). J. Fox
+# 2018-12-17: added title argument, if title=FALSE, suppress unchangable main= arguments
 
 mcPlots <- function(model, terms=~., layout=NULL, ask, overlaid=TRUE, ...){
     terms <- if(is.character(terms)) paste("~",terms) else terms
@@ -26,9 +27,6 @@ mcPlots <- function(model, terms=~., layout=NULL, ask, overlaid=TRUE, ...){
     if(attr(attr(model.frame(model), "terms"), "intercept") == 0)
         stop("Error---the 'lm' object must have an intercept")
     nt <- length(good)
-    if (nt == 0) stop("No plots specified")
-    #	if (missing(main)) main <- if (nt == 1) paste("Marginal/Conditional Plot:", good) else
-    #                                                "Marginal/Conditional Plots"
     if (nt == 0) stop("No plots specified")
     if(overlaid){
         if (nt > 1 & (is.null(layout) || is.numeric(layout))) {
@@ -63,9 +61,9 @@ mcPlot <-  function(model, ...) UseMethod("mcPlot")
 mcPlot.lm <- function(model, variable, id=FALSE,
                       col.marginal=carPalette()[2], col.conditional=carPalette()[3],
                       col.arrows="gray",
-                      pch = c(16,1), lwd = 2, grid=TRUE,   ###removed arg main
+                      pch = c(16,1), lwd = 2, grid=TRUE,   
                       ellipse=FALSE,
-                      overlaid=TRUE, new=TRUE, ...){
+                      overlaid=TRUE, new=TRUE, title=TRUE, ...){
     id <- applyDefaults(id, defaults=list(method=list(abs(residuals(model, type="pearson")), "x"), n=2, cex=1, col=carPalette()[1], location="lr"), type="id")
     if (isFALSE(id)){
         id.n <- 0
@@ -112,8 +110,9 @@ mcPlot.lm <- function(model, variable, id=FALSE,
     xlm <- c( min(res0[, 1], res[, 1]), max(res0[, 1], res[, 1]))
     ylm <- c( min(res0[, 2], res[, 2]), max(res0[, 2], res[, 2]))
     if(overlaid){
+        mn <- if(title) paste("Marginal/Conditional plot of", var.names[var]) else NULL
         plot(res[, 1], res[, 2], xlab = xlab, ylab = ylab, type="n",
-             main=paste("Marginal/Conditional plot of", var.names[var]),
+             main=mn,
              xlim=xlm, ylim=ylm,  ...)
         if(grid){
             grid(lty=1, equilogs=FALSE)
@@ -136,10 +135,11 @@ mcPlot.lm <- function(model, variable, id=FALSE,
         rownames(res) <- rownames(mod.mat)
         invisible(res)}
     else { # side.by.side plots
+        mn <- if(title) paste("Marginal plot of", var.names[var]) else NULL
         plot(res0[, 1], res0[, 2], type="n",
              xlab = paste("Centered", var.names[var], sep=" "),
              ylab = paste("Centered", responseName, sep=" "),
-             main=paste("Marginal plot of", var.names[var]),
+             main=mn,
              xlim=xlm, ylim=ylm,  ...)
         if(grid){
             grid(lty=1, equilogs=FALSE)
@@ -155,8 +155,9 @@ mcPlot.lm <- function(model, variable, id=FALSE,
                    col=id.col, location=id.location)
         colnames(res) <- c(var.names[var], responseName)
         rownames(res) <- rownames(mod.mat)
+        mn <- if(title) paste("Added-Variable plot of", var.names[var]) else NULL
         plot(res[, 1], res[, 2], xlab = xlab, ylab = ylab, type="n",
-             main=paste("Added-Variable plot of", var.names[var]),
+             main=mn,
              xlim=xlm, ylim=ylm,  ...)
         if(grid){
             grid(lty=1, equilogs=FALSE)

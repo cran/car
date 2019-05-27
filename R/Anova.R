@@ -226,7 +226,8 @@ Anova.III.lm <- function(mod, error, singular.ok=FALSE, ...){
   not.aliased <- !is.na(coef(mod))
   if (!singular.ok && !all(not.aliased))
     stop("there are aliased coefficients in the model")
-  for (term in 1:n.terms){
+  indices <- 1:n.terms
+  for (term in indices){
     subs <- which(assign == term - intercept)
     hyp.matrix <- I.p[subs,,drop=FALSE]
     hyp.matrix <- hyp.matrix[, not.aliased, drop=FALSE]
@@ -238,20 +239,18 @@ Anova.III.lm <- function(mod, error, singular.ok=FALSE, ...){
       p[term] <- NA
     }
     else {
-      test <- if (missing(error)) linearHypothesis(mod, hyp.matrix, 
-                                                   singular.ok=singular.ok, ...)
-      else linearHypothesis(mod, hyp.matrix, error.SS=error.SS, error.df=error.df, 
-                            singular.ok=singular.ok, ...)
+      test <- linearHypothesis(mod, hyp.matrix, singular.ok=singular.ok, ...)
       SS[term] <- test$"Sum of Sq"[2]
       df[term] <- test$"Df"[2]
-      f[term] <- test$"F"[2]
-      p[term] <- test$"Pr(>F)"[2]
     }
   }
-  Source[n.terms + 1] <- "Residuals"
-  SS[n.terms + 1] <- error.SS
-  df[n.terms + 1] <- error.df
-  p[n.terms + 1] <- f[n.terms + 1] <- NA
+  index.error <- n.terms + 1
+  Source[index.error] <- "Residuals"
+  SS[index.error] <- error.SS
+  df[index.error] <- error.df
+  f[indices] <- (SS[indices]/df[indices])/(error.SS/error.df)
+  p[indices] <- pf(f[indices], df[indices], error.df, lower.tail=FALSE)
+  p[index.error] <- f[index.error] <- NA
   result <- data.frame(SS, df, f, p)
   row.names(result) <- Source
   names(result) <- c("Sum Sq", "Df", "F value", "Pr(>F)")

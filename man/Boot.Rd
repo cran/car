@@ -58,7 +58,7 @@ Boot(object, f=coef, labels=names(f(object)), R=999,
     the estimates from the last bootstrap iteration as starting values
     for the next iteration.}
 \item{ncores}{A numeric argument that specifies the number of cores for parallel
-    processing.  If less than or equal to 1, no parallel processing wiill be used.}
+    processing for unix systems.  If less than or equal to 1, no parallel processing wiill be used. Note in a Windows platform will produce a warning and set this argument to 1.}
 }
 \details{
 \code{Boot} uses a
@@ -97,8 +97,8 @@ Applications}.  Oxford:  Oxford University Press.
 
 Fox, J. and Weisberg, S. (2019) \emph{Companion to Applied Regression}, Third Edition. Thousand Oaks:  Sage.
 
-Fox, J. and Weisberg, S. (2017) \emph{Bootstrapping},
-\url{http://socserv.mcmaster.ca/jfox/Books/Companion/appendix/Appendix-Bootstrapping.pdf}.
+Fox, J. and Weisberg, S. (2019) \emph{Bootstrapping Regression Models in R},
+\url{https://socialsciences.mcmaster.ca/jfox/Books/Companion/appendices/Appendix-Bootstrapping.pdf}.
 
 Weisberg, S. (2014) \emph{Applied Linear Regression}, Fourth Edition, Wiley
 Wiley, Chapters 4 and 11.}

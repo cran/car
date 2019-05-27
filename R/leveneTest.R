@@ -2,7 +2,7 @@
 
 # levene.test.default function slightly modified and generalized from Brian Ripley via R-help
 # the original generic version was contributed by Derek Ogle
-# last modified 28 January 2010 by J. Fox
+# last modified 2019-02-01 by J. Fox
 
 leveneTest <- function (y, ...) {
 	UseMethod("leveneTest") 
@@ -43,5 +43,9 @@ leveneTest.formula <- function(y, data, ...) {
 
 
 leveneTest.lm <- function(y, ...) {
-	leveneTest.formula(formula(y), data=model.frame(y), ...)
+    m <- model.frame(y)
+    m$..y <- model.response(m)
+    f <- formula(y)
+    f[2] <- expression(..y)
+	leveneTest.formula(f, data=m, ...)
 }

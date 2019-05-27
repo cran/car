@@ -3,6 +3,7 @@
 # 25 April 2016 check na.action for compatibility with Rcmdr
 # 2017-02-13: modified to use id arg in calls to invTranPlot(). J. Fox
 # 2017-11-30: substitute carPalette() for palette(). J. Fox
+# 2019-05-16: make sure that xlab arg is properly passed to invTranPlot(). J. Fox
 
 inverseResponsePlot <- function(model, lambda=c(-1, 0, 1), robust=FALSE,
    xlab=NULL, ...)
@@ -37,7 +38,7 @@ inverseResponsePlot.lm <- function(model, lambda=c(-1, 0, 1), robust=FALSE,
   mf <- model$model
   if (is.null(mf)) mf <- update(model, model=TRUE, method="model.frame")
   
-  xlab <- if(is.null(xlab)) names(mf)[1]
+  if (is.null(xlab)) xlab <- names(mf)[1] else force(xlab)
   y <- mf[, 1]
   yhat <- predict(model)
   invTranPlot(y, yhat, lambda=lambda, xlab=xlab, robust=robust, 

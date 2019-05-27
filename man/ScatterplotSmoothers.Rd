@@ -65,7 +65,7 @@ additional arguments to the smoother.  As of November, 2016, the smoother is eva
 
 For \code{loessLine} the default value is
 \code{smoother.args=list(lty.smooth=1, lwd.smooth=2, lty.spread=4, lwd.spread=2, span=2/3 (prior to 11/2016, span was 1/2),
-degree=2, family="symmetric", iterations=4)}.
+degree=1, family="symmetric", iterations=4)}.
 The arguments \code{lty.smooth} and \code{lwd.smooth} are the type and width
 respectively of the mean or median smooth, \code{lty.spread}
 and \code{lwd.spred} are the type and color of the spread smooths if requested.

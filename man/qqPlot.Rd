@@ -98,7 +98,7 @@ graph}
   Any distribution for which quantile and
   density functions exist in R (with prefixes \code{q} and \code{d}, respectively) may be used.
   When plotting a vector, the confidence envelope is based on the SEs of the order statistics
-  of an independent random sample from the comparison distribution (see Fox, 2008).
+  of an independent random sample from the comparison distribution (see Fox, 2016).
   Studentized residuals from linear models are plotted against the appropriate t-distribution with a point-wise
   confidence envelope computed by default by a parametric bootstrap,
   as described by Atkinson (1985).

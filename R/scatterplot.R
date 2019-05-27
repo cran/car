@@ -29,6 +29,7 @@
 # 2018-04-12: J. Fox: fixed error produced when groups not a factor, reported by Alexandre Courtiol.
 # 2018-05-19: J. Fox: fixed bug when legend=FALSE, reported by Castor Guisande.
 # 2018-06-25: S. Weisberg  made the argument 'var' an alias of 'spread'
+# 2019-01-15: J. Fox: make scatterplot.formula() more robust
 
 reg <- function(reg.line, x, y, col, lwd, lty, log.x, log.y){
   if(log.x) x <- log(x)
@@ -102,6 +103,8 @@ scatterplot.formula <- function (formula, data, subset, xlab, ylab,
   names <- names(X)
   if (missing(xlab)) xlab <- names[2]
   if (missing(ylab)) ylab <- names[1]
+  X[, 1] <- as.vector(X[, 1])
+  if (!is.factor(X[, 2])) X[, 2] <- as.vector(X[, 2])
   if (ncol(X) == 2) scatterplot(X[,2], X[,1], xlab=xlab, ylab=ylab,
                                 id=id, ...)
   else {

@@ -4,6 +4,7 @@
 # 2017-12-19: Improved handling of gamma small case, still not great for the
 #             multivariate extenstion.  Works for lm and lmer
 # 2017-12-25: bug fix with multivariace bcnPower
+# 2019-03-07: bug fix in estimateTransform.bcnPowerlmer, thanks to wouter@zoology.ubc.ca
 
 bcnPower <- function(U, lambda, jacobian.adjusted=FALSE, gamma) {
   if(is.matrix(U)){
@@ -372,25 +373,26 @@ estimateTransform.bcnPowerlmer <- function(object, verbose=FALSE,
   } else{
   # iteration is needed only if gamma is not on the boundary
   # set iteration counter
-  i <- 0
-  crit <- 1
-  while( (crit > conv) & (i < itmax) & gamma.ok) {
-    i <- i+1
-    last.value <- res
-    res <- lambda.1d(res$lambda, res$gamma)
-    res <- gamma.1d(res$lambda, res$gamma)
-    if(res$gamma < 1.5 * gamma.min){
-      gamma.ok <- FALSE
-      res <- lambda.1d(res$lambda, gamma.min)
-    }
-    crit <- (res$llik - last.value$llik)/abs(res$llik)
-    if(verbose)
-      print(data.frame(Inter=i, gamma=res$gamma, lambda=res$lambda,
+    i <- 0
+    crit <- 1
+    while( (crit > conv) & (i < itmax) & gamma.ok) {
+      i <- i+1
+      last.value <- res
+      res <- lambda.1d(res$lambda, res$gamma)
+      res <- gamma.1d(res$lambda, res$gamma)
+      if(res$gamma < 1.5 * gamma.min){
+        gamma.ok <- FALSE
+        res <- lambda.1d(res$lambda, gamma.min)
+      }
+      crit <- (res$llik - last.value$llik)/abs(res$llik)
+      if(verbose)
+      print(data.frame(Iter=i, gamma=res$gamma, lambda=res$lambda,
                        llik=res$llik, crit=crit))
-  }}
-  if(i==itmax & conv > crit)
-    warning(paste("No convergence in", itmax, "iterations, criterion =",
+    }
+    if(i==itmax & conv > crit)
+      warning(paste("No convergence in", itmax, "iterations, criterion =",
                   crit, collapse=" "))
+  }
 #  if(!gamma.ok) warning(paste("gamma too close to zero, set to",gamma.min, collapse=" "))
   # optimize does not give the Hessian, so run optimHess
   if(gamma.ok){

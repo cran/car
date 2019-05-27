@@ -10,6 +10,7 @@
 # 2015-11-06: now returns Cook's distance, not its square root.  S. Weisberg
 # 2017-02-12: consolidated id argument. J. Fox
 # 2017-11-30: substitute carPalette() for palette(). J. Fox
+# 2019-01-02: added lmerMod method. J. Fox
 
 # moved from Rcmdr 5 December 2006
 
@@ -64,4 +65,8 @@ influencePlot.lm <- function(model, scale=10,
         return(result)
     }
     else return(invisible(NULL))
+}
+
+influencePlot.lmerMod <- function(model, ...){
+  influencePlot.lm(model, ...)
 }

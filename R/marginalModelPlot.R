@@ -1,8 +1,5 @@
 #############################################
 # marginal model plots    Rev 12/30/09
-# To do:
-# Allow a Groups arg that will draw the plot for the specified group
-# BUG:  sd's are WRONG with weights; see cards data
 # 15 March 2010 changed to make
 #   mmps(lm(longley)) work without specifying data or response
 #   fixed bug  when only one plot is requested --- suppress call to par()
@@ -23,6 +20,9 @@
 # 2017-02-13: consolidated smooth and id arguments. J. Fox
 # 2017-10-29: Changed line type of smooth of the data to 1 as advertised
 # 2017-10-29: Changed default color palette from palette() to carPalette()
+# 2019-05-17: in mmp.glm, default horizontal variable when fitted=TRUE is now the
+#             fitted values for lm and the linear predictor for glm
+# 2019-05-17: added ylab arg to mmp() methods. J. Fox
 #############################################
 
 marginalModelPlot <- function(...){
@@ -41,7 +41,7 @@ mmp.lm <- function (model, variable, sd = FALSE,
 }
 
 mmp.default <- function (model, variable, sd = FALSE,
-                         xlab = deparse(substitute(variable)), smooth=TRUE, key=TRUE, pch, groups=NULL,
+                         xlab = deparse(substitute(variable)), ylab, smooth=TRUE, key=TRUE, pch, groups=NULL,
                          col.line = carPalette()[c(2, 8)], col=carPalette()[1],
                          id=FALSE, grid=TRUE, ...){
     id <- applyDefaults(id, defaults=list(method="y", n=2, cex=1, col=carPalette()[1], location="lr"), type="id")
@@ -89,8 +89,9 @@ mmp.default <- function (model, variable, sd = FALSE,
     } else {
         u <- variable}
     resp <- model.response(model.frame(model))
+    if (missing(ylab)) ylab <- colnames(model$model[1])
     plot(u, resp,
-         xlab = xlab, ylab = colnames(model$model[1]), type="n", ...)
+         xlab = xlab, ylab = ylab, type="n", ...)
     if(grid){
         grid(lty=1, equilogs=FALSE)
         box()}
@@ -139,7 +140,7 @@ mmp.default <- function (model, variable, sd = FALSE,
 }
 
 mmp.glm <- function (model, variable, sd = FALSE,
-                     xlab = deparse(substitute(variable)),
+                     xlab = deparse(substitute(variable)), ylab,
                      smooth=TRUE, key=TRUE, pch, groups=NULL,
                      col.line = carPalette()[c(2, 8)], col=carPalette()[1],
                      id=FALSE, grid=TRUE, ...){
@@ -183,7 +184,8 @@ mmp.glm <- function (model, variable, sd = FALSE,
     }
     if (missing(variable)) {
         xlab <- "Linear Predictor"
-        u <- fitted(update(model, na.action=na.omit))
+        u <- predict(update(model, na.action=na.omit), type="link")
+#        u <- fitted(update(model, na.action=na.omit)) #deleted 5/17/2019
     }  else {
         u <- variable }
     response <- model.response(model.frame(model))
@@ -196,7 +198,8 @@ mmp.glm <- function (model, variable, sd = FALSE,
         if (is.factor(response)) {response <- as.numeric(response) - 1}
         if (is.matrix(response)){response <- response[, 1]/pw}
     }
-    plot(u, response, type="n", xlab = xlab, ylab = colnames(model$model[1]))
+    if (missing(ylab)) ylab <- colnames(model$model[1])
+    plot(u, response, type="n", xlab = xlab, ylab = ylab)
     if(grid){
         grid(lty=1, equilogs=FALSE)
         box()}

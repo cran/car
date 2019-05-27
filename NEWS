@@ -1,14 +1,50 @@
+Changes to Version 3.0-3
+
+  o Fixed a bug in mmp.glm, so the horizontal axis for the default plot is the linear predictor, not the fitted values.  
+
+  o Fixed a bug in estimatePower.bncPowerlmer when the shift parameter is too close to the lower bound, thanks to Wouter van der Bijl <wouter@zoology.ubc.ca>
+  
+  o Fixed a bug in brief.lm the caused an error with rank-deficient models.
+  
+  o Fixed a bug in deltaMethod() when a variable in the model is named "g" (reported by Chris Andrews.)
+  
+  o Added a title argument to mcPlots
+  
+  o influence.merMod() and influence.lme() now support parallel computations.
+
+  o Fix a bug in gamLine() to return values in the response scale, rather than the linear predictor scale, for glms.
+  
+  o Fixed a bug that caused the error argument to be ignored in Anova() for type-III tests in linear models (reported by Austin Hurst).
+  
+  o New lmerMod method for influencePlot(), infIndexPlot(), and outlierTest().
+  
+  o Made scatterplot.formula() more robust.
+  
+  o Fixed qqPlot() to respect order of factor levels when plotting by groups (suggestion of Vilmantas Gegzna).
+  
+  o Fixed bug in S.multinom() that exponentiated coefficients twice (reported by Thamron Keowmani).
+  
+  o Made several S() methods tolerant of models with just one coefficient or, for multinom model, 2 response levels (problem reported for S.polr() by Thamron Keowmani).
+  
+  o Added carHexsticker().
+  
+  o Updated CITATION file.
+  
+  o Small corrections.
+  
 Changes to Version 3.0-2
 
-  o This version deals with a technical problem (reported by Don van den Bergh), implementing a solution suggested by Brian Ripley: Rather than importing utils::askYesNo(), which is unavailable before R 3.5.0, a local unexported copy is supplied in the car package, to be removed after version 3.0-2.
+  o Include unexported copy of rather than import utils::askYesNo(), which doesn't exist before R 3.5.0. To be reversed in car 3.0-3 which will require R >= 3.5.0
+  
+  o Fix a bug in confint.boot() and hence Confint.boot() that always set level=0.95 when confint when function falls back to type="perc" (reported by Derek Lee Sonderegger).
 
 Changes to Version 3.0-1
 
-  o Fix a bug in 'Boot' so lm and glm models work with transformed predictors like log(x) or I(x-34).
-  
-  o For 'smooth' argument to scatterplot and scatterPlot matrix, the 'smooth' subargument is replaced by a new argument 'var', and 'lty.smooth', 'col.smooth', 'lwd.smooth' are replaced by 'lty.var', 'col.var' and 'lwd.var', respectively, although the old arguments are still allowed.
+  o Fix a bug in 'Boot()' so lm and glm models work with transformed predictors like log(x) or I(x-34).
 
-  o Mofidied man page for showLabels to clarify setting the labels argument
+  o For 'smooth' argument to scatterplot() and scatterPlot matrix(), the 'smooth' subargument is replaced by a new argument 'var', and 'lty.smooth', 'col.smooth', 'lwd.smooth' are replaced by 'lty.var', 'col.var' and 'lwd.var', respectively, although the old arguments are still allowed.
+
+  o Mofidied man page for showLabels() to clarify setting the labels argument
 
   o Too few colors in scatterplot() and scatterplotMatrix() now produces a warning rather than an error (suggestion of John Maindonald).
 
@@ -23,9 +59,9 @@ Changes to Version 3.0-1
   o Fixed bug in influence.merMod() and influence.lme() when there is more than one grouping variable (reported by Maarten Jung).
 
   o Make model.matrix.lme() more bullet proof (following report by Peter Grossmann).
-  
+
   o Anova.lm() now doesn't permit non-standard coefficient covariance matrix for model with aliased coefficients (following report by Ariel Muldoon).
-  
+
   o Added kernel functions depan() and dbiwt() for use with adaptiveKernel().
 
   o Updated carWeb().

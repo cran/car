@@ -40,6 +40,10 @@
 # 2018-01-15:  S. Weisberg all Summmarize/Summarise methods renamed S
 # 2018-02-02:  J. Fox fixed S.lm() and S.glm() output when vcov. arg not given.
 # 2018-02-07,08,12:  J. Fox removed leading blank lines in formatCall() and elsewhere.
+# 2018-10-23: J. Fox made coefs2use() work with models without an intercept even if intercept arg is TRUE.
+# 2019-05-02: J. Fox fixed bug in Confint.polr() that exponentiated coefficients twice (reported by Thamron Keowmani).
+# 2019-05-02,13: J. Fox made several S() methods tolerant of model with 1 coefficient or
+#             in the case of multinom models, 2 response levels(reported by Thamron Keowmani).
 
 formatCall <- function(call){
   call <- if (is.character(call)){
@@ -482,7 +486,7 @@ S.multinom <- function(object, brief=FALSE, exponentiate=FALSE, ...){
     result <- summary(object, ...)
     result$brief <- brief
     result$fitstats <- fitstats(object)
-    if (exponentiate) result$exponentiated <- exp(Confint(object, exponentiate=TRUE))
+    if (exponentiate) result$exponentiated <- Confint(object, exponentiate=TRUE)
     class(result) <- "S.multinom"
     result
 }
@@ -507,7 +511,14 @@ print.S.multinom <- function (x, digits = max(3, getOption("digits") - 3),
         dimnames(table)[[2]] <- c("Estimate", "Std. Error", "z value", "Pr(>|z|)")
         for (level in levels[-1]){
             cat("\n ", level, "\n")
-            printCoefmat(table[, , level], signif.stars=signif.stars, digits=digits, ...)
+            tab <- table[, , level]
+            if (is.vector(tab)){
+              cnames <- names(tab)
+              tab <- matrix(tab, nrow=1)
+              colnames(tab) <- cnames
+              rownames(tab) <- x$coefnames
+            }
+            printCoefmat(tab, signif.stars=signif.stars, digits=digits, ...)
         }
     }
     cat("\nResidual Deviance:", format(x$deviance, digits=digits, ...), "\n")
@@ -515,7 +526,8 @@ print.S.multinom <- function (x, digits = max(3, getOption("digits") - 3),
     exponentiated <- x$exponentiated
     if (!is.null(exponentiated)){
         cat("\nExponentiated Coefficients:\n")
-        for (response in dimnames(table)[[3]]){
+      if (length(dim(table)) == 2) print(exponentiated, digits=digits, ...)
+      else  for (response in dimnames(table)[[3]]){
             cat("\n ", response, "\n")
             print(exponentiated[, , response], digits=digits, ...)
         }
@@ -542,8 +554,8 @@ print.S.polr <- function(x, digits = max(3, getOption("digits") - 3),
     n.par <- nrow(table)
     n.ints <- length(x$zeta)
     n.coefs <- n.par - n.ints
-    coef.table <- table[1:n.coefs, ]
-    int.table <- table[(n.coefs + 1):n.par, ]
+    coef.table <- table[1:n.coefs, , drop=FALSE]
+    int.table <- table[(n.coefs + 1):n.par, , drop=FALSE]
     colnames(coef.table) <- colnames(int.table) <- c("Estimate", "Std. Error", "z value", "Pr(>|z|)")
     if (!x$brief) cat("\n")
     cat(" Coefficients:\n")
@@ -791,7 +803,8 @@ Confint.lm <- function(object, estimate=TRUE, parm, level = 0.95, vcov.= vcov(ob
     ci
 }
 
-Confint.glm <- function(object, estimate=TRUE, exponentiate=FALSE, vcov., dispersion, ...){
+Confint.glm <- function(object, estimate=TRUE, exponentiate=FALSE, vcov., dispersion, type=c("LR", "Wald"), ...){
+    type <- match.arg(type)
     silent <- list(...)$silent
     if (!missing(vcov.) && !missing(dispersion))
         stop("cannot specify both vcov. and dispersion arguments")
@@ -799,7 +812,10 @@ Confint.glm <- function(object, estimate=TRUE, exponentiate=FALSE, vcov., disper
     result <- if (!missing(vcov.)) Confint.default(object, estimate=FALSE, vcov.=vcov(object, complete=FALSE), ...)
     else if (!missing(dispersion))
         Confint.default(object, estimate=FALSE, vcov.=dispersion*summary(object)$cov.unscaled, ...)
-    else suppressMessages(confint(object, ...))
+    else if (type == "LR"){
+      suppressMessages(confint(object, ...))
+    }
+    else Confint.default(object, estimate=FALSE, vcov.=vcov(object))
     if (estimate){
         result <- cbind(coef(object), result)
         colnames(result)[1] <- "Estimate"
@@ -817,6 +833,12 @@ Confint.polr <- function(object, estimate=TRUE, exponentiate=FALSE, thresholds=!
     dots <- list(...)
     level <- if (is.null(dots$level)) 0.95 else dots$level
     result <- suppressMessages(confint(object, ...))
+    if (!is.matrix(result)) {
+      cnames <- names(result)
+      result <- matrix(result, nrow=1)
+      colnames(result) <- cnames
+      rownames(result) <- names(coef(object))
+    }
     cnames <- colnames(result)
     if (estimate){
         result <- cbind(coef(object), result)
@@ -930,7 +952,7 @@ coefs2use <- function(model, terms, intercept){
     model.names <- attributes(mm)$dimnames[[2]]
     model.assign <- attributes(mm)$assign
     use <- model.names[!is.na(match(model.assign, terms.used))]
-    if (intercept) c("(Intercept)", use) else use
+    if (intercept && has.intercept(model)) c("(Intercept)", use) else use
 }
 
 # S <- function(model, terms, intercept, pvalues, digits, horizontal, ...){

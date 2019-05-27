@@ -23,25 +23,25 @@ with known or estimated covariance matrix.
 \usage{
 deltaMethod(object, ...)
 
-\method{deltaMethod}{default}(object, g, vcov., func=g, constants, level=0.95, ...)
-\method{deltaMethod}{lm} (object, g, vcov.=vcov(object, complete=FALSE), 
+\method{deltaMethod}{default}(object, g., vcov., func=g., constants, level=0.95, ...)
+\method{deltaMethod}{lm} (object, g., vcov.=vcov(object, complete=FALSE), 
            parameterNames=names(coef(object)), ...)
-\method{deltaMethod}{nls}(object, g, vcov.=vcov(object, complete=FALSE), ...)
-\method{deltaMethod}{multinom} (object, g, vcov. = vcov(object, complete=FALSE), 
+\method{deltaMethod}{nls}(object, g., vcov.=vcov(object, complete=FALSE), ...)
+\method{deltaMethod}{multinom} (object, g., vcov. = vcov(object, complete=FALSE), 
            parameterNames = if (is.matrix(coef(object))) 
            colnames(coef(object)) else names(coef(object)), ...) 
-\method{deltaMethod}{polr} (object, g, vcov.=vcov(object, complete=FALSE), ...)
-\method{deltaMethod}{survreg} (object, g, vcov. = vcov(object, complete=FALSE), 
+\method{deltaMethod}{polr} (object, g., vcov.=vcov(object, complete=FALSE), ...)
+\method{deltaMethod}{survreg} (object, g., vcov. = vcov(object, complete=FALSE), 
            parameterNames = names(coef(object)), ...)
-\method{deltaMethod}{coxph} (object, g, vcov. = vcov(object, complete=FALSE), 
+\method{deltaMethod}{coxph} (object, g., vcov. = vcov(object, complete=FALSE), 
            parameterNames = names(coef(object)), ...)
-\method{deltaMethod}{mer} (object, g, vcov. = vcov(object, complete=FALSE),
+\method{deltaMethod}{mer} (object, g., vcov. = vcov(object, complete=FALSE),
            parameterNames = names(fixef(object)), ...)
-\method{deltaMethod}{merMod} (object, g, vcov. = vcov(object, complete=FALSE),
+\method{deltaMethod}{merMod} (object, g., vcov. = vcov(object, complete=FALSE),
            parameterNames = names(fixef(object)), ...)
-\method{deltaMethod}{lme} (object, g, vcov. = vcov(object, complete=FALSE),
+\method{deltaMethod}{lme} (object, g., vcov. = vcov(object, complete=FALSE),
            parameterNames = names(fixef(object)), ...)
-\method{deltaMethod}{lmList} (object, g,  ...)
+\method{deltaMethod}{lmList} (object, g.,  ...)
 
 }
 \arguments{
@@ -54,7 +54,7 @@ deltaMethod(object, ...)
   For the other methods, \code{object} is a 
   regression object for which \code{coef(object)} or \code{fixef(object)} returns a vector of parameter
   estimates.}
-  \item{g}{A quoted string that is the function of the parameter estimates to be
+  \item{g.}{A quoted string that is the function of the parameter estimates to be
   evaluated; see the details below. }
   \item{vcov.}{The (estimated) covariance matrix of the coefficient
   estimates.  For the default method, this argument is required.  For all
@@ -63,7 +63,7 @@ deltaMethod(object, ...)
   to \code{object} returns a covariance matrix.  The default is 
   to use the function \code{vcov}.}
   \item{func}{A quoted string used to annotate output.  The default of
-  \code{func = g} is usually appropriate.}
+  \code{func = g.} is usually appropriate.}
   \item{parameterNames}{A character vector of length \code{p} that gives the 
   names of the parameters in the same order as they appear in the vector of
   estimates.  This argument will be useful if some of the names in the
@@ -90,9 +90,9 @@ variance.
          
 The default method requires that you provide \eqn{x} in the argument
 \code{object}, \eqn{C} in the argument \code{vcov.}, and a text expression
-in argument \code{g} that when evaluated gives the function \eqn{g}.  The
+in argument \code{g.} that when evaluated gives the function \eqn{g}.  The
 call \code{names(object)} must return the names of the elements of \code{x}
-that are used in the expression \code{g}.  
+that are used in the expression \code{g.}.  
 
 Since
 the delta method is often applied to functions of regression parameter 
@@ -109,11 +109,11 @@ are returned by the \code{fixef} function, while for \code{multinom},
 \code{coef} as a matrix.  Methods for these models are provided to get the
 correct estimates and variance matrix.
 
-The argument \code{g} must be a quoted character string
+The argument \code{g.} must be a quoted character string
 that gives the function of interest.  For example, if you set 
 \code{m2 <- lm(Y ~ X1 + X2 + X1:X2)}, then \code{deltaMethod(m2,"X1/X2")} applies the
 delta method to the ratio of the coefficient estimates for \code{X1} and
-\code{X2}.  The argument \code{g} can consist of constants and names 
+\code{X2}.  The argument \code{g.} can consist of constants and names 
 associated with the elements of the vector of coefficient estimates.
        
 In some cases the names may include characters including such as the colon 
@@ -126,7 +126,7 @@ example, the ratio of the
 \code{deltaMethod(m2, "b1/b3", parameterNames=c("b0", "b1", "b2", "b3"))}.
 The name \dQuote{\code{(Intercept)}} used for the intercept in linear and generalized
 linear models is an exception, and it will be correctly interpreted by
-\code{deltaMethod}.
+\code{deltaMethod}. The name \code{"g."} also may not be among the coefficient names.
 
 For \code{multinom} objects, the \code{coef} function returns a matrix of
 coefficients, with each row giving the estimates for comparisons of one category
@@ -162,10 +162,10 @@ were not easily fixed without the change in syntax.
 \value{
 A data.frame with two components
 named \code{Estimate} for the estimate, \code{SE} for its standard error.
-The value of \code{g} is given as a row label.  
+The value of \code{g.} is given as a row label.  
 }
 
-\seealso{First derivatives of \code{g} are computed using symbolic differentiation
+\seealso{First derivatives of \code{g.} are computed using symbolic differentiation
 by the function \code{\link{D}}.}
 
 \references{

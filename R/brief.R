@@ -5,6 +5,8 @@
 # 2017-12-15--21: tweaks to brief.data.frame. J. Fox
 # 2017-12-19: added head, tail args to brief.data.frame()
 # 2018-02-10: tweak brief.glm() output formatting
+# 2018-12-26: Changed the argument for brief.lm from vcov.=vcov to just vcov. If arge is
+#             missing set vcov. = vcov(orject, complete=FALSE) to match brief.glm
 
 brief <- function(object, ...){
     g <- options("max.print"=.Machine$integer.max)
@@ -240,8 +242,9 @@ brief.default <- function(object, terms = ~ ., intercept=missing(terms), pvalues
   invisible(sumry)
 }
 
-brief.lm <- function(object, terms = ~ ., intercept=missing(terms), pvalues=FALSE, digits=3, horizontal=TRUE, vcov.=vcov, ...){
+brief.lm <- function(object, terms = ~ ., intercept=missing(terms), pvalues=FALSE, digits=3, horizontal=TRUE, vcov., ...){ 
   use <- coefs2use(object, terms, intercept)
+  vcov. <- if(missing(vcov.)) vcov(object, complete=FALSE) else vcov.
   sumry <- S(object, vcov.=vcov., ...)
   cols <- if (pvalues) c(1, 2, 4) else 1:2
   coefs <- sumry$coefficients

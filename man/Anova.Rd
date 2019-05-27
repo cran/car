@@ -289,7 +289,12 @@ corrections for non-spericity in repeated-measures ANOVA are adapted from the fu
 \code{stats:::stats:::mauchly.test.SSD} and \code{stats:::sphericity} by R Core; \code{summary.Anova.mlm}
 and \code{print.summary.Anova.mlm} incorporates code contributed by Gabriel Baud-Bovy.}
 
-\section{Warning}{Be careful of type-III tests.}
+\section{Warning}{
+Be careful of type-III tests: For a traditional multifactor ANOVA model with interactions, for example, these tests will normally only be sensible when using contrasts that, for different terms, are
+orthogonal in the row-basis of the model, such as those produced by \code{\link{contr.sum}}, \code{\link{contr.poly}}, or \code{\link{contr.helmert}}, but \emph{not} by the default
+\code{\link{contr.treatment}}. In a model that contains factors, numeric covariates, and interactions, main-effect tests for factors will be for differences over the origin. In contrast (pun intended),
+type-II tests are invariant with respect to (full-rank) contrast coding. If you don't understand this issue, then you probably shouldn't use \code{Anova} for type-III tests.
+}
 
 \seealso{ \code{\link{linearHypothesis}}, \code{\link[stats]{anova}}
 \code{\link[stats]{anova.lm}}, \code{\link[stats]{anova.glm}},
@@ -302,6 +307,7 @@ and \code{print.summary.Anova.mlm} incorporates code contributed by Gabriel Baud
 mod <- lm(conformity ~ fcategory*partner.status, data=Moore,
   contrasts=list(fcategory=contr.sum, partner.status=contr.sum))
 Anova(mod)
+Anova(mod, type=3)  # note use of contr.sum in call to lm()
 
 ## One-Way MANOVA
 ## See ?Pottery for a description of the data set used in this example.

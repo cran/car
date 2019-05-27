@@ -2,7 +2,7 @@
 # Revision history:
 # 2009-10-29: renamed var argument to .vcov; tidied code. John
 # 2010-07-02; added method for survreg and coxph objects.
-# 2010-07-02; rewrote default method to permit prarmeter names to have
+# 2010-07-02; rewrote default method to permit parameter names to have
 #   meta-characters 
 # 2011-07028  Removed meta-character checks; removed parameterPrefix because
 #   it didn't work and caused problems; added parameterNames to restore the
@@ -20,15 +20,16 @@
 # 2017-11-09: made compatible with vcov() in R 2.5.0. J. Fox
 # 2017-11-29: further fixes for vcov() and vcov.(). J. Fox
 # 2017-12-01: fix bug in handling vcov. arg in some methods. J. Fox
+# 2019-01-16: changed g arg to g. to allow variable named "g". J. Fox
 #-------------------------------------------------------------------------------
 
 deltaMethod <- function (object, ...) {
 	UseMethod("deltaMethod")
 }
 
-deltaMethod.default <- function (object, g, vcov., func = g, constants, level=0.95, ...) {
-	if (!is.character(g)) 
-		stop("The argument 'g' must be a character string")
+deltaMethod.default <- function (object, g., vcov., func = g., constants, level=0.95, ...) {
+	if (!is.character(g.)) 
+		stop("The argument 'g.' must be a character string")
 	if ((exists.method("coef", object, default=FALSE) ||
 				(!is.atomic(object) && !is.null(object$coefficients))) 
 			&& exists.method("vcov", object, default=FALSE)){
@@ -37,18 +38,19 @@ deltaMethod.default <- function (object, g, vcov., func = g, constants, level=0.
 	}
 	para <- object         
 	para.names <- names(para)
-	g <- parse(text = g)
+	if (any(para.names == "g.")) stop("there is a parameter named 'g.'")
+	g. <- parse(text = g.)
 	q <- length(para)
 	for (i in 1:q) {
 		assign(names(para)[i], para[i])
 	}
 	if(!missing(constants)){
      for (i in seq_along(constants)) assign(names(constants[i]), constants[[i]])}
-	est <- eval(g)
+	est <- eval(g.)
 	names(est) <- NULL
 	gd <- rep(0, q)
 	for (i in 1:q) {
-		gd[i] <- eval(D(g, names(para)[i]))
+		gd[i] <- eval(D(g., names(para)[i]))
 	}
 	se.est <- as.vector(sqrt(t(gd) %*% vcov. %*% gd))
 	result <- data.frame(Estimate = est, SE = se.est, row.names = c(func))
@@ -62,7 +64,7 @@ deltaMethod.default <- function (object, g, vcov., func = g, constants, level=0.
 	result
 }
 
-deltaMethod.lm <- function (object, g, vcov. = vcov(object, complete=FALSE), 
+deltaMethod.lm <- function (object, g., vcov. = vcov(object, complete=FALSE), 
            parameterNames = names(coef(object)), ...) {
 #  if( !exists("deltaMethodMessageFlag", envir=.carEnv)){
 #     message("deltaMethod arguments have changed, see help(deltaMethod)")
@@ -70,27 +72,28 @@ deltaMethod.lm <- function (object, g, vcov. = vcov(object, complete=FALSE),
 #     }
 	para <- coef(object)
 	para.names <- parameterNames
+	if (any(para.names == "g.")) stop("there is a parameter named 'g.'")
 	para.names[1] <- gsub("\\(Intercept\\)", "Intercept", para.names[1])
 	names(para) <- para.names
 	vcov. <- if (is.function(vcov.)) 
 			vcov.(object)
 		else vcov.
-	deltaMethod.default(para, g, vcov.,  ...)
+	deltaMethod.default(para, g., vcov.,  ...)
 }
 
 # nls has named parameters so parameterNames is ignored
-deltaMethod.nls <- function(object, g, vcov.=vcov(object, complete=FALSE), ...){
+deltaMethod.nls <- function(object, g., vcov.=vcov(object, complete=FALSE), ...){
 	vcov. <- if(is.function(vcov.)) vcov.(object) else vcov.
-	deltaMethod.default(coef(object), g, vcov., ...)   
+	deltaMethod.default(coef(object), g., vcov., ...)   
 }
 
-deltaMethod.polr <- function(object,g,vcov.=vcov(object, complete=FALSE), ...){
+deltaMethod.polr <- function(object,g.,vcov.=vcov(object, complete=FALSE), ...){
 	sel <- 1:(length(coef(object)))
 	vcov. <- if(is.function(vcov.)) vcov.(object)[sel, sel] else vcov.[sel, sel]
-	deltaMethod.lm(object, g, vcov., ...)
+	deltaMethod.lm(object, g., vcov., ...)
 }
 
-deltaMethod.multinom <- function(object, g, vcov.=vcov(object, complete=FALSE), 
+deltaMethod.multinom <- function(object, g., vcov.=vcov(object, complete=FALSE), 
    parameterNames = if(is.matrix(coef(object)))
      colnames(coef(object)) else names(coef(object)), ...){
   vcov. <- if(is.function(vcov.)) vcov.(object) else vcov.
@@ -101,57 +104,57 @@ deltaMethod.multinom <- function(object, g, vcov.=vcov(object, complete=FALSE),
 	nc <- dim(coefs)[2]
 	for (i in 1:dim(coefs)[1]){
 		para <- coefs[i, ]
-		ans <- deltaMethod(para, g, vcov.[(i - 1) + 1:nc, (i - 1) + 1:nc], ...)
+		ans <- deltaMethod(para, g., vcov.[(i - 1) + 1:nc, (i - 1) + 1:nc], ...)
 		rownames(ans)[1] <- paste(rownames(coefs)[i], rownames(ans)[1])
 		out <- rbind(out,ans)
 	}
 	out}
 
 # method for survreg objects. 
-deltaMethod.survreg <- function(object, g, vcov. = vcov(object, complete=FALSE), 
+deltaMethod.survreg <- function(object, g., vcov. = vcov(object, complete=FALSE), 
            parameterNames = names(coef(object)), ...) {
- deltaMethod.lm(object, g, vcov., parameterNames , ...) }
+ deltaMethod.lm(object, g., vcov., parameterNames , ...) }
 
 
  # method for coxph objects.
-deltaMethod.coxph <- function(object, g, vcov. = vcov(object, complete=FALSE), 
+deltaMethod.coxph <- function(object, g., vcov. = vcov(object, complete=FALSE), 
            parameterNames = names(coef(object)), ...) {
- deltaMethod.lm(object, g, vcov.,  parameterNames, ...) }
+ deltaMethod.lm(object, g., vcov.,  parameterNames, ...) }
            
 # lmer
 
-deltaMethod.merMod <- function(object, g, vcov. = vcov(object, complete=FALSE),
+deltaMethod.merMod <- function(object, g., vcov. = vcov(object, complete=FALSE),
                             parameterNames = names(fixef(object)), ...) {
-    deltaMethod.mer(object=object, g=g, vcov.=vcov, 
+    deltaMethod.mer(object=object, g.=g., vcov.=vcov, 
                        parameterNames=parameterNames, ...)
 }
     
-deltaMethod.mer <- function(object, g, vcov. = vcov(object, complete=FALSE),
+deltaMethod.mer <- function(object, g., vcov. = vcov(object, complete=FALSE),
            parameterNames = names(fixef(object)), ...) {
   para <- fixef(object)
   names(para) = parameterNames
  	vcov. <- if (is.function(vcov.)) 
 			vcov.(object)
 		else vcov.
-  deltaMethod(para, g, vcov., ...)
+  deltaMethod(para, g., vcov., ...)
   }
 
 
 #lme
-deltaMethod.lme <- function(object, g, vcov. = vcov(object, complete=FALSE),
+deltaMethod.lme <- function(object, g., vcov. = vcov(object, complete=FALSE),
            parameterNames = names(fixef(object)), ...) {
   para <- fixef(object)
   names(para) = parameterNames
  	vcov. <- if (is.function(vcov.)) 
 			vcov.(object)
 		else vcov.
-  deltaMethod(para, g, vcov., ...)
+  deltaMethod(para, g., vcov., ...)
   }
   
 # nlsList  lsList
-deltaMethod.lmList <- function(object, g, ...) {
-  out <- t(sapply(object, function(x) deltaMethod(x, g, ...)))
-  rownames(out) <- paste(rownames(out), g)
+deltaMethod.lmList <- function(object, g., ...) {
+  out <- t(sapply(object, function(x) deltaMethod(x, g., ...)))
+  rownames(out) <- paste(rownames(out), g.)
   out
   }
   

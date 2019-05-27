@@ -17,7 +17,7 @@ mcPlot(model, ...)
 \method{mcPlot}{lm}(model, variable, id=FALSE,
     col.marginal=carPalette()[2], col.conditional=carPalette()[3],
     col.arrows="gray", pch = c(16,1), lwd = 2, grid=TRUE,
-    ellipse=FALSE, overlaid=TRUE, new=TRUE, ...)
+    ellipse=FALSE, overlaid=TRUE, new=TRUE, title=TRUE, ...)
 }
 \arguments{
   \item{model}{model object produced by \code{lm}.
@@ -59,6 +59,7 @@ of the graph will have this many rows and columns.  If not set, behavior depends
     \code{ellipse=list(levels=0.5)}, which plots a bivariate-normal 50 percent concentration ellipse.}
   \item{new}{if \code{TRUE}, the default, the plot window is reset when \code{overlaid=FALSE} using \code{par{mfrow=c(1, 2)}}.  If \code{FALSE}, the layout of the plot window is not reset.
   Users will ordinarily ignore this argument.}
+  \item{title}{If TRUE, the default, the standard main argument in plot is used to add a standard title to each plot.  If FALSE no title is used.}
 }
 
 \details{

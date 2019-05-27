@@ -2,13 +2,14 @@
 \alias{outlierTest}
 \alias{outlierTest.lm}
 \alias{outlierTest.glm}
+\alias{outlierTest.lmerMod}
 \alias{print.outlierTest}
 
 \title{Bonferroni Outlier Test}
 
 \description{
-  Reports the Bonferroni p-values for testing each observation in turn to be a mean-shift outliner, based Studentized residuals in
-  linear (t-tests) and generalized linear models (normal tests).
+  Reports the Bonferroni p-values for testing each observation in turn to be a mean-shift outlier, based Studentized residuals in
+  linear (t-tests), generalized linear models (normal tests), and linear mixed models.
 }
 
 \usage{
@@ -16,13 +17,15 @@ outlierTest(model, ...)
 
 \method{outlierTest}{lm}(model, cutoff=0.05, n.max=10, order=TRUE, 
 	labels=names(rstudent), ...)
+	
+\method{outlierTest}{lmerMod}(model, ...)
 
 \method{print}{outlierTest}(x, digits=5, ...)
 }
 
 \arguments{
-  \item{model}{an \code{lm} or \code{glm} model object.}
-  \item{cutoff}{observations with Bonferonni p-values exceeding
+  \item{model}{an \code{lm}, \code{glm}, or \code{lmerMod} model object; the \code{"lmerMod"} method calls the \code{"lm"} method and can take the same arguments.}
+  \item{cutoff}{observations with Bonferroni p-values exceeding
   	\code{cutoff} are not reported, unless no observations are
   	nominated, in which case the one with the largest Studentized
   	residual is reported.}

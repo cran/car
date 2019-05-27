@@ -23,18 +23,20 @@ mmps(model, terms= ~ ., fitted=TRUE, layout=NULL, ask,
 
 marginalModelPlot(...)
 
+mmp(model, ...)
+
 \method{mmp}{lm}(model, variable, sd = FALSE,
-    xlab = deparse(substitute(variable)),
+    xlab = deparse(substitute(variable)), 
     smooth=TRUE, key=TRUE, pch, groups=NULL, ...)
 
 \method{mmp}{default}(model, variable, sd = FALSE,
-    xlab = deparse(substitute(variable)), smooth=TRUE,
+    xlab = deparse(substitute(variable)), ylab, smooth=TRUE,
     key=TRUE, pch, groups=NULL,
     col.line = carPalette()[c(2, 8)], col=carPalette()[1],
     id=FALSE, grid=TRUE, ...)
 
 \method{mmp}{glm}(model, variable, sd = FALSE,
-    xlab = deparse(substitute(variable)),
+    xlab = deparse(substitute(variable)), ylab,
     smooth=TRUE, key=TRUE, pch, groups=NULL,
     col.line = carPalette()[c(2, 8)], col=carPalette()[1],
     id=FALSE, grid=TRUE, ...)
@@ -49,9 +51,9 @@ marginalModelPlot(...)
   \code{formula(object)} will be used.  If a conditioning argument is given,
   eg \code{terms = ~. | a}, then separate colors and smoothers are used for
   each unique non-missing value of \code{a}.  See examples below.}
-\item{fitted}{If the default \code{TRUE}, then a marginal model plot in the direction
-  of the fitted values or linear predictor of a generalized linear model will
-  be drawn.}
+\item{fitted}{If \code{TRUE}, the default, then a marginal model plot in the direction
+  of the fitted values for a linear model or the linear predictor of a 
+  generalized linear model will be drawn.}
 \item{layout}{
   If set to a value like \code{c(1, 1)} or \code{c(4, 3)}, the layout
 of the graph will have this many rows and columns.  If not set, the program
@@ -71,8 +73,12 @@ Additional arguments passed from \code{mmps} to \code{mmp} and
 then to \code{plot}.  Users should generally use \code{mmps}, or equivalently
 \code{marginalModelPlots}.
 }
-\item{variable}{ The quantity to be plotted on the horizontal axis.  The
-  default is the predicted values \code{predict(object)}.  It can be any other
+\item{variable}{ The quantity to be plotted on the horizontal axis.  If this argument
+  is missing, the horizontal variable is the linear predictor, returned by 
+  \code{predict(object)} for models of class
+  \code{lm}, with default label \code{"Fitted values"},  or returned by 
+  \code{predict(object, type="link")} for models of class \code{glm}, with default 
+  label \code{"Linear predictor"}. It can be any other
   vector of length equal to the number of observations in the object. Thus the
   \code{mmp} function can be used to get a marginal model plot versus any
   regressor or predictor while the \code{mmps} function can be used only to get
@@ -83,7 +89,8 @@ then to \code{plot}.  Users should generally use \code{mmps}, or equivalently
 \item{sd}{ If \code{TRUE}, display sd smooths.  For a binomial regression with all
 sample sizes equal to one, this argument is ignored as the SD bounds don't
 make any sense. }
-\item{xlab}{ label for horizontal axis }
+\item{xlab}{ label for horizontal axis.}
+\item{ylab}{ label for vertical axis, defaults to name of response.}
 \item{smooth}{specifies the smoother to be used along with its arguments; if \code{FALSE}, no smoother is shown;
 can be a list giving the smoother function and its named arguments; \code{TRUE}, the default, is equivalent to
 \code{list(smoother=loessLine, span=2/3)} for linear models and \code{list(smoother=gamLine, k=3)} for generalized linear models.

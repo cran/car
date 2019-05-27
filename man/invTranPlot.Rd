@@ -10,7 +10,7 @@
 draws a two-dimensional scatterplot of \eqn{Y}{Y} versus 
 \eqn{X}{X}, along with the OLS
 fit from the regression of \eqn{Y}{Y} on 
-\eqn{(X^{\lambda}-1)/\lambda}{(Y^(lam)-1)/lam}.  \code{invTranEstimate}
+\eqn{(X^{\lambda}-1)/\lambda}{(X?^(lam)-1)/lam}.  \code{invTranEstimate}
 finds the nonlinear least squares estimate of \eqn{\lambda}{lambda} and its
 standard error.
 }

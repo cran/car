@@ -1,4 +1,4 @@
-# last modified 2018-08-23 by J. Fox
+# last modified 2019-01-02 by J. Fox
 
 # additions for car 3.0-0, started 2016-12-27
 
@@ -65,7 +65,7 @@ importFrom("abind", "abind")
 importFrom("stats", "naprint", "symnum", ".checkMFClasses",
            "delete.response", "napredict", "influence", "dfbetas",
             "AIC", "BIC")
-importFrom("utils", "download.file", "capture.output") #, "askYesNo") # askYesNo temporarily removed in car 3.0-2
+importFrom("utils", "download.file", "capture.output", "askYesNo", "browseURL")
 
 
 #  from earlier versions car package
@@ -80,7 +80,7 @@ importFrom(stats, D, IQR, alias, anova, as.formula, binomial, bw.nrd0, coef, coe
     drop1, family, fitted, fitted.values, fivenum, formula, gaussian, getCall,
     glm, glm.fit, hatvalues, is.empty.model, lm, lm.fit, loess, loess.control,
     logLik, lowess, lsfit, make.link, median, model.frame, model.matrix,
-    model.matrix.default, model.response, model.weights, na.omit, na.pass,
+    model.matrix.default, model.response, model.weights, na.action, na.omit, na.pass,
     naresid, optim, optimize, p.adjust, pchisq, pf, pnorm, ppoints, predict, printCoefmat,
     pt, qchisq, qf, qnorm, qqline, qqnorm, qt, quantile, resid, residuals, rnorm,
     rstandard, rstudent, sd, setNames, spline, summary.lm, terms, update, var, vcov, weights,
@@ -94,6 +94,7 @@ export(
     basicPowerAxis,
     bcPowerAxis,
     Boxplot,
+    carHexsticker,
     carWeb,
     confidenceEllipse,
     contr.Helmert,
@@ -289,10 +290,12 @@ S3method(powerTransform, default)
 S3method(powerTransform, lm)
 S3method(powerTransform, lmerMod)
 S3method(influencePlot, lm)
+S3method(influencePlot, lmerMod)
 S3method(inverseResponsePlot, lm)
 S3method(invTranPlot, formula)
 S3method(invTranPlot, default)
 S3method(infIndexPlot, lm)
+S3method(infIndexPlot, lmerMod)
 S3method(powerTransform, formula)
 S3method(hccm, default)
 S3method(hccm, lm)
@@ -322,9 +325,11 @@ S3method(mcPlot, lm)
 S3method(mmp, default)
 S3method(mmp, lm)
 S3method(mmp, glm)
+S3method(na.action, merMod)
 S3method(ncvTest, glm)
 S3method(ncvTest, lm)
 S3method(outlierTest, lm)
+S3method(outlierTest, lmerMod)
 S3method(print, Anova.mlm)
 S3method(print, boxTidwell)
 S3method(print, linearHypothesis.mlm)

@@ -6,6 +6,7 @@
 # 2016-07-23: add ... argument to call to lines(). J. Fox
 # 2017-02-12: consolidated id argument
 # 2017-11-30: substitute carPalette() for palette(). J. Fox
+# 2019-01-02: add lmerMod method and make lm method work for it. J. Fox
 
 influenceIndexPlot <- function(model, ...){
     UseMethod("infIndexPlot")
@@ -25,7 +26,7 @@ infIndexPlot.lm <- function(model, vars=c("Cook", "Studentized", "Bonf", "hat"),
     }
     else{
         labels <- id$labels
-        if (is.null(labels)) labels <- row.names(model$model)
+        if (is.null(labels)) labels <- row.names(model.frame(model))
         id.method <- id$method
         id.n <- if ("identify" %in% id.method) Inf else id$n
         id.cex <- id$cex
@@ -33,7 +34,7 @@ infIndexPlot.lm <- function(model, vars=c("Cook", "Studentized", "Bonf", "hat"),
         id.location <- id$location
     }
     # Added for compatibility with Rcmdr
-    if(class(model$na.action) == "exclude") model <- update(model, na.action=na.omit)
+    if(class(na.action(model)) == "exclude") model <- update(model, na.action=na.omit)
     # End addition
     what <- pmatch(tolower(vars), 
                    tolower(c("Cook", "Studentized", "Bonf", "hat")))
@@ -45,7 +46,7 @@ infIndexPlot.lm <- function(model, vars=c("Cook", "Studentized", "Bonf", "hat"),
               mgp=c(2, 1, 0), oma=c(6, 0, 6, 0))
     oldwarn <- options()$warn
     options(warn=-1)
-    xaxis <- as.numeric(row.names(model$model))
+    xaxis <- as.numeric(row.names(model.matrix(model)))
     options(warn=oldwarn)
     if (any (is.na(xaxis))) xaxis <- 1:length(xaxis)
     on.exit(par(op))
@@ -75,4 +76,8 @@ infIndexPlot.lm <- function(model, vars=c("Cook", "Studentized", "Bonf", "hat"),
     mtext(side=3, outer=TRUE ,main, cex=1.2, line=1)
     mtext(side=1, outer=TRUE, "Index", line=3)
     invisible()
+}
+
+infIndexPlot.lmerMod <- function(model, ...){
+  infIndexPlot.lm(model, ...)
 }

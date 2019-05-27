@@ -23,7 +23,8 @@
 # 2017-12-28: rewrote termsToMf used by residualPlots.  It didn't work right.  SW
 # 2018-01-15: df.terms.multinom() now works with response matrix. JF
 # 2018-05-23: make model.matrix.lme() more bullet proof, following report by Peter Grossmann. JF
-# 2018-08-23: temporarily add askYesNo()
+# 2018-11-07: added combineLists(). JF
+# 2019-01-02: added na.action.merMod(), removed df.residual.merMod(). JF
 
 #if (getRversion() >= "2.15.1") globalVariables(c(".boot.sample", ".boot.indices"))
 
@@ -282,7 +283,7 @@ squeezeBlanks <- function(text){
 
 df.residual.mer <- function(object, ...) NULL
 
-df.residual.merMod <- function(object, ...) NULL
+# df.residual.merMod <- function(object, ...) NULL # no longer needed, now supplied by lme4
 
 df.residual.lme <- function(object, ...) Inf
 
@@ -300,6 +301,18 @@ model.matrix.lme <- function(object, ...){
 	    model.matrix(formula(object), eval(object$call$data))
     }
     else model.matrix(formula(object), data)
+}
+
+# added by J. Fox 2019-01-02:
+
+na.action.merMod <- function(object, ...){
+  nms <- names(attributes(model.frame(object)))
+  if ("na.action" %in% nms) attributes(model.frame(object))$na.action
+  else {
+    na.action <- integer(0)
+    class(na.action) <- options("na.action")
+    na.action
+  }
 }
 
 # added by J. Fox 2012-04-08 to use in deltaMethod.default()
@@ -457,35 +470,54 @@ format.perc <- function (probs, digits){
   paste(format(100 * probs, trim = TRUE, scientific = FALSE, digits = digits), "%")
 }
 
-# the following function is copied from the utils package and is intended only for car 3.0-2
+# the following unexported function is useful for combining results of parallel computations
 
-askYesNo <- function (msg, default = TRUE, prompts = getOption("askYesNo", 
-                                                   gettext(c("Yes", "No", "Cancel"))), ...) 
-{
-    if (is.character(prompts) && length(prompts) == 1) 
-        prompts <- strsplit(prompts, "/")[[1]]
-    if (!is.character(prompts) || length(prompts) != 3) {
-        fn <- match.fun(prompts)
-        return(fn(msg = msg, default = default, prompts = prompts, 
-                  ...))
+combineLists <- function(..., fmatrix="list", flist="c", fvector="rbind", 
+                         fdf="rbind", recurse=FALSE){
+    # combine lists of the same structure elementwise
+    
+    # ...: a list of lists, or several lists, each of the same structure
+    # fmatrix: name of function to apply to matrix elements
+    # flist: name of function to apply to list elements
+    # fvector: name of function to apply to data frame elements
+    # recurse: process list element recursively
+    
+    frecurse <- function(...){
+        combineLists(..., fmatrix=fmatrix, fvector=fvector, fdf=fdf, 
+                     recurse=TRUE)
     }
-    choices <- tolower(prompts)
-    if (is.na(default)) 
-        choices[3L] <- prompts[3L]
-    else if (default) 
-        choices[1L] <- prompts[1L]
-    else choices[2L] <- prompts[2L]
-    msg1 <- paste0("(", paste(choices, collapse = "/"), ") ")
-    if (nchar(paste0(msg, msg1)) > 250) {
-        cat(msg, "\n")
-        msg <- msg1
+    
+    if (recurse) flist="frecurse"
+    list.of.lists <- list(...)
+    if (length(list.of.lists) == 1){
+        list.of.lists <- list.of.lists[[1]]
+        list.of.lists[c("fmatrix", "flist", "fvector", "fdf")] <- 
+            c(fmatrix, flist, fvector, fdf)
+        return(do.call("combineLists", list.of.lists))
     }
-    else msg <- paste0(msg, " ", msg1)
-    ans <- readline(msg)
-    match <- pmatch(tolower(ans), tolower(choices))
-    if (!nchar(ans)) 
-        default
-    else if (is.na(match)) 
-        stop("Unrecognized response ", dQuote(ans))
-    else c(TRUE, FALSE, NA)[match]
+    if (any(!sapply(list.of.lists, is.list))) 
+        stop("arguments are not all lists")
+    len <- sapply(list.of.lists, length)
+    if (any(len[1] != len)) stop("lists are not all of the same length")
+    nms <- lapply(list.of.lists, names)
+    if (any(unlist(lapply(nms, "!=", nms[[1]])))) 
+        stop("lists do not all have elements of the same names")
+    nms <- nms[[1]]
+    result <- vector(len[1], mode="list")
+    names(result) <- nms
+    for(element in nms){
+        element.list <- lapply(list.of.lists, "[[", element)
+        clss <- sapply(element.list, class)
+        if (any(clss[1] != clss)) stop("list elements named '", element,
+                                       "' are not all of the same class")
+        is.df <- is.data.frame(element.list[[1]])
+        fn <- if (is.matrix(element.list[[1]])) fmatrix 
+        else if (is.list(element.list[[1]]) && !is.df) flist 
+        else if (is.vector(element.list[[1]])) fvector
+        else if (is.df) fdf
+        else stop("list elements named '", element, 
+                  "' are not matrices, lists, vectors, or data frames")
+        result[[element]] <- do.call(fn, element.list)
+    }
+    result
 }

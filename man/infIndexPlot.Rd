@@ -2,6 +2,7 @@
 \alias{infIndexPlot}
 \alias{influenceIndexPlot}
 \alias{infIndexPlot.lm}
+\alias{infIndexPlot.lmerMod}
 \alias{infIndexPlot.influence.merMod}
 \alias{infIndexPlot.influence.lme}
 \title{Influence Index Plot}
@@ -24,9 +25,9 @@ influenceIndexPlot(model, ...)
     "cookd"), id = TRUE, grid = TRUE, main = "Diagnostic Plots", ...)
 }
 \arguments{
-  \item{model}{A regression object of class \code{lm} or \code{glm}, or an influence
+  \item{model}{A regression object of class \code{lm}, \code{glm}, or \code{lmerMod}, or an influence
   object for a \code{lmer}, \code{glmer}, or \code{lme} object (see
-  \code{\link{influence.mixed.models}}).}
+  \code{\link{influence.mixed.models}}). The \code{"lmerMod"} method calls the \code{"lm"} method and can take the same arguments.}
   \item{vars}{
 All the quantities listed in this argument are plotted.  Use \code{"Cook"}
 for Cook's distances, \code{"Studentized"} for Studentized

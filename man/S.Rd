@@ -89,7 +89,7 @@ Confint(object, ...)
     parm, level=0.95, vcov.=vcov(object, complete=FALSE), ...)
 
 \method{Confint}{glm}(object, estimate=TRUE, exponentiate=FALSE,
-    vcov., dispersion, ...)
+    vcov., dispersion, type=c("LR", "Wald"), ...)
 
 \method{Confint}{polr}(object, estimate=TRUE, exponentiate=FALSE,
     thresholds=!exponentiate, ...)
@@ -141,6 +141,7 @@ if \code{TRUE}, set \code{header}, \code{resid.summary} and \code{adj.r.squared}
   \item{parm, level}{see \code{\link{confint}}}
   \item{estimate}{show the estimated coefficients in the confidence-interval table; default is \code{TRUE}.}
   \item{thresholds}{show confidence intervals for the estimated thresholds in the \code{"polr" model.}}
+  \item{type}{if \code{"LR"} (the default) compute confidence intervals based on the LR statistics by profiling the likelihood; if \code{"Wald"} base confidence intervals on the Wald statistic using the coefficient standard error and the normal distribution.}
   \item{\dots}{
 additional arguments to be passed down, for consistency with \code{summary} and \code{confint} methods
 }
