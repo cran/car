@@ -25,6 +25,7 @@
 # 2018-05-23: make model.matrix.lme() more bullet proof, following report by Peter Grossmann. JF
 # 2018-11-07: added combineLists(). JF
 # 2019-01-02: added na.action.merMod(), removed df.residual.merMod(). JF
+# 2019-10-24: include colorblind palette in carPalette(). JF
 
 #if (getRversion() >= "2.15.1") globalVariables(c(".boot.sample", ".boot.indices"))
 
@@ -438,29 +439,43 @@ applyDefaults <- function(args, defaults, type=""){
     as.list(defaults)
 }
 
-# carPalette <- function(palette){
-#   default <- c("black", "blue", "magenta", "cyan", "orange", "gray", "green3", "red")
-#   if(is.null(options()$carPalette)) options(carPalette = default)
-#   if(missing(palette)) options()$carPalette  else{
-#     if(palette[1] == "default") {
-#       options(carPalette=default)
-#       default} else {
-#         options(carPalette=palette)
-#         options()$carPalette
-#       }
-#   }
+# carPal <- function(){
+#     car.palette <- default <- c("black", "blue", "magenta", "cyan", "orange", "gray", "green3", "red")
+#     function(palette){
+#         if (missing(palette)) return(car.palette)
+#         else{
+#             previous <- car.palette
+#             car.palette <<- if( palette[1] == "default") default else palette
+#             return(invisible(previous))
+#         }
+#     }
 # }
 
 carPal <- function(){
-    car.palette <- default <- c("black", "blue", "magenta", "cyan", "orange", "gray", "green3", "red")
-    function(palette){
-        if (missing(palette)) return(car.palette)
-        else{
-            previous <- car.palette
-            car.palette <<- if( palette[1] == "default") default else palette
-            return(invisible(previous))
-        }
+  car.palette <- default <- c("black", "blue", "magenta", "cyan", "orange", "gray", "green3", "red")
+  colorblind <- rgb(red = c(0, 230, 86, 0, 240, 0, 213, 204),
+                    green = c(0, 159, 180, 158, 228, 114, 94, 121),
+                    blue  = c(0, 0, 233, 115, 66, 178, 0, 167),
+                    names = c("black", "orange", "sky.blue", "bluish.green", "yellow", 
+                              "blue", "vermillion", "reddish.purple"),
+                    maxColorValue = 255)
+  # colorblind palette from https://jfly.uni-koeln.de/color/
+  function(palette){
+    if (missing(palette)) return(car.palette)
+    else{
+      previous <- car.palette
+      car.palette <<- if (palette[1] %in% c("default", "car")) {
+        default
+      } else if (palette[1] == "colorblind") {
+        colorblind
+      } else if (palette[1] == "R"){
+        palette()
+      } else {
+        palette
+      }
+      return(invisible(previous))
     }
+  }
 }
 
 carPalette <- carPal()

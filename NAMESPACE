@@ -1,4 +1,4 @@
-# last modified 2019-01-02 by J. Fox
+# last modified 2019-06-03 by J. Fox
 
 # additions for car 3.0-0, started 2016-12-27
 
@@ -380,3 +380,5 @@ S3method(summary, boot)
 S3method(print, summary.boot)
 S3method(print, confint.boot)
 S3method(vcov, boot)
+
+S3method(print, deltaMethod)

@@ -1,3 +1,14 @@
+Changes to Version 3.0-4
+
+  o Scoping improvements to deltaMethod(), which now also takes an optional hypothesized value; contribution and suggestion by Pavel Krivitsky.
+  
+  o Make Anova() work for coxph() models with strata (following problem reported by Susan Galloway Hilsenbeck).
+  
+  o Modify carPalette() to provide a colorblind-friendly palette as an option (suggestion of Sercan Kahveci).
+  
+  o Small improvements.
+
+
 Changes to Version 3.0-3
 
   o Fixed a bug in mmp.glm, so the horizontal axis for the default plot is the linear predictor, not the fitted values.  

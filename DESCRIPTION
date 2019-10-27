@@ -1,6 +1,6 @@
 Package: car
-Version: 3.0-3
-Date: 2019-05-17
+Version: 3.0-4
+Date: 2019-10-24
 Title: Companion to Applied Regression
 Authors@R: c(person("John", "Fox", role = c("aut", "cre"), email = "jfox@mcmaster.ca"),
 	person("Sanford", "Weisberg", role = "aut", email = "sandy@umn.edu"),
@@ -15,6 +15,7 @@ Authors@R: c(person("John", "Fox", role = c("aut", "cre"), email = "jfox@mcmaste
     person("Gregor", "Gorjanc", role = "ctb"),
     person("Spencer", "Graves", role = "ctb"),
     person("Richard", "Heiberger", role = "ctb"),
+    person("Pavel", "Krivitsky", role = "ctb"),
     person("Rafael", "Laboissiere", role = "ctb"),
     person("Martin", "Maechler", role="ctb"),
     person("Georges", "Monette", role = "ctb"),
@@ -54,6 +55,7 @@ Author: John Fox [aut, cre],
   Gregor Gorjanc [ctb],
   Spencer Graves [ctb],
   Richard Heiberger [ctb],
+  Pavel Krivitsky [ctb],
   Rafael Laboissiere [ctb],
   Martin Maechler [ctb],
   Georges Monette [ctb],
@@ -69,8 +71,8 @@ Author: John Fox [aut, cre],
 Maintainer: John Fox <jfox@mcmaster.ca>
 Repository: CRAN
 Repository/R-Forge/Project: car
-Repository/R-Forge/Revision: 599
-Repository/R-Forge/DateTimeStamp: 2019-05-17 17:04:58
-Date/Publication: 2019-05-27 16:20:03 UTC
+Repository/R-Forge/Revision: 610
+Repository/R-Forge/DateTimeStamp: 2019-10-24 18:55:04
+Date/Publication: 2019-10-27 05:40:07 UTC
 NeedsCompilation: no
-Packaged: 2019-05-17 17:32:52 UTC; rforge
+Packaged: 2019-10-24 19:10:32 UTC; rforge

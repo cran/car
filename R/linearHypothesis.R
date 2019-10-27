@@ -35,12 +35,13 @@
 #   2016-06-29: added "value" and "vcov" attributes to returned object, print vcov when verbose. John
 #   2017-02-16: replaced KRmodcomp() with pbkrtest::KRmodcomp(). John
 #   2017-11-07: added complete=FALSE to vcov() calls. John
+#   2019-06-06: remove vcov.default(), which is no longer needed, suggestion of Pavel Krivitsky. John
 #----------------------------------------------------------------------------------------------------
 
-vcov.default <- function(object, ...){
-	stop(paste("there is no vcov() method for models of class",
-					paste(class(object), collapse=", ")))
-}
+# vcov.default <- function(object, ...){
+# 	stop(paste("there is no vcov() method for models of class",
+# 					paste(class(object), collapse=", ")))
+# }
 
 has.intercept.matrix <- function (model, ...) {
 	"(Intercept)" %in% colnames(model)

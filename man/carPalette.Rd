@@ -11,7 +11,7 @@ carPalette(palette)
 }
 \arguments{
   \item{palette}{
-if missing, returns the colors that will be used in \pkg{car} graphics; if present, the colors to be used in graphics will be set.
+if missing, returns the colors that will be used in \pkg{car} graphics; if present, the colors to be used in graphics will be set. The \code{palette} argument may also be one of \code{"car"} or \code{"default"} to use the default \pkg{car} palette (defined below), \code{"R"} to use the default R palette, or \code{"colorblind"} to use a colorblind-friendly palette (from \url{https://jfly.uni-koeln.de/color/}). 
 }
 }
 \details{

@@ -52,6 +52,8 @@
 # 2018-01-15: Anova.multinom() now works with response matrix. JF
 # 2018-02-11: If there are aliased coefs in lm object, treat as GLM. JF
 # 2018-04-04: pass ... arguments through print() methods. Follows comments by Egor Katkov. JF
+# 2019-10-16: modify Anova.coxph() and Anova.default()  for coxph() models with strata (or clusters)
+#             (following problem reported by Susan Galloway Hilsenbeck). JF
 #-------------------------------------------------------------------------------
 
 # Type II and III tests for linear, generalized linear, and other models (J. Fox)
@@ -1230,7 +1232,14 @@ Anova.coxph <- function(mod, type=c("II","III", 2, 3), test.statistic=c("LR", "W
   type <- match.arg(type)
   test.statistic <- match.arg(test.statistic)
   if (length((mod$rscore) > 0) && (test.statistic == "LR")){ 
-    warning("LR tests unavailable with robust variances\nWald tests substituted")
+    warning("LR tests unavailable with robust variances\n  Wald tests substituted")
+    test.statistic <- "Wald"
+  }
+  names <- term.names(mod)
+  clusters <- grepl("cluster\\(", names)
+  strata <- grepl("strata\\(", names)
+  if ((any(clusters) || any(strata)) && test.statistic == "LR"){
+    warning("LR tests not supported for models with clusters or strata\n Wald tests substituted")
     test.statistic <- "Wald"
   }
   switch(type,
@@ -1254,13 +1263,18 @@ Anova.II.LR.coxph <- function(mod, ...){
   fac <-attr(terms(mod), "factors")
   names <- term.names(mod)
   n.terms <- length(names)
-  if (n.terms < 2) return(anova(mod, test="Chisq"))
+  df <- df.terms(mod)
+  if (sum(df > 0) < 2) return(anova(mod, test="Chisq"))
   method <- mod$method
   X <- model.matrix(mod)
   asgn <- attr(X, 'assign')
   p <- LR <- rep(0, n.terms)
   df <- df.terms(mod)
   for (term in 1:n.terms){
+    if (df[names[term]] == 0){
+      message("skipping term ", names[term])
+      next
+    }
     rels <- names[relatives(names[term], names, fac)]
     exclude.1 <- as.vector(unlist(sapply(c(names[term], rels), which.nms)))
     mod.1 <- survival::coxph(mod$y ~ X[, -exclude.1, drop = FALSE], method=method)
@@ -1278,6 +1292,7 @@ Anova.II.LR.coxph <- function(mod, ...){
   row.names(result) <- names
   names(result) <- c("LR Chisq", "Df", "Pr(>Chisq)")
   class(result) <- c("anova", "data.frame")
+  result <- result[df > 0, , drop=FALSE]
   attr(result, "heading") <- "Analysis of Deviance Table (Type II tests)"
   result
 }
@@ -1288,14 +1303,18 @@ Anova.III.LR.coxph <- function(mod, ...){
   fac <-attr(terms(mod), "factors")
   names <- term.names(mod)
   n.terms <- length(names)
-  if (n.terms < 2) return(anova(mod, test="Chisq"))
+  df <- df.terms(mod)
+  if (sum(df > 0) < 2) return(anova(mod, test="Chisq"))
   method <- mod$method
   X <- model.matrix(mod)
   asgn <- attr(X, 'assign')
-  df <- df.terms(mod)
   LR <- p <- rep(0, n.terms)
   loglik1 <- logLik(mod)
   for (term in 1:n.terms){
+    if (df[names[term]] == 0){
+      message("skipping term ", names[term])
+      next
+    }
     mod.0 <- survival::coxph(mod$y ~ X[, -which.nms(names[term])], method=method)
     LR[term] <- -2*(logLik(mod.0) - loglik1)
     p[term] <- pchisq(LR[term], df[term], lower.tail=FALSE)
@@ -1304,6 +1323,7 @@ Anova.III.LR.coxph <- function(mod, ...){
   row.names(result) <- names
   names(result) <- c("LR Chisq", "Df","Pr(>Chisq)")
   class(result) <- c("anova", "data.frame")
+  result <- result[df > 0, , drop=FALSE]
   attr(result,"heading") <- "Analysis of Deviance Table (Type III tests)"
   result
 }
@@ -1513,10 +1533,14 @@ Anova.II.default <- function(mod, vcov., test, singular.ok=TRUE, ...){
   if (inherits(mod, "coxph")){
     assign <- assign[assign != 0]
     clusters <- grep("^cluster\\(", names)
-    if (length(clusters) > 0) {
-      names <- names[-clusters]
-      df <- df[-clusters]
-      n.terms <- n.terms - length(clusters)
+    strata <- grep("^strata\\(.*\\)$", names)
+    for (cl in clusters) assign[assign > cl] <- assign[assign > cl] - 1
+    for (st in strata) assign[assign > st] <- assign[assign > st] - 1
+    if (length(clusters) > 0 || length(strata) > 0) {
+      message("skipping term ", paste(names[c(clusters, strata)], collapse=", "))
+      names <- names[-c(clusters, strata)]
+      df <- df[-c(clusters, strata)]
+      n.terms <- n.terms - length(clusters) - length(strata)
     }
   }
   #	if (inherits(mod, "plm")) assign <- assign[assign != 0]
@@ -1532,11 +1556,11 @@ Anova.II.default <- function(mod, vcov., test, singular.ok=TRUE, ...){
   }
   result <- if (test == "Chisq"){ 
     if (length(df) == n.terms + 1) df <- df[1:n.terms]
-    data.frame(df, teststat[!is.na(teststat)], p[!is.na(teststat)])
+    data.frame(df[df > 0], teststat[!is.na(teststat)], p[!is.na(teststat)])
   }
   else data.frame(df, teststat, p)
   if (nrow(result) == length(names) + 1) names <- c(names,"Residuals")
-  row.names(result) <- names
+  row.names(result) <- names[df > 0]
   names(result) <- c ("Df", test, if (test == "Chisq") "Pr(>Chisq)" 
                       else "Pr(>F)")
   class(result) <- c("anova", "data.frame")
@@ -1557,10 +1581,14 @@ Anova.III.default <- function(mod, vcov., test, singular.ok=FALSE, ...){
     if (intercept) names <- names[-1]
     assign <- assign[assign != 0]
     clusters <- grep("^cluster\\(", names)
-    if (length(clusters) > 0) {
-      names <- names[-clusters]
-      df <- df[-clusters]
-      n.terms <- n.terms - length(clusters)
+    strata <- grep("^strata\\(.*\\)$", names)
+    for (cl in clusters) assign[assign > cl] <- assign[assign > cl] - 1
+    for (st in strata) assign[assign > st] <- assign[assign > st] - 1
+    if (length(clusters) > 0 || length(strata) > 0) {
+      message("skipping term ", paste(names[c(clusters, strata)], collapse=", "))
+      names <- names[-c(clusters, strata)]
+      df <- df[-c(clusters, strata)]
+      n.terms <- n.terms - length(clusters) - length(strata)
     }
   }
   #	if (inherits(mod, "plm")) assign <- assign[assign != 0]
