@@ -1,3 +1,7 @@
+Changes to Version 3.0-5
+
+  o Change class(x) == "y" to inherits(x, "y") throughout code (thanks to Martin Maechler).
+
 Changes to Version 3.0-4
 
   o Scoping improvements to deltaMethod(), which now also takes an optional hypothesized value; contribution and suggestion by Pavel Krivitsky.
@@ -7,7 +11,6 @@ Changes to Version 3.0-4
   o Modify carPalette() to provide a colorblind-friendly palette as an option (suggestion of Sercan Kahveci).
   
   o Small improvements.
-
 
 Changes to Version 3.0-3
 

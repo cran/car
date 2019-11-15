@@ -12,13 +12,14 @@
 # 2017-02-12: consolidate id argument. J. Fox
 # 2017-11-09: made consistent with vcov() in R 2.5.0. J Fox
 # 2017-11-30: substitute carPalette() for palette(). J. Fox
+# 2019-11-14: change class(x) == "y" to inherits(x, "y")
 
 # these functions to be rewritten; simply renamed for now
 
 leveragePlots <- function(model, terms= ~ ., layout=NULL, ask, 
 		main, ...){
 # Added for compatibility with Rcmdr
-  if(class(model$na.action) == "exclude") model <- update(model, na.action=na.omit)
+  if(inherits(model$na.action, "exclude")) model <- update(model, na.action=na.omit)
 # End addition
 	terms <- if(is.character(terms)) paste("~",terms) else terms
 	vform <- update(formula(model),terms)

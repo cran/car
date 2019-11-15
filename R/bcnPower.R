@@ -5,6 +5,7 @@
 #             multivariate extenstion.  Works for lm and lmer
 # 2017-12-25: bug fix with multivariace bcnPower
 # 2019-03-07: bug fix in estimateTransform.bcnPowerlmer, thanks to wouter@zoology.ubc.ca
+# 2019-11-14,15: change class(x) == "y" to inherits(x, "y") and likewise for !=
 
 bcnPower <- function(U, lambda, jacobian.adjusted=FALSE, gamma) {
   if(is.matrix(U)){
@@ -196,7 +197,7 @@ estimateTransform.bcnPower <- function(X, Y, weights,
   res$gamma[!gamma.ok] <- gamma.min
   if(all(gamma.ok)){
      hess <- try(optimHess(c(res$lambda, res$gamma), fn4))
-     res$invHess <- if(class(hess) == "try-error") NA else solve(-hess)
+     res$invHess <- if(inherits(hess, "try-error")) NA else solve(-hess)
   } else {
     fn4a <- function(lam) fn4(c(lam, res$gamma))
     hess <- try(optimHess(res$lambda, fn4a)) # hessian for lambda only
@@ -217,7 +218,7 @@ estimateTransform.bcnPower <- function(X, Y, weights,
     if (is.null(colnames(Y))) paste("Y", 1:d, sep="") else colnames(Y)
   invHesslabels <- c(paste(res$ylabs, "lambda", sep=":"),
                      paste(res$ylabs, "gamma", sep=":"))
-  if(class(hess) != "try-error")
+  if (!inherits(hess, "try-error"))
         rownames(res$invHess) <- colnames(res$invHess) <- invHesslabels
   res$xqr <- xqr
   res$y <- as.matrix(Y)

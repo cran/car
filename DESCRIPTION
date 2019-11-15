@@ -1,6 +1,6 @@
 Package: car
-Version: 3.0-4
-Date: 2019-10-24
+Version: 3.0-5
+Date: 2019-11-15
 Title: Companion to Applied Regression
 Authors@R: c(person("John", "Fox", role = c("aut", "cre"), email = "jfox@mcmaster.ca"),
 	person("Sanford", "Weisberg", role = "aut", email = "sandy@umn.edu"),
@@ -37,7 +37,7 @@ ByteCompile: yes
 LazyLoad: yes
 Description: 
   Functions to Accompany J. Fox and S. Weisberg, 
-  An R Companion to Applied Regression, Third Edition, Sage, in press.
+  An R Companion to Applied Regression, Third Edition, Sage, 2019.
 License: GPL (>= 2)
 URL: https://r-forge.r-project.org/projects/car/,
         https://CRAN.R-project.org/package=car,
@@ -71,8 +71,8 @@ Author: John Fox [aut, cre],
 Maintainer: John Fox <jfox@mcmaster.ca>
 Repository: CRAN
 Repository/R-Forge/Project: car
-Repository/R-Forge/Revision: 610
-Repository/R-Forge/DateTimeStamp: 2019-10-24 18:55:04
-Date/Publication: 2019-10-27 05:40:07 UTC
+Repository/R-Forge/Revision: 613
+Repository/R-Forge/DateTimeStamp: 2019-11-15 14:26:32
+Date/Publication: 2019-11-15 16:30:02 UTC
 NeedsCompilation: no
-Packaged: 2019-10-24 19:10:32 UTC; rforge
+Packaged: 2019-11-15 14:50:34 UTC; rforge

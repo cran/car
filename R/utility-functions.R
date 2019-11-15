@@ -26,6 +26,7 @@
 # 2018-11-07: added combineLists(). JF
 # 2019-01-02: added na.action.merMod(), removed df.residual.merMod(). JF
 # 2019-10-24: include colorblind palette in carPalette(). JF
+# 2019-11-14: change class(x) == "y" to inherits(x, "y")
 
 #if (getRversion() >= "2.15.1") globalVariables(c(".boot.sample", ".boot.indices"))
 
@@ -376,16 +377,16 @@ termsToMf <- function(model, terms){
                  silent=TRUE)
   # This second test is used for models like m1 <- lm(longley) which
   # fail the first test because update doesn't work
-  if(class(mf.vars) == "try-error")
+  if(inherits(mf.vars, "try-error"))
     mf.vars <- try(update(model, terms$vars,
                           method="model.frame", data=model.frame(model)), silent=TRUE)
-  if(class(mf.vars) == "try-error") stop("argument 'terms' not interpretable.")
+  if(inherits(mf.vars, "try-error")) stop("argument 'terms' not interpretable.")
   if(!is.null(terms$groups)){
     mf.groups <- try(update(model, terms$groups, method="model.frame"), silent=TRUE)
-    if(class(mf.groups) == "try-error")
+    if(inherits(mf.groups, "try-error"))
       mf.groups <- try(update(model, terms$groups,
                               method="model.frame", data=model.frame(model)), silent=TRUE)
-    if(class(mf.groups) == "try-error") stop("argument 'terms' not interpretable.")
+    if(inherits(mf.groups, "try-error")) stop("argument 'terms' not interpretable.")
   } else {mf.groups <- NULL}
   list(mf.vars=mf.vars, mf.groups=mf.groups)
 }
@@ -395,7 +396,7 @@ termsToMf <- function(model, terms){
 package.installed <- function(package){
   package <- as.character(substitute(package))
   result <- try(find.package(package), silent=TRUE)
-  !class(result) ==  "try-error"
+  !inherits(result,  "try-error")
 }
 
 # support for coxme objects
@@ -522,9 +523,12 @@ combineLists <- function(..., fmatrix="list", flist="c", fvector="rbind",
     names(result) <- nms
     for(element in nms){
         element.list <- lapply(list.of.lists, "[[", element)
-        clss <- sapply(element.list, class)
-        if (any(clss[1] != clss)) stop("list elements named '", element,
-                                       "' are not all of the same class")
+#        clss <- sapply(element.list, class)
+        clss <- lapply(element.list, class)
+#        if (any(clss[1] != clss)) stop("list elements named '", element,
+        if (!all(vapply(clss, function(e) all(e == clss[[1L]]), NA)))
+          stop("list elements named '", element, "' are not all of the same class")
+        
         is.df <- is.data.frame(element.list[[1]])
         fn <- if (is.matrix(element.list[[1]])) fmatrix 
         else if (is.list(element.list[[1]]) && !is.df) flist 

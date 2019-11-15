@@ -4,6 +4,7 @@
 # 2017-02-13: modified to use id arg in calls to invTranPlot(). J. Fox
 # 2017-11-30: substitute carPalette() for palette(). J. Fox
 # 2019-05-16: make sure that xlab arg is properly passed to invTranPlot(). J. Fox
+# 2019-11-14: change class(x) == "y" to inherits(x, "y")
 
 inverseResponsePlot <- function(model, lambda=c(-1, 0, 1), robust=FALSE,
    xlab=NULL, ...)
@@ -14,7 +15,7 @@ invResPlot <- function(model, ...) UseMethod("inverseResponsePlot")
 
 inverseResponsePlot.lm <- function(model, lambda=c(-1, 0, 1), robust=FALSE, 
        xlab=NULL, id=FALSE, ...) {
-  if(class(model$na.action) == "exclude") model <- update(model, na.action=na.omit)
+  if(inherits(model$na.action, "exclude")) model <- update(model, na.action=na.omit)
   id <- applyDefaults(id, defaults=list(method="x", n=2, cex=1, col=carPalette()[1], location="lr"), type="id")
   if (isFALSE(id)){
       id.n <- 0

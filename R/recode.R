@@ -1,5 +1,5 @@
 # recode function (J. Fox)
-# last modified 2017-04-27 by J. Fox
+# 2019-11-14: change class(x) == "y" to inherits(x, "y")
 
 recode <- function(var, recodes, as.factor, as.numeric=TRUE, levels){
   lo <- -Inf
@@ -14,17 +14,17 @@ recode <- function(var, recodes, as.factor, as.numeric=TRUE, levels){
 		if (0 < length(grep(":", term))) {
 			range <- strsplit(strsplit(term, "=")[[1]][1],":")
 			low <- try(eval(parse(text=range[[1]][1])), silent=TRUE)
-            if (class(low) == "try-error"){
+            if (inherits(low, "try-error")){
                 stop("\n  in recode term: ", term, 
                     "\n  message: ", low)
             }
 			high <- try(eval(parse(text=range[[1]][2])), silent=TRUE)
-		    if (class(high) == "try-error"){
+		    if (inherits(high, "try-error")){
 		        stop("\n  in recode term: ", term, 
 		            "\n  message: ", high)
 		    }
 			target <- try(eval(parse(text=strsplit(term, "=")[[1]][2])), silent=TRUE)
-		    if (class(target) == "try-error"){
+		    if (inherits(target, "try-error")){
 		        stop("\n  in recode term: ", term, 
 		            "\n  message: ", target)
 		    }
@@ -32,7 +32,7 @@ recode <- function(var, recodes, as.factor, as.numeric=TRUE, levels){
 		}
 		else if (0 < length(grep("^else=", squeezeBlanks(term)))) {
 			target <- try(eval(parse(text=strsplit(term, "=")[[1]][2])), silent=TRUE)
-		    if (class(target) == "try-error"){
+		    if (inherits(target, "try-error")){
 		        stop("\n  in recode term: ", term, 
 		            "\n  message: ", target)
 		    }
@@ -40,12 +40,12 @@ recode <- function(var, recodes, as.factor, as.numeric=TRUE, levels){
 		}
 		else {
 			set <- try(eval(parse(text=strsplit(term, "=")[[1]][1])), silent=TRUE)
-		    if (class(set) == "try-error"){
+		    if (inherits(set, "try-error")){
 		        stop("\n  in recode term: ", term, 
 		            "\n  message: ", set)
 		    }
 			target <- try(eval(parse(text=strsplit(term, "=")[[1]][2])), silent=TRUE)
-		    if (class(target) == "try-error"){
+		    if (inherits(target, "try-error")){
 		        stop("\n  in recode term: ", term, 
 		            "\n  message: ", target)
 		    }

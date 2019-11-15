@@ -46,7 +46,7 @@ crPlots<-function(model, terms= ~ ., layout=NULL, ask, main, ...){
         on.exit(par(op))
     }
     if(!is.null(class(model$na.action)) && 
-       class(model$na.action) == 'exclude') class(model$na.action) <- 'omit'
+       inherits(model$na.action, 'exclude')) class(model$na.action) <- 'omit'
     for(term in vterms) 
         crPlot(model, term, ...)
     mtext(side=3, outer=TRUE, main, cex=1.2)
@@ -84,7 +84,7 @@ crPlot.lm<-function(model, variable, id=FALSE,
     }
     else smoother <- "none"
     if(!is.null(class(model$na.action)) && 
-       class(model$na.action) == 'exclude') class(model$na.action) <- 'omit'
+       inherits(model$na.action, 'exclude')) class(model$na.action) <- 'omit'
     var<-if (is.character(variable) & 1==length(variable)) variable
     else deparse(substitute(variable))
     xlab <- if(!missing(xlab)) xlab else var

@@ -23,6 +23,7 @@
 # 2019-05-17: in mmp.glm, default horizontal variable when fitted=TRUE is now the
 #             fitted values for lm and the linear predictor for glm
 # 2019-05-17: added ylab arg to mmp() methods. J. Fox
+# 2019-11-14: change class(x) == "y" to inherits(x, "y")
 #############################################
 
 marginalModelPlot <- function(...){
@@ -266,7 +267,7 @@ mmps <- function(model, terms= ~ ., fitted=TRUE, layout=NULL, ask,
         }
         if (any( type2=="original", na.rm=TRUE )){
             p1 <- try(predict(model, type="terms"), silent=TRUE)
-            if(class(p1) == "try-error") {type2[type2=="original"] <- NA} else
+            if(inherits(p1, "try-error")) {type2[type2=="original"] <- NA} else
                 warning("Splines and/or polynomials replaced by a fitted linear combination")
         }
     }

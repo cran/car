@@ -23,6 +23,7 @@
 # 25 April 2016: checks for na.action=na.exclude and changes it to na.omit for compatibility with Rcmdr. sw
 # 2017-02-13: consolidated id and smooth arguments. John
 # 2017-11-30: substitute carPalette() for palette(). J. Fox
+# 2019-11-14: change class(x) == "y" to inherits(x, "y")
 
 residualPlots <- function(model, ...){UseMethod("residualPlots")}
 
@@ -31,7 +32,7 @@ residualPlots.default <- function(model, terms= ~ . ,
                                   fitted=TRUE, AsIs=TRUE, plot=TRUE, tests=TRUE, groups, ...){
     mf <- if(!is.null(terms)) termsToMf(model, terms) else NULL
     # Added for compatibility with Rcmdr
-    if(class(model$na.action) == "exclude") model <- update(model, na.action=na.omit)
+    if(inherits(model$na.action, "exclude")) model <- update(model, na.action=na.omit)
     # End addition
     groups <- if (!missing(groups)) {
         termsToMf(model, as.formula(paste("~",
@@ -149,7 +150,7 @@ residualPlot.default <- function(model, variable = "fitted", type = "pearson",
         paste(string.capitalize(type), "residuals")
     column <- match(variable, names(model$model))
     # Added for compatibility with Rcmdr
-    if(class(model$na.action) == "exclude") model <- update(model, na.action=na.omit)
+    if(inherits(model$na.action, "exclude")) model <- update(model, na.action=na.omit)
     # End addition
     if(is.na(column) && variable != "fitted")
         stop(paste(variable, "is not a regressor in the mean function"))
@@ -166,7 +167,7 @@ residualPlot.default <- function(model, variable = "fitted", type = "pearson",
             c(NA, NA)}
     else if (inherits(horiz, "matrix")) {
         horiz <- try(predict(model, type="terms"), silent=TRUE)
-        if(class(horiz) == "try-error") 
+        if(inherits(horiz, "try-error"))
             stop("Could not plot spline terms") 
         warning("Splines replaced by a fitted linear combination")
         horiz <- horiz[ , variable]
@@ -195,7 +196,7 @@ residualPlot.default <- function(model, variable = "fitted", type = "pearson",
     theResiduals <- switch(type, "rstudent"=rstudent(model), 
                            "rstandard"=rstandard(model), residuals(model, type=type))
     if(plot==TRUE){
-        if(class(horiz) == "factor") {
+        if(inherits(horiz, "factor")) {
             idm <- if(is.list(id.method)) {
                 lapply(id.method, function(x) if(x[1]=="xy") "y" else x)} else {
                     if(id.method[1] == "xy") "y"}    

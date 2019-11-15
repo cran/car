@@ -7,6 +7,7 @@
 # 2017-02-12: consolidated id argument
 # 2017-11-30: substitute carPalette() for palette(). J. Fox
 # 2019-01-02: add lmerMod method and make lm method work for it. J. Fox
+# 2019-11-14: change class(x) == "y" to inherits(x, "y")
 
 influenceIndexPlot <- function(model, ...){
     UseMethod("infIndexPlot")
@@ -34,7 +35,7 @@ infIndexPlot.lm <- function(model, vars=c("Cook", "Studentized", "Bonf", "hat"),
         id.location <- id$location
     }
     # Added for compatibility with Rcmdr
-    if(class(na.action(model)) == "exclude") model <- update(model, na.action=na.omit)
+    if(inherits(na.action(model),  "exclude")) model <- update(model, na.action=na.omit)
     # End addition
     what <- pmatch(tolower(vars), 
                    tolower(c("Cook", "Studentized", "Bonf", "hat")))

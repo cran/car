@@ -18,6 +18,7 @@
 # 20 Aug 2013 replace residuals.glm() with residuals(). John
 # 2017-02-11: consolidated id and smooth arguments. John
 # 2017-11-30: substitute carPalette() for palette(). J. Fox
+# 2019-11-14: change class(x) == "y" to inherits(x, "y")
 
 ceresPlots<-function(model, terms= ~ ., layout=NULL, ask, main, ...){
   terms <- if(is.character(terms)) paste("~", terms) else terms
@@ -51,7 +52,7 @@ ceresPlots<-function(model, terms= ~ ., layout=NULL, ask, main, ...){
     on.exit(par(op))
     }
 	if(!is.null(class(model$na.action)) && 
-		class(model$na.action) == 'exclude') class(model$na.action) <- 'omit'
+		inherits(model$na.action, 'exclude')) class(model$na.action) <- 'omit'
   for(term in vterms) 
 		ceresPlot(model, term, main="", ...)
 	mtext(side=3, outer=TRUE, main, cex=1.2)
@@ -120,7 +121,7 @@ ceresPlot.lm<-function(model, variable, id=FALSE,
 		return(rval)
 	}
 	if(!is.null(class(model$na.action)) && 
-		class(model$na.action) == 'exclude') class(model$na.action) <- 'omit'
+		inherits(model$na.action, 'exclude')) class(model$na.action) <- 'omit'
 	var<-if (is.character(variable) & 1==length(variable)) variable
 		else deparse(substitute(variable))
 	mod.mat<-model.matrix(model)
