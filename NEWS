@@ -1,3 +1,7 @@
+Changes to Version 3.0-6
+
+  o Explicitly import utils::globalVariables() (suggestion of Vince Carey).
+
 Changes to Version 3.0-5
 
   o Change class(x) == "y" to inherits(x, "y") throughout code (thanks to Martin Maechler).

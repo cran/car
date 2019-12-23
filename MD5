@@ -1,6 +1,6 @@
-e87a3f10e78fe51e20037720f84f11ec *DESCRIPTION
-a24ded974356bde811292ee35d31e72e *NAMESPACE
-03f914538dca76f5dc72ac3b8b7af949 *NEWS
+e9f6569cec74b20e75ec00d4d159b273 *DESCRIPTION
+186968b76bdf2e32b5b1898b12bd9c72 *NAMESPACE
+614f3f1ad1408ffc0a0bafb440564491 *NEWS
 35b773ca383bc5ab1bde43181d82b1c6 *R/Anova.R
 11918ba5d6f90dd29581474ec24fb4ae *R/Boot.R
 7a59048f55c9b7c24cd211c2add306f2 *R/Boxplot.R
@@ -66,12 +66,12 @@ c382894aaffe1e1b0c69c179a99b9fd3 *R/subsets.R
 11db50793298a2557a9744023af741f2 *R/vif.R
 317b9f576ec59708c8945d1f8126c5fa *R/wcrossprod.R
 d90296231464288e04124e8f1d864302 *R/which.names.R
-5be2cbbe53c9a10f47b4b87e13086495 *build/vignette.rds
+93339727697c605c089a3898d2b3d0dd *build/vignette.rds
 e2082206594825292948475ea3960d0a *inst/CITATION
 b6b5c8008a809152b9308aba25757693 *inst/doc/car-hex.pdf
 122d85be1db9e16f4ef1b70d5f719d61 *inst/doc/embedding.R
 3b8a21d96b98f9b8d612e6cbc21312d2 *inst/doc/embedding.Rnw
-5b2bc09111c97dd2876be7f1635fa391 *inst/doc/embedding.pdf
+3829027858adcab179e6ea038a6015fc *inst/doc/embedding.pdf
 5a62472033d06c95f3aa8006caff42ca *man/Anova.Rd
 0d1b7c4afbb643345cf73a304f682e76 *man/Boot.Rd
 ff51ddead5705eea6a0c341f7ba6cd31 *man/Boxplot.Rd
