@@ -1,6 +1,7 @@
 # 2015-08-26:  Modified by S. Weisberg to add support for bcn power transformations.
 # 2017-05-11:  Added boxCox2d, renamed verssion of contour.powerTransform
 # 2017-05-11:  Bug fixes in boxCox.formula with arugment passing to other methods
+# 2020-02-17:  Replaced match.fun by local, non-exported matchFun
 
 boxCox <- function(object,...) UseMethod("boxCox")
 
@@ -41,7 +42,7 @@ boxCox.default <- function(object,
     if(param=="gamma") {expression(max(logL[gamma](lambda,gamma)))} else
     {expression(max[lambda](logL(lambda, gamma)))}}} else ylab
   xlab <- if(is.null(xlab)){if(param == "lambda") expression(lambda) else expression(gamma)} else xlab
-  fam <- match.fun(family)
+  fam <- matchFun(family)
   if (is.null(object$y) || is.null(object$qr))
     stop(paste(deparse(substitute(object)),
                "does not have both 'qr' and 'y' components"))

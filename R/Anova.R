@@ -54,6 +54,7 @@
 # 2018-04-04: pass ... arguments through print() methods. Follows comments by Egor Katkov. JF
 # 2019-10-16: modify Anova.coxph() and Anova.default()  for coxph() models with strata (or clusters)
 #             (following problem reported by Susan Galloway Hilsenbeck). JF
+# 2019-02-17: fix Anova.lme() to work with models without intercepts (to fix bug reported by Benjamin Tyner). JF
 #-------------------------------------------------------------------------------
 
 # Type II and III tests for linear, generalized linear, and other models (J. Fox)
@@ -1809,6 +1810,10 @@ Anova.III.mer <- function(mod, vcov., singular.ok=FALSE, test=c("Chisq", "F"), .
   result
 }
 
+has.intercept.lme <- function(model, ...){
+  any(names(fixef(model)) == "(Intercept)")
+}
+
 Anova.lme <- function(mod, type=c("II","III", 2, 3),
                       vcov.=vcov(mod, complete=FALSE), singular.ok, ...){
   if (is.function(vcov.)) vcov. <- vcov.(mod)
@@ -1875,7 +1880,7 @@ Anova.II.lme <- function(mod, vcov., singular.ok=TRUE, ...){
 
 Anova.III.lme <- function(mod, vcov., singular.ok=FALSE, ...){
   intercept <- has.intercept(mod)
-  p <- length(coefficients(mod))
+  p <- length(fixef(mod))
   I.p <- diag(p)
   names <- term.names(mod)
   n.terms <- length(names)

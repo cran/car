@@ -5,6 +5,7 @@
 # 2017-02-13: consolidated id argument. John
 # 2017-02-16: replace rlm() calls with MASS::rlm()
 # 2017-11-30: substitute carPalette() for palette(). J. Fox
+# 2020-02-17: replaced match.fun by matchFun in utility-functions.R
 
 invTranPlot <- function(x,...) UseMethod("invTranPlot")
 
@@ -74,7 +75,7 @@ invTranPlot.default<- function(x, y, lambda=c(-1, 0, 1), robust=FALSE,
  if (optimal){
      opt <- invTranEstimate(x, y, family=family, confidence=FALSE, robust=robust)
      lam <- c(opt$lambda, lambda)} else lam <- lambda
- fam <- match.fun(family)
+ fam <- matchFun(family)
  plot(x, y, xlab=xlab, ylab=ylab, type="n", col=col, ...)
  if(grid){
     grid(lty=1, equilogs=FALSE)
@@ -118,11 +119,11 @@ invTranEstimate <- function(x, y, family="bcPower", confidence=0.95,
   if (is.factor(x)) stop("Predictor variable may not be a factor")
   if (is.factor(y)) stop("Response variable may not be a factor")
   if (robust) confidence <- FALSE
-  fam <- match.fun(family)
+  fam <- matchFun(family)
   f <- if(robust==FALSE)
     function(lambda,x,y,family){deviance(lm(y~fam(x,lambda)))}  else
     function(lambda,x,y,family){sum(residuals(MASS::rlm(y ~ fam(x,lambda)))^2)}
-  lhat <- optimize(f = function(lambda) f(lambda, x, y, family),interval=c(-10,10))
+  lhat <- optimize(f = function(lambda) f(lambda, x, y, family), interval=c(-10,10))
   if (confidence==FALSE){ return(list(lambda=lhat$minimum)) } else {
     g <- lm(y~fam(x,lhat$minimum))
     n = length(residuals(g))

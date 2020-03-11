@@ -9,6 +9,7 @@
 # 2017-10-25: modified print.powerTransform() and print.summary.powerTransform()
 #             so that singular words are used for 1 parameter (e.g., "is" vs "are"). J. Fox
 # 2017-12-01: removed plot.powerTransform
+# 2020-02-17: replaced match.fun by matchFun (in utility-functions.R) for consistency
 
 
 ### Power families:
@@ -127,8 +128,8 @@ estimateTransform <- function(X, Y, weights=NULL, family="bcPower", ...) {
 
 # estimateTransform.default is renamed 'estimateTransform
 estimateTransform.default <- function(X, Y, weights=NULL,
-                    family="bcPower", start=NULL, method="L-BFGS-B", ...) {
-  fam <- match.fun(family)
+                    family="bcPower", start=NULL, method="L-BFGS-B", ...) { 
+  fam <- matchFun(family) 
   Y <- as.matrix(Y) # coerces Y to be a matrix.
   X <- as.matrix(X) # coerces X to be a matrix.
   w <- if(is.null(weights)) 1 else sqrt(weights)
@@ -184,7 +185,7 @@ estimateTransform.default <- function(X, Y, weights=NULL,
 testTransform <- function(object, lambda) UseMethod("testTransform")
 
 testTransform.powerTransform <- function(object, lambda=rep(1, dim(object$y)[2])){
-   fam <- match.fun(object$family)
+   fam <- matchFun(object$family)
    Y <- cbind(object$y) # coerces Y to be a matrix.
    nc <- dim(Y)[2]
    nr <- nrow(Y)

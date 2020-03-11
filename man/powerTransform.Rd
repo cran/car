@@ -130,7 +130,7 @@ testTransform(p2, .5)
 summary(powerTransform(update(m2, cbind(LoBD$I1L2, LoBD$I1L1) ~ .), family="bcnPower"))
 
 \dontrun{ 
-  # tajes a few seconds:
+  # takes a few seconds:
   # multivariate bcnPower, with 8 responses
   summary(powerTransform(update(m2, as.matrix(LoBD[, -1]) ~ .), family="bcnPower"))
   # multivariate bcnPower, fit with one iteration using starting values as estimates

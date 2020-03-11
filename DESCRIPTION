@@ -1,6 +1,6 @@
 Package: car
-Version: 3.0-6
-Date: 2019-12-20
+Version: 3.0-7
+Date: 2020-03-10
 Title: Companion to Applied Regression
 Authors@R: c(person("John", "Fox", role = c("aut", "cre"), email = "jfox@mcmaster.ca"),
 	person("Sanford", "Weisberg", role = "aut", email = "sandy@umn.edu"),
@@ -31,8 +31,9 @@ Authors@R: c(person("John", "Fox", role = c("aut", "cre"), email = "jfox@mcmaste
 Depends: R (>= 3.5.0), carData (>= 3.0-0)
 Imports: abind, MASS, mgcv, nnet, pbkrtest (>= 0.4-4), quantreg,
         grDevices, utils, stats, graphics, maptools, rio, lme4, nlme
-Suggests: alr4, boot, coxme, leaps, lmtest, Matrix, MatrixModels, rgl
-        (>= 0.93.960), sandwich, SparseM, survival, survey
+Suggests: alr4, boot, coxme, knitr, leaps, lmtest, Matrix,
+        MatrixModels, rgl (>= 0.93.960), sandwich, SparseM, survival,
+        survey
 ByteCompile: yes
 LazyLoad: yes
 Description: 
@@ -41,7 +42,8 @@ Description:
 License: GPL (>= 2)
 URL: https://r-forge.r-project.org/projects/car/,
         https://CRAN.R-project.org/package=car,
-        http://socserv.socsci.mcmaster.ca/jfox/Books/Companion/index.html
+        https://socserv.socsci.mcmaster.ca/jfox/Books/Companion/index.html
+VignetteBuilder: knitr
 Author: John Fox [aut, cre],
   Sanford Weisberg [aut],
   Brad Price [aut],
@@ -71,8 +73,8 @@ Author: John Fox [aut, cre],
 Maintainer: John Fox <jfox@mcmaster.ca>
 Repository: CRAN
 Repository/R-Forge/Project: car
-Repository/R-Forge/Revision: 617
-Repository/R-Forge/DateTimeStamp: 2019-12-20 14:33:56
-Date/Publication: 2019-12-23 11:10:02 UTC
+Repository/R-Forge/Revision: 622
+Repository/R-Forge/DateTimeStamp: 2020-03-10 18:05:42
+Date/Publication: 2020-03-11 17:30:07 UTC
 NeedsCompilation: no
-Packaged: 2019-12-20 14:50:33 UTC; rforge
+Packaged: 2020-03-10 18:31:11 UTC; rforge

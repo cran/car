@@ -27,6 +27,7 @@
 # 2019-01-02: added na.action.merMod(), removed df.residual.merMod(). JF
 # 2019-10-24: include colorblind palette in carPalette(). JF
 # 2019-11-14: change class(x) == "y" to inherits(x, "y")
+# 2020-02-17: added matchFun() as a replacement for match.fun
 
 #if (getRversion() >= "2.15.1") globalVariables(c(".boot.sample", ".boot.indices"))
 
@@ -539,4 +540,10 @@ combineLists <- function(..., fmatrix="list", flist="c", fvector="rbind",
         result[[element]] <- do.call(fn, element.list)
     }
     result
+}
+
+matchFun <- function(name){
+  object <- getFromNamespace(name, ns = "car")
+  if (!is.function(object)) stop("'", name, "' is not a function")
+  object
 }

@@ -1,4 +1,4 @@
-# last modified 2019-12-20 by J. Fox
+# last modified 2020-03-10 by J. Fox
 
 # additions for car >= 3.0-0, started 2016-12-27
 
@@ -65,7 +65,7 @@ importFrom("abind", "abind")
 importFrom("stats", "naprint", "symnum", ".checkMFClasses",
            "delete.response", "napredict", "influence", "dfbetas",
             "AIC", "BIC")
-importFrom("utils", "download.file", "capture.output", "askYesNo", "browseURL", "globalVariables")
+importFrom("utils", "download.file", "capture.output", "askYesNo", "browseURL", "globalVariables", "getFromNamespace")
 
 
 #  from earlier versions car package
