@@ -41,7 +41,7 @@ Recode(...)
     \item{vector of values}{For example, \code{c(7,8,9)='high'}.}
     \item{range of values}{For example, \code{7:9='C'}. The special values \code{lo}
       and \code{hi} may appear in a range. For example, \code{lo:10=1}. \emph{Note:} \code{:} is
-      \emph{not} the R sequence operator.  In addition you may not use \code{:} with the collect operator, so for example \code{c(1, 3, 5:7)} will cause an error.}
+      \emph{not} the R sequence operator.  In addition, you may not use \code{:} with the \code{c} function within a recode specification, so for example \code{c(1, 3, 5:7)} will cause an error.}
     \item{\code{else}}{everything that does not fit a previous specification.
       For example, \code{else=NA}. Note that \code{else} matches \emph{all} otherwise
       unspecified values on input, including \code{NA}.}

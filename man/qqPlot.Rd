@@ -10,7 +10,7 @@
 \description{
  Plots empirical quantiles of a variable, or of studentized residuals from
  a linear model, against theoretical quantiles of a comparison distribution.  Includes
- options not avaiable in the \code{\link[stats]{qqnorm}} function.
+ options not available in the \code{\link[stats]{qqnorm}} function.
 }
 \usage{
 qqPlot(x, ...)

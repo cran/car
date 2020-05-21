@@ -44,6 +44,7 @@
 # 2019-05-02: J. Fox fixed bug in Confint.polr() that exponentiated coefficients twice (reported by Thamron Keowmani).
 # 2019-05-02,13: J. Fox made several S() methods tolerant of model with 1 coefficient or
 #             in the case of multinom models, 2 response levels(reported by Thamron Keowmani).
+# 2020-05-17: J. Fox added S.data.frame()
 
 formatCall <- function(call){
   call <- if (is.character(call)){
@@ -756,6 +757,14 @@ print.S.glmerMod <- function(x, digits=max(3, getOption("digits") - 3),
       paste(paste(names(x$ngrps), x$ngrps, sep = ", "), collapse = "; "), fill = TRUE)
   print(x$fitstats)
   invisible(x)
+}
+
+S.data.frame <- function(object, brief=FALSE, ...){
+  if (brief){
+    return(brief(object, ...))
+  }
+  object <- strings2factors(object, verbose=FALSE)
+  summary(object, ...)
 }
 
 Confint <- function(object, ...){

@@ -55,6 +55,7 @@
 # 2019-10-16: modify Anova.coxph() and Anova.default()  for coxph() models with strata (or clusters)
 #             (following problem reported by Susan Galloway Hilsenbeck). JF
 # 2019-02-17: fix Anova.lme() to work with models without intercepts (to fix bug reported by Benjamin Tyner). JF
+# 2020-04-01: fix Anova.coxph() to work with weights (to fix bug reported by Daniel Morillo Cuadrado)
 #-------------------------------------------------------------------------------
 
 # Type II and III tests for linear, generalized linear, and other models (J. Fox)
@@ -1267,6 +1268,7 @@ Anova.II.LR.coxph <- function(mod, ...){
   df <- df.terms(mod)
   if (sum(df > 0) < 2) return(anova(mod, test="Chisq"))
   method <- mod$method
+  weights <- mod$weights
   X <- model.matrix(mod)
   asgn <- attr(X, 'assign')
   p <- LR <- rep(0, n.terms)
@@ -1278,12 +1280,12 @@ Anova.II.LR.coxph <- function(mod, ...){
     }
     rels <- names[relatives(names[term], names, fac)]
     exclude.1 <- as.vector(unlist(sapply(c(names[term], rels), which.nms)))
-    mod.1 <- survival::coxph(mod$y ~ X[, -exclude.1, drop = FALSE], method=method)
+    mod.1 <- survival::coxph(mod$y ~ X[, -exclude.1, drop = FALSE], method=method, weights=weights)
     loglik.1 <- logLik(mod.1)
     mod.2 <- if (length(rels) == 0) mod
     else {
       exclude.2 <- as.vector(unlist(sapply(rels, which.nms)))
-      survival::coxph(mod$y ~ X[, -exclude.2, drop = FALSE], method=method)
+      survival::coxph(mod$y ~ X[, -exclude.2, drop = FALSE], method=method, weights=weights)
     }
     loglik.2 <- logLik(mod.2)
     LR[term] <- -2*(loglik.1 - loglik.2)
@@ -1307,6 +1309,7 @@ Anova.III.LR.coxph <- function(mod, ...){
   df <- df.terms(mod)
   if (sum(df > 0) < 2) return(anova(mod, test="Chisq"))
   method <- mod$method
+  weights <- mod$weights
   X <- model.matrix(mod)
   asgn <- attr(X, 'assign')
   LR <- p <- rep(0, n.terms)
@@ -1316,7 +1319,7 @@ Anova.III.LR.coxph <- function(mod, ...){
       message("skipping term ", names[term])
       next
     }
-    mod.0 <- survival::coxph(mod$y ~ X[, -which.nms(names[term])], method=method)
+    mod.0 <- survival::coxph(mod$y ~ X[, -which.nms(names[term])], method=method, weights=weights)
     LR[term] <- -2*(logLik(mod.0) - loglik1)
     p[term] <- pchisq(LR[term], df[term], lower.tail=FALSE)
   }

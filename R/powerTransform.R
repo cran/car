@@ -10,6 +10,9 @@
 #             so that singular words are used for 1 parameter (e.g., "is" vs "are"). J. Fox
 # 2017-12-01: removed plot.powerTransform
 # 2020-02-17: replaced match.fun by matchFun (in utility-functions.R) for consistency
+# 2020-04-03: in estimateTransform.lm, changed  
+#   model.matrix(mt, mf, contrasts) to model.matrix(mt, mf) to avoid a 
+#   warning since R 3.5.0  S. Weisberg
 
 
 ### Power families:
@@ -93,7 +96,7 @@ powerTransform.lm <- function(object, family="bcPower", ...) {
     if (is.empty.model(mt)) {
         x <- matrix(rep(1,dim(mf)[1]), ncol=1) }
     else {
-        x <- model.matrix(mt, mf, contrasts)   }
+        x <- model.matrix(mt, mf)   }
   estimateTransform(x, y, w, family=family, ...)
   }
 

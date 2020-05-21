@@ -1,10 +1,11 @@
-# last modified 2020-03-10 by J. Fox
+# last modified 2020-05-17 by J. Fox
 
 # additions for car >= 3.0-0, started 2016-12-27
 
 export(Import, Export, Predict, bcnPowerAxis)
 import("rio")
 export(Confint, S, carPalette, poTest, brief)
+export(strings2factors)
 S3method(Confint, lm)
 S3method(Confint, glm)
 S3method(Confint, multinom)
@@ -22,6 +23,7 @@ S3method(S, lme)
 S3method(S, lmerMod)
 S3method(S, glmerMod)
 S3method(S, default)
+S3method(S, data.frame)
 S3method(print, S.lm)
 S3method(print, S.glm)
 S3method(print, S.multinom)
@@ -59,6 +61,7 @@ S3method(infIndexPlot, influence.merMod)
 S3method(infIndexPlot, influence.lme)
 S3method(whichNames, data.frame)
 S3method(whichNames, default)
+S3method(strings2factors, data.frame)
 
 import("carData")
 importFrom("abind", "abind")

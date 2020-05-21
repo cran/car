@@ -30,6 +30,7 @@
 # 2018-05-19: J. Fox: fixed bug when legend=FALSE, reported by Castor Guisande.
 # 2018-06-25: S. Weisberg  made the argument 'var' an alias of 'spread'
 # 2019-01-15: J. Fox: make scatterplot.formula() more robust
+# 2020-05-03: J. Fox: make marginal boxplots work with xlim and ylim (problem reported by Yousri Fanous)
 
 reg <- function(reg.line, x, y, col, lwd, lty, log.x, log.y){
   if(log.x) x <- log(x)
@@ -125,6 +126,9 @@ scatterplot.default <- function(x, y, boxplots=if (by.groups) "" else "xy",
                                 col=carPalette()[-1], pch=1:n.groups,
                                 reset.par=TRUE, ...){
   force(col)
+  dots <- list(...)
+  xlim <- dots$xlim
+  ylim <- dots$ylim
   id <- applyDefaults(id, defaults=list(method="mahal", n=2, cex=1, col=carPalette()[-1], location="lr"), type="id")
   legend <- applyDefaults(legend, defaults=list(title=deparse(substitute(groups)), inset=0.02, cex=1))
   legend.plot <- !(isFALSE(legend) || missing(groups))
@@ -188,7 +192,8 @@ scatterplot.default <- function(x, y, boxplots=if (by.groups) "" else "xy",
       log.x <- ""
       .x <- x
     }
-    plot(x, seq(0, 1, length=length(x)), type="n", axes=FALSE, xlab="", ylab="", log=log.x)
+    
+    plot(x, seq(0, 1, length=length(x)), type="n", axes=FALSE, xlab="", ylab="", log=log.x, xlim=xlim)
     res <- boxplot.stats(.x, coef = 1.5, do.conf=FALSE)
     if (logged("x")){
       res$stats <- exp(res$stats)
@@ -214,7 +219,7 @@ scatterplot.default <- function(x, y, boxplots=if (by.groups) "" else "xy",
       log.y <- ""
       .y <- y
     }
-    plot(seq(0, 1, length=length(y)), y, type="n", axes=FALSE, xlab="", ylab="", log=log.y)
+    plot(seq(0, 1, length=length(y)), y, type="n", axes=FALSE, xlab="", ylab="", log=log.y, ylim=ylim)
     res <- boxplot.stats(.y, coef = 1.5, do.conf=FALSE)
     if (logged("y")){
       res$stats <- exp(res$stats)

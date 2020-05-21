@@ -9,6 +9,7 @@
 \alias{S.lme}
 \alias{S.lmerMod}
 \alias{S.glmerMod}
+\alias{S.data.frame}
 \alias{print.S.lm}
 \alias{print.S.glm}
 \alias{print.S.multinom}
@@ -60,6 +61,8 @@ S(object, brief, ...)
 
 \method{S}{glmerMod}(object, brief=FALSE, correlation=FALSE, exponentiate, ...)
 
+\method{S}{data.frame}(object, brief=FALSE, ...)
+
 \method{S}{default}(object, brief, ...)
 
 \method{print}{S.lm}(x, digits = max(3, getOption("digits") - 3),
@@ -108,7 +111,7 @@ Confint(object, ...)
 
 \arguments{
   \item{object}{
-a model object, e.g., of class \code{"lm"} as produced by a call to \code{\link{lm}}.
+a model or other object, e.g., of class \code{"lm"} as produced by a call to \code{\link{lm}}.
 }
   \item{exponentiate}{for a \code{"glm"} or \code{"glmerMod"} model using the \code{log} or \code{logit} link, or a
     \code{"polr"} or \code{"multinom"} model, show exponentiated coefficient estimates and confidence bounds.}
@@ -134,7 +137,7 @@ if \code{TRUE}, print the five-number summary of the residuals in the summary, d
 if \code{TRUE}, print the adjusted r-squared in the summary, default is \code{FALSE}
   }
   \item{brief}{
-if \code{TRUE}, set \code{header}, \code{resid.summary} and \code{adj.r.squared} to \code{FALSE}, and suppress exponeniated coefficients for GLMs with log or logit link.
+if \code{TRUE}, set \code{header}, \code{resid.summary} and \code{adj.r.squared} to \code{FALSE}, and suppress exponeniated coefficients for GLMs with log or logit link. For a data frame, equivalent to use of \code{\link{brief}}.
   }
   \item{KR}{if \code{TRUE} (default is \code{FALSE}), compute Kenward-Roger standard errors and
   Satterthwaite degrees of freedom for t-tests. \emph{Warning:} This computation can be very time-consuming.}
@@ -147,7 +150,8 @@ additional arguments to be passed down, for consistency with \code{summary} and 
 }
 }
 \details{
-All these functions mimic functions in the \pkg{stats} and other standard R packages for summarizing aspects of linear, generalized linear, and some other statistical models.
+All these functions mimic functions in the \pkg{stats} and other standard R packages for summarizing aspects of linear, generalized linear, and some other statistical models. The 
+\code{S} function also provides an alterntive to \code{summary} for data frames, treating character variables as if they were factors.
 
 The \code{S} and \code{Confint} functions add support for the \code{vcov.} argument for linear models, which allows specifying a covariance matrix for the regression coefficients other than the usual covariance matrix returned by the function \code{\link{vcov}}.  This argument may be either the name of a function, so that the call to \code{vcov.(object)} returns a covariance matrix, or else \code{vcov.} is set equal to a covariance matrix.  For example, setting \code{vcov.=hccm} uses 'proposal 3' described by Long and Ervin (2000) for a sandwich coefficient-variance estimator that may be robust against nonconstant variance (see \code{\link{hccm}}).  Setting \code{vcov. = hccm(object, type = "hc2")} would use the matrix returned by the \code{hccm} function using proposal 2.  For use with a bootstrap, see the examples below. The overall F-test in the \code{S.lm} output uses the supplied covariance matrix in a call to the \code{\link{linearHypothesis}} function.
 
@@ -198,6 +202,12 @@ Confint(mod.prestige, vcov.=hccm)
 # A logit model
 mod.mroz <- glm(lfp ~ ., data=Mroz, family=binomial)
 S(mod.mroz)
+
+# use for data frames vs. summary()
+Duncan.1 <-Duncan
+Duncan.1$type <- as.character(Duncan$type)
+summary(Duncan.1)
+S(Duncan.1)
 
 \dontrun{
 # Using the bootstrap for standard errors
