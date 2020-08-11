@@ -91,7 +91,7 @@ You have to install the \code{rgl} package to produce 3D plots.  On a Macintosh 
   \item{grid}{plot grid lines on the regression surface(s) (\code{TRUE} or \code{FALSE}).}
   \item{grid.lines}{number of lines (default, 26) forming the grid, in each of the x and z directions.}
   \item{df.smooth}{degrees of freedom for the two-dimensional smooth regression surface;
-    if \code{NULL} (the default), the \code{\link[mgcv]{gam}} function will select the degrees of freedom
+    if \code{NULL} (the default), the \code{\link{gam}} function will select the degrees of freedom
     for a smoothing spline by generalized cross-validation; if a positive number, a fixed
     regression spline will be fit with the specified degrees of freedom.}
   \item{df.additive}{degrees of freedom for each explanatory variable in an additive regression;
@@ -172,7 +172,7 @@ or a list containing any or all of the following elements:
   \emph{An R Companion to Applied Regression}, Third Edition, Sage.
 }
 
-\seealso{\code{\link[rgl]{rgl-package}}, \code{\link[mgcv]{gam}}}
+\seealso{\code{\link[rgl]{rgl-package}}, \code{\link{gam}}}
 
 \examples{
     if(interactive() && require(rgl) && require(mgcv)){

@@ -79,7 +79,7 @@ spm(x, ...)
   \item{use}{if \code{"complete.obs"} (the default), cases with missing data are omitted; if \code{"pairwise.complete.obs"), all valid cases are used
     in each panel of the plot.}}
   \item{pch}{plotting characters for points; default is the plotting characters in
-    order (see \code{\link[graphics]{par}}).}
+    order (see \code{\link{par}}).}
   \item{col}{colors for points; the default is \code{\link{carPalette}} starting at the second color. The color of
     the \code{regLine} and \code{smooth} are the same as for points but can be changed using the the
     \code{regLine} and \code{smooth} arguments.}
@@ -147,9 +147,9 @@ spm(x, ...)
   \emph{An R Companion to Applied Regression}, Third Edition, Sage.
 }
 
-\seealso{\code{\link[graphics]{pairs}}, \code{\link{scatterplot}},
+\seealso{\code{\link{pairs}}, \code{\link{scatterplot}},
   \code{\link{dataEllipse}}, \code{\link{powerTransform}},
-  \code{\link{bcPower}}, \code{\link{yjPower}}, \code{\link[MASS]{cov.trob}},
+  \code{\link{bcPower}}, \code{\link{yjPower}}, \code{\link{cov.trob}},
   \code{\link{showLabels}}, \code{\link{ScatterplotSmoothers}}.}
 
 \examples{

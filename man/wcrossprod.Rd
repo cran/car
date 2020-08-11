@@ -7,7 +7,7 @@ Weighted Matrix Crossproduct
 Given matrices \code{x} and \code{y} as arguments and an optional matrix or vector of weights, \code{w}, 
 return a weighted matrix cross-product, \code{t(x) w y}.
 If no weights are supplied, or the weights are constant, the function uses
-\code{\link[base]{crossprod}} for speed.
+\code{\link{crossprod}} for speed.
 
 }
 \usage{
@@ -36,7 +36,7 @@ John Fox \email{jfox@mcmaster.ca}
 
 
 \seealso{
-\code{\link[base]{crossprod}}
+\code{\link{crossprod}}
 }
 \examples{
 set.seed(12345)

@@ -24,6 +24,7 @@
 # 2019-06-03: introduction of environment to hold coefficients and constants. Pavel Krivitsky
 # 2019-06-05: option for hypothesis test. J. Fox
 # 2019-06-07: move handling intercepts to default method, suggestion of Pavel Krivitsky. J. Fox 
+# 2020-05-27: fix to deltaMethod.survreg() to handle Log(scale) parameter. J. Fox
 #-------------------------------------------------------------------------------
 
 deltaMethod <- function (object, ...) {
@@ -124,7 +125,12 @@ deltaMethod.multinom <- function(object, g., vcov.=vcov(object, complete=FALSE),
 # method for survreg objects. 
 deltaMethod.survreg <- function(object, g., vcov. = vcov(object, complete=FALSE), 
            parameterNames = names(coef(object)), ..., envir=parent.frame()) {
- deltaMethod.lm(object, g., vcov., parameterNames , ..., envir=envir) }
+  if (length(parameterNames != nrow(vcov.))){
+    p <- which(rownames(vcov.) == "Log(scale)")
+    if (length(p) > 0) vcov. <- vcov.[-p, -p]
+  }
+  deltaMethod.lm(object, g., vcov., parameterNames , ..., envir=envir) 
+}
 
 
  # method for coxph objects.

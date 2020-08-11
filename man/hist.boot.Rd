@@ -86,7 +86,7 @@ A confidence interval based on the bootstrap will be added to the histogram
 using the BCa method if \code{ci="bca"} the percentile method if
 \code{ci="perc"}, or the normal method if \code{ci="norm"}.  No interval is drawn if
 \code{ci="none"}.  The default is \code{"bca"}.  The interval is indicated
-by a thick horizontal line at \code{y=0}.  For some bootstraps the BCa method is unavailable, in which case a warning is issued and \code{ci="perc"} is substituted.  If you wish to see all the options at once, see \code{\link[boot]{boot.ci}}.  The normal method is computed as the (estimate from the original data) minus the bootstrap bias plus or minus the standard deviation of the bootstrap replicates times the appropriate quantile of the standard normal distribution.
+by a thick horizontal line at \code{y=0}.  For some bootstraps the BCa method is unavailable, in which case a warning is issued and \code{ci="perc"} is substituted.  If you wish to see all the options at once, see \code{\link{boot.ci}}.  The normal method is computed as the (estimate from the original data) minus the bootstrap bias plus or minus the standard deviation of the bootstrap replicates times the appropriate quantile of the standard normal distribution.
 }
   \item{legend}{
 A legend can be added to the (array of) histograms.  The value \dQuote{"top"}
@@ -117,7 +117,7 @@ implemented are the \code{"percentile"} method, which uses the function
 \code{quantile} to return the appropriate quantiles for the confidence
 limit specified, the default \code{bca} which uses the bias-corrected and accelerated
 method presented by Efron and Tibshirani (1993, Chapter 14).  For the
-other types, see the documentation for \code{\link[boot]{boot}}.
+other types, see the documentation for \code{\link{boot}}.
 }
 }
 \value{

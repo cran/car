@@ -36,6 +36,7 @@
 #   2017-02-16: replaced KRmodcomp() with pbkrtest::KRmodcomp(). John
 #   2017-11-07: added complete=FALSE to vcov() calls. John
 #   2019-06-06: remove vcov.default(), which is no longer needed, suggestion of Pavel Krivitsky. John
+#   2020-05-27: tweak to linearHypothesis.survreg(). John
 #----------------------------------------------------------------------------------------------------
 
 # vcov.default <- function(object, ...){
@@ -519,8 +520,11 @@ linearHypothesis.survreg <- function(model, hypothesis.matrix, rhs=NULL,
 		test=c("Chisq", "F"), vcov., verbose=FALSE, ...){
 	if (missing(vcov.)) {
 		vcov. <- vcov(model, complete=FALSE)
-		p <- which(rownames(vcov.) == "Log(scale)")
-		if (length(p) > 0) vcov. <- vcov.[-p, -p]
+		b <- coef(model)
+		if (length(b) != nrow(vcov.)){
+  		p <- which(rownames(vcov.) == "Log(scale)")
+  		if (length(p) > 0) vcov. <- vcov.[-p, -p]
+		}
 	}
 	linearHypothesis.default(model, hypothesis.matrix, rhs, test, vcov., verbose=verbose, ...)
 }

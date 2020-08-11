@@ -49,7 +49,7 @@ deltaMethod(object, ...)
   \item{object}{For the default method, \code{object} is either (1) a vector of \code{p} 
   named elements, so \code{names(object)} returns a list
   of \code{p} character strings that are the names of the elements of
-  \code{object}; or (2) a model object for which there are \code{\link[stats]{coef}} and \code{\link[stats]{vcov}} methods,
+  \code{object}; or (2) a model object for which there are \code{\link{coef}} and \code{\link{vcov}} methods,
   and for which the named coefficient vector returned by \code{coef} is asymptotically normally distributed with asymptotic
   covariance matrix returned by \code{vcov}.
   For the other methods, \code{object} is a 

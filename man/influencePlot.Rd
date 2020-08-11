@@ -54,8 +54,8 @@ used for its side-effect of drawing a plot.
 \email{sandy@umn.edu}}
 
 
-\seealso{\code{\link[stats]{cooks.distance}}, \code{\link[stats]{rstudent}}, 
-\code{\link[stats]{hatvalues}}, \code{\link{showLabels}}}
+\seealso{\code{\link{cooks.distance}}, \code{\link{rstudent}}, 
+\code{\link{hatvalues}}, \code{\link{showLabels}}}
 
 \examples{
 influencePlot(lm(prestige ~ income + education, data=Duncan))

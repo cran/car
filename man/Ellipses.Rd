@@ -61,8 +61,8 @@ confidenceEllipse(model, ...)
   \item{group.labels}{labels to be plotted for the groups; by default, the levels of the \code{groups} factor.}
   \item{ellipse.label}{a label for the ellipse(s) or a vector of labels; if several ellipses are drawn and just one label is given,
     then that label will be repeated. The default is not to label the ellipses.}
-  \item{weights}{a numeric vector of weights, of the same length as \code{x} and \code{y} to be used  by \code{\link[stats]{cov.wt}}
-    or \code{\link[MASS]{cov.trob}} in computing a weighted covariance matrix; if absent, weights of \code{1} are used.}
+  \item{weights}{a numeric vector of weights, of the same length as \code{x} and \code{y} to be used  by \code{\link{cov.wt}}
+    or \code{\link{cov.trob}} in computing a weighted covariance matrix; if absent, weights of \code{1} are used.}
   \item{plot.points}{if \code{FALSE} data ellipses are drawn,
     but points are not plotted.}
   \item{levels}{draw elliptical contours at these (normal) probability or confidence levels.}
@@ -92,13 +92,13 @@ confidenceEllipse(model, ...)
     and linear-model methods respectively.}
   \item{col}{color for lines and ellipse center; the default is the \emph{second} entry
     in the current \pkg{car} palette (see \code{\link{carPalette}}
-    and \code{\link[graphics]{par}}). For \code{dataEllipse}, two colors can be given, in
+    and \code{\link{par}}). For \code{dataEllipse}, two colors can be given, in
     which case the first is for plotted points and the second for lines and the ellipse center;
     if ellipses are plotted for \code{groups}, then this is a vector of colors for the groups.}
   \item{pch}{for \code{dataEllipse} this is the plotting character (default, symbol \code{1}, a hollow circle)
     to use for the points; if ellipses are plotted by \code{groups}, then this a vector of plotting characters,
     with consecutive symbols starting with \code{1} as the default.}
-  \item{lwd}{line width; default is \code{2} (see \code{\link[graphics]{par}}).}
+  \item{lwd}{line width; default is \code{2} (see \code{\link{par}}).}
   \item{fill}{fill the ellipse with translucent color \code{col} (default, \code{FALSE})?}
   \item{fill.alpha}{transparency of fill (default = \code{0.3}).}
   \item{\dots}{other plotting parameters to be passed to \code{plot} and
@@ -140,7 +140,7 @@ graph}
  
 \author{Georges Monette, John Fox \email{jfox@mcmaster.ca}, and Michael Friendly.}
 
-\seealso{\code{\link[MASS]{cov.trob}}, \code{\link[stats]{cov.wt}}, \code{\link{linearHypothesis}}.}
+\seealso{\code{\link{cov.trob}}, \code{\link{cov.wt}}, \code{\link{linearHypothesis}}.}
   
 \examples{
 dataEllipse(Duncan$income, Duncan$education, levels=0.1*1:9, 

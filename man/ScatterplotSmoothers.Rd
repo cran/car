@@ -10,13 +10,13 @@ Smoothers to Draw Lines on Scatterplots
 
 \description{
 These smoothers are used to draw nonparametric-regression lines on scatterplots produced by
-the \code{\link{scatterplot}}, \code{\link{scatterplotMatrix}} and several other \pkg{car} functions.
+the \code{\link{scatterplot}}, \code{\link{scatterplotMatrix}}, and several other \pkg{car} functions.
 The functions are not meant to
 be called directly by the user, although the user can supply options via the \code{smoother.args} argument,
 the contents of which vary by the smoother (see \emph{Details} below). The \code{gamLine} smoother uses the
-\code{\link[mgcv]{gam}} function in the \pkg{mgcv} package, the \code{loessLine} smoother uses the
-\code{\link[stats]{loess}} function in the \pkg{stats} package, and the \code{quantregLine} smoother uses the
-\code{\link[quantreg]{rqss}} function in the \pkg{quantreg} package.
+\code{\link{gam}} function in the \pkg{mgcv} package, the \code{loessLine} smoother uses the
+\code{\link{loess}} function in the \pkg{stats} package, and the \code{quantregLine} smoother uses the
+\code{\link{rqss}} function in the \pkg{quantreg} package.
 }
 
 \usage{
@@ -48,54 +48,54 @@ quantregLine(x, y, col=carPalette()[1], log.x=FALSE, log.y=FALSE, var=FALSE, spr
 }
 
 \details{
-The function \code{loessLine} is a re-implementation of the \pkg{loess} smoother
+The \code{loessLine} function is a re-implementation of the \code{loess} smoother
 that was used in \pkg{car} prior to September 2012.  The main enhancement is the ability to
-set more arguments through the \code{smoother.args} argument.
+set more options through the \code{smoother.args} argument.
 
-The function \code{gamLine} is more general than the \code{loess} fitting
-because it allows fitting a generalized additive model using splines.  You can specify an error
+The \code{gamLine} function is more general than  \code{loessLine} 
+because it supports fitting a generalized spline regression model, with user-specified error
 distribution and link function.
 
-The function \code{quantregLine} fits an additive model using splines with estimation
-based on L1 regression for the median and quantile regression if you ask for the spread.  It is
+The \code{quantregLine} function fits a model using splines with estimation
+based on L1 regression for the median and quantile regression the (optional) spread.  It is
 likely to be more robust than the other smoothers.
 
-The argument \code{smoother.args} is a list of named elements used to pass
-additional arguments to the smoother.  As of November, 2016, the smoother is evaluated at an equally spaced grid of 50 points in the range of the horizontal variable.  With any of the smoothers you can change to say 100 evaluation points by using the argument \code{smoother.args=list(evaluation=100)}.  As of version 3.0-1, the arguments in \code{smoother.args} \code{col.var}, \code{lty.var} and \code{lwd.var} are equivalent to \code{col.spread}, \code{lty.spread} and \code{lwd.spread}, respectively.
+The \code{smoother.args} argument is a list of named elements used to pass
+additional arguments to the smoother.  As of November, 2016, the smoother is evaluated by default at an equally spaced grid of 50 points in the range of the horizontal variable.  With any of the smoothers, you can change to, say, 100 evaluation points via the argument \code{smoother.args=list(evaluation=100)}.  As of version 3.0-1, the \code{smoother.args} elements  \code{col.var}, \code{lty.var}, and \code{lwd.var} are equivalent to \code{col.spread}, \code{lty.spread}, and \code{lwd.spread}, respectively.
 
-For \code{loessLine} the default value is
-\code{smoother.args=list(lty.smooth=1, lwd.smooth=2, lty.spread=4, lwd.spread=2, span=2/3 (prior to 11/2016, span was 1/2),
-degree=1, family="symmetric", iterations=4)}.
-The arguments \code{lty.smooth} and \code{lwd.smooth} are the type and width
-respectively of the mean or median smooth, \code{lty.spread}
-and \code{lwd.spred} are the type and color of the spread smooths if requested.
-The arguments \code{span}, \code{degree} and \code{family} are
-passed to the \code{\link{loess}} function, \code{iterations=4} robustness iterations.
+For \code{loessLine}, the default is
+\code{smoother.args=list(lty.smooth=1, lwd.smooth=2, lty.spread=4, lwd.spread=2, span=2/3,
+degree=1, family="symmetric", iterations=4)}. (Prior to November 2016, the default span was 1/2.)
+The elements \code{lty.smooth}, \code{lwd.smooth}, and \code{col.spread} are the line type, line width, and line color, 
+respectively of the mean or median smooth; \code{lty.spread},
+\code{lwd.spread}, and \code{col.spread} are the line type, width, and color of the spread smooths, if requested.
+The elements \code{span}, \code{degree}, and \code{family} are
+passed as arguments to the \code{\link{loess}} function, along with \code{iterations} robustness iterations.
 
-For \code{gamLine} the default is
+For \code{gamLine}, the default is
 \code{smoother.args=list(lty.smooth=1, lwd.smooth=2, lty.spread=4, lwd.spread=2,
-k=-1, bs="tp", family="gaussian", link=NULL, weights=NULL)}
-The first four arguments are as for \code{loessLine}.  The next two
-arguments are passed to the \code{gam} function to control the smoothing:
+k=-1, bs="tp", family="gaussian", link=NULL, weights=NULL)}.
+The first four elements are as for \code{loessLine}.  The next two
+elements are passed to the \code{\link{gam}} function to control smoothing:
 \code{k=-1} allows \code{gam} to choose the number of splines in the basis
-function; \code{bs="tp"} provides the type of spline basis to be used with \code{"tp"}
-for the default thin-plate splines.  The last three arguments allow providing
-a family, link and weights as in generalized linear models.  See examples
-below.  The spread argument is ignored unless family="gaussian" and link=NULL.
+function; \code{bs="tp"} provides the type of spline basis to be used, with \code{"tp"}
+for the default thin-plate splines.  The last three arguments specify
+a distributional family, link function, and weights as in generalized linear models.  See the examples
+below.  The \code{spread} element is ignored unless \code{family="gaussian"} and \code{link=NULL}.
 
-For \code{quantregLine} the default is
+For \code{quantregLine}, the default is
 \code{smoother.args=list(lty.smooth=1, lwd.smooth=2, lty.spread=4, lwd.spread=2,
 lambda=IQR(x))}.  The first four
-arguments are as for \code{loessLine}.  The last argument is passed to the
-\code{\link[quantreg]{qss}} function in \code{quantreg}.  It is a smoothing
-parameter, here a robust estimate of the scale of the horizontal axis variable.
+elements are as for \code{loessLine}.  The last element is passed to the
+\code{\link{qss}} function in \pkg{quantreg}.  It is a smoothing
+parameter, by default a robust estimate of the scale of the horizontal axis variable.
 This is an arbitrary choice, and may not work well in all circumstances.
 }
 
 \author{John Fox \email{jfox@mcmaster.ca} and Sanford Weisberg \email{sandy@umn.edu}.}
 
-\seealso{\code{\link{scatterplot}}, \code{\link{scatterplotMatrix}}, \code{\link[mgcv]{gam}},
-    \code{\link[stats]{loess}}, and \code{\link[quantreg]{rqss}}.}
+\seealso{\code{\link{scatterplot}}, \code{\link{scatterplotMatrix}}, \code{\link{gam}},
+    \code{\link{loess}}, and \code{\link{rqss}}.}
 
 \examples{
 scatterplot(prestige ~ income, data=Prestige)

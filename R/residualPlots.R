@@ -24,6 +24,7 @@
 # 2017-02-13: consolidated id and smooth arguments. John
 # 2017-11-30: substitute carPalette() for palette(). J. Fox
 # 2019-11-14: change class(x) == "y" to inherits(x, "y")
+# 2018-08-06: enabled spread and var for smoothers. J. Fox
 
 residualPlots <- function(model, ...){UseMethod("residualPlots")}
 
@@ -135,11 +136,14 @@ residualPlot.default <- function(model, variable = "fitted", type = "pearson",
         id.col <- id$col
         id.location <- id$location
     }
-    smoother.args <- applyDefaults(smooth, defaults=list(smoother=loessLine, span=2/3, col=carPalette()[3]), type="smooth")
+    
+    smoother.args <- applyDefaults(smooth, defaults=list(smoother=loessLine, span=2/3, 
+                                                         var=FALSE, col=carPalette()[3]), type="smooth")
     if (!isFALSE(smoother.args)) {
         smoother <- smoother.args$smoother 
         col.smooth <- smoother.args$col
         smoother.args$smoother <- smoother.args$col <- NULL
+        if (is.null(smoother.args$spread)) smoother.args$spread <- smoother.args$var
     }
     else smoother <- NULL
     string.capitalize <- function(string) {
@@ -233,11 +237,11 @@ residualPlot.default <- function(model, variable = "fitted", type = "pearson",
                 if(is.function(smoother))
                     if(missing(groups)){
                         smoother(horiz, theResiduals, col.smooth, log.x=FALSE, log.y=FALSE,
-                                 spread=FALSE, smoother.args=smoother.args)} else
+                                 spread=smoother.args$spread, smoother.args=smoother.args)} else
                                      for (g in 1:length(levels(groups))){
                                          sel <- groups == levels(groups)[g]
                                          smoother(horiz[sel], theResiduals[sel], colors[g], log.x=FALSE, log.y=FALSE,
-                                                  spread=FALSE, smoother.args=smoother.args)}
+                                                  spread=smoother.args$spread, smoother.args=smoother.args)}
                 if(key & !missing(groups)){
                     items <- paste(groups.name, levels(groups), sep= " = ")
                     plotArrayLegend("top", items=items, col.items=colors, pch=pchs)

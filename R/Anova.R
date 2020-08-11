@@ -56,6 +56,7 @@
 #             (following problem reported by Susan Galloway Hilsenbeck). JF
 # 2019-02-17: fix Anova.lme() to work with models without intercepts (to fix bug reported by Benjamin Tyner). JF
 # 2020-04-01: fix Anova.coxph() to work with weights (to fix bug reported by Daniel Morillo Cuadrado)
+# 2020-05-27: tweak to handling of Anova.coxph Wald tests. JF
 #-------------------------------------------------------------------------------
 
 # Type II and III tests for linear, generalized linear, and other models (J. Fox)
@@ -1456,15 +1457,21 @@ Anova.III.LR.survreg <- function(mod, ...){
 
 Anova.II.Wald.survreg <- function(mod){
   V <- vcov(mod, complete=FALSE)
-  p <- which(rownames(V) == "Log(scale)")
-  if (length(p) > 0) V <- V[-p, -p]
+  b <- coef(mod)
+  if (length(b) != nrow(V)){
+    p <- which(rownames(V) == "Log(scale)")
+    if (length(p) > 0) V <- V[-p, -p]
+  }
   Anova.II.default(mod, V, test="Chisq")
 }
 
 Anova.III.Wald.survreg <- function(mod){
   V <- vcov(mod, complete=FALSE)
-  p <- which(rownames(V) == "Log(scale)")
-  if (length(p) > 0) V <- V[-p, -p]
+  b <- coef(mod)
+  if (length(b) != nrow(V)){
+    p <- which(rownames(V) == "Log(scale)")
+    if (length(p) > 0) V <- V[-p, -p]
+  }
   Anova.III.default(mod, V, test="Chisq")
 }
 

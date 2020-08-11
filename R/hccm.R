@@ -2,6 +2,8 @@
 # Revision history:
 # 2009-09-16: optionally allow models with aliased coefficients J. Fox
 # 2012-04-04: modified to allow weighted linear models. J. Fox
+# 2020-06-25: Fix bug in hccm.lm() when model matrix includes just one column 
+#             (reported by Justin Yap). J. Fox
 #-------------------------------------------------------------------------------
 
 # Heteroscedasticity-corrected standard errors (White adjustment) (J. Fox)
@@ -53,7 +55,7 @@ hccm.lm <-function (model, type = c("hc3", "hc0", "hc1", "hc2", "hc4"),
 		wts <- wts[-removed]
 		h <- h[-removed]
 	}
-	X <- model.matrix(model)[, !aliased]
+	X <- model.matrix(model)[, !aliased, drop=FALSE]
 	df.res <- df.residual(model)
 	n <- length(e)
 	e <- wts*e

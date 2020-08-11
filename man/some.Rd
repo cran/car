@@ -45,7 +45,7 @@ in the \code{utils} package.
 }
 
 
-\seealso{\code{\link[utils]{head}}, \code{\link[utils]{tail}}, \code{\link{brief}}.}
+\seealso{\code{\link{head}}, \code{\link{tail}}, \code{\link{brief}}.}
 
 \examples{
 some(Duncan)

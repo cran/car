@@ -32,7 +32,7 @@ Modified Functions for Summarizing Linear, Generalized Linear, and Some Other Mo
 }
 
 \description{
-\pkg{car} package replacements for the \code{\link{summary}} (\code{S}) and \code{\link{confint}} (\code{Confint}) functions for \code{\link{lm}}, \code{\link{glm}}, \code{\link[nnet]{multinom}}, and \code{\link[MASS]{polr}} objects, with additional arguments but the same defaults as the original functions. The \code{Confint} method for \code{"polr"} objects profiles the likelihood to get confidence intervals for the regression parameters but uses Wald intervals for the thresholds.
+\pkg{car} package replacements for the \code{\link{summary}} (\code{S}) and \code{\link{confint}} (\code{Confint}) functions for \code{\link{lm}}, \code{\link{glm}}, \code{\link{multinom}}, and \code{\link{polr}} objects, with additional arguments but the same defaults as the original functions. The \code{Confint} method for \code{"polr"} objects profiles the likelihood to get confidence intervals for the regression parameters but uses Wald intervals for the thresholds.
 Default methods that call the standard R \code{\link{summary}} and \code{\link{confint}} functions are provided for the \code{S} and \code{Confint} generics, so the \pkg{car} functions should be safe to use in general. The default method for \code{Confint} also assumes that there is an appropriate \code{\link{coef}} method. For briefer model summaries, see \code{\link{brief}}.
 }
 

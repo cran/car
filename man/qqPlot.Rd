@@ -10,7 +10,7 @@
 \description{
  Plots empirical quantiles of a variable, or of studentized residuals from
  a linear model, against theoretical quantiles of a comparison distribution.  Includes
- options not available in the \code{\link[stats]{qqnorm}} function.
+ options not available in the \code{\link{qqnorm}} function.
 }
 \usage{
 qqPlot(x, ...)
@@ -62,14 +62,14 @@ qqp(...)
   \item{envelope}{confidence level for point-wise confidence envelope, or
     \code{FALSE} for no envelope.}
   \item{las}{if \code{0}, ticks labels are drawn parallel to the
-    axis; set to \code{1} for horizontal labels (see \code{\link[graphics]{par}}).}
+    axis; set to \code{1} for horizontal labels (see \code{\link{par}}).}
   \item{col}{color for points; the default is the \emph{first} entry
     in the current \pkg{car} palette (see \code{\link{carPalette}}
-    and \code{\link[graphics]{par}}).}
+    and \code{\link{par}}).}
   \item{col.lines}{color for lines; the default is the \emph{second} entry
     in the current \pkg{car} palette.}
   \item{pch}{plotting character for points; default is \code{1}
-    (a circle, see \code{\link[graphics]{par}}).}
+    (a circle, see \code{\link{par}}).}
   \item{cex}{factor for expanding the size of plotted symbols; the default is
     \code{1}.}
   \item{id}{controls point identification; if \code{FALSE}, no points are identified;
@@ -78,7 +78,7 @@ qqp(...)
     which identifies the 2 points with the 2 points with the most extreme
     verical values --- studentized residuals for the \code{"lm"} method. Points labels are by default
     taken from the names of the variable being plotted is any, else case indices are used.  Unlike most graphical functions in \pkg{car}, the default is \code{id=TRUE} to include point identification.}
-  \item{lwd}{line width; default is \code{2} (see \code{\link[graphics]{par}}).}
+  \item{lwd}{line width; default is \code{2} (see \code{\link{par}}).}
   \item{line}{\code{"quartiles"} to pass a line through the quartile-pairs, or
     \code{"robust"} for a robust-regression line; the latter uses the \code{rlm}
     function in the \code{MASS} package. Specifying \code{line = "none"} suppresses the line.}
@@ -121,8 +121,8 @@ graph}
 }
 \author{John Fox \email{jfox@mcmaster.ca}}
 
-\seealso{\code{\link[stats]{qqplot}}, \code{\link[stats]{qqnorm}},
- \code{\link[stats]{qqline}}, \code{\link{showLabels}}}
+\seealso{\code{\link{qqplot}}, \code{\link{qqnorm}},
+ \code{\link{qqline}}, \code{\link{showLabels}}}
 
 \examples{
 x<-rchisq(100, df=2)

@@ -66,7 +66,7 @@ probabilityAxis(scale=c("logit", "probit"),
   \item{axis.title}{title for axis.}
   \item{cex}{relative character expansion for axis label.}
   \item{las}{if \code{0}, ticks labels are drawn parallel to the
-    axis; set to \code{1} for horizontal labels (see \code{\link[graphics]{par}}).}
+    axis; set to \code{1} for horizontal labels (see \code{\link{par}}).}
   \item{base}{base of log transformation for \code{power.axis}
     when \code{power = 0}.}
   \item{interval}{desired interval between tick marks on the probability

@@ -296,9 +296,9 @@ orthogonal in the row-basis of the model, such as those produced by \code{\link{
 type-II tests are invariant with respect to (full-rank) contrast coding. If you don't understand this issue, then you probably shouldn't use \code{Anova} for type-III tests.
 }
 
-\seealso{ \code{\link{linearHypothesis}}, \code{\link[stats]{anova}}
-\code{\link[stats]{anova.lm}}, \code{\link[stats]{anova.glm}},
-\code{\link[stats]{anova.mlm}}, \code{\link[survival]{anova.coxph}}, \code{\link[survey]{svyglm}}.}
+\seealso{ \code{\link{linearHypothesis}}, \code{\link{anova}}
+\code{\link{anova.lm}}, \code{\link{anova.glm}},
+\code{\link{anova.mlm}}, \code{\link{anova.coxph}}, \code{\link[survey]{svyglm}}.}
 
 \examples{
 

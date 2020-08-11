@@ -54,7 +54,7 @@ outlierTest(model, ...)
 
 \references{
   Cook, R. D. and Weisberg, S. (1982)
-  \emph{Residuals and Influence in Regression.} Chapman and Hall, \url{https://conservancy.umn.edu/handle/11299/37076}.
+  \emph{Residuals and Influence in Regression.} Chapman and Hall.
   
   Fox, J. (2016)
   \emph{Applied Regression Analysis and Generalized Linear Models},

@@ -62,7 +62,7 @@ is omitted for \code{leveragePlots}.}
 \item{col}{color(s) of points}
 \item{col.lines}{color of the fitted line
 }
-\item{lwd}{line width; default is \code{2} (see \code{\link[graphics]{par}}).
+\item{lwd}{line width; default is \code{2} (see \code{\link{par}}).
 }
 \item{grid}{If TRUE, the default, a light-gray background grid is put on the
 graph}

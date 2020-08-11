@@ -1,5 +1,6 @@
 \name{ceresPlots}
 \alias{ceresPlots}
+\alias{ceresPlots.default}
 \alias{ceresPlot}
 \alias{ceresPlot.lm}
 \alias{ceresPlot.glm}
@@ -10,7 +11,9 @@
   linear models.
 }
 \usage{
-ceresPlots(model, terms = ~., layout = NULL, ask, main,
+ceresPlots(model, ...)
+
+\method{ceresPlots}{default}(model, terms = ~., layout = NULL, ask, main,
     ...)
 
 ceresPlot(model, ...)
@@ -64,7 +67,7 @@ axis}
     \pkg{car} package and their arguments.  Ceres plots do not support variance smooths.}
   \item{col}{color for points; the default is the first entry
     in the current \pkg{car} palette (see \code{\link{carPalette}}
-    and \code{\link[graphics]{par}}).
+    and \code{\link{par}}).
 }
   \item{col.lines}{a list of at least two colors.  The first color is used for the
     ls line and the second color is used for the fitted lowess line.  To use
@@ -73,9 +76,9 @@ axis}
   \item{xlab,ylab}{labels for the x and y axes, respectively.  If not set
     appropriate labels are created by the function.}
   \item{pch}{plotting character for points; default is \code{1}
-    (a circle, see \code{\link[graphics]{par}}).
+    (a circle, see \code{\link{par}}).
 }
-  \item{lwd}{line width; default is \code{2} (see \code{\link[graphics]{par}}).
+  \item{lwd}{line width; default is \code{2} (see \code{\link{par}}).
 }
   \item{grid}{If TRUE, the default, a light-gray background grid is put on the
 graph

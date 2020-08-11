@@ -14,8 +14,8 @@ Influence Diagnostics for Mixed-Effects Models
 }
 
 \description{
-These functions compute deletion influence diagnostics for linear mixed-effects models fit by \code{\link[lme4]{lmer}} in the \pkg{lme4} package and
-\code{\link[nlme]{lme}} in the \pkg{nlme} package and for generalized linear mixed-effects models fit by  \code{\link[lme4]{glmer}} in the
+These functions compute deletion influence diagnostics for linear mixed-effects models fit by \code{\link{lmer}} in the \pkg{lme4} package and
+\code{\link{lme}} in the \pkg{nlme} package and for generalized linear mixed-effects models fit by  \code{\link{glmer}} in the
 \pkg{lme4} package. The main functions are methods for the \code{\link{influence}} generic function. Other functions are provided for
 computing \code{\link{dfbeta}}, \code{\link{dfbetas}}, \code{\link{cooks.distance}}, and influence on variance-covariance components based
 on the objects computed by \code{influence.merMod} and \code{influence.lme}.
@@ -50,7 +50,7 @@ on the objects computed by \code{influence.merMod} and \code{influence.lme}.
   An even smaller value can be used if interest is only in influence on the fixed effects.}
   \item{ncores}{number of cores for parallel computation of diagnostics; if \code{1}
   (the default), the computation isn't parallelized; if \code{Inf}, all of the available \emph{physical} cores 
-  (not necessarily \emph{logical} cores --- see \code{\link[parallel]{detectCores}}) on the computer will be used.}
+  (not necessarily \emph{logical} cores --- see \code{\link{detectCores}}) on the computer will be used.}
   \item{which}{if \code{"fixed.effects"} (the default), return influence on the fixed effects; if \code{"var.cov"}, return influence on the variance-covariance components.}
   \item{\dots}{ignored.}
 }
@@ -93,7 +93,7 @@ J. Fox \email{jfox@mcmaster.ca}
 }
 
 \seealso{
-\code{\link[lme4]{lmer}}, \code{\link[lme4]{glmer}}, \code{\link[nlme]{lme}}, \code{\link{infIndexPlot}}.
+\code{\link{lmer}}, \code{\link{glmer}}, \code{\link{lme}}, \code{\link{infIndexPlot}}.
 }
 
 \examples{

@@ -56,16 +56,16 @@ slp(...)
   \item{ylab}{label for vertical axis.}
   \item{point.labels}{if \code{TRUE} label the points in the plot with group names.}
   \item{las}{if \code{0}, ticks labels are drawn parallel to the
-    axis; set to \code{1} for horizontal labels (see \code{\link[graphics]{par}}).}
+    axis; set to \code{1} for horizontal labels (see \code{\link{par}}).}
   \item{col}{color for points; the default is the first entry
     in the current \pkg{car} palette (see \code{\link{carPalette}}
-    and \code{\link[graphics]{par}}).}
+    and \code{\link{par}}).}
   \item{col.lines}{for the default method, the line color, defaulting to the second entry in the \pkg{car} color palette; 
     for the \code{"lm"} method, a vector of two colors for, respectively, the fitted straight line and a nonparametric regression smooth line,
     default to the second and third entries in the \pkg{car} color palette.}
   \item{pch}{plotting character for points; default is \code{1} 
-    (a circle, see \code{\link[graphics]{par}}).}
-  \item{lwd}{line width; default is \code{2} (see \code{\link[graphics]{par}}).}
+    (a circle, see \code{\link{par}}).}
+  \item{lwd}{line width; default is \code{2} (see \code{\link{par}}).}
   \item{grid}{If TRUE, the default, a light-gray background grid is put on the
 graph}
     \item{id}{controls point identification; if \code{FALSE} (the default), no points are identified;

@@ -1,5 +1,6 @@
 \name{avPlots}
 \alias{avPlots}
+\alias{avPlots.default}
 \alias{avp}
 \alias{avPlot}
 \alias{avPlot.lm}
@@ -13,7 +14,10 @@
 }
 
 \usage{
-avPlots(model, terms=~., intercept=FALSE, layout=NULL, ask, main, ...)
+avPlots(model, ...)
+
+\method{avPlots}{default}(model, terms=~., intercept=FALSE, 
+  layout=NULL, ask, main, ...)
 
 avp(...)
 
@@ -63,11 +67,11 @@ avPlot(model, ...)
     the most extreme horizontal values (i.e., largest partial leverage).}
   \item{col}{color for points; the default is the \emph{second} entry
     in the current \pkg{car} palette (see \code{\link{carPalette}}
-    and \code{\link[graphics]{par}}).}
+    and \code{\link{par}}).}
   \item{col.lines}{color for the fitted line.}
   \item{pch}{plotting character for points; default is \code{1} 
-    (a circle, see \code{\link[graphics]{par}}).}
-  \item{lwd}{line width; default is \code{2} (see \code{\link[graphics]{par}}).}
+    (a circle, see \code{\link{par}}).}
+  \item{lwd}{line width; default is \code{2} (see \code{\link{par}}).}
   \item{xlab}{x-axis label.  If omitted a label will be constructed.}
   \item{ylab}{y-axis label.  If omitted a label will be constructed.}
   \item{type}{if \code{"Wang"} use the method of Wang (1985);

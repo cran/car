@@ -7,7 +7,7 @@
 
 \description{
 The \code{poTest} function implements tests proposed by Brant (1990) for proportional odds for
-logistic models fit by the \code{\link[MASS]{polr}} function in the MASS package.
+logistic models fit by the \code{\link{polr}} function in the MASS package.
 }
 
 \usage{
@@ -17,7 +17,7 @@ poTest(model, ...)
 }
 
 \arguments{
-  \item{model}{a proptional-odds logit model fit by \code{\link[MASS]{polr}}.}
+  \item{model}{a proptional-odds logit model fit by \code{\link{polr}}.}
   \item{x}{an object produced by \code{poTest}.}
   \item{digits}{number of significant digits to print.}
   \item{\dots}{ignored.}

@@ -100,7 +100,7 @@ sp(x, ...)
   \item{log}{same as the \code{log} argument to \code{\link{plot}}, to produce log axes.}
   \item{jitter}{a list with elements \code{x} or \code{y} or both, specifying jitter factors
     for the horizontal and vertical coordinates of the points in the scatterplot. The
-    \code{\link[base]{jitter}} function is used to randomly perturb the points; specifying a
+    \code{\link{jitter}} function is used to randomly perturb the points; specifying a
     factor of \code{1} produces the default jitter.
     Fitted lines are unaffected by the jitter.}
   \item{col}{with no grouping, this specifies a color for plotted points;
@@ -108,17 +108,17 @@ sp(x, ...)
     of colors of length at least equal to the number of groups. The default is
     value returned by \code{\link{carPalette}[-1]}.}
   \item{pch}{plotting characters for points; default is the plotting characters in
-    order (see \code{\link[graphics]{par}}).}
+    order (see \code{\link{par}}).}
   \item{cex}{sets the size of plotting characters, with \code{cex=1} the standard size.  You can also
     set the sizes of other elements with the arguments \code{cex.axis}, \code{cex.lab}, \code{cex.main},
-    and \code{cex.sub}.  See \code{\link[graphics]{par}}.}
+    and \code{cex.sub}.  See \code{\link{par}}.}
   \item{reset.par}{if \code{TRUE} (the default) then plotting parameters are reset to their previous values
     when \code{scatterplot} exits; if \code{FALSE} then the \code{mar} and \code{mfcol} parameters are
     altered for the current plotting device. Set to \code{FALSE} if you want to add graphical elements
     (such as lines) to the plot.}
   \item{\dots}{other arguments passed down and to \code{plot}.  For example, the argument \code{las} sets
     the style of the axis labels, and \code{xlim} and \code{ylim} set the limits on the horizontal and
-    vertical axes, respectively; see \code{\link[graphics]{par}}.}
+    vertical axes, respectively; see \code{\link{par}}.}
 }
 
 \details{
@@ -160,10 +160,10 @@ sp(x, ...)
   \emph{An R Companion to Applied Regression}, Third Edition, Sage.
 }
 
-\seealso{\code{\link[graphics]{boxplot}},
-  \code{\link[base]{jitter}}, \code{\link{legend}},
+\seealso{\code{\link{boxplot}},
+  \code{\link{jitter}}, \code{\link{legend}},
   \code{\link{scatterplotMatrix}}, \code{\link{dataEllipse}}, \code{\link{Boxplot}},
-  \code{\link[MASS]{cov.trob}},
+  \code{\link{cov.trob}},
   \code{\link{showLabels}}, \code{\link{ScatterplotSmoothers}}.}
 
 \examples{

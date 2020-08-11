@@ -39,7 +39,7 @@ subsets(object, ...)
     \code{"rsq"}, unadjusted \eqn{R^{2}}{R^2};
     \code{"rss"}, residual sum of squares.}
   \item{las}{if \code{0}, ticks labels are drawn parallel to the
-    axis; set to \code{1} for horizontal labels (see \code{\link[graphics]{par}}).}
+    axis; set to \code{1} for horizontal labels (see \code{\link{par}}).}
   \item{cex.subsets}{can be used to change the relative size of the characters used to
     plot the regression subsets; default is \code{1}.}
   \item{\dots}{arguments to be passed down to 

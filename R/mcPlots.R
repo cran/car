@@ -10,8 +10,13 @@
 # 2017-02-13: consolidated id and ellipse arguments. J. Fox
 # 2017-11-30: substitute carPalette() for palette(). J. Fox
 # 2018-12-17: added title argument, if title=FALSE, suppress unchangable main= arguments
+# 2018-07-13: made mcPlots() generic. J. Fox
 
-mcPlots <- function(model, terms=~., layout=NULL, ask, overlaid=TRUE, ...){
+mcPlots <- function(model, ...){
+    UseMethod("mcPlots")
+}
+
+mcPlots.default <- function(model, terms=~., layout=NULL, ask, overlaid=TRUE, ...){
     terms <- if(is.character(terms)) paste("~",terms) else terms
     vform <- update(formula(model),terms)
     if(any(is.na(match(all.vars(vform), all.vars(formula(model))))))

@@ -1,3 +1,17 @@
+Changes to Version 3.0-9
+
+  o Declare linearHypothesis.survreg() method, previously omitted from NAMESPACE (following question by Robert Dinterman); tweaks to survreg methods for linearHypothesis(), Anova(), and deltaMethod() to make them more robust.
+  
+  o Fix bug in hccm() when model matrix includes just one column (reported by Justin Yap).
+  
+  o Fix buglet in scatterplotMatrix.formula() when groups specified.
+  
+  o Several functions are now generic: avPlots(), ceresPlots(), crPlots(), mcPlots().
+  
+  o Enable spread smoothers for crPlot(), ceresPlot(), and residualPlot() (suggestion of Dave Armstrong).
+  
+  o Small changes to docs.
+
 Changes to Version 3.0-8
 
   o Import() now defaults to stringsAsFactors=FALSE to match the default behavior of read.table() as of R 4.0.0.

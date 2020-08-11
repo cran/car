@@ -15,9 +15,13 @@
 #  ylim of marginal plot (S. Weisberg)
 # 16 May 2016 added argument id.location to set location of labels (S. Weisberg)
 # 2017-11-30: substitute carPalette() for palette(). J. Fox
+# 2018-07-13: made avPlots() generic. J. Fox
 
+avPlots <- function(model, ...){
+    UseMethod("avPlots")
+}
 
-avPlots <- function(model, terms=~., intercept=FALSE, layout=NULL, ask, 
+avPlots.default <- function(model, terms=~., intercept=FALSE, layout=NULL, ask, 
                     main, ...){
     terms <- if(is.character(terms)) paste("~",terms) else terms
     vform <- update(formula(model),terms)

@@ -27,6 +27,7 @@
 # 2018-02-09: S. Weisberg removed the transform and family arguments from the default method
 # 2018-04-02: J. Fox: warning rather than error for too few colors.
 # 2018-04-12: J. Fox: clean up handling of groups arg.
+# 2020-07-02: J. Fox: fix buglet in scatterplotMatrix.formula() when groups specified.
 
 scatterplotMatrix <- function(x, ...){
   UseMethod("scatterplotMatrix")
@@ -50,7 +51,7 @@ scatterplotMatrix.formula <- function (formula, data=NULL, subset, ...) {
   }
   else{
     groups <- TRUE
-    formula <- as.character(formula)
+    formula <- paste(as.character(formula), collapse=" ")
     formula <- as.formula(sub("\\|", "+", formula))
   }
   m$formula <-formula

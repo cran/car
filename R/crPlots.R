@@ -17,12 +17,18 @@
 # 20 Aug 2013 replace residuals.glm() with residuals(). John
 # 2017-02-11: consolidated id and smooth arguments. John
 # 2017-11-30: substitute carPalette() for palette(). J. Fox
+# 2018-07-13: made crPlots() generic. J. Fox
+# 2018-08-06: enabled spread and var for smoothers. J. Fox
 
 # these functions to be rewritten; simply renamed for now
 
 crp<-function(...) crPlots(...)
 
-crPlots<-function(model, terms= ~ ., layout=NULL, ask, main, ...){
+crPlots <- function(model, ...){
+    UseMethod("crPlots")
+}
+
+crPlots.default <- function(model, terms= ~ ., layout=NULL, ask, main, ...){
     terms <- if(is.character(terms)) paste("~", terms) else terms
     vform <- update(formula(model), terms)
     if(any(is.na(match(all.vars(vform), all.vars(formula(model))))))
@@ -77,10 +83,11 @@ crPlot.lm<-function(model, variable, id=FALSE,
         id.col <- id$col
         id.location <- id$location
     }
-    smoother.args <- applyDefaults(smooth, defaults=list(smoother=loessLine), type="smooth")
+    smoother.args <- applyDefaults(smooth, defaults=list(smoother=loessLine, var=FALSE), type="smooth")
     if (!isFALSE(smoother.args)) {
         smoother <- smoother.args$smoother 
         smoother.args$smoother <- NULL
+        if (is.null(smoother.args$spread)) smoother.args$spread <- smoother.args$var
     }
     else smoother <- "none"
     if(!is.null(class(model$na.action)) && 
@@ -115,7 +122,7 @@ crPlot.lm<-function(model, variable, id=FALSE,
         if (line) abline(lm(partial.res[,var]~.x), lty=2, lwd=lwd, col=col.lines[1])
         if (is.function(smoother)) {
             smoother(.x, partial.res[,var], col=col.lines[2], log.x=FALSE,
-                     log.y=FALSE, spread=FALSE, smoother.args=smoother.args)
+                     log.y=FALSE, spread=smoother.args$spread, smoother.args=smoother.args)
         }
         showLabels(.x, partial.res[,var], labels=labels, 
                    method=id.method, n=id.n, cex=id.cex,
@@ -137,7 +144,7 @@ crPlot.lm<-function(model, variable, id=FALSE,
         if (line) abline(lm(partial.res[,last]~.x), lty=2, lwd=lwd, col=col.lines[1])
         if (is.function(smoother)) {
             smoother(.x, partial.res[, last], col=col.lines[2], log.x=FALSE,
-                     log.y=FALSE, spread=FALSE, smoother.args=smoother.args)
+                     log.y=FALSE, spread=smoother.args$spread, smoother.args=smoother.args)
         }
         showLabels(.x, partial.res[,last], labels=labels, 
                    method=id.method, n=id.n, cex=id.cex,

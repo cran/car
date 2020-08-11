@@ -18,9 +18,9 @@ regLine(mod, col=carPalette()[2], lwd=2, lty=1,...)
     intercept and slope of a regresison line.}
   \item{col}{color for points and lines; the default is the \emph{second} entry
     in the current \pkg{car} palette (see \code{\link{carPalette}}
-    and \code{\link[graphics]{par}}).}
-  \item{lwd}{line width; default is \code{2} (see \code{\link[graphics]{par}}).}
-  \item{lty}{line type; default is \code{1}, a solid line (see \code{\link[graphics]{par}}).}
+    and \code{\link{par}}).}
+  \item{lwd}{line width; default is \code{2} (see \code{\link{par}}).}
+  \item{lty}{line type; default is \code{1}, a solid line (see \code{\link{par}}).}
   \item{\dots}{optional arguments to be passed to the
     \code{lines} plotting function.}
 }
@@ -37,7 +37,7 @@ regLine(mod, col=carPalette()[2], lwd=2, lty=1,...)
 \author{John Fox \email{jfox@mcmaster.ca}}
 
 
-\seealso{\code{\link[graphics]{abline}}, \code{\link[graphics]{lines}}}
+\seealso{\code{\link{abline}}, \code{\link{lines}}}
 
 \examples{
 plot(repwt ~ weight, pch=c(1,2)[sex], data=Davis)

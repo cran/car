@@ -18,6 +18,7 @@
 %   2014-08-23 added linearHypothesis.rlm. J. Fox
 %   2016-06-29 noted addition of "value" and "vcov" attributes, added example. J. Fox
 %   2018-04-11 rhs suppressed using pbkrtest for lmer model. J.Fox
+%   2020-05-27 added documentation for survreg method. J. Fox
 %------------------------------------------------------------------------------------
 
 \name{linearHypothesis}
@@ -33,6 +34,7 @@
 \alias{linearHypothesis.lme}
 \alias{linearHypothesis.svyglm}
 \alias{linearHypothesis.rlm}
+\alias{linearHypothesis.survreg}
 \alias{print.linearHypothesis.mlm}
 \alias{matchCoefs}
 \alias{matchCoefs.default}
@@ -97,6 +99,9 @@ lht(model, ...)
 \method{linearHypothesis}{svyglm}(model, ...)
 
 \method{linearHypothesis}{rlm}(model, ...)
+
+\method{linearHypothesis}{survreg}(model, hypothesis.matrix, rhs=NULL,
+		test=c("Chisq", "F"), vcov., verbose=FALSE, ...)
     
 %%\method{coef}{multinom}(object, ...)
 
@@ -305,9 +310,9 @@ matchCoefs(model, pattern, ...)
 
 \author{Achim Zeileis and John Fox \email{jfox@mcmaster.ca}}
 
-\seealso{\code{\link[stats]{anova}}, \code{\link{Anova}}, \code{\link[lmtest]{waldtest}},
+\seealso{\code{\link{anova}}, \code{\link{Anova}}, \code{\link[lmtest]{waldtest}},
   \code{\link{hccm}}, \code{\link[sandwich]{vcovHC}}, \code{\link[sandwich]{vcovHAC}}, 
-  \code{\link[stats]{coef}}, \code{\link[stats]{vcov}}
+  \code{\link{coef}}, \code{\link{vcov}}
 
 }
 

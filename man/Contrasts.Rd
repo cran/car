@@ -65,8 +65,8 @@ contr.Helmert(n, contrasts = TRUE)
 
 \author{John Fox \email{jfox@mcmaster.ca}}
 
-\seealso{\code{\link[stats]{contr.treatment}}, \code{\link[stats]{contr.sum}}, 
-  \code{\link[stats]{contr.helmert}}, \code{\link[stats]{contr.poly}} }
+\seealso{\code{\link{contr.treatment}}, \code{\link{contr.sum}}, 
+  \code{\link{contr.helmert}}, \code{\link{contr.poly}} }
 
 \examples{
 # contr.Treatment vs. contr.treatment in the base package:

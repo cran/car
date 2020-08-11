@@ -46,6 +46,15 @@ Recode(...)
       For example, \code{else=NA}. Note that \code{else} matches \emph{all} otherwise
       unspecified values on input, including \code{NA}.}
     }
+  Character data and factor levels on the left-hand side of a recode specification must be quoted. Thus,
+  e.g., \code{c(a, b, c) = 'low'} is not allowed, and should be \code{c('a', 'b', 'c') = 'low'}. 
+  Similarly, the colon is reserved for numeric data, and, e.g., \code{c('a':'c') = 'low'} is not allowed. 
+  If the \code{var} argument is a character variable with (some) values that are composed of numerals, or a factor
+  with (some) levels that are numerals (e.g., \code{'12'} or \code{'-2'}), then these too must be quoted 
+  and cannot be used with colons (e.g., \code{'15':'19' = '15 to 19'} is not allowed, and could be
+  specified as \code{c('15', '16', '17', '18', '19') = '15 to 19'}, assuming that all values are 
+  the character representation of whole numbers).
+  
   If all of the output values are numeric, and if \code{as.factor} is 
   \code{FALSE}, then a numeric result is returned; if \code{var} is a factor,
   then by default so is the result.
@@ -62,7 +71,7 @@ Recode(...)
   \emph{An R Companion to Applied Regression}, Third Edition, Sage.
 }
 
-\seealso{\code{\link[base]{cut}}, \code{\link[base]{factor}}}
+\seealso{\code{\link{cut}}, \code{\link{factor}}}
 
 \examples{
 x<-rep(1:3,3)
