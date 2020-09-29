@@ -89,7 +89,7 @@ The summary methods handle the \code{NA}s appropriately.
 Fox and Weisberg (2017) cited below discusses this function and provides more examples.
 }
 \value{
-See \code{\link{boot}} for the returned value of the structure returned by this function.  
+See \code{\link{boot}} for the returned value of the structure returned by this function. 
 }
 \references{
 Davison, A, and Hinkley, D.  (1997)  \emph{Bootstrap Methods and their
@@ -114,7 +114,7 @@ Wiley, Chapters 4 and 11.}
 functions in the \pkg{car} package are
 \code{\link{summary.boot}},
 \code{\link{confint.boot}}, and
-\code{\link{hist.boot}}.
+\code{\link{hist.boot}}.   
 }
 
 

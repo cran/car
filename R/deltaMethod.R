@@ -25,6 +25,7 @@
 # 2019-06-05: option for hypothesis test. J. Fox
 # 2019-06-07: move handling intercepts to default method, suggestion of Pavel Krivitsky. J. Fox 
 # 2020-05-27: fix to deltaMethod.survreg() to handle Log(scale) parameter. J. Fox
+# 2020-09-02: Correct bug when using parameter name "(Intercept)". SW
 #-------------------------------------------------------------------------------
 
 deltaMethod <- function (object, ...) {
@@ -43,9 +44,8 @@ deltaMethod.default <- function (object, g., vcov., func = g., constants, level=
 	para <- object         
 	para.names <- names(para)
 	para.names[1] <- gsub("\\(Intercept\\)", "Intercept", para.names[1])
-	g. <- parse(text = g.)
+	g. <- parse(text = gsub("\\(Intercept\\)", "Intercept", g.))
 	q <- length(para)
-
 	envir <- new.env(parent=envir)
 	for (i in 1:q) {
 	    assign(para.names[i], para[i], envir)
@@ -56,7 +56,7 @@ deltaMethod.default <- function (object, g., vcov., func = g., constants, level=
 	names(est) <- NULL
 	gd <- rep(0, q)
 	for (i in 1:q) {
-		gd[i] <- eval(D(g., names(para)[i]), envir)
+		gd[i] <- eval(D(g., para.names[i]), envir)
 	}
 	se.est <- as.vector(sqrt(t(gd) %*% vcov. %*% gd))
 	result <- data.frame(Estimate = est, SE = se.est, row.names = c(func))

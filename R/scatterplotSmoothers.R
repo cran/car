@@ -20,6 +20,7 @@
 # 2018-06-25: The argument 'spread' has an alias 'var', with 'var' having precedence.  S. Weisberg
 #             Similarly, col.var, lty.var, lwd.var override col.spread, lty.spread, lwd.spread
 # 2018-08-23: gamLine tried to graph in linear predictor scale, not the response scale for glms.
+# 2020-09-23: fixed quantregLine() to work with development version 5.69 of the quantreg package. John
 
 default.arg <- function(args.list, arg, default){
     if (is.null(args.list[[arg]])) default else args.list[[arg]]
@@ -221,8 +222,9 @@ quantregLine <- function(x, y, col=carPalette()[1], log.x=FALSE, log.y=FALSE,
     x <- x[ord]
     y <- y[ord]
     x.eval <- seq(min(x), max(x), length=evaluation)
+    Data <- data.frame(x, y)
     if (!spread){
-        fit <- rqss(y ~ qss(x, lambda=lambda))
+        fit <- rqss(y ~ qss(x, lambda=lambda), data=Data)
         y.eval <- predict(fit, newdata=data.frame(x=x.eval))
         y.eval <- if(log.y) exp(y.eval) else y.eval
         if(draw)lines(if(log.x) exp(x.eval) else x.eval, y.eval, lwd=lwd.smooth,
@@ -230,9 +232,9 @@ quantregLine <- function(x, y, col=carPalette()[1], log.x=FALSE, log.y=FALSE,
           out <- list(x=if(log.x) exp(x.eval) else x.eval, y=y.eval)
     }
     else{
-        fit <- rqss(y ~ qss(x, lambda=lambda))
-        q1fit <- rqss(y ~ qss(x, lambda=lambda), tau=0.25)
-        q3fit <- rqss(y ~ qss(x, lambda=lambda), tau=0.75)
+        fit <- rqss(y ~ qss(x, lambda=lambda), data=Data)
+        q1fit <- rqss(y ~ qss(x, lambda=lambda), tau=0.25, data=Data)
+        q3fit <- rqss(y ~ qss(x, lambda=lambda), tau=0.75, data=Data)
         y.eval <- predict(fit, newdata=data.frame(x=x.eval))
         y.eval.q1 <- predict(q1fit, newdata=data.frame(x=x.eval))
         y.eval.q3 <- predict(q3fit, newdata=data.frame(x=x.eval))

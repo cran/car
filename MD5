@@ -1,8 +1,8 @@
-9d01af1e8ebc73bc15a54d8a2fc30e0a *DESCRIPTION
+9095f5b12e0864d6e70acd2df11d22b1 *DESCRIPTION
 31a1bab2b8cb784a130a6295497c2ee0 *NAMESPACE
-fe484a8572c3f60c798972140fc9cf88 *NEWS
+520c4827e31d59dda934733ae8e1ecdf *NEWS
 0ab6891d5727988324bc2726b70b6fdc *R/Anova.R
-11918ba5d6f90dd29581474ec24fb4ae *R/Boot.R
+fd838db72e29106932ef50045649ceb3 *R/Boot.R
 7a59048f55c9b7c24cd211c2add306f2 *R/Boxplot.R
 0de785cf1492be1ff844173d644aeb6e *R/Contrasts.R
 22a12559293cb0494914b1f2899c8882 *R/Ellipse.R
@@ -26,7 +26,7 @@ c583000c55ebbef815a725577c220c1e *R/carHexsticker.R
 3ed6b97ba60b4749edf08d428b022c71 *R/ceresPlots.R
 320f846a1788e0b8ce19294a3d7238c1 *R/compareCoefs.R
 7550dc327b2fd42741f8b021599a6670 *R/crPlots.R
-8b4618060c856221e1a36a221a846743 *R/deltaMethod.R
+b8eb72a0dcbbe05450ef065a5d90a775 *R/deltaMethod.R
 5d4c4d78b963e1f598648246498f0d49 *R/densityPlot.R
 ac6e448923b78176c42dd93df0691628 *R/dfbetaPlots.R
 a89ec78a4487110c5315c4d204517067 *R/durbinWatsonTest.R
@@ -55,7 +55,7 @@ d19ad5d6ba8eba8d27421f85c635859a *R/qqPlot.R
 c1b30dabe55b43a9f31f13b90feed904 *R/scatter3d.R
 88498b04c9b68224dda01bc27daeea1c *R/scatterplot.R
 95e3525782e0404707f67cf02123b013 *R/scatterplotMatrix.R
-d1fbb7c49aefffc7533e2469a7422c1c *R/scatterplotSmoothers.R
+8601c145da26316b3b8f5d2b79772e67 *R/scatterplotSmoothers.R
 1b4288cb9189cf0e579e325db82ca724 *R/showLabels.R
 11bf042736b3cabd46ce713d09c147fa *R/sigmaHat.R
 9314e03ceb0ce81847849890c19abe41 *R/some.R
@@ -72,9 +72,9 @@ e2082206594825292948475ea3960d0a *inst/CITATION
 b6b5c8008a809152b9308aba25757693 *inst/doc/car-hex.pdf
 1685e3ad853d62d3d2d8c9e8c52c2152 *inst/doc/embedding.R
 ec79db1c197a1f8b3ae603342005b7d8 *inst/doc/embedding.Rnw
-07986338638f8dbdc70a6699cd25a5e6 *inst/doc/embedding.pdf
+89ee7142a4a5060e2831a5352ca6b971 *inst/doc/embedding.pdf
 ffb2060640b9dac038cb76fdf543dd3c *man/Anova.Rd
-d9c1493b8374cee2bf7965985c5a0f92 *man/Boot.Rd
+76b6f8ee7151cf452b831c3835ddfc6c *man/Boot.Rd
 ff51ddead5705eea6a0c341f7ba6cd31 *man/Boxplot.Rd
 c0b45af98a0fc46375bd67cab5c16907 *man/Contrasts.Rd
 0ed5a58e2e5f17fe1e40e33f0be67477 *man/Ellipses.Rd

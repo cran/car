@@ -55,12 +55,18 @@
 #              produce a warning and set ncores=1.  
 ##2018-12-21:  Brad changed the cluster initalizations for the parallel environements to makeCluster
 ##             For non-unix environments we export the data, and model type to the cluster.
+## 2020-09-02: Corrected weights with lm models and method="residual" to
+#              match Alg 6.3 of Davison and Hinkley
+## 2020-09=02: Removed unneeded code using missing values in Boot.nls
+## 2020-09-02: Boot.nls failed if nls algorithm="plinear".  This is fixed
+## 2020-09-02: Correctly use weights in lm, nls
 
 Boot <- function(object, f=coef, labels=names(f(object)), R=999, 
             method=c("case", "residual"), ncores=1, ...){UseMethod("Boot")}
 
 Boot.default <- function(object, f=coef, labels=names(f(object)),
-                         R=999, method=c("case", "residual"), ncores=1, start=FALSE,...) {
+                         R=999, method=c("case", "residual"), 
+                         ncores=1, start=FALSE,...) {
   if(!(requireNamespace("boot"))) stop("The 'boot' package is missing")
   
   ## original statistic
@@ -90,7 +96,10 @@ Boot.default <- function(object, f=coef, labels=names(f(object)),
       res <- if(first) residuals(object, type="pearson") else
         residuals(object, type="pearson")/sqrt(1 - hatvalues(object))
       res <- if(!first) (res - mean(res)) else res
-      val <- fitted(object) + res[indices]
+# next two lines added 9/2/2020.  This works for lm or other model methods
+# that return a slot called weights with the case weights
+      wts <- if(!is.null(object$weights)) object$weights else 1
+      val <- fitted(object) + res[indices]/sqrt(wts)
       if (!is.null(object$na.action)){
         pad <- object$na.action
         attr(pad, "class") <- "exclude"
@@ -141,7 +150,6 @@ Boot.default <- function(object, f=coef, labels=names(f(object)),
     }
   }
   
-  
   ## call boot() but set nice labels
   b <- boot::boot(dd, boot.f, R, .fn=f,parallel=p_type,ncpus = ncores, 
                   cl = cl2,...)
@@ -159,7 +167,7 @@ Boot.lm <- function(object, f=coef, labels=names(f(object)),
                      R=999, method=c("case", "residual"), ncores=1, ...){
 # check for missing values:
   if(!is.null(object$na.action))
-    stop("The Boot function in the 'car' package does not currently allow
+    stop("The Boot function in the 'car' package does not allow
   missing values for lm or glm models.  Refit your model with rows 
   with missing values removed.  If you have a data frame called 'd', 
   then the argument data=na.omit(d) is likely to work.")
@@ -175,55 +183,79 @@ Boot.glm <- function(object, f=coef, labels=names(f(object)),
   your own version of residual bootstrap for a glm.")
   # check for missing values:
   if(!is.null(object$na.action))
-    stop("The Boot function in the 'car' package does not currently allow
+    stop("The Boot function in the 'car' package does not allow
   missing values for lm or glm models.  Refit your model with rows 
   with missing values removed.  If you have a data frame called 'd', 
   then the argument data=na.omit(d) is likely to work.")  
     Boot.default(object, f, labels, R, method,ncores, ...)
 }
 
+
 Boot.nls <- function(object, f=coef, labels=names(f(object)),
                      R=999, method=c("case", "residual"), ncores=1, ...) {
-  f0 <- f(object)
-### Remove rows with missing data from the data object
-  all.names <- all.vars(object$m$formula())
-  param.names <- names(object$m$getPars())
-  vars <- all.names[!(all.names %in% param.names)]
-  obj <- update(object, data = na.omit(eval(object$data)[,vars]), start=coef(object))
+  ## check for missing values:
+  if(!is.null(object$na.action))
+    stop("The Boot function in the 'car' package does not allow
+missing values for nls models.  Refit your model with rows 
+with missing values removed.  If you have a data frame called 'd', 
+then the argument data=complete.cases(d) is likely to work.")
   if(!(requireNamespace("boot"))) stop("The 'boot' package is missing")
+  f0 <- f(object)
   if(length(labels) != length(f0)) labels <- paste("V", seq(length(f0)), sep="")
   method <- match.arg(method)
-  opt<-options(show.error.messages = FALSE)
-  if(method=="case") {
-     boot.f <- function(data, indices, .fn) {
-         assign(".boot.indices", indices, envir=.carEnv)
-         mod <- try(update(obj, subset=get(".boot.indices", envir=.carEnv),
-                 start=coef(obj)))
-         if(inherits(mod, "try-error")){
-            out <- .fn(obj)
-            out <- rep(NA, length(out)) } else  {out <- .fn(mod)}
-     out
-     }
-    } else {
+  if(method=="case") { 
     boot.f <- function(data, indices, .fn) {
-      first <- all(indices == seq(length(indices)))
-      res <- residuals(object)
-      val <- fitted(object) + res[indices]
-      if (!is.null(object$na.action)){
-            pad <- object$na.action
-            attr(pad, "class") <- "exclude"
-            val <- naresid(pad, val)
-            }
-      assign(".y.boot", val, envir=.carEnv)
-      mod <- try(update(object, get(".y.boot", envir=.carEnv) ~ .,
-             start=coef(object)))
+      assign(".boot.indices", indices, envir=.carEnv)
+      # When algorithm="plinear", remove all coefs with names starting with '.' 
+      # from the starting values
+      sv <- coef(object)
+      if(object$call$algorithm == "plinear") sv <- sv[!grepl("\\.", names(sv))]
+      # update the call to use the bootstrap sample determined by indices
+      # if the weights argument has been set then update it as well.
+      newcall <- if(is.null(object$weights))
+                    update(object, subset=get(".boot.indices", envir=.carEnv),
+                           start=sv, evaluate=FALSE)  
+                else  update(object, subset=get(".boot.indices", envir=.carEnv),
+                        weights=object$weights, start=sv, evaluate=FALSE) 
+      # try to evaluate the call
+      mod <- try(eval(newcall), silent=TRUE)
       if(inherits(mod, "try-error")){
-            out <- .fn(object)
-            out <- rep(NA, length(out)) } else  {out <- .fn(mod)}
+        out <- .fn(object)
+        out <- rep(NA, length(out)) } else  {out <- .fn(mod)}
       out
-      }
     }
-
+  } else {
+    boot.f <- function(data, indices, .fn) { 
+      wts <- if(is.null(object$weights)) 1 else object$weights
+      res <- residuals(object) * sqrt(wts)  # Pearson residuals
+      val <- fitted(object) + res[indices]/sqrt(wts)
+      assign(".y.boot", val, envir=.carEnv)
+      assign(".wts", wts, envir=.carEnv)
+      # When algorithm="plinear", remove all coefs with names starting with '.' 
+      # from the starting values
+      sv <- coef(object)
+      if(object$call$algorithm == "plinear") sv <- sv[!grepl("^\\.", names(sv))]
+      # generate an updated call with .y.boot as the response but do not evaluate
+      newcall <- if(is.null(object$call$weights))
+        update(object, get(".y.boot", envir=.carEnv) ~ .,
+               start=sv, evaluate=FALSE)
+      else
+        update(object, get(".y.boot", envir=.carEnv) ~ .,
+               weights= get(".wts", envir=.carEnv),
+               start=sv, evaluate=FALSE)
+      # formula.update may have mangled the rhs of newcall$formula
+      # copy it from the original call.  I consider this to be a kludge to work
+      # around a bug in formula.update
+      newcall$formula[[3]] <- formula(object)[[3]]
+      # refit to bootstrap sample
+      mod <- try(eval(newcall), silent=TRUE)
+      if(inherits(mod, "try-error")){
+        out <- .fn(object)
+        out <- rep(NA, length(out)) } else  {out <- .fn(mod)}
+      out
+    }
+  }
+  # multicore code  
   if(ncores<=1){
     #parallel_env="no"
     #ncores=getOption("boot.ncpus",1L)
@@ -233,7 +265,7 @@ Boot.nls <- function(object, f=coef, labels=names(f(object)),
     #if(.Platform$OS.type=="unix"){
     #    parallel_env="multicore"
   }else{
-    #warning("Multicore processing in Boot is not avaliable for Windows.  It is current under development")
+    #warning("Multicore processing in Boot is not available for Windows.  It is current under development")
     #ncores=1
     #parallel_env="no"
     #ncores=getOption("boot.ncpus",1L)
@@ -244,22 +276,26 @@ Boot.nls <- function(object, f=coef, labels=names(f(object)),
     }else{
       p_type="snow"
       parallel::clusterExport(cl2,varlist=c(".carEnv",sapply(c(1,3),function(m){gsub("()",getCall(object)[m],replacement="")})))
-      
     }
   }
-
-  b <- boot::boot(data.frame(update(object, model=TRUE)$model), boot.f, R, .fn=f,parallel = p_type,ncpus = ncores,cl=cl2, ...)
+  # call boot::boot.  
+  b <- boot::boot(data.frame(update(object, model=TRUE)$model), boot.f, R, 
+                  .fn=f, parallel = p_type, ncpus = ncores, cl=cl2, ...)
+  #  b <- boot::boot(eval(object$data), boot.f, R, .fn=f, parallel = p_type, ncpus = ncores, cl=cl2, ...)
   colnames(b$t) <- labels
   if(exists(".y.boot", envir=.carEnv))
-     remove(".y.boot", envir=.carEnv)
+    remove(".y.boot", envir=.carEnv)
   if(exists(".boot.indices", envir=.carEnv))
-     remove(".boot.indices", envir=.carEnv)
-  options(opt)
+    remove(".boot.indices", envir=.carEnv)
+  if(exists(".wts", envir=.carEnv))
+    remove(".wts", envir=.carEnv)
   d <- dim(na.omit(b$t))[1]
   if(d != R)
-   cat( paste("\n","Number of bootstraps was", d, "out of", R, "attempted", "\n"))
+    cat( paste("\n","Number of bootstraps was", d, "out of", R, "attempted", "\n"))
   b
 }
+
+
 
 Confint.boot <- function(object, parm, level = 0.95,
   type = c("bca", "norm", "basic", "perc"), ...){

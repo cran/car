@@ -1,5 +1,13 @@
-Changes to Version 3.0-9
+Changes to Version 3.0-10
 
+  o Fixed as error when using parameter name "(Intercept)" with deltaMethod().  
+  
+  o Several changes to Boot() to correct bugs, support the plinear algorithm, to correct use of weights for lm, and allow use of weights for nls.
+  
+  o Fix quantregLine() to work with development version 5.69 of quantreg package (following heads-up from Roger Koenker).
+  
+Changes to Version 3.0-9
+  
   o Declare linearHypothesis.survreg() method, previously omitted from NAMESPACE (following question by Robert Dinterman); tweaks to survreg methods for linearHypothesis(), Anova(), and deltaMethod() to make them more robust.
   
   o Fix bug in hccm() when model matrix includes just one column (reported by Justin Yap).
