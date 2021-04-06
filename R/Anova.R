@@ -124,7 +124,7 @@ Anova.lm <- function(mod, error, type=c("II","III", 2, 3),
     if ((white.adjust != "FALSE") || (!is.null(vcov.)))
       stop("non-standard coefficient covariance matrix\n  may not be used for model with aliased coefficients")
     message("Note: model has aliased coefficients\n      sums of squares computed by model comparison")
-    result <- Anova(lm2glm(mod), type=type, singular.ok=TRUE, test.statistic="F", ...)
+    result <- Anova(lm2glm(mod), type=type, singular.ok=TRUE, ...)
     heading <- attributes(result)$heading
     if (type == "2") type <- "II"
     if (type == "3") type <- "III"
@@ -133,10 +133,10 @@ Anova.lm <- function(mod, error, type=c("II","III", 2, 3),
   }
   if (white.adjust != "FALSE"){
     if (white.adjust == "TRUE") white.adjust <- "hc3" 
-    return(Anova.default(mod, type=type, vcov.=hccm(mod, type=white.adjust), test.statistic="F", 
+    return(Anova.default(mod, type=type, vcov.=hccm(mod, type=white.adjust), 
                          singular.ok=singular.ok, ...))
   }
-  else if (!is.null(vcov.)) return(Anova.default(mod, type=type, vcov.=vcov., test.statistic="F", 
+  else if (!is.null(vcov.)) return(Anova.default(mod, type=type, vcov.=vcov., 
                                                  singular.ok=singular.ok, ...))
   switch(type,
          II=Anova.II.lm(mod, error, singular.ok=singular.ok, ...),
