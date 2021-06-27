@@ -1,6 +1,7 @@
 \name{brief}
 \alias{brief}
 \alias{brief.data.frame}
+\alias{brief.tbl}
 \alias{brief.matrix}
 \alias{brief.numeric}
 \alias{brief.integer}
@@ -26,6 +27,7 @@ brief(object, ...)
 \method{brief}{data.frame}(object, rows = if (nr <= 10) c(nr, 0) else c(3, 2),
     cols, head=FALSE, tail=FALSE, elided = TRUE,
     classes = inherits(object, "data.frame"), ...)
+\method{brief}{tbl}(object, ...)
 \method{brief}{matrix}(object, rows = if (nr <= 10) c(nr, 0) else c(3, 2), ...)
 
 \method{brief}{numeric}(object, rows = c(2, 1), elided = TRUE, ...)
@@ -88,25 +90,19 @@ brief(object, ...)
     \code{"polr"} or \code{"multinom"} model, show exponentiated coefficient estimates and confidence bounds.}
     \item{digits}{significant digits for printing.}
      \item{horizontal}{if \code{TRUE} (the default), orient the summary produced by \code{brief} horizontally, which typically saves space.}
-       \item{dispersion}{see \code{\link{summary.glm}}}
+       \item{dispersion}{use an estimated covariance matrix computed as the dispersion times the unscaled covariance matrix; see \code{\link{summary.glm}}}
   
   \item{vcov.}{either a matrix giving the estimated covariance matrix of the estimates, 
     or a function that
-    when called with \code{object} as an argument returns an estimated covariance matrix 
-    of the estimates.  The default \code{vcov. = vcov(object, complete=FALSE)} uses the 
-    usual estimated covariance matrix with NA for any row and column with aliased regressors. 
+    when called with \code{object} as an argument returns an estimated covariance matrix of the estimates.  If not set, \code{vcov(object, complete=FALSE)} is called to use the
+    usual estimated covariance matrix with aliased regressors removed. 
     Other choices include the functions documented at \code{\link{hccm}}, and a bootstrap
     estimate \code{vcov.=vcov(Boot(object))}; see the documentation for \code{\link{Boot}}.  
-    For the \code{glm} method, if the \code{vcov.} or \code{dispersion} argument is specified,
-    then Wald-based confidence limits are computed; otherwise the reported confidence limits
-    are computed by profiling the likelihood.
     NOTES:  (1) The \code{dispersion} and \code{vcov.} arguments may not \emph{both} be 
     specified. (2) Setting \code{vcov.=vcov} returns an error if the model includes aliased 
     terms; use \code{vcov.=vcov(object, complete=FALSE)}. (3) The \code{hccm} method will 
     generally return a matrix of full rank even if the model has aliased terms.  Similarly
-    \code{vcov.=vcov(Boot(object))} may return a full rank matrix, or it will a matrix with 
-    NA corresponding to aliased regressors if same regressors are aliased in every bootstrap
-    sample.
+    \code{vcov.=vcov(Boot(object))} may return a full rank matrix.
 }
 
   \item{\dots}{arguments to pass down.}
@@ -117,7 +113,7 @@ Invisibly returns \code{object} for a data object, or summary for a model object
 }
 
 \note{
-The method \code{brief.matrix} calls \code{brief.data.frame}.
+The method \code{brief.matrix} calls \code{brief.data.frame}, and \code{brief.tbl} (for tibbles) calls \code{print}.
 }
 
 \references{

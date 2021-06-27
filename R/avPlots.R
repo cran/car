@@ -16,6 +16,7 @@
 # 16 May 2016 added argument id.location to set location of labels (S. Weisberg)
 # 2017-11-30: substitute carPalette() for palette(). J. Fox
 # 2018-07-13: made avPlots() generic. J. Fox
+# 2021-04-24: added pt.wts and cex args. J. Fox
 
 avPlots <- function(model, ...){
     UseMethod("avPlots")
@@ -62,7 +63,8 @@ avPlot <-  function(model, ...) UseMethod("avPlot")
 avPlot.lm <- function(model, variable,
                       id=TRUE,
                       col = carPalette()[1], col.lines = carPalette()[2],
-                      xlab, ylab, pch = 1, lwd = 2, main=paste("Added-Variable Plot:", variable), grid=TRUE,
+                      xlab, ylab, pch = 1, lwd = 2, cex=par("cex"), pt.wts=FALSE,
+                      main=paste("Added-Variable Plot:", variable), grid=TRUE,
                       ellipse=FALSE,
                       marginal.scale=FALSE, ...){
     variable <- if (is.character(variable) & 1 == length(variable))
@@ -113,7 +115,11 @@ avPlot.lm <- function(model, variable,
     if(grid){
         grid(lty=1, equilogs=FALSE)
         box()}
-    points(res[, 1], res[, 2], col=col, pch=pch, ...)
+    w <- if (pt.wts){
+        w <- sqrt(wt)
+        cex*w/mean(w)
+    } else cex
+    points(res[, 1], res[, 2], col=col, pch=pch, cex=w, ...)
     abline(lsfit(res[, 1], res[, 2], wt = wt), col = col.lines, lwd = lwd)
     if (ellipse) {
         ellipse.args <- c(list(res, add=TRUE, plot.points=FALSE), ellipse.args)
@@ -131,7 +137,8 @@ avPlot.lm <- function(model, variable,
 avPlot.glm <- function(model, variable, 
                        id=TRUE,
                        col = carPalette()[1], col.lines = carPalette()[2],
-                       xlab, ylab, pch = 1, lwd = 2,  type=c("Wang", "Weisberg"), 
+                       xlab, ylab, pch = 1, lwd = 2, cex=par("cex"), pt.wts=FALSE,
+                       type=c("Wang", "Weisberg"), 
                        main=paste("Added-Variable Plot:", variable), grid=TRUE,
                        ellipse=FALSE, ...) {
     type<-match.arg(type)
@@ -172,7 +179,11 @@ avPlot.glm <- function(model, variable,
     if(grid){
         grid(lty=1, equilogs=FALSE)
         box()}
-    points(res.x, res.y, col=col, pch=pch, ...)
+    w <- if (pt.wts){
+        w <- sqrt(wt)
+        cex*w/mean(w)
+    } else cex
+    points(res.x, res.y, col=col, pch=pch, cex=w, ...)
     abline(lsfit(res.x, res.y, wt=wt), col=col.lines, lwd=lwd)
     showLabels(res.x, res.y, labels=labels, 
                method=id.method, n=id.n, cex=id.cex, 

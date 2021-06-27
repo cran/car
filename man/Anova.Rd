@@ -17,6 +17,7 @@
 %   2016-06-25: provision to print univariate ANOVAs for a mlm. J. Fox
 %   2017-11-02: added warning about KR F-tests
 %   2017-11-07: make compatible with vcov() in re-devel. J. Fox
+%   2021-06-14: updates for vcov. arg. J. Fox
 %-------------------------------------------------------------------------------------
 
 \name{Anova}
@@ -77,7 +78,7 @@ Manova(mod, ...)
 \method{Anova}{glm}(mod, type=c("II","III", 2, 3),
     test.statistic=c("LR", "Wald", "F"),
     error, error.estimate=c("pearson", "dispersion", "deviance"),
-    singular.ok, ...)
+   vcov.=vcov(mod, complete=TRUE),  singular.ok, ...)
 
 \method{Anova}{multinom}(mod, type = c("II","III", 2, 3), ...)
 
@@ -209,6 +210,7 @@ Manova(mod, ...)
     to compute a covariance matrix, computed by default by applying the generic \code{vcov} function to the model object.
     A similar argument may be supplied to the \code{lm} method, and the default (\code{NULL}) is to ignore the argument;
     if both \code{vcov.} and \code{white.adjust} are supplied to the \code{lm} method, the latter is used.}
+    In the \code{glm} method, \code{vcov.} is ignored unless \code{test="Wald"}; in the \code{mer} and \code{merMod} methods, \code{vcov.} is ignored if \code{test="F"}.
   \item{\dots}{do not use.}
 }
 \details{

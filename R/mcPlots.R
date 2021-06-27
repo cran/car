@@ -11,6 +11,7 @@
 # 2017-11-30: substitute carPalette() for palette(). J. Fox
 # 2018-12-17: added title argument, if title=FALSE, suppress unchangable main= arguments
 # 2018-07-13: made mcPlots() generic. J. Fox
+# 2021-04-28: added pt.wts and cex args. J. Fox
 
 mcPlots <- function(model, ...){
     UseMethod("mcPlots")
@@ -66,7 +67,8 @@ mcPlot <-  function(model, ...) UseMethod("mcPlot")
 mcPlot.lm <- function(model, variable, id=FALSE,
                       col.marginal=carPalette()[2], col.conditional=carPalette()[3],
                       col.arrows="gray",
-                      pch = c(16,1), lwd = 2, grid=TRUE,   
+                      pch = c(16,1), cex=par("cex"), pt.wts=FALSE,
+                      lwd = 2, grid=TRUE,   
                       ellipse=FALSE,
                       overlaid=TRUE, new=TRUE, title=TRUE, ...){
     id <- applyDefaults(id, defaults=list(method=list(abs(residuals(model, type="pearson")), "x"), n=2, cex=1, col=carPalette()[1], location="lr"), type="id")
@@ -110,6 +112,10 @@ mcPlot.lm <- function(model, variable, id=FALSE,
     res0 <- lm(cbind(mod.mat[, var], response) ~ 1, weights=wt)$residual
     res  <- lsfit(mod.mat[, -var], cbind(mod.mat[, var], response),
                   wt = wt, intercept = FALSE)$residuals
+    w <- if (pt.wts){
+        w <- sqrt(wt)
+        cex*w/mean(w)
+    } else cex
     xlab <- paste(var.names[var], "| others")
     ylab <- paste(responseName, " | others")
     xlm <- c( min(res0[, 1], res[, 1]), max(res0[, 1], res[, 1]))
@@ -122,8 +128,8 @@ mcPlot.lm <- function(model, variable, id=FALSE,
         if(grid){
             grid(lty=1, equilogs=FALSE)
             box()}
-        points(res0[, 1], res0[, 2], pch=pch[1], col=col.marginal)
-        points(res[, 1], res[, 2], col=col.conditional, pch=pch[2], ...)
+        points(res0[, 1], res0[, 2], pch=pch[1], col=col.marginal, cex=w)
+        points(res[, 1], res[, 2], col=col.conditional, pch=pch[2], cex=w, ...)
         arrows(res0[, 1], res0[, 2], res[, 1], res[, 2], length=0.125, col=col.arrows)
         abline(lsfit(res0[, 1], res0[, 2], wt = wt), col = col.marginal, lwd = lwd)
         abline(lsfit(res[, 1], res[, 2], wt = wt), col = col.conditional, lwd = lwd)
@@ -149,7 +155,7 @@ mcPlot.lm <- function(model, variable, id=FALSE,
         if(grid){
             grid(lty=1, equilogs=FALSE)
             box()}
-        points(res0[, 1], res0[, 2], pch=pch[1], col=col.marginal)
+        points(res0[, 1], res0[, 2], pch=pch[1], col=col.marginal, cex=w)
         abline(lsfit(res0[, 1], res0[, 2], wt = wt), col = col.marginal, lwd = lwd)
         if (ellipse) {
             ellipse.args1 <- c(list(res0, add=TRUE, plot.points=FALSE, col=col.marginal), ellipse.args)
@@ -167,7 +173,7 @@ mcPlot.lm <- function(model, variable, id=FALSE,
         if(grid){
             grid(lty=1, equilogs=FALSE)
             box()}
-        points(res[, 1], res[, 2], col=col.conditional, pch=pch[2], ...)
+        points(res[, 1], res[, 2], col=col.conditional, pch=pch[2], cex=w, ...)
         abline(lsfit(res[, 1], res[, 2], wt = wt), col = col.conditional, lwd = lwd)
         if (ellipse) {
             ellipse.args1 <- c(list(res, add=TRUE, plot.points=FALSE, col=col.conditional), ellipse.args)
@@ -179,3 +185,7 @@ mcPlot.lm <- function(model, variable, id=FALSE,
         invisible(res)}
 }
 
+mcPlot.glm <- function(model, ...){
+    stop("marginal-conditional plots are not available for 'glm' objects;\n",
+         "  consider using avPlot()")
+}

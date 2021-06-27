@@ -3,7 +3,7 @@
 \alias{mcPlots.default}
 \alias{mcPlot}
 \alias{mcPlot.lm}
-
+\alias{mcPlot.glm}
 
 \title{Draw Linear Model Marginal and Conditional Plots in Parallel or Overlaid}
 \description{
@@ -19,12 +19,15 @@ mcPlot(model, ...)
 
 \method{mcPlot}{lm}(model, variable, id=FALSE,
     col.marginal=carPalette()[2], col.conditional=carPalette()[3],
-    col.arrows="gray", pch = c(16,1), lwd = 2, grid=TRUE,
-    ellipse=FALSE, overlaid=TRUE, new=TRUE, title=TRUE, ...)
+    col.arrows="gray", pch = c(16,1), cex=par("cex"), pt.wts=FALSE,
+    lwd = 2, grid=TRUE, ellipse=FALSE, overlaid=TRUE, new=TRUE, 
+    title=TRUE, ...)
+    
+\method{mcPlot}{glm}(model, ...)
 }
 \arguments{
-  \item{model}{model object produced by \code{lm}.
-}
+  \item{model}{model object produced by \code{lm}; the \code{"glm"} method just
+  reports an error.}
   \item{terms}{ A one-sided formula that specifies a subset of the predictors.
 One added-variable plot is drawn for each regressor and for each basis vector used to define a factor. For example, the
 specification \code{terms = ~ . - X3} would plot against all terms
@@ -54,6 +57,11 @@ of the graph will have this many rows and columns.  If not set, behavior depends
   ellipses in the marginal and conditional plots, respectively.  The defaults are determined by the \code{\link{carPalette}} function.}
   \item{col.arrows}{color for the arrows with \code{overlaid=TRUE}}
   \item{pch}{Plotting character for marginal and conditional plots, respectively.}
+  \item{cex}{size of plotted points; default is taken from \code{par("cex")}.}
+  \item{pt.wts}{if \code{TRUE} (the default is \code{FALSE}), the areas of 
+  plotted points for a weighted least squares fit 
+  are made proportional to the weights, with the average size taken from the
+  \code{cex} argument.}
   \item{lwd}{line width; default is \code{2} (see \code{\link{par}}).}
   \item{grid}{If \code{TRUE}, the default, a light-gray background grid is put on the graph.}
   \item{ellipse}{Arguments to pass to the \code{\link{dataEllipse}} function, in the form of a list

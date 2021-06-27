@@ -227,7 +227,7 @@ confidenceEllipse.lm <- function(model, which.coef, vcov.=vcov, L, levels=0.95, 
 		col=carPalette()[2], lwd=2, fill=FALSE, fill.alpha=0.3, draw=TRUE, add=!draw, ...){
 	if (missing(dfn)) dfn <- if (Scheffe) sum(df.terms(model)) else 2
 	dfd <- df.residual(model)
-	if (is.function(vcov.)) vcov. <- vcov.(model)
+	vcov. <- getVcov(vcov., model)
 	if (missing(L)){
 		which.coef <- if(length(coefficients(model)) == 2) c(1, 2)
 				else{
@@ -265,7 +265,8 @@ confidenceEllipse.lm <- function(model, which.coef, vcov.=vcov, L, levels=0.95, 
 confidenceEllipse.default <- function(model, which.coef, vcov.=vcov, L, levels=0.95, Scheffe=FALSE, dfn,
 		center.pch=19, center.cex=1.5, segments=51, xlab, ylab,
 		col=carPalette()[2], lwd=2, fill=FALSE, fill.alpha=0.3, draw=TRUE, add=!draw, ...){
-  if (is.function(vcov.)) vcov. <- vcov.(model)
+  vcov. <- getVcov(vcov., model)  
+#if (is.function(vcov.)) vcov. <- vcov.(model)
 	if (missing(L)){
 		which.coef <- if(length(coefficients(model)) == 2) c(1, 2)
 				else{

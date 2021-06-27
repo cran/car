@@ -60,11 +60,11 @@ The \code{quantregLine} function fits a model using splines with estimation
 based on L1 regression for the median and quantile regression the (optional) spread.  It is
 likely to be more robust than the other smoothers.
 
-The \code{smoother.args} argument is a list of named elements used to pass
-additional arguments to the smoother.  As of November, 2016, the smoother is evaluated by default at an equally spaced grid of 50 points in the range of the horizontal variable.  With any of the smoothers, you can change to, say, 100 evaluation points via the argument \code{smoother.args=list(evaluation=100)}.  As of version 3.0-1, the \code{smoother.args} elements  \code{col.var}, \code{lty.var}, and \code{lwd.var} are equivalent to \code{col.spread}, \code{lty.spread}, and \code{lwd.spread}, respectively.
+The \code{smoother.args} argument is a list of named elements (or sub-arguments) used to pass
+additional arguments to the smoother.  As of November, 2016, the smoother is evaluated by default at an equally spaced grid of 50 points in the range of the horizontal variable.  With any of the smoothers, you can change to, say, 100 evaluation points via the argument \code{smoother.args=list(evaluation=100)}.  As of version 3.0-1, the \code{smoother.args} elements  \code{col.var}, \code{lty.var}, and \code{lwd.var} are equivalent to \code{col.spread}, \code{lty.spread}, and \code{lwd.spread}, respectively. The \code{style} sub-argument controls how spread/variance envelopes are displayed, with choices \code{"filled"} (the default), \code{"lines"}, and \code{"none"} (which is equivalent to \code{var=FALSE}). The \code{alpha} subargument controls the transparency/opacity of filled spread envelopes with allowable values between \code{0} and \code{1} (default \code{0.15}). The \code{border} subargument controls whether a border line is drawn around the filled region (the default is \code{TRUE}). The \code{vertical} subargument controls whether the left and right ends of the filled region are forced to be vertical (the default is \code{TRUE}).
 
 For \code{loessLine}, the default is
-\code{smoother.args=list(lty.smooth=1, lwd.smooth=2, lty.spread=4, lwd.spread=2, span=2/3,
+\code{smoother.args=list(lty.smooth=1, lwd.smooth=2, lty.spread=4, lwd.spread=2, style="filled", alpha=0.15, span=2/3,
 degree=1, family="symmetric", iterations=4)}. (Prior to November 2016, the default span was 1/2.)
 The elements \code{lty.smooth}, \code{lwd.smooth}, and \code{col.spread} are the line type, line width, and line color, 
 respectively of the mean or median smooth; \code{lty.spread},
@@ -73,9 +73,9 @@ The elements \code{span}, \code{degree}, and \code{family} are
 passed as arguments to the \code{\link{loess}} function, along with \code{iterations} robustness iterations.
 
 For \code{gamLine}, the default is
-\code{smoother.args=list(lty.smooth=1, lwd.smooth=2, lty.spread=4, lwd.spread=2,
+\code{smoother.args=list(lty.smooth=1, lwd.smooth=2, lty.spread=4, lwd.spread=2, style="filled", alpha=0.15,
 k=-1, bs="tp", family="gaussian", link=NULL, weights=NULL)}.
-The first four elements are as for \code{loessLine}.  The next two
+The first six elements are as for \code{loessLine}.  The next two
 elements are passed to the \code{\link{gam}} function to control smoothing:
 \code{k=-1} allows \code{gam} to choose the number of splines in the basis
 function; \code{bs="tp"} provides the type of spline basis to be used, with \code{"tp"}
@@ -84,8 +84,8 @@ a distributional family, link function, and weights as in generalized linear mod
 below.  The \code{spread} element is ignored unless \code{family="gaussian"} and \code{link=NULL}.
 
 For \code{quantregLine}, the default is
-\code{smoother.args=list(lty.smooth=1, lwd.smooth=2, lty.spread=4, lwd.spread=2,
-lambda=IQR(x))}.  The first four
+\code{smoother.args=list(lty.smooth=1, lwd.smooth=2, lty.spread=4, lwd.spread=2, style="filled", alpha=0.15,
+lambda=IQR(x))}.  The first six
 elements are as for \code{loessLine}.  The last element is passed to the
 \code{\link{qss}} function in \pkg{quantreg}.  It is a smoothing
 parameter, by default a robust estimate of the scale of the horizontal axis variable.
@@ -110,18 +110,19 @@ scatterplot(prestige ~ income | type, data=Prestige,
     smooth=list(smoother=quantregLine))
 scatterplot(prestige ~ income | type, data=Prestige, smooth=FALSE)
 
-scatterplot(prestige ~ income | type, data=Prestige, spread=TRUE)
+scatterplot(prestige ~ income | type, data=Prestige, 
+    smooth=list(spread=TRUE))
 scatterplot(prestige ~ income | type, data=Prestige,
-    smooth=list(smoother=gamLine), spread=TRUE)
+    smooth=list(smoother=gamLine, spread=TRUE))
 scatterplot(prestige ~ income | type, data=Prestige,
-    smooth=list(smoother=quantregLine), spread=TRUE)
+    smooth=list(smoother=quantregLine, spread=TRUE))
 
-scatterplot(weight ~ repwt | sex, spread=TRUE, data=Davis,
-    smooth=list(smoother=loessLine))
-scatterplot(weight ~ repwt | sex, spread=TRUE, data=Davis,
-    smooth=list(smoother=gamLine)) # messes up
-scatterplot(weight ~ repwt | sex, spread=TRUE, data=Davis,
-    smooth=list(smoother=quantregLine)) #  robust
+scatterplot(weight ~ repwt | sex, data=Davis,
+    smooth=list(smoother=loessLine, spread=TRUE, style="lines"))
+scatterplot(weight ~ repwt | sex, data=Davis,
+    smooth=list(smoother=gamLine, spread=TRUE, style="lines")) # messes up
+scatterplot(weight ~ repwt | sex, data=Davis,
+    smooth=list(smoother=quantregLine, spread=TRUE, style="lines")) #  robust
 
 set.seed(12345)
 w <- 1 + rpois(100, 5)

@@ -45,6 +45,7 @@
 # 2019-05-02,13: J. Fox made several S() methods tolerant of model with 1 coefficient or
 #             in the case of multinom models, 2 response levels(reported by Thamron Keowmani).
 # 2020-05-17: J. Fox added S.data.frame()
+# 2020-12-15:  In Confint.glm, fixed but go vcov. works correctly.
 
 formatCall <- function(call){
   call <- if (is.character(call)){
@@ -161,9 +162,10 @@ S.lm <- function (object, brief=FALSE, correlation = FALSE, symbolic.cor = FALSE
     p1 <- 1L:p
     R <- chol2inv(Qr$qr[p1, p1, drop = FALSE])
     #    se <- sqrt(diag(R) * resvar)
-    V <- if(is.matrix(vcov.)) vcov. else
-        if(deparse(substitute(vcov.) == "Boot")) cov((b1 <- Boot(object))$t) else
-            vcov.(object)
+    V <- getVcov(vcov., object)
+#    V <- if(is.matrix(vcov.)) vcov. else
+#        if(deparse(substitute(vcov.) == "Boot")) cov((b1 <- Boot(object))$t) #else
+#            vcov.(object)
     se <- sqrt(diag(V))
     est <- z$coefficients[Qr$pivot[p1]]
     tval <- est/se
@@ -774,7 +776,8 @@ Confint <- function(object, ...){
 Confint.default <- function(object, estimate=TRUE, level=0.95, vcov., ...) {
     if (missing(vcov.)) result <- confint(object, level=level, ...)
     else{
-        vc <- if (is.function(vcov.)) vcov.(object) else vcov.
+#        vc <- if (is.function(vcov.)) vcov.(object) else vcov.
+        vc <- getVcov(vcov., object, complete=FALSE)
         b <- coef(object)
         se <- sqrt(diag(vc))
         p <- 1 - (1 - level)/2
@@ -802,7 +805,9 @@ Confint.lm <- function(object, estimate=TRUE, parm, level = 0.95, vcov.= vcov(ob
     fac <- qt(a, object$df.residual)
     pct <- format.perc(a, 3)
     ci <- array(NA, dim = c(length(parm), 2L), dimnames = list(parm,  pct))
-    ses <- sqrt(diag(if(is.matrix(vcov.)) vcov. else vcov.(object)))[parm]
+    V <- getVcov(vcov., object, complete=FALSE)
+    ses <- sqrt(diag(V))[parm]
+#    ses <- sqrt(diag(if(is.matrix(vcov.)) vcov. else vcov.(object)))[parm]
     ci[] <- cf[parm] + ses %o% fac
     ci
     if (estimate){
@@ -818,13 +823,15 @@ Confint.glm <- function(object, estimate=TRUE, exponentiate=FALSE, vcov., disper
     if (!missing(vcov.) && !missing(dispersion))
         stop("cannot specify both vcov. and dispersion arguments")
     if (!missing(vcov.) && (is.null(silent) || !silent)) cat("Standard errors computed by", deparse(substitute(vcov.)), "\n")
-    result <- if (!missing(vcov.)) Confint.default(object, estimate=FALSE, vcov.=vcov(object, complete=FALSE), ...)
+    result <- if (!missing(vcov.)) 
+# next line, bug fix 12/15/2020
+        Confint.default(object, estimate=FALSE, vcov.=getVcov(vcov., object, complete=FALSE), ...)
     else if (!missing(dispersion))
         Confint.default(object, estimate=FALSE, vcov.=dispersion*summary(object)$cov.unscaled, ...)
     else if (type == "LR"){
       suppressMessages(confint(object, ...))
     }
-    else Confint.default(object, estimate=FALSE, vcov.=vcov(object))
+    else Confint.default(object, estimate=FALSE)
     if (estimate){
         result <- cbind(coef(object), result)
         colnames(result)[1] <- "Estimate"

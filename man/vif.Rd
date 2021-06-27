@@ -2,11 +2,13 @@
 \alias{vif}
 \alias{vif.default}
 \alias{vif.merMod}
+\alias{vif.polr}
+\alias{vif.svyolr}
 
 \title{Variance Inflation Factors}
 \description{
   Calculates variance-inflation and generalized variance-inflation factors
-  for linear, generalized linear, and other models.
+  (VIFs and GVIFs) for linear, generalized linear, and other regression models.
 }
 \usage{
 vif(mod, ...)
@@ -14,6 +16,10 @@ vif(mod, ...)
 \method{vif}{default}(mod, ...)
 
 \method{vif}{merMod}(mod, ...)
+
+\method{vif}{polr}(mod, ...)
+
+\method{vif}{svyolr}(mod, ...)
 }
  
 \arguments{
@@ -40,6 +46,8 @@ vif(mod, ...)
   
   Through a further generalization, the implementation here is applicable as well to other sorts of models,
   in particular weighted linear models,  generalized linear models, and mixed-effects models.
+  
+  Specific methods are provided for ordinal regression model objects produced by \code{\link[MASS:polr]{polr}} in the \pkg{MASS} package and \code{\link[survey:svyolr]{svyolr}} in the \pkg{survey} package, which are "intercept-less"; VIFs or GVIFs for linear and similar regression models without intercepts are generally not sensible.
 }
 \value{
   A vector of vifs, or a matrix containing one row for each term in the model, and

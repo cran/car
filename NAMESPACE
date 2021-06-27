@@ -1,4 +1,4 @@
-# last modified 2020-07-13 by J. Fox
+# last modified 2021-06-17 by J. Fox
 
 # additions for car >= 3.0-0, started 2016-12-27
 
@@ -49,13 +49,14 @@ S3method(brief, factor)
 S3method(brief, list)
 S3method(brief, "function")
 S3method(brief, default)
-S3method(influence, merMod)
+S3method(brief, tbl)
+# S3method(influence, merMod)
 S3method(influence, lme)
-S3method(cooks.distance, influence.merMod)
+# S3method(cooks.distance, influence.merMod)
 S3method(cooks.distance, influence.lme)
-S3method(dfbeta, influence.merMod)
+# S3method(dfbeta, influence.merMod)
 S3method(dfbeta, influence.lme)
-S3method(dfbetas, influence.merMod)
+# S3method(dfbetas, influence.merMod)
 S3method(dfbetas, influence.lme)
 S3method(infIndexPlot, influence.merMod)
 S3method(infIndexPlot, influence.lme)
@@ -67,7 +68,7 @@ import("carData")
 importFrom("abind", "abind")
 importFrom("stats", "naprint", "symnum", ".checkMFClasses",
            "delete.response", "napredict", "influence", "dfbetas",
-            "AIC", "BIC")
+            "AIC", "BIC", "expand.model.frame")
 importFrom("utils", "download.file", "capture.output", "askYesNo", "browseURL", "globalVariables", "getFromNamespace")
 
 
@@ -320,6 +321,7 @@ S3method(linearHypothesis, mlm)
 S3method(linearHypothesis, polr)
 S3method(linearHypothesis, rlm)
 S3method(linearHypothesis, svyglm)
+S3method(linearHypothesis, lmList)
 S3method(linearHypothesis, nlsList)
 S3method(linearHypothesis, survreg)
 S3method(Manova, mlm)
@@ -328,8 +330,10 @@ S3method(matchCoefs, lme)
 S3method(matchCoefs, mer)
 S3method(matchCoefs, merMod)
 S3method(matchCoefs, mlm)
+S3method(matchCoefs, lmList)
 S3method(mcPlots, default)
 S3method(mcPlot, lm)
+S3method(mcPlot, glm)
 S3method(mmp, default)
 S3method(mmp, lm)
 S3method(mmp, glm)
@@ -372,10 +376,11 @@ S3method(coef, powerTransform)
 S3method(vcov, powerTransform)
 S3method(vif, default)
 S3method(vif, merMod)
+S3method(vif, polr)
+S3method(vif, svyolr)
 S3method(symbox, formula)
-S3method(symbox, default)
-# added with bcnPower
-
+S3method(symbox, default) # added with bcnPower
+S3method(symbox, lm)
 
 # methods related to Boot
 S3method(Boot, default)

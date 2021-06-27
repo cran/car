@@ -91,6 +91,11 @@ Fox and Weisberg (2017) cited below discusses this function and provides more ex
 \value{
 See \code{\link{boot}} for the returned value of the structure returned by this function. 
 }
+
+\section{Warning}{
+C=A call like \code{car::Boot(object, method="residual")} will fail for the residual method if not preceded by \code{library(car)}.  If \code{method="case"} the \code{library(car)} command is not required.
+}
+
 \references{
 Davison, A, and Hinkley, D.  (1997)  \emph{Bootstrap Methods and their
 Applications}.  Oxford:  Oxford University Press.

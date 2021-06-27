@@ -26,6 +26,7 @@
 # 2019-06-07: move handling intercepts to default method, suggestion of Pavel Krivitsky. J. Fox 
 # 2020-05-27: fix to deltaMethod.survreg() to handle Log(scale) parameter. J. Fox
 # 2020-09-02: Correct bug when using parameter name "(Intercept)". SW
+# 2020-12-15: added error checking to vcov using getVcov
 #-------------------------------------------------------------------------------
 
 deltaMethod <- function (object, ...) {
@@ -86,29 +87,29 @@ deltaMethod.lm <- function (object, g., vcov. = vcov(object, complete=FALSE),
 	para <- coef(object)
 	para.names <- parameterNames
 	names(para) <- para.names
-	vcov. <- if (is.function(vcov.)) 
-			vcov.(object)
-		else vcov.
+	vcov. <- getVcov(vcov., object)
 	deltaMethod.default(para, g., vcov.,  ..., envir=envir)
 }
 
 
 # nls has named parameters so parameterNames is ignored
 deltaMethod.nls <- function(object, g., vcov.=vcov(object, complete=FALSE), ..., envir=parent.frame()){
-	vcov. <- if(is.function(vcov.)) vcov.(object) else vcov.
+	vcov. <- getVcov(vcov., object)
 	deltaMethod.default(coef(object), g., vcov., ..., envir=envir)   
 }
 
 deltaMethod.polr <- function(object,g.,vcov.=vcov(object, complete=FALSE), ..., envir=parent.frame()){
 	sel <- 1:(length(coef(object)))
-	vcov. <- if(is.function(vcov.)) vcov.(object)[sel, sel] else vcov.[sel, sel]
+	vcov. <- getVcov(vcov., object)[sel, sel]
+#	vcov. <- if(is.function(vcov.)) vcov.(object)[sel, sel] else vcov.[sel, sel]
 	deltaMethod.lm(object, g., vcov., ..., envir=envir)
 }
 
 deltaMethod.multinom <- function(object, g., vcov.=vcov(object, complete=FALSE), 
    parameterNames = if(is.matrix(coef(object)))
      colnames(coef(object)) else names(coef(object)), ..., envir=parent.frame()){
-  vcov. <- if(is.function(vcov.)) vcov.(object) else vcov.
+  vcov. <- getVcov(vcov., object)
+#  vcov. <- if(is.function(vcov.)) vcov.(object) else vcov.
 	out <- NULL
 	coefs <- coef(object)
 	if (!is.matrix(coefs)) { coefs <- t(as.matrix(coefs)) }
@@ -150,9 +151,10 @@ deltaMethod.mer <- function(object, g., vcov. = vcov(object, complete=FALSE),
            parameterNames = names(fixef(object)), ..., envir=parent.frame()) {
   para <- fixef(object)
   names(para) = parameterNames
- 	vcov. <- if (is.function(vcov.)) 
-			vcov.(object)
-		else vcov.
+  vcov. <- getVcov(vcov., object)
+# 	vcov. <- if (is.function(vcov.)) 
+#			vcov.(object)
+#		else vcov.
   deltaMethod(para, g., vcov., ..., envir=envir)
   }
 
@@ -162,9 +164,10 @@ deltaMethod.lme <- function(object, g., vcov. = vcov(object, complete=FALSE),
            parameterNames = names(fixef(object)), ..., envir=parent.frame()) {
   para <- fixef(object)
   names(para) = parameterNames
- 	vcov. <- if (is.function(vcov.)) 
-			vcov.(object)
-		else vcov.
+  vcov. <- getVcov(vcov., object)
+# 	vcov. <- if (is.function(vcov.)) 
+#			vcov.(object)
+#		else vcov.
   deltaMethod(para, g., vcov., ..., envir=envir)
   }
   

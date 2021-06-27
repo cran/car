@@ -2,26 +2,31 @@
 \alias{symbox}
 \alias{symbox.formula}
 \alias{symbox.default}
+\alias{symbox.lm}
 
 \title{Boxplots for transformations to symmetry}
 
 \description{\code{symbox} first transforms \code{x} to each of a series
     of selected powers, with each transformation standardized to mean 0 and
     standard deviation 1. The results are then displayed side-by-side in boxplots, permiting
-    a visual assessment of which power makes the distribution reasonably symmetric.}
+    a visual assessment of which power makes the distribution reasonably symmetric.
+    For the \code{"lm"} method, the response variable in the model is successively 
+    transformed.}
 
 \usage{
 symbox(x, ...)
 \method{symbox}{formula}(formula, data=NULL, subset, na.action=NULL, ylab,  ...)
 \method{symbox}{default}(x, powers = c(-1, -0.5, 0, 0.5, 1), start, 
 	trans=bcPower, xlab="Powers", ylab, ...)
+\method{symbox}{lm}(x, powers = c(-1, -0.5, 0, 0.5, 1), start, trans=bcPower, 
+                      xlab, ylab="Studentized residuals", ...)
 }
 
 \arguments{
     \item{x}{a numeric vector.}
     \item{formula}{a one-sided formula specifying a single numeric variable.}
     \item{data, subset, na.action}{as for statistical modeling functions (see, e.g., \code{\link{lm}}).}
-    \item{xlab, ylab}{axis labels; if \code{ylab} is missing, a label will be supplied.}
+    \item{xlab, ylab}{axis labels; if \code{ylab} is missing, a label will be supplied. For the \code{"lm"} method, if \code{xlab} is missing, a label will also be supplied.}
     \item{powers}{a vector of selected powers to which \code{x} is to be raised. 
         For meaningful comparison of powers,  \code{1} should be included
         in the vector of powers.}
@@ -53,6 +58,7 @@ symbox(x, ...)
 
 \examples{
 symbox(~ income, data=Prestige)
+symbox(lm(wages ~ education + poly(age, 2) + sex, data=SLID))
 }
 
 \keyword{hplot}

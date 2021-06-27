@@ -28,7 +28,7 @@ Predict(object, ...)
   \item{newdata, se.fit, scale, df, interval, level, type, terms, na.action, pred.var, weights}{see \code{\link{predict.lm}}.}
   \item{vcov.}{optional, either a function to compute the coefficient covariance matrix of 
     \code{object} (e.g., \code{\link{hccm}}) or a coefficient covariance matrix (as returned,
-    e.g., by \code{\link{hccm}}).}
+    e.g., by \code{\link{hccm}}).  To use a bootstrap to estimate the covariance matrix, set \code{vcov. = vcov(Boot(object))}.}
   \item{\dots}{arguments to pass down to \code{Predict} or \code{predict} methods.}
 }
 

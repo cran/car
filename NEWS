@@ -1,3 +1,39 @@
+Changes to Version 3.0-11
+  
+  o boxCox() function now allows the use of any of the usual graphics parameters in the plot() function.  If particuar boxCox(model, main="my title") will add a title to the plot, and boxCox(model, main="") will suppress it.
+  
+  o car::Boot(object, method="residual") will work for method="residual" only if the car package has been previously attached via either library(car) or require(car).  
+  
+  o Added error checking with vcov. argument.  Changed vcov.boot to print a warning of bootstrap replicates that returned NA
+  
+  o Introduced brief.tbl(), which simply calls print(), to cope with changes to tibbles.
+  
+  o qqPlot() fills (shades) confidence envelopes by default, and smoothers for scatterplots fill variance (spread) envelopes by default (suggestions of Michael Friendly).
+  
+  o Fixed problem in infIndexPlot.influence.lme() (reported by Francis L. Huang).
+  
+  o New "polr" and "svyolr" methods for vif() (following report by Abra Jeffers).
+  
+  o Make linearHypothesis() and Anova() work with "svyolr" objects via their default methods.
+  
+  o Regularize handling of vcov. argument in Anova() and linearHypothesis().
+  
+  o vcov. argument now works with Anova() for models produced by lme4::lmer() and glmer(), (fixing a bug reported by Amy MacDougall).
+  
+  o New linearHypothesis.lmList() method.
+  
+  o New "lm" method for symbox().
+  
+  o New cex and pt.wts arguments for avPlot() "lm" and "glm" methods, and for mcPlot.lm().
+  
+  o Fix handling of imatrix argument to Anova.mlm() (suggestion of Benedikt Langenberg).
+  
+  o Remove influence.merMod() and related methods in favor of versions of these methods in the lme4 package.
+  
+  o Rewrite "embedding" vignette.
+  
+  o Small fixes and improvements.
+
 Changes to Version 3.0-10
 
   o Fixed as error when using parameter name "(Intercept)" with deltaMethod().  

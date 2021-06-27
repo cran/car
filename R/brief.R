@@ -5,8 +5,9 @@
 # 2017-12-15--21: tweaks to brief.data.frame. J. Fox
 # 2017-12-19: added head, tail args to brief.data.frame()
 # 2018-02-10: tweak brief.glm() output formatting
-# 2018-12-26: Changed the argument for brief.lm from vcov.=vcov to just vcov. If arge is
-#             missing set vcov. = vcov(orject, complete=FALSE) to match brief.glm
+# 2018-12-26: Changed the argument for brief.lm from vcov.=vcov to just vcov. If arg is
+#             missing set vcov. = vcov(object, complete=FALSE) to match brief.glm
+# 2020-10-07: added brief.tbl() to cope with changes to tibbles.
 
 brief <- function(object, ...){
     g <- options("max.print"=.Machine$integer.max)
@@ -244,7 +245,6 @@ brief.default <- function(object, terms = ~ ., intercept=missing(terms), pvalues
 
 brief.lm <- function(object, terms = ~ ., intercept=missing(terms), pvalues=FALSE, digits=3, horizontal=TRUE, vcov., ...){ 
   use <- coefs2use(object, terms, intercept)
-  vcov. <- if(missing(vcov.)) vcov(object, complete=FALSE) else vcov.
   sumry <- S(object, vcov.=vcov., ...)
   cols <- if (pvalues) c(1, 2, 4) else 1:2
   coefs <- sumry$coefficients
@@ -261,7 +261,7 @@ brief.lm <- function(object, terms = ~ ., intercept=missing(terms), pvalues=FALS
   colnames(coefs) <- if (pvalues) c("Estimate", "Std. Error", "Pr(>|t|)") else c("Estimate", "Std. Error")
   print(if (horizontal) t(coefs) else coefs, digits=digits)
   if (missing(terms)) cat("\n Residual SD =", format(sumry$sigma, digits=digits),
-                          "on", object$df.residual, "df, R-squared =", format(sumry$r.squared, digits=digits))
+                          "on", object$df.residual, "df, R-squared =", format(sumry$r.squared, digits=digits), "\n")
   invisible(sumry)
 }
 
@@ -293,8 +293,8 @@ brief.glm <- function(object, terms = ~ ., intercept=missing(terms), pvalues=FAL
   print(if (horizontal) t(coefs) else coefs, digits=digits)
   if (missing(terms)) cat(paste0("\n Residual deviance = ", format(object$deviance, digits=digits),
                           " on ", object$df.residual, " df",
-                          if (family(object)$family %in% c("binomial", "poisson")) ""
-                          else (paste0(", Est. dispersion = ", format(sumry$dispersion, digits=digits)))))
+                          if (family(object)$family %in% c("binomial", "poisson")) "\n"
+                          else (paste0(", Est. dispersion = ", format(sumry$dispersion, digits=digits), "\n"))))
   invisible(sumry)
 }
 
@@ -365,3 +365,6 @@ brief.multinom <- function(object, terms = ~ ., intercept=missing(terms), pvalue
   invisible(sumry)
 }
 
+brief.tbl <- function(object, ...){
+  print(object, ...)
+}

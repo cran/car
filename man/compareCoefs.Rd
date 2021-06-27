@@ -32,9 +32,9 @@ from the standard normal distribution corresponding to the Wald statistics.}
 \item{vcov.}{an optional argument, specifying a function to be applied to all of the models, returning a coefficient covariance matrix
 for each, or a list with one element for each model, with each element either containing a function to
 be applied to the corresponding model or a coefficient covariance matrix for that model. If omitted, \code{vcov} is applied to
-each model.}
+each model.  This argument can also be a list of estimated covariance matrices of the coefficient estimates.}
 \item{print}{
-If \code{TRUE}, the defualt, the results are printed in a nice format
+If \code{TRUE}, the default, the results are printed in a nice format
 using \code{\link{printCoefmat}}.  If
 \code{FALSE}, the results are returned as a matrix
 }

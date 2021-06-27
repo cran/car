@@ -1,6 +1,6 @@
 Package: car
-Version: 3.0-10
-Date: 2020-09-23
+Version: 3.0-11
+Date: 2021-06-26
 Title: Companion to Applied Regression
 Authors@R: c(person("John", "Fox", role = c("aut", "cre"), email = "jfox@mcmaster.ca"),
 	person("Sanford", "Weisberg", role = "aut", email = "sandy@umn.edu"),
@@ -30,8 +30,9 @@ Authors@R: c(person("John", "Fox", role = c("aut", "cre"), email = "jfox@mcmaste
     person("R-Core", role="ctb"))
 Depends: R (>= 3.5.0), carData (>= 3.0-0)
 Imports: abind, MASS, mgcv, nnet, pbkrtest (>= 0.4-4), quantreg,
-        grDevices, utils, stats, graphics, maptools, rio, lme4, nlme
-Suggests: alr4, boot, coxme, knitr, leaps, lmtest, Matrix,
+        grDevices, utils, stats, graphics, maptools, rio, lme4 (>=
+        1.1-27.1), nlme
+Suggests: alr4, boot, coxme, effects, knitr, leaps, lmtest, Matrix,
         MatrixModels, rgl (>= 0.93.960), sandwich, SparseM, survival,
         survey
 ByteCompile: yes
@@ -73,8 +74,8 @@ Author: John Fox [aut, cre],
 Maintainer: John Fox <jfox@mcmaster.ca>
 Repository: CRAN
 Repository/R-Forge/Project: car
-Repository/R-Forge/Revision: 653
-Repository/R-Forge/DateTimeStamp: 2020-09-23 17:25:46
-Date/Publication: 2020-09-29 07:20:03 UTC
+Repository/R-Forge/Revision: 687
+Repository/R-Forge/DateTimeStamp: 2021-06-26 13:54:07
+Date/Publication: 2021-06-27 16:00:09 UTC
 NeedsCompilation: no
-Packaged: 2020-09-23 17:48:21 UTC; rforge
+Packaged: 2021-06-26 14:08:22 UTC; rforge

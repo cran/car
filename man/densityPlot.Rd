@@ -77,7 +77,7 @@ dbiwt(x)
   \item{show.bw}{if \code{TRUE}, show the bandwidth(s) in the horizontal-axis label or (for multiple groups)
     the legend; the default is \code{FALSE}.}
   \item{rug}{if \code{TRUE} (the default), draw a rug plot (one-dimentional scatterplot) at the bottom of the density estimate.}
-  \item{\dots}{arguments to be passed down.}
+  \item{\dots}{arguments to be passed down to graphics functions.}
 }
 
 \details{

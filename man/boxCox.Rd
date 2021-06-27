@@ -23,7 +23,7 @@ boxCox(object, ...)
 \method{boxCox}{default}(object,
         lambda = seq(-2, 2, 1/10), plotit = TRUE,
         interp = plotit, eps = 1/50,
-        xlab=NULL, ylab=NULL,
+        xlab=NULL, ylab=NULL, main= "Profile Log-likelihood",
         family="bcPower",
         param=c("lambda", "gamma"), gamma=NULL,
         grid=TRUE, ...)
@@ -77,7 +77,7 @@ boxCox2d(x, ksds = 4, levels = c(0.5, 0.95, 0.99, 0.999),
               graph.
   }
   \item{\dots}{
-  additional arguments passed to the \code{lm} method with \code{boxCox.formula} or passed to \code{contour} with \code{boxCox2d}.
+  additional arguments passed to \code{plot}, or to \code{contour} with \code{boxCox2d}.
   }
     \item{x}{
   An object created by a call to \code{\link{powerTransform}} using \code{family="bcnPower"}.
@@ -89,7 +89,7 @@ Contour plotting of the log-likelihood surface will cover plus of minus \code{ks
 Contours will be drawn at the values of levels.  For example, \code{levels=c(.5, .99)} would display two contours, at the 50\% level and at the 99\% level.
 }
   \item{main}{
-Title for the contour plot
+Title for the contour plot or the profile log-likelihood plot
 }
 }
 

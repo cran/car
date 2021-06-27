@@ -1,7 +1,9 @@
 # 2015-08-26:  Modified by S. Weisberg to add support for bcn power transformations.
 # 2017-05-11:  Added boxCox2d, renamed verssion of contour.powerTransform
-# 2017-05-11:  Bug fixes in boxCox.formula with arugment passing to other methods
+# 2017-05-11:  Bug fixes in boxCox.formula with argument passing to other methods
 # 2020-02-17:  Replaced match.fun by local, non-exported matchFun
+# 2021-05-27:  Added a main= argument to boxCox.default for a default title, and 
+#              ... passes to plot.  Rd updated.
 
 boxCox <- function(object,...) UseMethod("boxCox")
 
@@ -32,7 +34,7 @@ boxCox.lm <- function (object, lambda = seq(-2, 2, 1/10),
 boxCox.default <- function(object,
                            lambda = seq(-2, 2, 1/10), plotit = TRUE,
                            interp = plotit, eps = 1/50,
-                           xlab=NULL, ylab=NULL,
+                           xlab=NULL, ylab=NULL, main= "Profile Log-likelihood",
                            family="bcPower",
                            param=c("lambda", "gamma"), gamma=NULL, grid=TRUE, ...)
 {
@@ -94,7 +96,7 @@ boxCox.default <- function(object,
     Lmax <- loglik[mx]
     lim <- Lmax - qchisq(19/20, 1)/2
     plot(xl, loglik, xlab = xlab, ylab = ylab, type = "n",
-         ylim = range(loglik, lim))
+         ylim = range(loglik, lim), main=main, ...)
     if(grid){
       grid(lty=1, equilogs=FALSE)
       box()}
@@ -128,7 +130,7 @@ boxCox.default <- function(object,
 
 ##########
 boxCox2d <- function(x, ksds=4, levels=c(.5, .95, .99, .999),
-                                      main="bcnPower Log-likelihood", grid=TRUE, ...){
+                    main="bcnPower Log-likelihood", grid=TRUE, ...){
   if(class(x)[1] != "bcnPowerTransform")
     stop("Error--first argument must be a bcnPower transformation")
   object <- x

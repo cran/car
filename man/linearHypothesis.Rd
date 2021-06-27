@@ -19,6 +19,7 @@
 %   2016-06-29 noted addition of "value" and "vcov" attributes, added example. J. Fox
 %   2018-04-11 rhs suppressed using pbkrtest for lmer model. J.Fox
 %   2020-05-27 added documentation for survreg method. J. Fox
+%   2020-12-21 added linearHypothesis.lmList(), and small edits. J. Fox
 %------------------------------------------------------------------------------------
 
 \name{linearHypothesis}
@@ -35,17 +36,18 @@
 \alias{linearHypothesis.svyglm}
 \alias{linearHypothesis.rlm}
 \alias{linearHypothesis.survreg}
-\alias{print.linearHypothesis.mlm}
+\alias{linearHypothesis.lmList}
+\alias{linearHypothesis.nlsList}
 \alias{matchCoefs}
 \alias{matchCoefs.default}
 \alias{matchCoefs.mer}
 \alias{matchCoefs.merMod}
 \alias{matchCoefs.lme}
 \alias{matchCoefs.mlm}
-\alias{linearHypothesis.nlsList}
+\alias{matchCoefs.lmList}
 \alias{makeHypothesis}
 \alias{printHypothesis}
-%%\alias{coef.multinom}
+\alias{print.linearHypothesis.mlm}
 
 \title{Test Linear Hypothesis}
 
@@ -66,7 +68,7 @@ lht(model, ...)
 
 \method{linearHypothesis}{default}(model, hypothesis.matrix, rhs=NULL,
 		test=c("Chisq", "F"), vcov.=NULL, singular.ok=FALSE, verbose=FALSE, 
-    coef. = coef(model), ...)  
+    coef. = coef(model), suppress.vcov.msg=FALSE, ...)  
 
 \method{linearHypothesis}{lm}(model, hypothesis.matrix, rhs=NULL,
     test=c("F", "Chisq"), vcov.=NULL, 
@@ -75,7 +77,9 @@ lht(model, ...)
 
 \method{linearHypothesis}{glm}(model,  ...)
 
-\method{linearHypothesis}{nlsList}(model,  ..., vcov., coef.)
+\method{linearHypothesis}{lmList}(model,  ..., vcov.=vcov, coef.=coef)
+
+\method{linearHypothesis}{nlsList}(model,  ..., vcov.=vcov, coef.=coef)
 
 \method{linearHypothesis}{mlm}(model, hypothesis.matrix, rhs=NULL, SSPE, V,
     test, idata, icontrasts=c("contr.sum", "contr.poly"), idesign, iterms, 
@@ -103,8 +107,6 @@ lht(model, ...)
 \method{linearHypothesis}{survreg}(model, hypothesis.matrix, rhs=NULL,
 		test=c("Chisq", "F"), vcov., verbose=FALSE, ...)
     
-%%\method{coef}{multinom}(object, ...)
-
 matchCoefs(model, pattern, ...)
 
 \method{matchCoefs}{default}(model, pattern, coef.=coef, ...)
@@ -116,6 +118,8 @@ matchCoefs(model, pattern, ...)
 \method{matchCoefs}{merMod}(model, pattern, ...)
 
 \method{matchCoefs}{mlm}(model, pattern, ...)
+
+\method{matchCoefs}{lmList}(model, pattern, ...)
 }
 
 \arguments{
@@ -176,10 +180,14 @@ matchCoefs(model, pattern, ...)
     it is computed from the model.}
   \item{vcov.}{a function for estimating the covariance matrix of the regression
     coefficients, e.g., \code{\link{hccm}}, or an estimated covariance matrix
-    for \code{model}. See also \code{white.adjust}.}
+    for \code{model}. See also \code{white.adjust}. 
+    For the \code{"lmList"} and \code{"nlsList"} methods, \code{vcov.}
+    must be a function (defaulting to \code{vcov}) to be applied to each model in the list.}
   \item{coef.}{a vector of coefficient estimates.  The default is to get the
     coefficient estimates from the \code{model} argument, but the user can input
-    any vector of the correct length.}       
+    any vector of the correct length. 
+    For the \code{"lmList"} and \code{"nlsList"} methods, \code{coef.}
+    must be a function (defaulting to \code{coef}) to be applied to each model in the list.}       
   \item{white.adjust}{logical or character. Convenience interface to \code{hccm}
     (instead of using the argument \code{vcov.}). Can be set either to a character value
     specifying the \code{type} argument of \code{\link{hccm}} or \code{TRUE},
@@ -193,8 +201,8 @@ matchCoefs(model, pattern, ...)
   \item{SSP}{if \code{TRUE} (the default), print the sum-of-squares and 
     cross-products matrix for the hypothesis and the response-transformation matrix.}
   \item{digits}{minimum number of signficiant digits to print.}
-%%  \item{object}{a \code{multinom} model object.}
   \item{pattern}{a \link[base:regex]{regular expression} to be matched against coefficient names.}
+  \item{suppress.vcov.msg}{for internal use by methods that call the default method.}
   \item{...}{arguments to pass down.}
 }
 

@@ -122,31 +122,21 @@ sp(x, ...)
 }
 
 \details{
-   Many arguments to \code{scatterplot} were changed in version 3 of \pkg{car} to simplify use of
-   this function.
+   Many arguments to \code{scatterplot} were changed in version 3 of \pkg{car} to simplify use of this function.
 
-   The \code{smooth} argument is usually either set to \code{TRUE} or \code{FALSE} to draw, or omit,
-   the smoother.  Alternatively \code{smooth} can be set to a list of arguments.  The default behavior of
-   \code{smooth=TRUE} is equivalent to \code{smooth=list(smoother=loessLine, var=!by.groups, lty.var=2, lty.var=4)}, specifying the smoother to be used, including the variance smooth,
-   and the line widths and types for the curves.  You can also specify the colors you want to use for the mean and variance smooths with the arguments \code{col.smooth} and \code{col.var}. Alternative smoothers are \code{gamline} which uses the
-   \code{\link{gam}} function from the \pkg{mgcv} package, and \code{quantregLine} which uses quantile regression to
-   estimate the median and quartile functions using \code{\link{rqss}} from the \pkg{quantreg} package.  All of these
-   smoothers have one or more arguments described on their help pages, and these arguments can be added to the
-   \code{smooth} argument; for example, \code{smooth = list(span=1/2)} would use the default
-   \code{loessLine} smoother,
-   include the variance smooth, and change the value of the smoothing parameter to 1/2.  For \code{loessLine}
-   and \code{gamLine} the variance smooth is estimated by separately
-   smoothing the squared positive and negative
-   residuals from the mean smooth, using the same type of smoother.  The displayed curves are equal to
-   the mean smooth plus the square root of the fit to the positive squared residuals, and the mean fit minus
-   the square root of the smooth of the negative squared residuals.  The lines therefore represent the
-   comnditional variabiliity at each value on the horizontal axis.  Because smoothing is done separately for
-   positive and negative residuals, the variation shown will generally not be symmetric about the fitted mean
-   function.  For the \code{quantregLine} method, the center estimates the median for each value on the
-   horizontal axis, and the variability estimates the lower and upper quartiles of the estimated conditional
-   distribution for each value of the horizontal axis.
+The \code{smooth} argument is used to control adding smooth curves to the plot to estimate the conditional center of the vertical axis variable given the horizontal axis variable, and also the conditional variability.  Setting \code{smooth=FALSE} omits all smoothers, while \code{smooth=TRUE}, the default, includes default smoothers.   Alternatively \code{smooth} can be set to a list of subarguments that provide finer control over the smoothing.  
 
-   The sub-arguments \code{spread}, \code{lty.spread} and \code{col.spread} of the \code{smooth} argument are equivalent to the newer \code{var}, \code{col.var} and \code{lty.var}, respectively, recognizing that the spread is a measuure of conditional variability.
+The default behavior of \code{smooth=TRUE} is equivalent to \code{smooth=list(smoother=loessLine, var=!by.groups, lty.var=2, lty.var=4, style="filled", alpha=0.15, border=TRUE, vertical=TRUE)}, specifying the default \code{\link{loessLine}} smoother for the conditional mean smooth and variance smooth.  The color of the smooths is the same of the color of the points, but this can be changed with the arguments \code{col.smooth} and \code{col.var}.
+   
+Additional available smoothers are \code{\link{gamLine}} which uses the \code{\link[mgcv]{gam}} function and \code{\link{quantregLine}} which uses quantile regression to estimate the median and quartile functions using \code{\link[quantreg]{rqss}}.  All of these smoothers have one or more arguments described on their help pages, and these arguments can be added to the \code{smooth} argument; for example, \code{smooth = list(span=1/2)} would use the default \code{loessLine} smoother, include the variance smooth, and change the value of the smoothing parameter to 1/2.  
+
+For \code{loessLine} and \code{gamLine} the variance smooth is estimated by separately smoothing the squared positive and negative residuals from the mean smooth, using the same type of smoother.  The displayed curves are equal to the mean smooth plus the square root of the fit to the positive squared residuals, and the mean fit minus the square root of the smooth of the negative squared residuals.  The lines therefore represent the comnditional variabiliity at each value on the horizontal axis.  Because smoothing is done separately for positive and negative residuals, the variation shown will generally not be symmetric about the fitted mean function.  For the \code{quantregLine} method, the center estimates the conditional median, and the variability estimates the lower and upper quartiles of the estimated conditional distribution.
+
+The default depection of the variance functions is via a shaded envelope between the upper and lower estimate of variability.  setting the subarguement \code{style="lines"} will display only the boundaries of this region, and \code{style="none"} suppresses variance smoothing.
+  
+For  \code{style="filled"} several subarguments modify the appearance of the region:  code{alpha} is a number between 0 and 1 that specifies opacity with defualt 0.15, \code{border}, \code{TRUE} or \code{FALSE} specifies a border for the envelope, and \code{vertical} either \code{TRUE} or \code{FALSE}, modifies the behavior of the envelope at the edges of the graph.
+
+The sub-arguments \code{spread}, \code{lty.spread} and \code{col.spread} of the \code{smooth} argument are equivalent to the newer \code{var}, \code{col.var} and \code{lty.var}, respectively, recognizing that the spread is a measuure of conditional variability.
 }
 
 \value{
@@ -167,15 +157,21 @@ sp(x, ...)
   \code{\link{showLabels}}, \code{\link{ScatterplotSmoothers}}.}
 
 \examples{
-scatterplot(prestige ~ income, data=Prestige, ellipse=TRUE)
+scatterplot(prestige ~ income, data=Prestige, ellipse=TRUE, 
+  smooth=list(style="lines"))
 
-scatterplot(prestige ~ income, data=Prestige, smooth=list(smoother=quantregLine))
+scatterplot(prestige ~ income, data=Prestige, 
+  smooth=list(smoother=quantregLine))
+  
+scatterplot(prestige ~ income, data=Prestige, 
+  smooth=list(smoother=quantregLine, border="FALSE"))
 
 # use quantile regression for median and quartile fits
 scatterplot(prestige ~ income | type, data=Prestige,
-            smooth=list(smoother=quantregLine, var=TRUE, span=1, lwd=4, lwd.var=2))
+  smooth=list(smoother=quantregLine, var=TRUE, span=1, lwd=4, lwd.var=2))
 
-scatterplot(prestige ~ income | type, data=Prestige, legend=list(coords="topleft"))
+scatterplot(prestige ~ income | type, data=Prestige, 
+  legend=list(coords="topleft"))
 
 scatterplot(vocabulary ~ education, jitter=list(x=1, y=1),
             data=Vocab, smooth=FALSE, lwd=3)

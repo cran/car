@@ -37,6 +37,9 @@
 #   2017-11-07: added complete=FALSE to vcov() calls. John
 #   2019-06-06: remove vcov.default(), which is no longer needed, suggestion of Pavel Krivitsky. John
 #   2020-05-27: tweak to linearHypothesis.survreg(). John
+#   2020-12-21: regularize handling of vcov. arg. Sandy and John
+#   2020-12-21: new matchCoefs.lmList() method, which covers nlsList objects. John
+#   2020-12-21: added linearHypothesis.lmList(). John
 #----------------------------------------------------------------------------------------------------
 
 # vcov.default <- function(object, ...){
@@ -170,8 +173,8 @@ linearHypothesis <- function (model, ...)
 lht <- function (model, ...)
 	UseMethod("linearHypothesis")
 	
-linearHypothesis.nlsList <- function(model,  ..., vcov., coef.){
-   vcov.nlsList <- function(object, ...) {
+linearHypothesis.lmList <- function(model,  ..., vcov.=vcov, coef.=coef){
+   vcov.List <- function(object, ...) {
        vlist <- lapply(object, vcov)
        ng <- length(vlist)
        nv <- dim(vlist[[1]])[1]
@@ -181,14 +184,21 @@ linearHypothesis.nlsList <- function(model,  ..., vcov., coef.){
           v[cells, cells] <- vlist[[j]]
         }
       v
-      }
-   linearHypothesis.default(model, vcov.=vcov.nlsList(model), 
-       coef.=unlist(lapply(model, coef)), ...)}
+   }
+   suppress.vcov.msg <- missing(vcov.)
+   if (!is.function(vcov.)) stop("vcov. must be a function")
+   if (!is.function(coef.)) stop("coef. must be a function")
+   linearHypothesis.default(model, vcov.=vcov.List(model), 
+       coef.=unlist(lapply(model, coef.)), suppress.vcov.msg = suppress.vcov.msg, ...)
+   }
 
+linearHypothesis.nlsList <- function(model,  ..., vcov.=vcov, coef.=coef){
+  NextMethod()
+}
 
 linearHypothesis.default <- function(model, hypothesis.matrix, rhs=NULL,
 		test=c("Chisq", "F"), vcov.=NULL, singular.ok=FALSE, verbose=FALSE, 
-    coef. = coef(model), ...){
+    coef. = coef(model), suppress.vcov.msg=FALSE, ...){
 	df <- df.residual(model)
 	if (is.null(df)) df <- Inf ## if no residual df available
     if (df == 0) stop("residual df = 0")
@@ -236,7 +246,7 @@ linearHypothesis.default <- function(model, hypothesis.matrix, rhs=NULL,
 	title <- "Linear hypothesis test\n\nHypothesis:"
 	topnote <- paste("Model 1: restricted model","\n", "Model 2: ", 
 			paste(deparse(name), collapse = "\n"), sep = "")
-	note <- if (is.null(vcov.)) ""
+	note <- if (is.null(vcov.) || suppress.vcov.msg) ""
 			else "\nNote: Coefficient covariance matrix supplied.\n"
 	rval <- matrix(rep(NA, 8), ncol = 4)
 	colnames(rval) <- c("Res.Df", "Df", test, paste("Pr(>", test, ")", sep = ""))
@@ -518,6 +528,7 @@ print.linearHypothesis.mlm <- function(x, SSP=TRUE, SSPE=SSP,
 
 linearHypothesis.survreg <- function(model, hypothesis.matrix, rhs=NULL,
 		test=c("Chisq", "F"), vcov., verbose=FALSE, ...){
+  suppress.vcov.msg <- missing(vcov.)
 	if (missing(vcov.)) {
 		vcov. <- vcov(model, complete=FALSE)
 		b <- coef(model)
@@ -526,13 +537,17 @@ linearHypothesis.survreg <- function(model, hypothesis.matrix, rhs=NULL,
   		if (length(p) > 0) vcov. <- vcov.[-p, -p]
 		}
 	}
-	linearHypothesis.default(model, hypothesis.matrix, rhs, test, vcov., verbose=verbose, ...)
+	linearHypothesis.default(model, hypothesis.matrix, rhs, test, vcov., verbose=verbose, 
+	                         suppress.vcov.msg = suppress.vcov.msg, ...)
 }
 
 linearHypothesis.polr <- function (model, hypothesis.matrix, rhs=NULL, vcov., verbose=FALSE, ...){
+  suppress.vcov.msg <- missing(vcov.)
 	k <- length(coef(model))
-	V <- vcov(model, complete=FALSE)[1:k, 1:k]
-	linearHypothesis.default(model, hypothesis.matrix, rhs, vcov.=V, verbose=verbose, ...)
+#	V <- vcov(model, complete=FALSE)[1:k, 1:k]
+	V <- getVcov(vcov., model, complete=FALSE)[1:k, 1:k]
+	linearHypothesis.default(model, hypothesis.matrix, rhs, vcov.=V, verbose=verbose, 
+	                         suppress.vcov.msg = suppress.vcov.msg, ...)
 }
 
 coef.multinom <- function(object, ...){
@@ -732,6 +747,11 @@ matchCoefs.lme <- function(model, pattern, ...) NextMethod(coef.=fixef)
 matchCoefs.mlm <- function(model, pattern, ...){
 	names <- rownames(coef(model))
 	grep(pattern, names, value=TRUE)
+}
+
+matchCoefs.lmList <- function(model, pattern, ...){
+  names <- names(unlist(lapply(model, coef)))
+  grep(pattern, names, value=TRUE)
 }
 
 

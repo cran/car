@@ -28,6 +28,10 @@
 # 2019-10-24: include colorblind palette in carPalette(). JF
 # 2019-11-14: change class(x) == "y" to inherits(x, "y")
 # 2020-02-17: added matchFun() as a replacement for match.fun
+# 2020-10-19: added envelope() for plotting confidence/variance envelopes. JF
+# 2020-12-03: added getVcov to interpret vcov. argument as matrix or function and return an error otherwise
+# 2020-12-18: getVcov() also able to return objects coercible to a matrix such as Matrix objects. JF
+# 2021-04-08: added getModelData(), not explorted. JF
 
 #if (getRversion() >= "2.15.1") globalVariables(c(".boot.sample", ".boot.indices"))
 
@@ -546,4 +550,47 @@ matchFun <- function(name){
   object <- getFromNamespace(name, ns = "car")
   if (!is.function(object)) stop("'", name, "' is not a function")
   object
+}
+
+envelope <- function(x.low, x.up=x.low, lower, upper, col=1, lty=1, lwd=1, 
+                     alpha=0.15, border=TRUE){
+  color <- as.vector(col2rgb(col))/255
+  polygon(c(x.up, rev(x.low)), c(upper, rev(lower)), 
+          col=rgb(red=color[1], green=color[2], blue=color[3], alpha=alpha),
+          border=if (border) rgb(red=color[1], green=color[2], blue=color[3]) else NA,
+          lty=lty, lwd=lwd)
+}
+
+getVcov <- function(v, mod, ...){
+  if(missing(v)) return(vcov(mod, ...)) 
+  if(inherits(v, "matrix")) return(v)
+  if(is.function(v)) return(v(mod, ...)) 
+  if(is.null(v)) return(vcov(mod, ...))
+  v <- try(as.matrix(v), silent=TRUE)
+  if (is.matrix(v)) return(v)
+  stop("vcov. must be a matrix or a function")
+}
+
+getModelData <- function(model) {
+  # returns a data frame with the data to which the model was fit
+  # model: a statistical model object that responds to model.frame() and formula() 
+  data1 <- data <- model.frame(model)
+  vars <- all.vars(formula(model))
+  if ("pi" %in% vars) {
+    vars <- setdiff(vars, "pi")
+    message("the symbol 'pi' is treated as a numeric constant in the model formula")
+  }
+  cols <- colnames(data)
+  check <- vars %in% cols
+  if (!(all(check))) {
+    missing.cols <- !check
+    data1 <- expand.model.frame(model, vars[missing.cols])
+  }
+  missing.cols <- !cols %in% colnames(data1)
+  if (any(missing.cols)) {
+    data1 <- cbind(data1, data[missing.cols])
+  }
+  cols <- colnames(data1)
+  valid <- make.names(cols) == cols | grepl("^\\(.*\\)$", cols)
+  data1[valid]
 }

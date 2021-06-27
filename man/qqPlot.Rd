@@ -21,7 +21,7 @@ qqp(...)
     ylim=range(x, na.rm=TRUE), ylab=deparse(substitute(x)),
     xlab=paste(distribution, "quantiles"), glab=deparse(substitute(groups)),
     main=NULL, las=par("las"),
-    envelope=.95, col=carPalette()[1], col.lines=carPalette()[2],
+    envelope=TRUE, col=carPalette()[1], col.lines=carPalette()[2],
     lwd=2, pch=1, cex=par("cex"),
     line=c("quartiles", "robust", "none"), id=TRUE, grid=TRUE, ...)
 
@@ -32,7 +32,7 @@ qqp(...)
                 deparse(substitute(x)), ")", sep=""),
     main=NULL, distribution=c("t", "norm"),
     line=c("robust", "quartiles", "none"), las=par("las"),
-    simulate=TRUE, envelope=.95,  reps=100,
+    simulate=TRUE, envelope=TRUE,  reps=100,
     col=carPalette()[1], col.lines=carPalette()[2], lwd=2, pch=1, cex=par("cex"),
     id=TRUE, grid=TRUE, ...)
 }
@@ -59,8 +59,7 @@ qqp(...)
   \item{xlab}{label for horizontal (comparison quantiles) axis.}
   \item{glab}{label for the grouping variable.}
   \item{main}{label for plot.}
-  \item{envelope}{confidence level for point-wise confidence envelope, or
-    \code{FALSE} for no envelope.}
+  \item{envelope}{\code{TRUE} (the default), \code{FALSE}, a confidence level such as \code{0.95}, or a list specifying how to plot a point-wise confidence envelope (see Details).}
   \item{las}{if \code{0}, ticks labels are drawn parallel to the
     axis; set to \code{1} for horizontal labels (see \code{\link{par}}).}
   \item{col}{color for points; the default is the \emph{first} entry
@@ -103,6 +102,21 @@ graph}
   confidence envelope computed by default by a parametric bootstrap,
   as described by Atkinson (1985).
   The function \code{qqp} is an abbreviation for \code{qqPlot}.
+  
+  The \code{envelope} argument can take a list with the following named elements; if an element is missing, then the default value is used:
+  
+  \describe{
+  
+  \item{\code{level}}{confidence level (default \code{0.95}).}
+  
+  \item{\code{style}}{one of \code{"filled"} (the default), \code{"lines"}, or \code{"none"}.}
+  
+  \item{\code{col}}{color (default is the value of \code{col.lines}).}
+  
+  \item{\code{alpha}}{transparency/opacity of a filled confidence envelope, a number between 0 and 1 (default \code{0.15}).}
+  
+  \item{\code{border}}{controls whether a border is drawn around a filled confidence envelope (default \code{TRUE}).}
+    }
 }
 \value{
   These functions return the labels of identified points, unless a grouping factor is employed,
@@ -127,7 +141,7 @@ graph}
 \examples{
 x<-rchisq(100, df=2)
 qqPlot(x)
-qqPlot(x, dist="chisq", df=2)
+qqPlot(x, dist="chisq", df=2, envelope=list(style="lines"))
 
 qqPlot(~ income, data=Prestige, subset = type == "prof")
 qqPlot(income ~ type, data=Prestige, layout=c(1, 3))

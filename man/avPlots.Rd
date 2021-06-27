@@ -25,7 +25,7 @@ avPlot(model, ...)
 
 \method{avPlot}{lm}(model, variable,
 	id=TRUE, col = carPalette()[1], col.lines = carPalette()[2],
-	xlab, ylab, pch = 1, lwd = 2, 
+	xlab, ylab, pch = 1, lwd = 2, cex = par("cex"), pt.wts = FALSE,
 	main=paste("Added-Variable Plot:", variable),
 	grid=TRUE,
 	ellipse=FALSE,
@@ -34,7 +34,8 @@ avPlot(model, ...)
 \method{avPlot}{glm}(model, variable, 
 	id=TRUE,
 	col = carPalette()[1], col.lines = carPalette()[2],
-	xlab, ylab, pch = 1, lwd = 2,  type=c("Wang", "Weisberg"), 
+	xlab, ylab, pch = 1, lwd = 2, cex = par("cex"), pt.wts = FALSE,
+	type=c("Wang", "Weisberg"), 
 	main=paste("Added-Variable Plot:", variable), grid=TRUE,
 	ellipse=FALSE, ...)
 }
@@ -72,6 +73,11 @@ avPlot(model, ...)
   \item{pch}{plotting character for points; default is \code{1} 
     (a circle, see \code{\link{par}}).}
   \item{lwd}{line width; default is \code{2} (see \code{\link{par}}).}
+  \item{cex}{size of plotted points; default is taken from \code{par("cex")}.}
+  \item{pt.wts}{if \code{TRUE} (the default is \code{FALSE}), for a weighted
+  least squares fit or a generalized linear model, the areas of plotted points
+  are made proportional to the weights, with the average size taken from the
+  \code{cex} argument.}
   \item{xlab}{x-axis label.  If omitted a label will be constructed.}
   \item{ylab}{y-axis label.  If omitted a label will be constructed.}
   \item{type}{if \code{"Wang"} use the method of Wang (1985);
@@ -122,7 +128,7 @@ avPlot(model, ...)
 avPlots(lm(prestige ~ income + education + type, data=Duncan))
 
 avPlots(glm(partic != "not.work" ~ hincome + children, 
-  data=Womenlf, family=binomial), id=FALSE)
+  data=Womenlf, family=binomial), id=FALSE, pt.wts=TRUE)
   
 m1 <- lm(partic ~ tfr + menwage + womwage + debt + parttime, Bfox)
 par(mfrow=c(1,3))

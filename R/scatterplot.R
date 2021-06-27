@@ -31,6 +31,7 @@
 # 2018-06-25: S. Weisberg  made the argument 'var' an alias of 'spread'
 # 2019-01-15: J. Fox: make scatterplot.formula() more robust
 # 2020-05-03: J. Fox: make marginal boxplots work with xlim and ylim (problem reported by Yousri Fanous)
+# 2021-04-05: J. Fox: don't explicitly dispatch on argument x in generic
 
 reg <- function(reg.line, x, y, col, lwd, lty, log.x, log.y){
   if(log.x) x <- log(x)
@@ -66,7 +67,7 @@ find.legend.columns <- function(n, target=min(4, n)){
 }
 
 scatterplot <- function(x, ...){
-  UseMethod("scatterplot", x)
+  UseMethod("scatterplot")
 }
 
 scatterplot.formula <- function (formula, data, subset, xlab, ylab,
@@ -375,5 +376,5 @@ scatterplot.default <- function(x, y, boxplots=if (by.groups) "" else "xy",
   if (is.null(indices)) invisible(indices) else if (is.numeric(indices)) sort(indices) else indices
 }
 
-sp <- function(x, ...)  UseMethod("scatterplot", x)
+sp <- function(x, ...)  UseMethod("scatterplot")
 

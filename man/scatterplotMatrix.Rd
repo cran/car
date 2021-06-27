@@ -155,7 +155,7 @@ spm(x, ...)
 \examples{
 scatterplotMatrix(~ income + education + prestige | type, data=Duncan)
 scatterplotMatrix(~ income + education + prestige | type, data=Duncan,
-    regLine=FALSE, smooth=list(spread=FALSE))
+    regLine=FALSE, smooth=list(span=1))
 scatterplotMatrix(~ income + education + prestige,
     data=Duncan, id=TRUE, smooth=list(method=gamLine))
 }

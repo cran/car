@@ -47,22 +47,28 @@ hccm(model, ...)
   corrected covariance matrix.
   
   The function \code{hccm.default} simply catches non-\code{lm} objects.
+  
+  See Freedman (2006) and Fox and Weisberg(2019, Sec. 5.1.2) for discussion of the use of these methods in generalized linear models or models with nonconstant variance.
 }
 \value{
   The heteroscedasticity-corrected covariance matrix for the model.
 }
 \references{
+  Cribari-Neto, F. (2004)
+  Asymptotic inference under heteroskedasticity of unknown form.
+  \emph{Computational Statistics and Data Analysis} \bold{45}, 215--233.
+  
   Fox, J. (2016)
   \emph{Applied Regression Analysis and Generalized Linear Models},
   Third Edition. Sage.  
   
   Fox, J. and Weisberg, S. (2019) 
   \emph{An R Companion to Applied Regression}, Third Edition, Sage.
-
-  Cribari-Neto, F. (2004)
-  Asymptotic inference under heteroskedasticity of unknown form.
-  \emph{Computational Statistics and Data Analysis} \bold{45}, 215--233.
   
+  Freedman, D. (2006)
+  On the so-called "Huber sandwich estimator" and "robust standard errors",
+  \emph{American Statistician}, \bold{60}, 299--302.
+
   Long, J. S. and Ervin, L. H. (2000)
   Using heteroscedasity consistent standard errors in the linear regression model. 
   \emph{The American Statistician} \bold{54}, 217--224.
