@@ -14,19 +14,19 @@ Export(x, file, format, ..., keep.row.names)
 A data frame or matrix to be written to a file.
 }
   \item{file}{
-A character string naming a file. If the file name has an extension, such as \code{.xlsx}, the extention is used to infer the type of file to be exported.  See \code{\link{export}} for the file types supported.
+A character string naming a file. If the file name has an extension, such as \code{.xlsx}, the extention is used to infer the type of file to be exported.  See \code{\link[rio]{export}} for the file types supported.
 }
-  \item{format}{see \code{\link{export}}.
+  \item{format}{see \code{\link[rio]{export}}.
 }
   \item{\dots}{
-Additional arguments; see \code{\link{export}}.
+Additional arguments; see \code{\link[rio]{export}}.
 }
   \item{keep.row.names}{
 If set to \code{TRUE}, then the data frame's row.names are appended to the left of the data frame with the name "id".  If set to quoted character string, the row.names are added using the character string as its name.  If set to \code{FALSE} row.names are lost.
 }
 }
 \details{
-This is a convenience function in the \pkg{car} package for exporting (writing) a data frame to a file in a wide variety of formats including csv, Microsoft Excel.  It optionally allows converting the row.names for the data frame to a column before writing.  It then calls \code{\link{export}} in the \code{rio} package.  That function in turn uses many other packages and functions for writing the function to a file.
+This is a convenience function in the \pkg{car} package for exporting (writing) a data frame to a file in a wide variety of formats including csv, Microsoft Excel.  It optionally allows converting the row.names for the data frame to a column before writing.  It then calls \code{\link[rio]{export}} in the \code{rio} package.  That function in turn uses many other packages and functions for writing the function to a file.
 }
 \value{
 The name of the output file as a character string (invisibly).
@@ -43,14 +43,18 @@ Chung-hong Chan, Geoffrey CH Chan, Thomas J. Leeper, and Jason Becker (2017). ri
 %% ~Make other sections like Warning with \section{Warning }{....} ~
 
 \seealso{
-\code{\link{export}}, \code{\link{Import}}
+\code{\link[rio]{export}}, \code{\link{Import}}
 }
 \examples{
+if(require("rio")) {
+
 Export(Duncan, "Duncan.csv", keep.row.names="occupation")
 Duncan2 <- Import("Duncan.csv") # Automatically restores row.names
 identical(Duncan, Duncan2)
 # cleanup
 unlink("Duncan.csv")
+
+}
 }
 % Add one or more standard keywords, see file "KEYWORDS" in the
 % R documentation directory.

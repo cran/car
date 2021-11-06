@@ -27,7 +27,7 @@ dfbetasPlots(model, ...)
 
 \method{dfbetasPlots}{lm}(model, terms=~., intercept=FALSE, layout=NULL, ask, 
 	    main, xlab, ylab,
-        labels=rownames(dfbeta), id.method="y",
+        labels=rownames(dfbetas), id.method="y",
         id.n=if(id.method[1]=="identify") Inf else 0, id.cex=1, 
         id.col=carPalette()[1], id.location="lr", col=carPalette()[1], grid=TRUE, ...)
 }

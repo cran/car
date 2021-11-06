@@ -1,6 +1,6 @@
 Package: car
-Version: 3.0-11
-Date: 2021-06-26
+Version: 3.0-12
+Date: 2021-11-02
 Title: Companion to Applied Regression
 Authors@R: c(person("John", "Fox", role = c("aut", "cre"), email = "jfox@mcmaster.ca"),
 	person("Sanford", "Weisberg", role = "aut", email = "sandy@umn.edu"),
@@ -30,11 +30,11 @@ Authors@R: c(person("John", "Fox", role = c("aut", "cre"), email = "jfox@mcmaste
     person("R-Core", role="ctb"))
 Depends: R (>= 3.5.0), carData (>= 3.0-0)
 Imports: abind, MASS, mgcv, nnet, pbkrtest (>= 0.4-4), quantreg,
-        grDevices, utils, stats, graphics, maptools, rio, lme4 (>=
+        grDevices, utils, stats, graphics, maptools, lme4 (>=
         1.1-27.1), nlme
 Suggests: alr4, boot, coxme, effects, knitr, leaps, lmtest, Matrix,
-        MatrixModels, rgl (>= 0.93.960), sandwich, SparseM, survival,
-        survey
+        MatrixModels, rgl (>= 0.93.960), rio, sandwich, SparseM,
+        survival, survey
 ByteCompile: yes
 LazyLoad: yes
 Description: 
@@ -45,6 +45,8 @@ URL: https://r-forge.r-project.org/projects/car/,
         https://CRAN.R-project.org/package=car,
         https://socialsciences.mcmaster.ca/jfox/Books/Companion/index.html
 VignetteBuilder: knitr
+NeedsCompilation: no
+Packaged: 2021-11-02 20:02:44 UTC; zeileis
 Author: John Fox [aut, cre],
   Sanford Weisberg [aut],
   Brad Price [aut],
@@ -73,9 +75,4 @@ Author: John Fox [aut, cre],
   R-Core [ctb]
 Maintainer: John Fox <jfox@mcmaster.ca>
 Repository: CRAN
-Repository/R-Forge/Project: car
-Repository/R-Forge/Revision: 687
-Repository/R-Forge/DateTimeStamp: 2021-06-26 13:54:07
-Date/Publication: 2021-06-27 16:00:09 UTC
-NeedsCompilation: no
-Packaged: 2021-06-26 14:08:22 UTC; rforge
+Date/Publication: 2021-11-06 05:35:32 UTC

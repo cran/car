@@ -1,3 +1,11 @@
+Changes to Version 3.0-12
+
+  o hccm() now reports an interpretable error, except for type = "hc0" or "hc1", when there are cases with hatvalues = 1 (following problem reported by Peng Ding).
+  
+  o Fix bug in rownames in dfbetasPlots.lm() (reported by Shu Fai Cheun).
+
+  o Package 'rio' was moved from Imports to Suggests. Both Import() and Export() now check for the availability of 'rio' first and report an error otherwise.
+
 Changes to Version 3.0-11
   
   o boxCox() function now allows the use of any of the usual graphics parameters in the plot() function.  If particuar boxCox(model, main="my title") will add a title to the plot, and boxCox(model, main="") will suppress it.

@@ -1,9 +1,8 @@
-# last modified 2021-06-17 by J. Fox
+# last modified 2021-11-02 by A. Zeileis
 
 # additions for car >= 3.0-0, started 2016-12-27
 
 export(Import, Export, Predict, bcnPowerAxis)
-import("rio")
 export(Confint, S, carPalette, poTest, brief)
 export(strings2factors)
 S3method(Confint, lm)

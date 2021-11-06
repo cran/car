@@ -3,13 +3,14 @@
 # arguments more consistent with other functions; ... passes args to plot
 # 2017-11-09: made consistent with vcov() in R 2.5.0. J. Fox
 # 2017-11-30: substitute carPalette() for palette(). J. Fox
+# 2021-08-31: fix bug in rownames in dfbetasPlots.lm() reported by Shu Fai Cheun. J. Fox
 
 dfbetasPlots <- function(model, ...){
 	UseMethod("dfbetasPlots")
 }
 
 dfbetasPlots.lm <- function(model, terms= ~ ., intercept=FALSE, layout=NULL, ask, 
-		main, xlab, ylab, labels=rownames(dfbeta), 
+		main, xlab, ylab, labels=rownames(dfbetas), 
 		id.method="y",  
 		id.n=if(id.method[1]=="identify") Inf else 0, id.cex=1, 
 		id.col=carPalette()[1], id.location="lr", col=carPalette()[1], grid=TRUE, ...){

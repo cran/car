@@ -2,8 +2,10 @@
 # Wrapper for the 'export' function in the 'rio' package that adds automatic support for row names by
 # converting the row names to the left-most column of the saved data file.
 # 3/15/2017:  S. Weisberg
+# 11/2/2021:  A. Zeileis, check for rio availability (so that rio can be in Suggests only)
 
 Export <- function(x, file, format, ..., keep.row.names){
+  if(!requireNamespace("rio")) stop("Export() relies on rio::export(), please install package 'rio'")
   stopifnot(is.data.frame(x))
   if(!missing(keep.row.names)){
     name <- if(is.logical(keep.row.names) & keep.row.names==TRUE) "id" else keep.row.names

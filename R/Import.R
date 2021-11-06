@@ -10,9 +10,11 @@
 # 4/2/2017:  S. Weisberg changed and simplified arguments.
 # 5/22/2017: S. Weisberg, fixed bug reading files with one character column (added drop=FALSE)
 # 5/6/2020: S. Weisberg, changed default for stringsAsFactors to FALSE.
+# 11/2/2021: A. Zeileis, check for rio availability (so that rio can be in Suggests only)
 
 Import <- function(file, format, ..., row.names=TRUE,
                    stringsAsFactors = FALSE){
+  if(!requireNamespace("rio")) stop("Import() relies on rio::import(), please install package 'rio'")
   d <- rio::import(file, format, ...)
   fmt <- if(!missing(format)) format else{
     pos <- regexpr("\\.([[:alnum:]]+)$", file)
