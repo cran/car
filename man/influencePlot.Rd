@@ -59,7 +59,7 @@ used for its side-effect of drawing a plot.
 
 \examples{
 influencePlot(lm(prestige ~ income + education, data=Duncan))
-\dontrun{
+\dontrun{ # requires user interaction to identify points
 influencePlot(lm(prestige ~ income + education, data=Duncan), 
     id=list(method="identify"))
 }

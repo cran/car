@@ -180,7 +180,7 @@ scatterplot(infantMortality ~ ppgdp, log="xy", data=UN, id=list(n=5))
 
 scatterplot(income ~ type, data=Prestige)
 
-\dontrun{
+\dontrun{ # interactive point identification
     # remember to exit from point-identification mode
     scatterplot(infantMortality ~ ppgdp, id=list(method="identify"), data=UN)
 }

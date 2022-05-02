@@ -135,14 +135,18 @@ scatterplotMatrix.default <-
     id.location <- id$location
   }
   if (is.null(labels)) labels <- as.character(seq(length.out=nrow(x)))
-  legend <- applyDefaults(legend, defaults=list(coords=NULL), type="legend")
+  legend <- applyDefaults(legend, defaults=list(coords=NULL, pt.cex=cex, cex=cex), type="legend")
   if (!(isFALSE(legend) || missing(groups))){
     legend.plot <- TRUE
     legend.pos <- legend$coords
+    legend.pt.cex <- legend$pt.cex
+    legend.cex <- legend$cex
   }
   else {
     legend.plot <- FALSE
     legend.pos <- NULL
+    legend.pt.cex <- cex
+    legend.cex <- cex.labels
   }
   # ellipse
   ellipse <- applyDefaults(ellipse, defaults=list(levels=c(0.5, 0.95), robust=TRUE, fill=TRUE, fill.alpha=0.2), type="ellipse")
@@ -175,11 +179,11 @@ scatterplotMatrix.default <-
     x <- x[, -1]
     id.col <- id.col[1]
   }
-  legendPlot <- function(position="topright"){
+  legendPlot <- function(position="topright", pt.cex=legend.pt.cex, cex=legend.cex){
     usr <- par("usr")
     legend(position, bg="white",
            legend=levels(groups), pch=pch, col=col[1:n.groups],
-           cex=cex)
+           pt.cex=pt.cex, cex=cex)
   }
   do.legend <- legend.plot
 ####### diagonal panel functions

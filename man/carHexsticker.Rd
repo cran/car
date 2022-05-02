@@ -17,7 +17,7 @@ John Fox \email{jfox@mcmaster.ca}
 }
 
 \examples{
-\dontrun{
+\dontrun{ # intended for interactive use
 carHexsticker()
 }
 }

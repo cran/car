@@ -1,5 +1,21 @@
+Changes to Version 3.0-13
+
+  o Handle singularities better in Anova.mlm() (suggestion of Marius Barth).
+  
+  o Fixed error reporting in logit() (bug reported by Collin Erickson).
+  
+  o Added pt.cex and cex sub-arguments to legend argument of scatterplotMatrix() (implicit suggestion of Duncan Mackay).
+  
+  o New vif.lm() method with options for handling linear models with interactions.
+  
+  o Fixed bug in cooks.distance.influence.lme() (in effect, incorrect division by the error variance twice rather than once), and a sign error in dfbeta.influence.lme() and dfbetas.influence.lme() (following report by Ben Bolker).
+  
+  o Added an error.df argument to the default methods of linearHypothesis() and Anova() for computing F-tests; if the argument is unspecified, then df.residual() is applied to the model, and if df.residual() returns NULL or NA, then an asymptotic chi-square test is substituted for the F-test (in response to a report by Adrian Olszewski that Anova() fails for gls models when an F-test is requested).
+
 Changes to Version 3.0-12
 
+  o The 'rio` package is now suggested, not required.  To use the Import() and Export() functions users may need to install rio using install.packages("rio")
+  
   o hccm() now reports an interpretable error, except for type = "hc0" or "hc1", when there are cases with hatvalues = 1 (following problem reported by Peng Ding).
   
   o Fix bug in rownames in dfbetasPlots.lm() (reported by Shu Fai Cheun).

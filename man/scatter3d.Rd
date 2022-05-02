@@ -188,7 +188,7 @@ Sys.sleep(5)
 scatter3d(prestige ~ income + education | type,
     radius=(1 + women)^(1/3), data=Prestige)
 	}
-	\dontrun{
+	\dontrun{ # requires user interaction to identify points
 # drag right mouse button to identify points, click right button in open area to exit
 scatter3d(prestige ~ income + education, data=Duncan, id=list(method="identify"))
 scatter3d(prestige ~ income + education | type, data=Duncan, id=list(method="identify"))

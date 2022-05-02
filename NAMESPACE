@@ -1,4 +1,4 @@
-# last modified 2021-11-02 by A. Zeileis
+# last modified 2022-03-11 by J. Fox
 
 # additions for car >= 3.0-0, started 2016-12-27
 
@@ -374,6 +374,7 @@ S3method(summary, powerTransform)
 S3method(coef, powerTransform)
 S3method(vcov, powerTransform)
 S3method(vif, default)
+S3method(vif, lm)
 S3method(vif, merMod)
 S3method(vif, polr)
 S3method(vif, svyolr)

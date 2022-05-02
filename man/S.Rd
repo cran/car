@@ -209,7 +209,7 @@ Duncan.1$type <- as.character(Duncan$type)
 summary(Duncan.1)
 S(Duncan.1)
 
-\dontrun{
+\dontrun{ # generates an error, which can then be corrected to run example
 # Using the bootstrap for standard errors
 b1 <- Boot(mod.prestige)
 S(mod.prestige, vcov.= vcov(b1))

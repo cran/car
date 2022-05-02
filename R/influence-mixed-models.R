@@ -1,16 +1,19 @@
-# # added 2017-12-13 by J. Fox
-# # 2017-12-14: improved recovery of model data
-# #             removed faulty one-step approximations
-# # 2018-01-28: fix computation of Cook's D for lme models
-# # 2018-05-23: fixed bug when more than one grouping variable (reported by Maarten Jung)
-# # 2018-06-07: skip plot of "sigma^2" in GLMM if dispersion fixed to 1; improved labelling for covariance components
-# # 2018-11-04: tweak to dfbetas.influence.merMod() suggested by Ben Bolker.
-# # 2018-11-09: parallel version of influence.merMod()
-# # 2020-12-04: make influence.lme() label rows of deleted fixed effects matrix so infIndexPlot() works 
-# #             (fixing problem reported by Francis L. Huang).
-# # merMod methods removed in favour of their versions in lme4
-# 
-# # influence diagnostics for mixed models
+# added 2017-12-13 by J. Fox
+# 2017-12-14: improved recovery of model data
+#             removed faulty one-step approximations
+# 2018-01-28: fix computation of Cook's D for lme models
+# 2018-05-23: fixed bug when more than one grouping variable (reported by Maarten Jung)
+# 2018-06-07: skip plot of "sigma^2" in GLMM if dispersion fixed to 1; improved labelling for covariance components
+# 2018-11-04: tweak to dfbetas.influence.merMod() suggested by Ben Bolker.
+# 2018-11-09: parallel version of influence.merMod()
+# 2020-12-04: make influence.lme() label rows of deleted fixed effects matrix so infIndexPlot() works
+#             (fixing problem reported by Francis L. Huang).
+# 2022-03-25: fix cooks.distance.influence.lme() to avoid dividing twice by the error variance and
+#             simplify to conform to Cook's definition for a linear model; correct sign error in
+#             dfbeta.influence.lme() and dfbetas.influence.lme() (following report by Ben Bolker).
+# merMod methods removed in favour of their versions in lme4
+
+# influence diagnostics for mixed models
 
 globalVariables(".groups")
 
@@ -18,7 +21,7 @@ dfbeta.influence.lme <- function(model, which=c("fixed", "var.cov"), ...){
     which <- match.arg(which)
     b <- if (which == "fixed") model[[2]] else model[[4]]
     b0 <- if (which == "fixed") model[[1]] else model[[3]]
-    b - matrix(b0, nrow=nrow(b), ncol=ncol(b), byrow=TRUE)
+    matrix(b0, nrow=nrow(b), ncol=ncol(b), byrow=TRUE) - b
 }
 
 dfbetas.influence.lme <- function(model, ...){
@@ -30,10 +33,9 @@ cooks.distance.influence.lme <- function(model, ...){
     n <- nrow(db)
     p <- ncol(db)
     d <- numeric(n)
-    vcovs <- model[[6]]
-    sig.sq <- (exp(model[[4]][, ncol(model[[4]])]))^2
+    vcov.inv <- (n - p)/(n*p)*solve(model$vcov)
     for (i in 1:n){
-        d[i] <- (db[i, ] %*% solve(vcovs[[i]]) %*% db[i, ])/(p*sig.sq[i])
+        d[i] <- db[i, ] %*% vcov.inv %*% db[i, ]
     }
     d
 }

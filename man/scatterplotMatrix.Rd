@@ -48,10 +48,10 @@ spm(x, ...)
     \code{TRUE} is equivalent to \code{list(method="mahal", n=2, cex=1, location="lr")},
     which identifies the 2 points (in each group, if \code{by.groups=TRUE}) with the largest Mahalanobis distances from the center
     of the data; \code{list(method="identify")} for interactive point identification is not allowed.}
-  \item{legend}{controls placement of a legend if the plot is drawn by groups; if \code{FALSE}, the legend
-    is suppressed. Can be a list with the named element\code{coords} specifying the position of the legend
-    in any form acceptable to the \code{\link{legend}} function;
-    \code{TRUE} (the default) is equivalent to \code{list(coords=NULL)}, for which placement will vary
+  \item{legend}{controls placement, point size, and text size of a legend if the plot is drawn by groups; if \code{FALSE}, the legend
+    is suppressed. Can be a list with the named element \code{coords} specifying the position of the legend
+    in any form acceptable to the \code{\link{legend}} function, and elements \code{pt.cex} and \code{cex} corresponding respectively to the \code{pt.cex} and \code{cex} arguments of the \code{\link{legend}} function;
+    \code{TRUE} (the default) is equivalent to \code{list(coords=NULL, pt.cex=cex, cex=cex)}, for which placement will vary
     by the the value of the \code{diagonal} argument---e.g., \code{"topright"} for \code{diagonal=TRUE}.}
    \item{regLine}{controls adding a fitted regression line to each plot, or to each group of points
     if \code{by.groups=TRUE}.  If \code{regLine=FALSE}, no line

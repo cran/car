@@ -6,12 +6,12 @@
   Compute the logit transformation of proportions or percentages.
 }
 \usage{
-logit(p, percents=range.p[2] > 1, adjust)
+logit(p, percents, adjust)
 }
 
 \arguments{
   \item{p}{numeric vector or array of proportions or percentages.}
-  \item{percents}{\code{TRUE} for percentages.}
+  \item{percents}{\code{TRUE} for percentages, \code{FALSE} for proportions. If the argument is missing and the largest value of \code{p} > 1, \code{percents} is set to \code{TRUE}, otherwise to \code{FALSE}.}
   \item{adjust}{adjustment factor to avoid proportions of 0 or 1;
     defaults to \code{0} if there are no such proportions in the data,
     and to \code{.025} if there are.}
@@ -39,16 +39,10 @@ logit(p, percents=range.p[2] > 1, adjust)
 \seealso{\code{\link{probabilityAxis}}}
 
 \examples{
-options(digits=4)
+save.opt <- options(digits=4)
 logit(.1*0:10)
-##  [1] -3.6636 -1.9924 -1.2950 -0.8001 -0.3847  0.0000  0.3847
-##  [8]  0.8001  1.2950  1.9924  3.6636
-## Warning message: 
-## proportions remapped to (0.025, 0.975) in: logit(0.1 * 0:10) 
-
 logit(.1*0:10, adjust=0)
-##  [1]    -Inf -2.1972 -1.3863 -0.8473 -0.4055  0.0000  0.4055
-##  [8]  0.8473  1.3863  2.1972     Inf
+options(save.opt)
 }
 
 \keyword{manip}

@@ -40,6 +40,7 @@
 #   2020-12-21: regularize handling of vcov. arg. Sandy and John
 #   2020-12-21: new matchCoefs.lmList() method, which covers nlsList objects. John
 #   2020-12-21: added linearHypothesis.lmList(). John
+#   2922-04-24: introduce new error.df argument for linearHypothesis.default(). John
 #----------------------------------------------------------------------------------------------------
 
 # vcov.default <- function(object, ...){
@@ -198,10 +199,19 @@ linearHypothesis.nlsList <- function(model,  ..., vcov.=vcov, coef.=coef){
 
 linearHypothesis.default <- function(model, hypothesis.matrix, rhs=NULL,
 		test=c("Chisq", "F"), vcov.=NULL, singular.ok=FALSE, verbose=FALSE, 
-    coef. = coef(model), suppress.vcov.msg=FALSE, ...){
-	df <- df.residual(model)
+    coef. = coef(model), suppress.vcov.msg=FALSE, error.df, ...){
+  if (missing(error.df)){
+    df <- df.residual(model)
+    test <- match.arg(test)
+    if (test == "F" && (is.null(df) || is.na(df))){
+      test <- "Chisq"
+      message("residual df unavailable, test set to 'Chisq'")
+    }
+  } else {
+    df <- error.df
+  }
 	if (is.null(df)) df <- Inf ## if no residual df available
-    if (df == 0) stop("residual df = 0")
+  if (df == 0) stop("residual df = 0")
 	V <- if (is.null(vcov.)) vcov(model, complete=FALSE)
 			else if (is.function(vcov.)) vcov.(model) else vcov.
 	b <- coef.

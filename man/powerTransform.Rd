@@ -121,7 +121,9 @@ testTransform(a3, c(0, 0, 0, -1))
 # color for each highway type
 transformedY <- bcPower(with(Highway1, cbind(len, adt, trks, sigs1)),
                         coef(a3, round=TRUE))
-\dontrun{scatterplotMatrix( ~ transformedY|htype, Highway1) }
+\dontrun{ # generates a smoother warning
+scatterplotMatrix( ~ transformedY|htype, Highway1) 
+}
 
 # With negative responses, use the bcnPower family
 m2 <- lm(I1L1 ~ pool, LoBD)
@@ -129,8 +131,7 @@ summary(p2 <- powerTransform(m2, family="bcnPower"))
 testTransform(p2, .5)
 summary(powerTransform(update(m2, cbind(LoBD$I1L2, LoBD$I1L1) ~ .), family="bcnPower"))
 
-\dontrun{ 
-  # takes a few seconds:
+\dontrun{ # takes a few seconds:
   # multivariate bcnPower, with 8 responses
   summary(powerTransform(update(m2, as.matrix(LoBD[, -1]) ~ .), family="bcnPower"))
   # multivariate bcnPower, fit with one iteration using starting values as estimates
@@ -138,8 +139,7 @@ summary(powerTransform(update(m2, cbind(LoBD$I1L2, LoBD$I1L1) ~ .), family="bcnP
 }
 
 # mixed effects model
-\dontrun{
-  # uses the lme4 package
+\dontrun{ # uses the lme4 package
   data <- reshape(LoBD[1:20, ], varying=names(LoBD)[-1], direction="long", v.names="y")
   names(data) <- c("pool", "assay", "y", "id")
   data$assay <- factor(data$assay)

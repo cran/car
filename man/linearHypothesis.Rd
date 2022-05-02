@@ -20,6 +20,7 @@
 %   2018-04-11 rhs suppressed using pbkrtest for lmer model. J.Fox
 %   2020-05-27 added documentation for survreg method. J. Fox
 %   2020-12-21 added linearHypothesis.lmList(), and small edits. J. Fox
+%   2022-04-24: added error.df argument to linearHypothesis.default(). J. Fox
 %------------------------------------------------------------------------------------
 
 \name{linearHypothesis}
@@ -68,7 +69,7 @@ lht(model, ...)
 
 \method{linearHypothesis}{default}(model, hypothesis.matrix, rhs=NULL,
 		test=c("Chisq", "F"), vcov.=NULL, singular.ok=FALSE, verbose=FALSE, 
-    coef. = coef(model), suppress.vcov.msg=FALSE, ...)  
+    coef. = coef(model), suppress.vcov.msg=FALSE, error.df, ...)  
 
 \method{linearHypothesis}{lm}(model, hypothesis.matrix, rhs=NULL,
     test=c("F", "Chisq"), vcov.=NULL, 
@@ -141,6 +142,7 @@ matchCoefs(model, pattern, ...)
     matrices even if the latter is singular; useful for computing univariate
     repeated-measures ANOVAs where there are fewer subjects than df for within-subject
     effects.}
+  \item{error.df}{For the \code{default} \code{linearHypothesis} method, if an F-test is requested and if \code{error.df} is missing, the error degrees of freedom will be computed by applying the \code{df.residual} function to the model; if \code{df.residual} returns \code{NULL} or \code{NA}, then a chi-square test will be substituted for the F-test (with a message to that effect.}
   \item{idata}{an optional data frame giving a factor or factors defining the
     intra-subject model for multivariate repeated-measures data. See 
     \emph{Details} for an explanation of the intra-subject design and for
@@ -398,13 +400,13 @@ linearHypothesis(mod.ok, c("treatment1:gender1", "treatment2:gender1"),
 
 ## mixed-effects models examples:
 
-\dontrun{
+\dontrun{ # loads nlme package
 	library(nlme)
 	example(lme)
 	linearHypothesis(fm2, "age = 0")
 }
 
-\dontrun{
+\dontrun{ # loads lme4 package
 	library(lme4)
 	example(glmer)
 	linearHypothesis(gm1, matchCoefs(gm1, "period"))

@@ -1,15 +1,22 @@
 # logit transformation of proportion or percent (J. Fox)
 
-# last modified 2012-06-24 by J. Fox
+# 2022-02-04: Fix range tests (bug reported by Collin Erickson)
+#             Print message if percents converted to proportions
 
-logit <- function(p, percents=range.p[2] > 1, adjust){
+logit <- function(p, percents, adjust){
 	range.p <- range(p, na.rm=TRUE)
+	if (missing(percents) && range.p[2] > 1){
+	  percents <- TRUE
+	  message("Note: largest value of p > 1 so values of p interpreted as percents")
+	} else {
+	  percents <- FALSE
+	}
 	if (percents){
-		if (range.p[1] < 0 || range.p[1] > 100) stop("p must be in the range 0 to 100")
+		if (range.p[1] < 0 || range.p[2] > 100) stop("p must be in the range 0 to 100")
 		p <- p/100
 		range.p <- range.p/100
 	}
-	else if (range.p[1] < 0 || range.p[1] > 1) stop("p must be in the range 0 to 1")
+	else if (range.p[1] < 0 || range.p[2] > 1) stop("p must be in the range 0 to 1")
 	a <-if (missing(adjust)) {
 				if (isTRUE(all.equal(range.p[1], 0)) || isTRUE(all.equal(range.p[2], 1))) .025 else 0
 			}

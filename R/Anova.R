@@ -68,6 +68,9 @@
 #             introduced vcov. arg to Anova.glm(). JF
 # 2021-06-16: Fix imatrix arg to Anova.mlm() (contribution of Benedikt Langenberg).JF
 # 2021-06-19: make sure that calls to anova() for survival::survreg() models return "anova" objects. JF
+# 2022-01-17,18: handle singularities better in Anova.mlm() (suggestion of Marius Barth)
+# 2922-04-24: introduce new error.df argument for linearHypothesis.default(). JF
+
 #-------------------------------------------------------------------------------
 
 # Type II and III tests for linear, generalized linear, and other models (J. Fox)
@@ -738,6 +741,8 @@ has.intercept.mlm <- function (model, ...)
 Anova.mlm <- function(mod, type=c("II","III", 2, 3), SSPE, error.df, idata, 
                       idesign, icontrasts=c("contr.sum", "contr.poly"), imatrix,
                       test.statistic=c("Pillai", "Wilks", "Hotelling-Lawley", "Roy"),...){
+  if (any(is.na(coef(mod)))) 
+    stop(if(!missing(idata)) "between-subjects ", "model is singular")
   wts <- if (!is.null(mod$weights)) mod$weights else rep(1, nrow(model.matrix(mod)))
   type <- as.character(type)
   type <- match.arg(type)
@@ -759,7 +764,8 @@ Anova.mlm <- function(mod, type=c("II","III", 2, 3), SSPE, error.df, idata,
 
 Anova.III.mlm <- function(mod, SSPE, error.df, idata, idesign, icontrasts, imatrix, test, ...){
   intercept <- has.intercept(mod)
-  V <- solve(crossprod(model.matrix(mod)))
+  # wts <- if (!is.null(mod$weights)) mod$weights else rep(1, nrow(model.matrix(mod)))
+  # V <- solve(wcrossprod(model.matrix(mod), w=wts))
   p <- nrow(coefficients(mod))
   I.p <- diag(p)
   terms <- term.names(mod)
@@ -812,8 +818,10 @@ Anova.III.mlm <- function(mod, SSPE, error.df, idata, idesign, icontrasts, imatr
       if (i.intercept) iterms <- c("(Intercept)", iterms)
       check.imatrix(X.design)
     }
-    df <- rep(0, n.terms*length(iterms))
-    hnames <- rep("", length(df))
+    n.tests <- n.terms*length(iterms)
+    df <- rep(0, n.tests)
+    singular <- rep(FALSE, n.tests)
+    hnames <- rep("", n.tests)
     P <- SSPEH <- SSP <- as.list(df)
     i <- 0
     for (iterm in iterms){
@@ -831,13 +839,14 @@ Anova.III.mlm <- function(mod, SSPE, error.df, idata, idesign, icontrasts, imatr
         hnames[i] <- if (iterm == "(Intercept)") terms[term]
         else if (terms[term] == "(Intercept)") iterm
         else paste(terms[term], ":", iterm, sep="")
+        singular[i] <- Test$singular
       }
     }
-    names(df) <- names(SSP) <- names(SSPEH) <- names(P) <- hnames
+    names(singular) <- names(df) <- names(SSP) <- names(SSPEH) <- names(P) <- hnames
     result <- list(SSP=SSP, SSPE=SSPEH, P=P, df=df, error.df=error.df,
                    terms=hnames, repeated=TRUE, type="III", test=test, 
                    idata=idata, idesign=idesign, icontrasts=icontrasts, imatrix=imatrix,
-                   singular=Test$singular)       
+                   singular=singular)       
   }
   class(result) <- "Anova.mlm"
   result
@@ -918,7 +927,9 @@ Anova.II.mlm <- function(mod, SSPE, error.df, idata, idesign, icontrasts, imatri
       if (iintercept) iterms <- c("(Intercept)", iterms)
       check.imatrix(X.design)
     }
-    df <- rep(0, (n.terms + intercept)*length(iterms))
+    n.tests <-(n.terms + intercept)*length(iterms)
+    df <- rep(0, n.tests)
+    singular <- rep(FALSE, n.tests)
     hnames <- rep("", length(df))
     P <- SSPEH <- SSP <- as.list(df)
     i <- 0
@@ -935,6 +946,7 @@ Anova.II.mlm <- function(mod, SSPE, error.df, idata, idesign, icontrasts, imatri
         SSP[[i]] <- lh2$SSPH - SSP1
         SSPEH[[i]] <- lh2$SSPE
         P[[i]] <- lh2$P
+        singular[i] <- lh2$singular
         df[i] <- 1
         hnames[i] <- iterm
       }
@@ -945,23 +957,24 @@ Anova.II.mlm <- function(mod, SSPE, error.df, idata, idesign, icontrasts, imatri
         SSP[[i]] <- Test$SSP
         SSPEH[[i]] <- Test$SSPE
         P[[i]] <- Test$P
+        singular[i] <- Test$singular
         df[i]<- length(subs)
         hnames[i] <- if (iterm == "(Intercept)") terms[term]
         else paste(terms[term], ":", iterm, sep="")
       }
     }
-    names(df) <- names(P) <- names(SSP) <- names(SSPEH) <- hnames
+    names(singular) <- names(df) <- names(P) <- names(SSP) <- names(SSPEH) <- hnames
     result <- list(SSP=SSP, SSPE=SSPEH, P=P, df=df, error.df=error.df,
                    terms=hnames, repeated=TRUE, type="II", test=test,
                    idata=idata, idesign=idesign, icontrasts=icontrasts, imatrix=imatrix,
-                   singular=Test$singular)       
+                   singular=singular)       
   }
   class(result) <- "Anova.mlm"
   result
 }
 
 print.Anova.mlm <- function(x, ...){
-  if ((!is.null(x$singular)) && x$singular) stop("singular error SSP matrix; multivariate tests unavailable\ntry summary(object, multivariate=FALSE)")
+  if ((!is.null(x$singular)) && any(x$singular)) stop("singular error SSP matrix; multivariate tests unavailable\ntry summary(object, multivariate=FALSE)")
   test <- x$test
   repeated <- x$repeated
   ntests <- length(x$terms)
@@ -1045,7 +1058,9 @@ summary.Anova.mlm <- function (object, test.statistic, univariate=object$repeate
                   SSPE = if (object$repeated) object$SSPE[[term]] else object$SSPE, 
                   P = if (object$repeated) object$P[[term]] else NULL, 
                   test = test.statistic, df = object$df[term], 
-                  df.residual = object$error.df, title = object$terms[term])
+                  df.residual = object$error.df, title = object$terms[term],
+                  singular = if (!is.null(object$singular)) object$singular[term]
+                  )
       class(hyp) <- "linearHypothesis.mlm"
       summary.object$multivariate.tests[[term]] <- hyp
     }
@@ -1060,15 +1075,15 @@ summary.Anova.mlm <- function (object, test.statistic, univariate=object$repeate
     colnames(table) <- c("Sum Sq", "num Df", "Error SS", "den Df", "F value", "Pr(>F)")
     colnames(table2) <- c("GG eps", "Pr(>F[GG])", "HF eps","Pr(>F[HF])")
     colnames(table3) <- c("Test statistic", "p-value")
-    if (singular) 
-      warning("Singular error SSP matrix:\nnon-sphericity test and corrections not available")
+    if (any(singular))
+      warning("one or more error SSP matrix:\ncorresponding non-sphericity tests and corrections not available")
     for (term in 1:nterms) {
       SSP <- object$SSP[[term]]
       SSPE <- object$SSPE[[term]]
       P <- object$P[[term]]
       p <- ncol(P)
       PtPinv <- solve(t(P) %*% P)
-      gg <- if (!singular) GG(SSPE, P) else NA
+      gg <- if (!singular[term]) GG(SSPE, P) else NA
       table[term, "Sum Sq"] <- sum(diag(SSP %*% PtPinv))
       table[term, "Error SS"] <- sum(diag(SSPE %*% PtPinv))
       table[term, "num Df"] <- object$df[term] * p
@@ -1078,8 +1093,8 @@ summary.Anova.mlm <- function (object, test.statistic, univariate=object$repeate
       table[term, "Pr(>F)"] <- pf(table[term, "F value"], table[term, "num Df"], table[term, "den Df"], 
                                   lower.tail = FALSE)
       table2[term, "GG eps"] <- gg
-      table2[term, "HF eps"] <- if (!singular) HF(gg, error.df, p) else NA
-      table3[term, ] <- if (!singular) mauchly(SSPE, P, object$error.df) else NA
+      table2[term, "HF eps"] <- if (!singular[term]) HF(gg, error.df, p) else NA
+      table3[term, ] <- if (!singular[term]) mauchly(SSPE, P, object$error.df) else NA
     }
     table3 <- na.omit(table3)
     if (nrow(table3) > 0) {
@@ -1377,6 +1392,13 @@ Anova.survreg <- function(mod, type=c("II","III", 2, 3), test.statistic=c("LR", 
     warning("LR tests unavailable with robust variances\nWald tests substituted")
     test.statistic <- "Wald"
   }
+  names <- term.names(mod)
+  clusters <- grepl("cluster\\(", names)
+  strata <- grepl("strata\\(", names)
+  if ((any(clusters) || any(strata)) && test.statistic == "LR"){
+    warning("LR tests not supported for models with clusters or strata\n Wald tests substituted")
+    test.statistic <- "Wald"
+  }
   switch(type,
          II=switch(test.statistic,
                    LR=Anova.II.LR.survreg(mod),
@@ -1494,7 +1516,8 @@ Anova.II.Wald.survreg <- function(mod){
   V <- vcov(mod, complete=FALSE)
   b <- coef(mod)
   if (length(b) != nrow(V)){
-    p <- which(rownames(V) == "Log(scale)")
+    # p <- which(rownames(V) == "Log(scale)")
+    p <- which(grepl("^Log\\(scale", rownames(V)))
     if (length(p) > 0) V <- V[-p, -p]
   }
   Anova.II.default(mod, V, test="Chisq")
@@ -1504,7 +1527,8 @@ Anova.III.Wald.survreg <- function(mod){
   V <- vcov(mod, complete=FALSE)
   b <- coef(mod)
   if (length(b) != nrow(V)){
-    p <- which(rownames(V) == "Log(scale)")
+    # p <- which(rownames(V) == "Log(scale)")
+    p <- which(grepl("^Log\\(scale", rownames(V)))
     if (length(p) > 0) V <- V[-p, -p]
   }
   Anova.III.default(mod, V, test="Chisq")
@@ -1513,18 +1537,29 @@ Anova.III.Wald.survreg <- function(mod){
 # Default Anova() method: requires methods for vcov() (if vcov. argument not specified) and coef().
 
 Anova.default <- function(mod, type=c("II","III", 2, 3), test.statistic=c("Chisq", "F"), 
-                          vcov.=vcov(mod, complete=FALSE), singular.ok, ...){
+                          vcov.=vcov(mod, complete=FALSE), singular.ok, error.df, ...){
+  if (missing(error.df)){
+    error.df <- df.residual(mod)
+    test.statistic <- match.arg(test.statistic)
+    if (test.statistic == "F" && (is.null(error.df) || is.na(error.df))){
+      test.statistic <- "Chisq"
+      message("residual df unavailable, test.statistic set to 'Chisq'")
+    }
+  }
   vcov. <- getVcov(vcov., mod)
   type <- as.character(type)
   type <- match.arg(type)
-  test.statistic <- match.arg(test.statistic)
   if (missing(singular.ok))
     singular.ok <- type == "2" || type == "II"
   switch(type,
-         II=Anova.II.default(mod, vcov., test.statistic, singular.ok=singular.ok),
-         III=Anova.III.default(mod, vcov., test.statistic, singular.ok=singular.ok),
-         "2"=Anova.II.default(mod, vcov., test.statistic, singular.ok=singular.ok),
-         "3"=Anova.III.default(mod, vcov., test.statistic, singular.ok=singular.ok))
+         II=Anova.II.default(mod, vcov., test.statistic, singular.ok=singular.ok, 
+                             error.df=error.df),
+         III=Anova.III.default(mod, vcov., test.statistic, singular.ok=singular.ok,
+                               error.df=error.df),
+         "2"=Anova.II.default(mod, vcov., test.statistic, singular.ok=singular.ok,
+                              error.df=error.df),
+         "3"=Anova.III.default(mod, vcov., test.statistic, singular.ok=singular.ok,
+                               error.df=error.df))
 }
 
 assignVector <- function(model, ...) UseMethod("assignVector")
@@ -1539,7 +1574,7 @@ assignVector.default <- function(model, ...){
   assign
 }
 
-Anova.II.default <- function(mod, vcov., test, singular.ok=TRUE, ...){
+Anova.II.default <- function(mod, vcov., test, singular.ok=TRUE, error.df,...){
   hyp.term <- function(term){
     which.term <- which(term==names)
     subs.term <- if (is.list(assign)) assign[[which.term]] else which(assign == which.term)
@@ -1560,7 +1595,8 @@ Anova.II.default <- function(mod, vcov., test, singular.ok=TRUE, ...){
     if (nrow(hyp.matrix.term) == 0)
       return(c(statistic=NA, df=0))            
     hyp <- linearHypothesis.default(mod, hyp.matrix.term, 
-                                    vcov.=vcov., test=test, singular.ok=singular.ok, ...)
+                                    vcov.=vcov., test=test, error.df=error.df,
+                                    singular.ok=singular.ok, ...)
     if (test=="Chisq") c(statistic=hyp$Chisq[2], df=hyp$Df[2])
     else c(statistic=hyp$F[2], df=hyp$Df[2])
   }
@@ -1577,9 +1613,9 @@ Anova.II.default <- function(mod, vcov., test, singular.ok=TRUE, ...){
   names <- term.names(mod)
   if (intercept) names <- names[-1]
   n.terms <- length(names)
-  df <- c(rep(0, n.terms), df.residual(mod))
-  if (inherits(mod, "coxph")){
-    assign <- assign[assign != 0]
+  df <- c(rep(0, n.terms), error.df)
+  if (inherits(mod, "coxph") || inherits(mod, "survreg")){
+    if (inherits(mod, "coxph")) assign <- assign[assign != 0]
     clusters <- grep("^cluster\\(", names)
     strata <- grep("^strata\\(.*\\)$", names)
     for (cl in clusters) assign[assign > cl] <- assign[assign > cl] - 1
@@ -1617,14 +1653,14 @@ Anova.II.default <- function(mod, vcov., test, singular.ok=TRUE, ...){
   result
 }
 
-Anova.III.default <- function(mod, vcov., test, singular.ok=FALSE, ...){
+Anova.III.default <- function(mod, vcov., test, singular.ok=FALSE, error.df, ...){
   intercept <- has.intercept(mod)
   p <- length(coefficients(mod))
   I.p <- diag(p)
   names <- term.names(mod)
   n.terms <- length(names)
   assign <- assignVector(mod) # attr(model.matrix(mod), "assign")
-  df <- c(rep(0, n.terms), df.residual(mod))
+  df <- c(rep(0, n.terms), error.df)
   if (inherits(mod, "coxph")){
     if (intercept) names <- names[-1]
     assign <- assign[assign != 0]
@@ -1659,7 +1695,8 @@ Anova.III.default <- function(mod, vcov., test, singular.ok=FALSE, ...){
     }
     else {
       hyp <- linearHypothesis.default(mod, hyp.matrix, 
-                                      vcov.=vcov., test=test, singular.ok=singular.ok, ...)
+                                      vcov.=vcov., test=test, error.df=error.df,
+                                      singular.ok=singular.ok, ...)
       teststat[term] <- if (test=="Chisq") hyp$Chisq[2] else hyp$F[2]
       df[term] <- abs(hyp$Df[2])
       p[term] <- if (test == "Chisq") 

@@ -42,7 +42,7 @@ package by John Verzani }
 
 \examples{
 
-\dontrun{
+\dontrun{ # meant for interactive use
 carWeb()
 carWeb(setup=TRUE)
 }
