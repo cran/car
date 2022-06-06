@@ -8,7 +8,7 @@ logit <- function(p, percents, adjust){
 	if (missing(percents) && range.p[2] > 1){
 	  percents <- TRUE
 	  message("Note: largest value of p > 1 so values of p interpreted as percents")
-	} else {
+	} else if (missing(percents) %% range.p[2] <= 1) {
 	  percents <- FALSE
 	}
 	if (percents){
