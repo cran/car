@@ -16,6 +16,7 @@
 # 2016-02-06: Changed call to rgl.clear() to next3d() for compatibility with embedding in HTML. J. Fox
 # 2017-06-27: introduced id argument replacing several arguments. J. Fox
 # 2017-11-30: use carPalette(), avoid red and green. J. Fox
+# 2022-05-30: add "robust" as a fit option.
 
 scatter3d <- function(x, ...){
     if (!requireNamespace("rgl")) stop("rgl package missing")
@@ -76,7 +77,7 @@ scatter3d.default <- function(x, y, z,
     id=FALSE, model.summary=FALSE, ...){
     if (!requireNamespace("rgl")) stop("rgl package missing")
     if (!requireNamespace("mgcv")) stop("mgcv package missing")
-  
+    if (!requireNamespace("MASS")) stop("MASS package missing")
     id <- applyDefaults(id, defaults=list(method="mahal", n=2,
         labels=as.character(seq(along=x)), offset = ((100/length(x))^(1/3))*0.02), type="id")
     if (isFALSE(id)){
@@ -247,7 +248,7 @@ scatter3d.default <- function(x, y, z,
         vals <- seq(0, 1, length.out=grid.lines)
         dat <- expand.grid(x=vals, z=vals)
         for (i in 1:length(fit)){
-            f <- match.arg(fit[i], c("linear", "quadratic", "smooth", "additive"))
+            f <- match.arg(fit[i], c("linear", "quadratic", "smooth", "additive", "robust"))
             if (is.null(groups)){
                 mod <- switch(f,
                     linear = lm(y ~ x + z),
@@ -256,7 +257,8 @@ scatter3d.default <- function(x, y, z,
                     else mgcv::gam(y ~ s(x, z, fx=TRUE, k=df.smooth)),
                     additive = if (is.null(df.additive)) mgcv::gam(y ~ s(x) + s(z))
                     else mgcv::gam(y ~ s(x, fx=TRUE, k=df.additive[1]+1) +
-                            s(z, fx=TRUE, k=(rev(df.additive+1)[1]+1)))
+                            s(z, fx=TRUE, k=(rev(df.additive+1)[1]+1))),
+                    robust = MASS::rlm(y ~ x + z, method = "MM")
                 )
                 if (model.summary) summaries[[f]] <- summary(mod)
                 yhat <- matrix(predict(mod, newdata=dat), grid.lines, grid.lines)
@@ -288,7 +290,8 @@ scatter3d.default <- function(x, y, z,
                         else mgcv::gam(y ~ s(x, z, fx=TRUE, k=df.smooth) + groups),
                         additive = if (is.null(df.additive)) mgcv::gam(y ~ s(x) + s(z) + groups)
                         else mgcv::gam(y ~ s(x, fx=TRUE, k=df.additive[1]+1) +
-                                s(z, fx=TRUE, k=(rev(df.additive+1)[1]+1)) + groups)
+                                s(z, fx=TRUE, k=(rev(df.additive+1)[1]+1)) + groups),
+                        robust = MASS::rlm(y ~ x + z + groups, method = "MM")
                     )
                     if (model.summary) summaries[[f]] <- summary(mod)
                     levs <- levels(groups)

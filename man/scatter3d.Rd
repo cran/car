@@ -110,8 +110,8 @@ You have to install the \code{rgl} package to produce 3D plots.  On a Macintosh 
     points are plotted instead.}
   \item{speed}{relative speed of revolution of the plot.}
   \item{fov}{field of view (in degrees); controls degree of perspective.}
-  \item{fit}{one or more of \code{"linear"}, \code{"quadratic"}, \code{"smooth"},
-    \code{"additive"}; to display fitted surface(s); partial matching is supported --
+  \item{fit}{one or more of \code{"linear"} (linear least squares regression), \code{"quadratic"} (quadratic least squares regression), \code{"smooth"} (nonparametric regression),
+    \code{"additive"} (nonparametric additive regression), \code{"robust"} (robust linear regression); to display fitted surface(s); partial matching is supported --
     e.g., \code{c("lin", "quad")}.}
   \item{groups}{if \code{NULL} (the default), no groups are defined; if a factor, a different surface
     or set of surfaces is plotted for each level of the factor; in this event, the colours in

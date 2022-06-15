@@ -5,6 +5,9 @@
 \alias{avPlot}
 \alias{avPlot.lm}
 \alias{avPlot.glm}
+\alias{avPlot3d}
+\alias{avPlot3d.lm}
+\alias{avPlot3d.glm}
 
 \title{Added-Variable Plots}
 \description{
@@ -38,7 +41,15 @@ avPlot(model, ...)
 	type=c("Wang", "Weisberg"), 
 	main=paste("Added-Variable Plot:", variable), grid=TRUE,
 	ellipse=FALSE, ...)
+	
+avPlot3d(model, coef1, coef2, id=TRUE, ...)
+
+\method{avPlot3d}{lm}(model, coef1, coef2, id=TRUE, fit="linear", ...)
+
+\method{avPlot3d}{glm}(model, coef1, coef2, id=TRUE, type=c("Wang", "Weisberg"), 
+  fit="linear", ...)
 }
+
 \arguments{
   \item{model}{model object produced by \code{lm} or \code{glm}.}
   \item{terms}{ A one-sided formula that specifies a subset of the predictors. 
@@ -46,6 +57,7 @@ avPlot(model, ...)
     specification \code{terms = ~.-X3} would plot against all terms
     except for \code{X3}. If this argument is a quoted name of one of the terms, the 
     added-variable plot is drawn for that term only.}
+  \item{coef1, coef2}{the quoted names of the two coefficients for a 3D added variable plot.}
   \item{intercept}{Include the intercept in the plots; default is \code{FALSE}.}
   \item{variable}{A quoted string giving the name of a regressor in the model matrix for the horizontal
     axis.}
@@ -58,14 +70,13 @@ avPlot(model, ...)
     plots from two models in the same graphics window.}
   \item{main}{The title of the plot; if missing, one will be supplied.}
   \item{ask}{If \code{TRUE}, ask the user before drawing the next plot; if \code{FALSE} don't ask.}
-  \item{\dots}{\code{avPlots} passes these arguments to \code{avPlot}.  
-    \code{avPlot} passes them to \code{plot}. }
   \item{id}{controls point identification; if \code{FALSE}, no points are identified;
     can be a list of named arguments to the \code{\link{showLabels}} function;
     \code{TRUE}, the default, is equivalent to 
     \code{list(method=list(abs(residuals(model, type="pearson")), "x"), n=2, cex=1, col=carPalette()[1], location="lr")},
     which identifies the 2 points with the largest residuals and the 2 points with 
-    the most extreme horizontal values (i.e., largest partial leverage).}
+    the most extreme horizontal values (i.e., largest partial leverage).
+    For \code{avPlot3d}, point identication is through \code{\link{Identify3d}}.}
   \item{col}{color for points; the default is the \emph{second} entry
     in the current \pkg{car} palette (see \code{\link{carPalette}}
     and \code{\link{par}}).}
@@ -89,11 +100,14 @@ avPlot(model, ...)
     plot the ellipses; and \code{robust}, a logical value determing whether to use the \code{\link{cov.trob}} function in the \pkg{MASS} package
     to calculate the center and covariance matrix for the data ellipses. \code{TRUE} is equivalent to \code{list(levels=c(.5, .95), robust=TRUE)}.}  
   \item{marginal.scale}{Consider an added-variable plot of Y versus X given Z.  If this argument is \code{FALSE} then the limits on the horizontal axis are determined by the range of the residuals from the regression of X on Z and the limits on the vertical axis are determined by the range of the residuals from the regressnio of Y on Z.  If the argument is \code{TRUE}, then the limits on the horizontal axis are determined by the range of X minus it mean, and on the vertical axis by the range of Y minus its means; adjustment is made if necessary to include outliers.  This scaling allows visualization of the correlations between Y and Z and between X and Z.  For example, if the X and Z are highly correlated, then the points will be concentrated on the middle of the plot.} 
+    \item{fit}{one or both of \code{"linear"} (linear least-squares, the default) and \code{"robust"} (robust regression) surfaces to be fit to the 3D added-variable plot; see \code{\link{scatter3d}} for details.}
+    \item{\dots}{\code{avPlots} passes these arguments to \code{avPlot} and \code{avPlot} passes them to \code{plot}; for \code{avPlot3d}, 
+  additional optional arguments to be passed to \code{\link{scatter3d}}.}
 }
 
 \details{
-  The function intended for direct use is \code{avPlots} (for which \code{avp}
-  is an abbreviation). 
+  The functions intended for direct use are \code{avPlots} (for which \code{avp}
+  is an abbreviation) and \code{avPlot3d}. 
 }
 
 \value{
@@ -139,6 +153,12 @@ abline(lm(partic ~ womwage, Bfox), col="red", lwd=2)
 avPlots(m1, ~ womwage, ellipse=list(levels=0.5)) 
 # AV plot, adjusting and scaling as in marginal plot
 avPlots(m1, ~ womwage, marginal.scale=TRUE, ellipse=list(levels=0.5)) 
+
+# 3D AV plot, requires the rgl package
+if (require("rgl")){
+avPlot3d(lm(prestige ~ income + education + type, data=Duncan), 
+  "income", "education")
+}
 }
 
 \keyword{hplot}

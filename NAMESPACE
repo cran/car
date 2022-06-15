@@ -1,9 +1,10 @@
-# last modified 2022-03-11 by J. Fox
+# last modified 2022-06-07 by J. Fox
 
 # additions for car >= 3.0-0, started 2016-12-27
 
 export(Import, Export, Predict, bcnPowerAxis)
 export(Confint, S, carPalette, poTest, brief)
+export(avPlot3d, crPlot3d)
 export(strings2factors)
 S3method(Confint, lm)
 S3method(Confint, glm)
@@ -62,6 +63,9 @@ S3method(infIndexPlot, influence.lme)
 S3method(whichNames, data.frame)
 S3method(whichNames, default)
 S3method(strings2factors, data.frame)
+S3method(avPlot3d, lm)
+S3method(avPlot3d, glm)
+S3method(crPlot3d, lm)
 
 import("carData")
 importFrom("abind", "abind")
@@ -255,6 +259,7 @@ S3method(Anova, polr)
 S3method(Anova, rlm)
 S3method(Anova, survreg)
 S3method(Anova, svyglm)
+S3method(Anova, svycoxph)
 S3method(avPlot, lm)
 S3method(avPlot, glm)
 S3method(avPlots, default)

@@ -6,6 +6,7 @@
 # 2015-01-13: fixed model.matrix.gls to work with models with formulas as object. J. Fox
 # 2020-12-19: new polr and svyolr methods for ordinal regression models. J. Fox
 # 2022-03-11: added new vif.lm() methods that handles interactions. J. Fox
+# 20220-6-07: rework vif.lm() for interations. J. Fox
 #-------------------------------------------------------------------------------
 
 # Generalized Variance-Inflation Factors (John Fox and Henric Nilsson)
@@ -130,56 +131,20 @@ vif.svyolr <- function(mod, ...) {
   result
 }
 
-vif.lm <- function(mod, type=c("terms", "marginal", "high-order"), ...){ 
-  
-  highOrderTerms <- function(){
-    high <- character(0)
-    for (term in names){
-      if (0 == length(relatives(term, names, factors))) high <- c(high, term)
-    }
-    high
-  }
-  
-  lowerOrderRelatives <- function(term){
-    candidates <- names[apply(factors, 2, function(x) any(factors[, term] & x))]
-    first.order <- names[colSums(factors) == 1]
-    if (term %in% first.order) return(NULL)
-    excluded <- first.order[
-      !sapply(first.order, function(x) term %in% names[relatives(x, names, factors)])
-    ]
-    lower <- if (length(excluded) == 0) candidates else candidates[factors[excluded, candidates] == 0]
-    list(candidates=candidates, first.order=first.order, excluded=excluded, lower=lower)
-    lower[lower != term]
-  }
-  
-  toCompareHighorder <- function(term){
-    relatives <- lowerOrderRelatives(term)
-    which.relatives <- assign.X %in% sapply(c(term, relatives), function(x)  which(x == names))
-    x1 <- X.names[which.relatives]
-    x2 <- setdiff(X.names, x1)
-    list(x1=x1, x2=x2)
-  }
-  
-  toCompare <- function(term){
-    relatives <- relatives(term, names, factors)
-    x1.x2 <- X.names[!(assign.X %in% relatives)]
-    x1 <- X.names[which(term == names) == assign.X]
-    x2 <- setdiff(x1.x2, x1)
-    list(x1=x1, x2=x2, x1.x2=x1.x2)
-  }
+vif.lm <- function(mod, type=c("terms", "predictor"), ...){ 
   
   type <- match.arg(type)
   
   if (any(attr(terms(mod), "order") > 1)){
     if (type == "terms"){
       message("there are higher-order terms (interactions) in this model\n",
-              "consider setting terms = 'marginal' or 'high-order'; see ?vif")
+              "consider setting type = 'predictor'; see ?vif")
     }
   }
   
   weighted <- any(weights(mod) != 1)
   if ((inherits(mod, "glm") || weighted) && type != "terms"){
-    warning("type = '", type, "' is available only for unweighted linear models;\n",
+    warning("type = 'predictor' is available only for unweighted linear models;\n",
             "  type = 'terms' will be used")
   }
   if (type == "terms" || weighted || inherits(mod, "glm")) {
@@ -198,48 +163,49 @@ vif.lm <- function(mod, type=c("terms", "marginal", "high-order"), ...){
     warning("No intercept: (G)VIFs may not be sensible.")
   }
   R <- cor(X)
+  detR <- det(R)
   X.names <- colnames(X)
-  
-  if (type == "marginal"){
-    n.terms <- length(names)
-    vifs <- matrix(0, n.terms, 3)
-    colnames(vifs) <- c("GVIF", "Df", "GVIF^(1/(2*Df))")
-    rownames(vifs) <- names
-    for (i in 1:n.terms){
-      compare <- toCompare(names[i])
-      vifs[i, 1] <- det(R[compare$x1, compare$x1, drop=FALSE])*
-        det(R[compare$x2, compare$x2, drop=FALSE])/
-        det(R[compare$x1.x2, compare$x1.x2, drop=FALSE])
-      p <- length(compare$x1)
-      vifs[i, 2] <- p
-      vifs[i, 3] <- vifs[i, 1]^(1/(2*p))
+  formula <- formula(mod)[-2]
+  terms <- attr(terms(mod), "term.labels")
+  term.vars <- lapply(parse(text=terms), all.vars)
+  predictors <- all.vars(formula)
+  vifs <- matrix(0, length(predictors), 3)
+  rownames(vifs) <- predictors
+  colnames(vifs) <- c("GVIF", "Df", "GVIF^(1/(2*Df))")
+  vifs <- as.data.frame(vifs)
+  vifs$`Interacts With` <- rep("", length(predictors))
+  vifs$`Other Predictors` <- rep("", length(predictors))
+  all.cols <- 1:ncol(X)
+  for (predictor in predictors){
+    which.terms <- sapply(term.vars, function(vars) predictor %in% vars)
+    related <- unique(unlist(strsplit(paste(terms[which.terms], collapse=":"), ":")))
+    vifs[predictor, 4] <- if (length(related[-1]) > 0) {
+      paste(related[-1], collapse=", ")
+    } else {
+      "--  "
     }
-    
-  } else {
-    high.order.terms <- highOrderTerms()
-    n.terms <- length(high.order.terms)
-    vifs <- matrix(0, n.terms, 3)
-    colnames(vifs) <- c("GVIF", "Df", "GVIF^(1/(2*Df))")
-    detR <- det(R)
-    for (i in 1:n.terms){
-      compare <- toCompareHighorder(high.order.terms[i])
-      vifs[i, 1] <- det(R[compare$x1, compare$x1, drop=FALSE])*
-        det(R[compare$x2, compare$x2, drop=FALSE])/
-        detR
-      p <- length(compare$x1)
-      vifs[i, 2] <- p
-      vifs[i, 3] <- vifs[i, 1]^(1/(2*p))
+    unrelated <- setdiff(predictors, related)
+    if (length(unrelated) > 0){
+      unrelated.terms <- sapply(term.vars, 
+                                function(vars) unrelated %in% vars)
+      if (is.matrix(unrelated.terms)) unrelated.terms <- apply(unrelated.terms, 2, any)
+      columns <- setdiff(all.cols, which(assign.X %in% which(unrelated.terms)))
+      gvif <- det(R[columns, columns, drop=FALSE])*det(R[-columns, -columns, drop=FALSE])/detR
+      vifs[predictor, 5] <- paste(unrelated, collapse=", ")
+    } else {
+      columns <- all.cols
+      gvif <- 1
+      vifs[predictor, 5] <- "--  "
     }
-    rownames(vifs) <- gsub("\\:", "\\*", high.order.terms)
+    p <- length(columns)
+    vifs[predictor, 1:3] <- c(gvif, p, gvif^(1/(2*p)))
   }
   
   if (all(vifs[, 2] == 1)) {
-    if (type == "marginal") message("VIFs computed respecting marginality")
-    else message("VIFs computed for high-order terms")
+    message("VIFs computed for predictors")
     return(vifs[, 1])
   } else {
-    if (type == "marginal") message("GVIFs computed respecting marginality")
-    else message("GVIFs computed for high-order terms")
+    message("GVIFs computed for predictors")
     return(vifs)
   }
 }

@@ -19,6 +19,7 @@
 %   2017-11-07: make compatible with vcov() in re-devel. J. Fox
 %   2021-06-14: updates for vcov. arg. J. Fox
 %   2022-04-24: added error.df argument to Anova.default(). J. Fox
+%   2022-06-07: added Anova.svycoxph(). J. Fox
 %-------------------------------------------------------------------------------------
 
 \name{Anova}
@@ -42,6 +43,7 @@
 \alias{as.data.frame.univaov}
 \alias{Anova.coxph}
 \alias{Anova.svyglm}
+\alias{Anova.svycoxph}
 \alias{Anova.rlm}
 \alias{Anova.coxme}
 \alias{Anova.default}
@@ -52,7 +54,7 @@
   (in the \pkg{nnet} package), \code{polr} (in the \pkg{MASS}
   package), \code{coxph} (in the \pkg{survival} package),
   \code{coxme} (in the \pkg{coxme} pckage),
-  \code{svyglm} (in the \pkg{survey} package), \code{rlm} (in the \pkg{MASS} package),
+  \code{svyglm} and \code{svycoxph} (in the \pkg{survey} package), \code{rlm} (in the \pkg{MASS} package),
   \code{lmer} in the \pkg{lme4} package,
   \code{lme} in the \pkg{nlme} package, and (by the default method) for most
   models with a linear predictor and asymptotically normal coefficients (see details below). For linear
@@ -125,6 +127,9 @@ Manova(mod, ...)
 
 \method{Anova}{svyglm}(mod, ...)
 
+\method{Anova}{svycoxph}(mod, type=c("II", "III", 2, 3),
+  test.statistic="Wald", ...)
+
 \method{Anova}{rlm}(mod, ...)
 
 \method{Anova}{default}(mod, type=c("II", "III", 2, 3),
@@ -134,7 +139,7 @@ Manova(mod, ...)
 
 \arguments{
   \item{mod}{\code{lm}, \code{aov}, \code{glm}, \code{multinom}, \code{polr}
-    \code{mlm}, \code{coxph}, \code{coxme}, \code{lme}, \code{mer}, \code{merMod}, \code{svyglm},
+    \code{mlm}, \code{coxph}, \code{coxme}, \code{lme}, \code{mer}, \code{merMod}, \code{svyglm}, \code{svycoxph},
     \code{rlm}, or other suitable model object.}
   \item{error}{for a linear model, an \code{lm} model object from which the
     error sum of squares and degrees of freedom are to be calculated. For

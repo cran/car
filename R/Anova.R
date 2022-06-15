@@ -70,6 +70,7 @@
 # 2021-06-19: make sure that calls to anova() for survival::survreg() models return "anova" objects. JF
 # 2022-01-17,18: handle singularities better in Anova.mlm() (suggestion of Marius Barth)
 # 2922-04-24: introduce new error.df argument for linearHypothesis.default(). JF
+# 2022-06-07: Added Anova.svycoxph(). JF
 
 #-------------------------------------------------------------------------------
 
@@ -2102,4 +2103,14 @@ coef.svyolr <- function(object, ...) NextMethod()
 vcov.svyolr <- function(object, ...){
   nms <- names(coef(object))
   (object$var)[nms, nms]
+}
+
+# Anova() method for svycoxph objects, to prevent test="LR"
+
+Anova.svycoxph <- function(mod, type=c("II", "III", 2, 3),
+                           test.statistic="Wald", ...){
+  test.statistic <- match.arg(test.statistic)
+  type <- as.character(type)
+  type <- match.arg(type)
+  NextMethod(test.statistic=test.statistic, type=type, ...)
 }

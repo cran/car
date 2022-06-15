@@ -16,7 +16,7 @@ vif(mod, ...)
 
 \method{vif}{default}(mod, ...)
 
-\method{vif}{lm}(mod, type=c("terms", "marginal", "high-order"), ...)
+\method{vif}{lm}(mod, type=c("terms", "predictor"), ...)
 
 \method{vif}{merMod}(mod, ...)
 
@@ -51,13 +51,11 @@ vif(mod, ...)
   Through a further generalization, the implementation here is applicable as well to other sorts of models,
   in particular weighted linear models,  generalized linear models, and mixed-effects models.
   
-  Three methods of computing GVIFs are provided for unweighted linear models: 
+  Two methods of computing GVIFs are provided for unweighted linear models: 
   \itemize{
-    \item Setting \code{type="terms"} (the default) behaves like the default method, and computes the GIF for each term in the model, ignoring relations of marginality among the terms in models with interactions. 
+    \item Setting \code{type="terms"} (the default) behaves like the default method, and computes the GVIF for each term in the model, ignoring relations of marginality among the terms in models with interactions. GVIFs computed in this manner aren't generally sensible.
     
-    \item Setting \code{type="marginal"} focuses in turn on each term in the model but ignores terms that are higher-order relatives of the focal term; e.g., in the model with formula \code{y ~ a*b + c}, the the GVIF for the main effect \code{a} ignores the interaction \code{a:b} to which \code{a} is marginal. 
-    
-    \item Setting \code{type="high-order"} computes a GVIF for each high-order term in the model, absorbing the lower-order relatives of the term (i.e., terms that are marginal to the focal term); thus, in the model with formula \code{y ~ a*b + c}, GVIFs are computed for \code{a:b} and \code{c}, and the former includes the terms \code{a}, \code{b}, and \code{a:b} (and is labelled \code{a*b}).
+    \item Setting \code{type="predictor"} focuses in turn on each predictor in the model, combining the main effect for that predictor with the main effects of the predictors with which the focal predictor interacts and the interactions; e.g., in the model with formula \code{y ~ a*b + b*c}, the GVIF for the predictor \code{a} also includes the \code{b} main effect and the \code{a:b} interaction regressors; the GVIF for the predictor \code{c} includes the \code{b} main effect and the  \code{b:c} interaction; and the GVIF for the predictor \code{b} includes the \code{a} and \code{c} main effects and the \code{a:b} and \code{a:c} interactions (i.e., the whole model), and is thus necessarily 1. These predictor GVIFs should be regarded as experimental.
     }
   
   Specific methods are provided for ordinal regression model objects produced by \code{\link[MASS:polr]{polr}} in the \pkg{MASS} package and \code{\link[survey:svyolr]{svyolr}} in the \pkg{survey} package, which are "intercept-less"; VIFs or GVIFs for linear and similar regression models without intercepts are generally not sensible.
@@ -85,9 +83,9 @@ vif(mod, ...)
 vif(lm(prestige ~ income + education, data=Duncan))
 vif(lm(prestige ~ income + education + type, data=Duncan))
 vif(lm(prestige ~ (income + education)*type, data=Duncan),
-    type="high-order")
+    type="terms") # not recommended
 vif(lm(prestige ~ (income + education)*type, data=Duncan),
-    type="marginal")
+    type="predictor")
 }
 
 \keyword{regression}

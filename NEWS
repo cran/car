@@ -1,3 +1,13 @@
+Changes to Version 3.1-0
+
+  o New 3D added-variable and component+residual plots, avPlot3d() and crPlot3d().
+
+  o More flexible recode()/Recode().
+  
+  o Added Anova.svycoxph() to prevent seledtion of test.statistic="LR".
+  
+  o New take on vif.lm().
+  
 Changes to Version 3.0-13
 
   o Handle singularities better in Anova.mlm() (suggestion of Marius Barth).
