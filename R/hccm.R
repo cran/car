@@ -6,6 +6,8 @@
 #             (reported by Justin Yap). J. Fox
 # 2021-07-29: Report error when any hatvalue = 1 for all but hc0 and hc1
 #             (following report of problem reported by Peng Ding) J. Fox
+# 2022-10-11: Modified error reports for hatvalue = 1, and add for
+#             hc0 and hc1. S. Weisberg
 #-------------------------------------------------------------------------------
 
 # Heteroscedasticity-corrected standard errors (Huber/White adjustment) (J. Fox)
@@ -42,22 +44,19 @@ hccm.lm <-function (model, type = c("hc3", "hc0", "hc1", "hc2", "hc4"),
 			hc2 = 1 - h, hc3 = (1 - h)^2, hc4 = (1 - h)^pmin(4, n * h/p))
 	V <- V %*% t(X) %*% apply(X, 2, "*", (e^2)/factor) %*% V
 	bad <- h > 1 - sqrt(.Machine$double.eps)
-	if ((n.bad <- sum(bad)) > 0 && !(type %in% c("hc0", "hc1"))) {
+	if ((n.bad <- sum(bad)) > 0 ) {
 	  nms <- names(e)
 	  bads <- if (n.bad <= 10) {
 	    paste(nms[bad], collapse=", ")
 	  } else {
 	    paste0(paste(nms[bad[1:10]], collapse=", "), ", ...")
-	  }
-	  if (any(is.nan(V))){
-	    stop("cannot proceed because of ", n.bad, if (n.bad == 1) " case " else " cases ",
-	       "with hatvalue = 1:\n   ", bads)
-	  } else {
-	    warning("adjusted coefficient covariances may be unstable because of ", n.bad, 
-	            if (n.bad == 1) " case " else " cases ",
-	            "with hatvalue near 1:\n   ", bads)
-	  }
-	}
+	  }}
+# error checking.  hc2, hc3, hc4 may have nan's if n.bad > 1
+	  if (n.bad > 0 & any(is.nan(V)))
+	    stop("hccm estimator is singular because of ", n.bad, if (n.bad == 1) " case " else " cases ", "with hatvalue = 1:\n   ", bads)
+# for hc0, hc1 there are no nans, but V may be singular	
+    if (qr(V)$rank < p)
+      stop("hccm estimator is singular because of ", n.bad, if (n.bad == 1) " case " else " cases ", "with hatvalue = 1:\n   ", bads)
 	V
 }
 

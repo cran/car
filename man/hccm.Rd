@@ -48,12 +48,19 @@ hccm(model, ...)
   
   The function \code{hccm.default} simply catches non-\code{lm} objects.
   
-  See Freedman (2006) and Fox and Weisberg(2019, Sec. 5.1.2) for discussion of the use of these methods in generalized linear models or models with nonconstant variance.
+  See Freedman (2006) and Fox and Weisberg (2019, Sec. 5.1.2) for discussion of the use of these methods in generalized linear models or models with nonconstant variance.
+  
+  The heteroscedasticity-corrected covariance matrix will be singular if one or more observations have hatvalues (leverages) equal to 1, and hence is not a consistent estimate of the population covariance matrix.  This will occur most often in outlier testing: if there are m suspected outliers then m dummy variables are added to the regression model corresponding to the m cases (See Section 2.2.2 of Cook and Weisberg (1982)).  The function returns an error if the heteroscedasticity-corrected covariance matrix is singular.
 }
 \value{
   The heteroscedasticity-corrected covariance matrix for the model.
 }
+
 \references{
+  Cook, R. D. and Weisberg, S. (1982).
+  Residuals and Influence in Regression, Chapman and Hall, 
+  \url{https://hdl.handle.net/11299/37076}.
+
   Cribari-Neto, F. (2004)
   Asymptotic inference under heteroskedasticity of unknown form.
   \emph{Computational Statistics and Data Analysis} \bold{45}, 215--233.
@@ -80,16 +87,16 @@ hccm(model, ...)
 \author{John Fox \email{jfox@mcmaster.ca}}
 
 \examples{
-options(digits=4)
-mod<-lm(interlocks~assets+nation, data=Ornstein)
-vcov(mod)
+mod <- lm(interlocks ~ assets + nation, data=Ornstein)
+print(vcov(mod), digits=4)
 ##             (Intercept)     assets  nationOTH   nationUK   nationUS
 ## (Intercept)   1.079e+00 -1.588e-05 -1.037e+00 -1.057e+00 -1.032e+00
 ## assets       -1.588e-05  1.642e-09  1.155e-05  1.362e-05  1.109e-05
 ## nationOTH    -1.037e+00  1.155e-05  7.019e+00  1.021e+00  1.003e+00
 ## nationUK     -1.057e+00  1.362e-05  1.021e+00  7.405e+00  1.017e+00
 ## nationUS     -1.032e+00  1.109e-05  1.003e+00  1.017e+00  2.128e+00
-hccm(mod)             
+
+print(hccm(mod), digits=4)             
 ##             (Intercept)     assets  nationOTH   nationUK   nationUS
 ## (Intercept)   1.664e+00 -3.957e-05 -1.569e+00 -1.611e+00 -1.572e+00
 ## assets       -3.957e-05  6.752e-09  2.275e-05  3.051e-05  2.231e-05

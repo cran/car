@@ -17,6 +17,8 @@
 # 2017-06-27: introduced id argument replacing several arguments. J. Fox
 # 2017-11-30: use carPalette(), avoid red and green. J. Fox
 # 2022-05-30: add "robust" as a fit option.
+# 2022-08-20: introduce reg.function and reg.function.col arguments. J. Fox
+# 2022-08-29: introduce mouseMode argument. J. Fox
 
 scatter3d <- function(x, ...){
     if (!requireNamespace("rgl")) stop("rgl package missing")
@@ -74,10 +76,13 @@ scatter3d.default <- function(x, y, z,
     # id.method=c("mahal", "xz", "y", "xyz", "identify", "none"), 
     # id.n=if (id.method == "identify") Inf else 0,
     # labels=as.character(seq(along=x)), offset = ((100/length(x))^(1/3)) * 0.02,
-    id=FALSE, model.summary=FALSE, ...){
+    id=FALSE, model.summary=FALSE, 
+    reg.function, reg.function.col=surface.col[length(surface.col)], 
+    mouseMode=c(none="none", left="polar", right="zoom", middle="fov", wheel="pull"), ...){
     if (!requireNamespace("rgl")) stop("rgl package missing")
     if (!requireNamespace("mgcv")) stop("mgcv package missing")
     if (!requireNamespace("MASS")) stop("MASS package missing")
+    rgl::par3d(mouseMode=mouseMode)
     id <- applyDefaults(id, defaults=list(method="mahal", n=2,
         labels=as.character(seq(along=x)), offset = ((100/length(x))^(1/3))*0.02), type="id")
     if (isFALSE(id)){
@@ -243,10 +248,12 @@ scatter3d.default <- function(x, y, z,
                     col=surface.col[j])
             }
         }
-    }
+    }        
+    
+    vals <- seq(0, 1, length.out=grid.lines)
+    dat <- expand.grid(x=vals, z=vals)
+    
     if (surface){
-        vals <- seq(0, 1, length.out=grid.lines)
-        dat <- expand.grid(x=vals, z=vals)
         for (i in 1:length(fit)){
             f <- match.arg(fit[i], c("linear", "quadratic", "smooth", "additive", "robust"))
             if (is.null(groups)){
@@ -365,6 +372,23 @@ scatter3d.default <- function(x, y, z,
         }
     }
     else levs <- levels(groups)
+    
+    # plot an arbitrary regression function
+    if (!missing(reg.function)){
+      x <- seq(minx, maxx, length.out=grid.lines)
+      z <- seq(minz, maxz, length.out=grid.lines)
+      D <- expand.grid(x=x, z=z)
+      x <- D$x
+      z <- D$z
+      ys <- eval(substitute(reg.function))
+      ys <- (ys - miny)/(maxy - miny)
+      ys <- matrix(ys, grid.lines, grid.lines)
+      
+      if (fill) rgl::rgl.surface(vals, vals, ys, color=reg.function.col, alpha=surface.alpha, lit=FALSE)
+      if(grid) rgl::rgl.surface(vals, vals, ys, color=if (fill) grid.col
+                                else reg.function.col, alpha=surface.alpha, lit=FALSE, front="lines", back="lines")
+    }
+    
     if (id.method == "identify"){
         Identify3d(xg, yg, zg, axis.scales=axis.scales, groups=ggroups, labels=glabels, 
             col=surface.col, offset=offset)

@@ -1,4 +1,4 @@
-# last modified 2022-06-07 by J. Fox
+# last modified 2022-10-04 by J. Fox
 
 # additions for car >= 3.0-0, started 2016-12-27
 
@@ -6,6 +6,7 @@ export(Import, Export, Predict, bcnPowerAxis)
 export(Confint, S, carPalette, poTest, brief)
 export(avPlot3d, crPlot3d)
 export(strings2factors)
+export(pointLabel)
 S3method(Confint, lm)
 S3method(Confint, glm)
 S3method(Confint, multinom)
@@ -74,12 +75,14 @@ importFrom("stats", "naprint", "symnum", ".checkMFClasses",
             "AIC", "BIC", "expand.model.frame")
 importFrom("utils", "download.file", "capture.output", "askYesNo", "browseURL", "globalVariables", "getFromNamespace")
 
+importFrom("grDevices", "as.graphicsAnnot", "xy.coords")
+importFrom("stats", "runif")
 
 #  from earlier versions car package
 
 importFrom(graphics, abline, arrows, axis, box, boxplot, contour, hist, identify,
     layout, legend, lines, locator, mtext, pairs, par, plot, points, polygon,
-    rug, segments, strheight, strwidth, text)
+    rug, segments, strheight, strwidth, text, title)
 importFrom(grDevices, boxplot.stats, col2rgb, gray, palette, rgb)
 importFrom(stats, D, IQR, alias, anova, as.formula, binomial, bw.nrd0, coef, coefficients,
     complete.cases, confint, contrasts, "contrasts<-", cooks.distance, cor,
@@ -104,6 +107,7 @@ export(
     carHexsticker,
     carWeb,
     confidenceEllipse,
+    confidenceEllipses,
     contr.Helmert,
     contr.Sum,
     contr.Treatment,
@@ -218,6 +222,9 @@ export(
 S3method(confidenceEllipse, default)
 S3method(confidenceEllipse, glm)
 S3method(confidenceEllipse, lm)
+S3method(confidenceEllipse, mlm)
+S3method(confidenceEllipses, default)
+S3method(confidenceEllipses, mlm)
 S3method(print, spreadLevelPlot)
 S3method(qqPlot, default)
 S3method(qqPlot, glm)

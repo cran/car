@@ -1,3 +1,5 @@
+# influencePlot.R
+
 # changed point marking, 25 November 2009 by S. Weisberg
 #  deleted the cutoff for Cook's D, and the coloring of the circles
 #  inserted default labeling of the id.n largest Cook D.
@@ -11,8 +13,22 @@
 # 2017-02-12: consolidated id argument. J. Fox
 # 2017-11-30: substitute carPalette() for palette(). J. Fox
 # 2019-01-02: added lmerMod method. J. Fox
+# 2022-09-21: Fill the bubble points by default. M. Friendly & J. Fox
 
 # moved from Rcmdr 5 December 2006
+
+colscale <- function(x, y, colors, min, max){
+  n <- length(colors)
+  polygon(x=c(x[1], x[2], x[2], x[1]), y=c(y[1], y[1], y[2], y[2]), xpd=TRUE)
+  xincrement <- (x[2] - x[1])/n
+  for (i in 1:n){
+    xx <- c(x[1] + (i - 1)*xincrement, x[1] + i*xincrement)
+    polygon(x=c(xx[1], xx[2], xx[2], xx[1]), y=c(y[1], y[1], y[2], y[2]),
+            border=NA, col=colors[i], xpd=TRUE)
+  }
+  text(x[1], mean(y), labels=min, pos=2, xpd=TRUE)
+  text(x[2], mean(y), labels=max, pos=4, xpd=TRUE)
+}
 
 influencePlot <- function(model, ...){
     UseMethod("influencePlot")
@@ -20,7 +36,9 @@ influencePlot <- function(model, ...){
 
 influencePlot.lm <- function(model, scale=10,  
                              xlab="Hat-Values", ylab="Studentized Residuals",
-                             id=TRUE, ...){
+                             id=TRUE, 
+                             fill=TRUE, fill.col=carPalette()[2], fill.alpha=0.5,
+                             ...){
     id <- applyDefaults(id, defaults=list(method="noteworthy", n=2, cex=1, col=carPalette()[1], location="lr"), type="id")
     if (isFALSE(id)){
         id.n <- 0
@@ -44,10 +62,21 @@ influencePlot.lm <- function(model, scale=10,
     scale <- scale/max(cook, na.rm=TRUE)
     p <- length(coef(model))
     n <- sum(!is.na(rstud))
-    plot(hatval, rstud, xlab=xlab, ylab=ylab, type='n', ...)
+    plot(hatval, rstud, xlab=xlab, ylab=ylab, type="n", ...) 
     abline(v=c(2, 3)*p/n, lty=2)
     abline(h=c(-2, 0, 2), lty=2)
-    points(hatval, rstud, cex=scale*cook, ...)
+    points(hatval, rstud, cex=scale*cook, ...) 
+    if (fill) {
+      cols <- scales::alpha(fill.col, alpha=fill.alpha*(cook^2/max(cook)^2))
+      points(hatval, rstud, cex=scale*cook, col=cols, pch=16)  
+      usr <- par("usr")
+      left <- usr[1] + 0.2*(usr[2] - usr[1])
+      right <- usr[1] + 0.8*(usr[2] - usr[1])
+      bot <- usr[4] + strheight("a")
+      top <- bot + 2*strheight("A")
+      colors <- scales::alpha(fill.col, alpha=seq(0, 1, length=100))
+      colscale(c(left, right), c(bot, top), colors, "Cook's D: 0", signif(max(cook)^2, 3))
+      }
     if(id.method == "noteworthy"){
         which.rstud <- order(abs(rstud), decreasing=TRUE)[1:id.n]
         which.cook <- order(cook, decreasing=TRUE)[1:id.n]

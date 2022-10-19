@@ -13,7 +13,7 @@
 # 2017-01-10 special handling for method="none".
 # 2017-02-13 fixed showLabels1() when location="avoid"
 # 2017-03-25: don't supply names if indexes are the same as labels. J. Fox
-
+# 2022-10-04: pointLabel() is now in the car package.
 
 showLabels <- function(x, y, labels=NULL, method="identify",
      n = length(x), cex=1, col=carPalette()[1], 
@@ -131,7 +131,7 @@ showLabels1 <- function(x, y, labels=NULL, id.method="identify",
     		text(x[i], y[i], labels[i], cex = id.cex, xpd = TRUE,
     			col = id.col, pos = labpos[i], offset = 0.25)}
   }
-  else maptools::pointLabel(c(x[ind], x[ind]), c(y[ind], y[ind]),
+  else pointLabel(c(x[ind], x[ind]), c(y[ind], y[ind]),
                 c(paste0(" ", labels[ind], " "), rep(" ", length(ind))),
                 cex=id.cex, xpd=TRUE, col=id.col)
   if (any(as.character(ind) != labels[ind])) names(ind) <- labels[ind]

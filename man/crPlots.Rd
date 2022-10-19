@@ -44,7 +44,10 @@ crPlot3d(model, var1, var2, ...)
     smoother = c("loess", "mgcv", "none"), df.mgcv = NULL, loess.args = NULL,
     sphere.size = 1, radius = 1, threshold = 0.01, speed = 1, fov = 60,
     ellipsoid = FALSE, level = 0.5, ellipsoid.alpha = 0.1,
-    id = FALSE, ...)
+    id = FALSE, 
+    mouseMode=c(none="none", left="polar", right="zoom", middle="fov", 
+	               wheel="pull"),
+    ...)
 }
 
 \arguments{
@@ -112,7 +115,7 @@ crPlot3d(model, var1, var2, ...)
     axis.col, surface.col, surface.alpha,
     point.col, text.col, grid.col, fogtype, fill, 
     sphere.size, radius, threshold, speed, fov,
-    ellipsoid, level, ellipsoid.alpha}{see \code{\link{scatter3d}.}}
+    ellipsoid, level, ellipsoid.alpha, mouseMode}{see \code{\link{scatter3d}.}}
 }
 
 \details{
@@ -157,7 +160,7 @@ crPlots(glm(partic != "not.work" ~ hincome + children,
   data=Womenlf, family=binomial), smooth=list(span=0.75))
 
 # 3D C+R plot, requires the rgl, effects, and mgcv packages
-if (require(rgl) && require(effects) && require(mgcv)){
+if (interactive() && require(rgl) && require(effects) && require(mgcv)){
 crPlot3d(lm(prestige ~ income*education + women, data=Prestige), 
     "income", "education") 
 }

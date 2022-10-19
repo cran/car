@@ -6,6 +6,7 @@
 # 2016-10-01: tweaked data.frame and list methods. J. Fox
 # 2017-01-11: consolidate id argument
 # 2017-10-03: add col and cex to id argument
+# 2022-10-04: pointLabel() is now in the car package.
 
 Boxplot <- function(y, ...){
   arg.list <- list(...)
@@ -69,7 +70,7 @@ Boxplot.default <- function(y, g, id=TRUE, xlab, ylab, ...){
             labs <- c(labs.low, labs.high)
             at <- if(!is.null(pars$at)) pars$at else 1		
             if (id.location == "lr") text(at, c(y.low, y.high), labs, pos = 2, xpd=TRUE, cex=id.cex, col=id.col)
-            else maptools::pointLabel(c(at, at), c(y.low, y.high, y.low, y.high), 
+            else pointLabel(c(at, at), c(y.low, y.high, y.low, y.high), 
                                       c(paste0(" ", labs, " "), rep(" ", length(labs))), 
                                       xpd=TRUE, col=id.col, cex=id.cex)
             return(if (length(labs) == 0) invisible(NULL) else labs)
@@ -128,7 +129,7 @@ Boxplot.default <- function(y, g, id=TRUE, xlab, ylab, ...){
                     at <- if(!is.null(pars$at)) pars$at[group] else group
                     labs <- c(labs.low, labs.high)
                     if (id.location == "lr") text(at, c(y.low, y.high), labs, pos = pos, xpd=TRUE, col=id.col, cex=id.cex)
-                    else maptools::pointLabel(c(at, at), c(y.low, y.high, y.low, y.high), 
+                    else pointLabel(c(at, at), c(y.low, y.high, y.low, y.high), 
                                                    c(paste0(" ", labs, " "), rep(" ", length(labs))), 
                                                    xpd=TRUE, col=id.col, cex=id.cex)
                     identified <- c(identified, c(labs.low, labs.high))

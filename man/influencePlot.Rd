@@ -16,7 +16,8 @@
 influencePlot(model, ...)
 
 \method{influencePlot}{lm}(model, scale=10,  
- xlab="Hat-Values", ylab="Studentized Residuals", id=TRUE, ...)
+ xlab="Hat-Values", ylab="Studentized Residuals", id=TRUE, 
+ fill=TRUE, fill.col=carPalette()[2], fill.alpha=0.5, ...)
 
 \method{influencePlot}{lmerMod}(model, ...)
 }
@@ -31,6 +32,9 @@ influencePlot(model, ...)
 \code{id=FALSE}; the default, \code{id=TRUE} is equivalent to \code{id=list(method="noteworthy", n=2, cex=1, col=carPalette()[1], location="lr")}.  
 The default \code{method="noteworthy"} is used only in this function and indicates setting labels for points with large Studentized residuals, hat-values or Cook's distances.  Set 
 \code{id=list(method="identify")} for interactive point identification.}
+  \item{fill}{if \code{TRUE} (the default) fill the circles, with the opacity of the filled color proportional to Cook's D, using the \code{\link[scales]{alpha}} function in the \pkg{scales} package to compute the opacity of the fill.}
+  \item{fill.col}{color to use for the filled points, taken by default from the second element of the \code{\link{carPalette}} color palette.}
+  \item{fill.alpha}{the maximum alpha (opacity) of the points.}
   \item{\dots}{arguments to pass to the \code{plot} and \code{points} functions.}
 }
 
@@ -51,10 +55,10 @@ used for its side-effect of drawing a plot.
 }
 
 \author{John Fox \email{jfox@mcmaster.ca}, minor changes by S. Weisberg
-\email{sandy@umn.edu}}
+\email{sandy@umn.edu} and a contribution from Michael Friendly}
 
 
-\seealso{\code{\link{cooks.distance}}, \code{\link{rstudent}}, 
+\seealso{\code{\link{cooks.distance}}, \code{\link{rstudent}}, \code{\link[scales]{alpha}}, \code{\link{carPalette}},
 \code{\link{hatvalues}}, \code{\link{showLabels}}}
 
 \examples{

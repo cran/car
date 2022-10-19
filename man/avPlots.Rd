@@ -155,7 +155,7 @@ avPlots(m1, ~ womwage, ellipse=list(levels=0.5))
 avPlots(m1, ~ womwage, marginal.scale=TRUE, ellipse=list(levels=0.5)) 
 
 # 3D AV plot, requires the rgl package
-if (require("rgl")){
+if (interactive() && require("rgl")){
 avPlot3d(lm(prestige ~ income + education + type, data=Duncan), 
   "income", "education")
 }

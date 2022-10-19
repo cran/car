@@ -41,7 +41,11 @@ scatter3d(x, ...)
 	  sphere.size=1, radius=1, threshold=0.01, speed=1, fov=60,
 	  fit="linear", groups=NULL, parallel=TRUE,
 	  ellipsoid=FALSE, level=0.5, ellipsoid.alpha=0.1, id=FALSE,
-	  model.summary=FALSE, ...)
+	  model.summary=FALSE, 
+	  reg.function, reg.function.col=surface.col[length(surface.col)], 
+	  mouseMode=c(none="none", left="polar", right="zoom", middle="fov", 
+	               wheel="pull"),
+	  ...)
 
 Identify3d(x, y, z, axis.scales=TRUE, groups = NULL, labels = 1:length(x),
 	col = c("blue", "green", "orange", "magenta", "cyan", "red", "yellow", "gray"),
@@ -135,6 +139,9 @@ You have to install the \code{rgl} package to produce 3D plots.  On a Macintosh 
     least as many colours as groups; if there are no groups, the first colour is used. Normally, the colours
     would correspond to the \code{surface.col} argument to \code{scatter3d}.}
   \item{offset}{vertical displacement for point labels (to avoid overplotting the points).}
+  \item{reg.function}{an arithmetic expression that is a function of \code{x} and \code{z} (respectively, the horizontal and out-of-screen explanatory variables), representing an arbitrary regression function to plot.}
+  \item{reg.function.col}{color to use for the surface produced by \code{reg.function}; defaults to the \emph{last} color in \code{surface.col}.}
+  \item{mouseMode}{defines what the mouse buttons, etc., do; passed to \code{\link[rgl]{par3d}} in the \pkg{rgl} package; the default in \code{scatter3d} is the same as in the \pkg{rgl} package, except for the left mouse button.}
   \item{\dots}{arguments to be passed down.}
 }
 
@@ -187,6 +194,27 @@ scatter3d(prestige ~ income + education, fit=c("linear", "additive"),
 Sys.sleep(5)
 scatter3d(prestige ~ income + education | type,
     radius=(1 + women)^(1/3), data=Prestige)
+Sys.sleep(5)
+if (require(mvtnorm)){
+  local({
+    set.seed(123)
+    Sigma <- matrix(c(
+      1, 0.5,
+      0.5, 1),
+      2, 2
+    )
+    X <- rmvnorm(200, sigma=Sigma)
+    D <- data.frame(
+      x1 = X[, 1],
+      x2 = X[, 2]
+    )
+    D$y <- with(D, 10 + 1*x1 + 2*x2 + 3*x1*x2 + rnorm(200, sd=3))
+    # plot true regression function
+    scatter3d(y ~ x1 + x2, D, 
+              reg.function=10 + 1*x + 2*z + 3*x*z,
+              surface=FALSE, revolutions=2)
+  })
+}
 	}
 	\dontrun{ # requires user interaction to identify points
 # drag right mouse button to identify points, click right button in open area to exit

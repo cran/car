@@ -71,6 +71,9 @@
 # 2022-01-17,18: handle singularities better in Anova.mlm() (suggestion of Marius Barth)
 # 2922-04-24: introduce new error.df argument for linearHypothesis.default(). JF
 # 2022-06-07: Added Anova.svycoxph(). JF
+# 2022-07-22: Fix bug in Anova.survreg() for Wald tests (reported by Megan Taylor Jones). JF
+# 2022-07-22: Make Anova.lm() more robust when there are aliased coefficients (following report by Taiwo Fagbohungbe). JF
+# 2022-07-27:  Tweaked the last fix so the tolerance for deciding rank is the same for the lm model and the temporary glm model. SW
 
 #-------------------------------------------------------------------------------
 
@@ -98,16 +101,24 @@ relatives <- function(term, names, factors){
 }
 
 lm2glm <- function(mod){
-  class(mod) <- c("glm", "lm")
-  wts <- mod$weights
-  mod$prior.weights <- if (is.null(wts)) rep(1, length(mod$residuals)) else wts
-  mod$y <- model.response(model.frame(mod))
-  mod$linear.predictors <- mod$fitted.values
-  mod$control <- list(epsilon=1e-8, maxit=25, trace=FALSE)
-  mod$family <- gaussian()
-  mod$deviance <- sum(residuals(mod)^2, na.rm=TRUE)
-  mod
+  # class(mod) <- c("glm", "lm")
+  # wts <- mod$weights
+  # mod$prior.weights <- if (is.null(wts)) rep(1, length(mod$residuals)) else wts
+  # mod$y <- model.response(model.frame(mod))
+  # mod$linear.predictors <- mod$fitted.values
+  # mod$control <- list(epsilon=1e-8, maxit=25, trace=FALSE)
+  # mod$family <- gaussian()
+  # mod$deviance <- sum(residuals(mod)^2, na.rm=TRUE)
+  # mod
+  Data <- getModelData(mod)
+  wts <- weights(mod)
+  Data$..wts.. <- if (is.null(wts)) rep(1, nrow(Data)) else wts
+  form <- formula(mod)
+  eps <- 1000 * (if(is.null(mod$call$tol)) 1e-7 else mod$call$tol)
+  glm(form, weights=..wts.., data=Data, control=list(epsilon=eps))
 }
+
+globalVariables("..wts..")
 
 Anova <- function(mod, ...){
   UseMethod("Anova", mod)
@@ -1403,16 +1414,20 @@ Anova.survreg <- function(mod, type=c("II","III", 2, 3), test.statistic=c("LR", 
   switch(type,
          II=switch(test.statistic,
                    LR=Anova.II.LR.survreg(mod),
-                   Wald=Anova.II.Wald.survreg(mod)),
+               #    Wald=Anova.II.Wald.survreg(mod)
+                   Wald=Anova.Wald.survreg(mod, type="2")),
          III=switch(test.statistic,
                     LR=Anova.III.LR.survreg(mod),
-                    Wald=Anova.III.Wald.survreg(mod)),
+               #     Wald=Anova.III.Wald.survreg(mod)
+                    Wald=Anova.Wald.survreg(mod, type="3")),
          "2"=switch(test.statistic,
                     LR=Anova.II.LR.survreg(mod),
-                    Wald=Anova.II.Wald.survreg(mod)),
+                    #    Wald=Anova.II.Wald.survreg(mod)
+                    Wald=Anova.Wald.survreg(mod, type="2")),
          "3"=switch(test.statistic,
                     LR=Anova.III.LR.survreg(mod),
-                    Wald=Anova.III.Wald.survreg(mod)))
+                    #     Wald=Anova.III.Wald.survreg(mod)
+                    Wald=Anova.Wald.survreg(mod, type="3")))
 }
 
 Anova.II.LR.survreg <- function(mod, ...){
@@ -1513,18 +1528,29 @@ Anova.III.LR.survreg <- function(mod, ...){
   result
 }
 
-Anova.II.Wald.survreg <- function(mod){
-  V <- vcov(mod, complete=FALSE)
-  b <- coef(mod)
-  if (length(b) != nrow(V)){
-    # p <- which(rownames(V) == "Log(scale)")
-    p <- which(grepl("^Log\\(scale", rownames(V)))
-    if (length(p) > 0) V <- V[-p, -p]
-  }
-  Anova.II.default(mod, V, test="Chisq")
-}
+# Anova.II.Wald.survreg <- function(mod){
+#   V <- vcov(mod, complete=FALSE)
+#   b <- coef(mod)
+#   if (length(b) != nrow(V)){
+#     # p <- which(rownames(V) == "Log(scale)")
+#     p <- which(grepl("^Log\\(scale", rownames(V)))
+#     if (length(p) > 0) V <- V[-p, -p]
+#   }
+#   Anova.II.default(mod, V, test="Chisq")
+# }
+# 
+# Anova.III.Wald.survreg <- function(mod){
+#   V <- vcov(mod, complete=FALSE)
+#   b <- coef(mod)
+#   if (length(b) != nrow(V)){
+#     # p <- which(rownames(V) == "Log(scale)")
+#     p <- which(grepl("^Log\\(scale", rownames(V)))
+#     if (length(p) > 0) V <- V[-p, -p]
+#   }
+#   Anova.III.default(mod, V, test="Chisq")
+# }
 
-Anova.III.Wald.survreg <- function(mod){
+Anova.Wald.survreg <- function(mod, type){
   V <- vcov(mod, complete=FALSE)
   b <- coef(mod)
   if (length(b) != nrow(V)){
@@ -1532,7 +1558,7 @@ Anova.III.Wald.survreg <- function(mod){
     p <- which(grepl("^Log\\(scale", rownames(V)))
     if (length(p) > 0) V <- V[-p, -p]
   }
-  Anova.III.default(mod, V, test="Chisq")
+  Anova.default(mod, V, test.statistic="Chisq", type=type)
 }
 
 # Default Anova() method: requires methods for vcov() (if vcov. argument not specified) and coef().

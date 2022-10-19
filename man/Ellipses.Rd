@@ -5,6 +5,10 @@
 \alias{confidenceEllipse.default}
 \alias{confidenceEllipse.lm}
 \alias{confidenceEllipse.glm}
+\alias{confidenceEllipse.mlm}
+\alias{confidenceEllipses}
+\alias{confidenceEllipses.default}
+\alias{confidenceEllipses.mlm}
 
 \title{Ellipses, Data Ellipses, and Confidence Ellipses}
 \description{
@@ -29,14 +33,24 @@ confidenceEllipse(model, ...)
 \method{confidenceEllipse}{lm}(model, which.coef, vcov.=vcov, 
   L, levels=0.95, Scheffe=FALSE, dfn,
   center.pch=19, center.cex=1.5, segments=51, xlab, ylab, 
-  col=carPalette()[2], lwd=2, fill=FALSE, fill.alpha=0.3, draw=TRUE, add=!draw, ...)
+  col=carPalette()[2], lwd=2, fill=FALSE, fill.alpha=0.3, draw=TRUE, add=!draw,
+  grid=TRUE, ...)
   
 \method{confidenceEllipse}{glm}(model, chisq, ...)
+
+\method{confidenceEllipse}{mlm}(model, xlab, ylab, which.coef=1:2, ...)
 
 \method{confidenceEllipse}{default}(model, which.coef, vcov.=vcov,
   L, levels=0.95, Scheffe=FALSE,  dfn,
   center.pch=19, center.cex=1.5, segments=51, xlab, ylab, 
-  col=carPalette()[2], lwd=2, fill=FALSE, fill.alpha=0.3, draw=TRUE, add=!draw, ...)
+  col=carPalette()[2], lwd=2, fill=FALSE, fill.alpha=0.3, draw=TRUE, add=!draw, 
+  grid=TRUE, ...)
+  
+confidenceEllipses(model, ...)
+
+\method{confidenceEllipses}{default}(model, coefnames,  main, grid=TRUE, ...)
+
+\method{confidenceEllipses}{mlm}(model, coefnames, main, ...)
 }
 
 \arguments{
@@ -110,18 +124,22 @@ confidenceEllipse(model, ...)
     which identifies the 2 points with the largest Mahalanobis distances from the center of the data.}
   \item{grid}{If TRUE, the default, a light-gray background grid is put on the
 graph}
+  \item{coefnames}{character vector of coefficient names to use to label the diagonal of the pairwise confidence ellipse matrix plotted by \code{confidenceEllipses}; defaults to the names of the coefficients in the model.}
+  \item{main}{title for matrix of pairwise confidence ellipses.}
 }
 \details{
   The ellipse is computed by suitably transforming a unit circle.
   
   \code{dataEllipse} superimposes the normal-probability contours over a scatterplot
   of the data.
+  
+  \code{confidenceEllipses} plots a matrix of all pairwise confidence ellipses; each panel of the matrix is created by \code{confidenceEllipse}.
 }
 \value{
    These functions are mainly used for their side effect of producing plots.  For
    greater flexibility (e.g., adding plot annotations), however, \code{ellipse} returns invisibly the (x, y) coordinates of the calculated ellipse.
    \code{dataEllipse} and \code{confidenceEllipse} return invisibly the  coordinates of one or more ellipses, in the latter instance a list named by
-   \code{levels}.
+   \code{levels}; \code{confidenceEllipses} invisibly returns \code{NULL}.
 }
 
 \references{ 
@@ -146,12 +164,17 @@ graph}
 dataEllipse(Duncan$income, Duncan$education, levels=0.1*1:9, 
     ellipse.label=0.1*1:9, lty=2, fill=TRUE, fill.alpha=0.1)
     
-confidenceEllipse(lm(prestige~income+education, data=Duncan), Scheffe=TRUE)
+confidenceEllipse(lm(prestige ~ income + education, data=Duncan), Scheffe=TRUE)
 
-confidenceEllipse(lm(prestige~income+education, data=Duncan), vcov.=hccm)
+confidenceEllipse(lm(prestige ~ income + education, data=Duncan), vcov.=hccm)
 
-confidenceEllipse(lm(prestige~income+education, data=Duncan), 
+confidenceEllipse(lm(prestige ~ income + education, data=Duncan), 
 	L=c("income + education", "income - education"))
+	
+confidenceEllipses(lm(prestige ~ income + education + type, data=Duncan),
+  fill=TRUE)
+cov2cor(vcov(lm(prestige ~ income + education + type, 
+  data=Duncan))) # correlations among coefficients
 
 wts <- rep(1, nrow(Duncan))
 wts[c(6, 16)] <- 0 # delete Minister, Conductor

@@ -37,6 +37,8 @@ crPlot3d.lm <- function (model,
                          level = 0.5,
                          ellipsoid.alpha = 0.1,
                          id = FALSE,
+                         mouseMode=c(none="none", left="polar", right="zoom", middle="fov", 
+                                     wheel="pull"),
                          ...)
 {
   smoother <- match.arg(smoother)
@@ -44,6 +46,8 @@ crPlot3d.lm <- function (model,
   if (!requireNamespace("rgl")) stop("rgl package missing")
   if (!requireNamespace("mgcv") && smoother == "mgcv") stop("mgcv package missing")
   if (!requireNamespace("effects")) stop("effects package missing")
+  
+  rgl::par3d(mouseMode=mouseMode)
   
   loess.args <- applyDefaults(
     loess.args,
