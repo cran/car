@@ -212,7 +212,7 @@ if (require(mvtnorm)){
     # plot true regression function
     scatter3d(y ~ x1 + x2, D, 
               reg.function=10 + 1*x + 2*z + 3*x*z,
-              surface=FALSE, revolutions=2)
+              fit="quadratic", revolutions=2)
   })
 }
 	}

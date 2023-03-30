@@ -25,44 +25,53 @@
 # 2017-11-30: substitute carPalette() for palette(). J. Fox
 # 2019-11-14: change class(x) == "y" to inherits(x, "y")
 # 2018-08-06: enabled spread and var for smoothers. J. Fox
+# 2022-11-03: convert one-column matrix regressor to vector. J. Fox
+# 2023-03-10: the 'lwd' argument was ignored, now it is used.  S. Weisberg
+# 2023-03-10: the 'lty' argument was removed, as it was previously unused.  S. Weisberg
+# 2023-03-14: grouping now works correctly.  the groups variable if used must be a quoted string
+# 2023-03-15: AsIs argument removed
 
 residualPlots <- function(model, ...){UseMethod("residualPlots")}
+
 
 residualPlots.default <- function(model, terms= ~ . , 
                                   layout=NULL, ask, main="", 
                                   fitted=TRUE, AsIs=TRUE, plot=TRUE, tests=TRUE, groups, ...){
-    mf <- if(!is.null(terms)) termsToMf(model, terms) else NULL
-    # Added for compatibility with Rcmdr
+  decodeGroups <- function(terms){
+    rhs <- terms[[2]]
+    # is '|' present in the formula?
+    if("|" %in% all.names(rhs)){
+      if(length(rhs[[3]]) > 1) stop("only one conditional variable permitted")
+      groups <- as.character(rhs[[3]])
+      terms <- as.formula(paste("~", deparse(rhs[[2]])))} 
+    else {
+      groups <- NULL
+      terms = terms}
+    list(terms=terms, groups=groups)
+  }
+  gps <- decodeGroups(terms)
+  if(!is.null(gps$groups)) {
+    terms <- gps$terms
+    groups <- gps$groups}
+  if(missing(groups)) groups <- NULL
+# Added for compatibility with Rcmdr
     if(inherits(model$na.action, "exclude")) model <- update(model, na.action=na.omit)
-    # End addition
-    groups <- if (!missing(groups)) {
-        termsToMf(model, as.formula(paste("~",
-                                          deparse(substitute(groups)))))$mf.vars[, 2, drop=FALSE]
-    } else {
-        if(is.null(mf$mf.groups)) NULL else
-            mf$mf.groups[, 2, drop=FALSE]
-    }  
-    mf <- mf$mf.vars
-    vform <- update(formula(model), attr(mf, "terms"))
-    if(any(is.na(match(all.vars(vform), all.vars(formula(model))))))
-        stop("Only regressors in the formula can be plotted.")
-    terms <- attr(mf, "term.labels") # this is a list
-    vterms <- attr(terms(vform), "term.labels")
-    # drop interactions (order > 1)
-    vterms <- setdiff(vterms, terms[attr(mf, "order") > 1])
-    # keep only terms that are numeric or integer or factors or poly
-    good <- NULL
-    for (term in vterms) if(
-        (AsIs == TRUE & inherits(model$model[[term]], "AsIs")) |
-        inherits(model$model[[term]], "numeric") |
-        inherits(model$model[[term]], "integer") |
-        (inherits(model$model[[term]], "factor") & is.null(groups)) |
-        inherits(model$model[[term]], "matrix") |
-        inherits(model$model[[term]], "poly")) good <- c(good, term)
-    nt <- length(good) + fitted
-    nr <- 0  
-    if (nt == 0) stop("No plots specified")
-    if (nt > 1 & plot == TRUE & (is.null(layout) || is.numeric(layout))) {
+# End addition
+# construct list of names of horizontal terms
+  model.terms <- names(update(model, method="model.frame"))[-1] # remove response
+  use.terms <- names(update(model, terms, method="model.frame"))[-1] # remove response
+  offsets <- which(substr(use.terms, 1, 7) == "offset(") 
+  if(any(offsets)) use.terms <- use.terms[-offsets] # remove offsets
+  wts <- which(use.terms == "(weights)")
+  if(any(wts)) use.terms <- use.terms[-wts] # remove weights
+  AsIss <- which(substr(use.terms, 1, 2) == "I(" ) #)
+  if(any(AsIss) & !AsIs) use.terms <- use.terms[-AsIss] # remove I() is AsIs=FALSE
+  if( !all(use.terms %in% model.terms))
+        stop("Only terms in the formula can be plotted.")
+  nt <- length(use.terms) + fitted
+  nr <- 0  
+  if (nt == 0) stop("No plots specified")
+  if (nt > 1 & plot == TRUE & (is.null(layout) || is.numeric(layout))) {
         if(is.null(layout)){
             layout <- switch(min(nt, 9), c(1, 1), c(1, 2), c(2, 2), c(2, 2), 
                              c(3, 2), c(3, 2), c(3, 3), c(3, 3), c(3, 3))
@@ -72,9 +81,8 @@ residualPlots.default <- function(model, terms= ~ . ,
                   oma=c(0, 0, 1.5, 0), mar=c(5, 4, 1, 2) + .1)
         on.exit(par(op))
     }
-    ans <- NULL       
-    if(!is.null(good)){
-        for (term in good){
+    ans <- NULL   
+    for (term in use.terms){
             nr <- nr + 1
             qtest <- if(is.null(groups))
                 residualPlot(model, term, plot=plot, ...) else
@@ -82,7 +90,7 @@ residualPlots.default <- function(model, terms= ~ . ,
             if(!is.null(qtest)){
                 ans <- rbind(ans, qtest)
                 row.names(ans)[nr] <- term}
-        } }   
+        }    
     # Tukey's test
     if (fitted == TRUE){      
         tuk <- if(is.null(groups))
@@ -119,7 +127,7 @@ residualPlot.default <- function(model, variable = "fitted", type = "pearson",
                                  smooth=FALSE, id=FALSE,
                                  col = carPalette()[1], col.quad = carPalette()[2],
                                  pch=1,
-                                 xlab, ylab, lwd = 1, lty = 1,  
+                                 xlab, ylab, lwd=1, 
                                  grid=TRUE, key=!missing(groups), ...) {
     id <- applyDefaults(id, defaults=list(method="r", n=2, cex=1, col=carPalette()[1], location="lr"), type="id")
     if (isFALSE(id)){
@@ -152,10 +160,29 @@ residualPlot.default <- function(model, variable = "fitted", type = "pearson",
     #     labels <- names(residuals(model)[!is.na(residuals(model))])
     ylab <- if(!missing(ylab)) ylab else
         paste(string.capitalize(type), "residuals")
-    column <- match(variable, names(model$model))
-    # Added for compatibility with Rcmdr
+    nb <- function(x) gsub(" ", "", x) # deletes all blanks from a column name
+    column <- match(nb(variable), nb(names(model$model)))
+# the groups argument should be a quoted name from names(model$model), corresponding usually to
+# a factor, a character variable, or a numeric variable with few levels
+    if(!missing(groups)){
+      groups.name <- groups
+      groups <- model$model[[match(nb(groups), nb(names(model$model)))]]
+      if(is.null(groups)){stop("groups must be  in the model")}
+      groups <- if(class(groups)[1] == "factor") groups else factor(groups, ordered=FALSE)
+      if(length(levels(groups)) > length(groups)/4) stop("groups has too many distinct values")
+      if(key){ 
+        mar3 <- 1.1 + length(levels(groups))
+        op <- par(mar=c(5.1, 4.1, mar3, 2.1))
+        on.exit(par(op))
+      }   
+      colors <- if(length(col) >=length(levels(groups))) col else carPalette()
+      col <- colors[as.numeric(groups)]
+      pchs <- if(length(pch) >= length(levels(groups))) pch else 1:length(levels(groups))
+      pch <-  pchs[as.numeric(groups)] 
+    }
+# Added for compatibility with Rcmdr
     if(inherits(model$na.action, "exclude")) model <- update(model, na.action=na.omit)
-    # End addition
+# End addition
     if(is.na(column) && variable != "fitted")
         stop(paste(variable, "is not a regressor in the mean function"))
     horiz <- if(variable == "fitted") predict(model) else model$model[[column]]
@@ -164,6 +191,8 @@ residualPlot.default <- function(model, variable = "fitted", type = "pearson",
             "Linear Predictor" else "Fitted values"} else variable
     lab <- if(!missing(xlab)) xlab else lab
     if(class(horiz)[1] == "ordered") horiz <- factor(horiz, ordered=FALSE)
+    if(is.character((horiz))) horiz <- factor(horiz)
+    if (is.matrix(horiz) && ncol(horiz) == 1) horiz <- as.vector(horiz)
     ans <-
         if(inherits(horiz, "poly")) {
             horiz <- horiz[ , 1]
@@ -179,24 +208,6 @@ residualPlot.default <- function(model, variable = "fitted", type = "pearson",
     }
     else if (inherits(horiz, "factor")) c(NA, NA)
     else residCurvTest(model, variable)
-    # are there groups
-    if(!missing(groups)){
-        if(is.data.frame(groups)){
-            groups.name <- names(groups)[1]
-            groups <- groups[, 1, drop=TRUE]
-        }  else 
-            groups.name <- deparse(substitute(groups))
-        groups <- if(class(groups)[1] == "factor") groups else factor(groups, ordered=FALSE)
-        if(key){ 
-            mar3 <- 1.1 + length(levels(groups))
-            op <- par(mar=c(5.1, 4.1, mar3, 2.1))
-            on.exit(par(op))
-        }   
-        colors <- if(length(col) >=length(levels(groups))) col else carPalette()
-        col <- colors[as.numeric(groups)]
-        pchs <- if(length(pch) >= length(levels(groups))) pch else 1:length(levels(groups))
-        pch <-  pchs[as.numeric(groups)] 
-    }
     theResiduals <- switch(type, "rstudent"=rstudent(model), 
                            "rstandard"=rstandard(model), residuals(model, type=type))
     if(plot==TRUE){
@@ -215,10 +226,10 @@ residualPlot.default <- function(model, variable = "fitted", type = "pearson",
                     box()}
                 points(horiz, theResiduals, col=col, pch=pch, ...)
                 if(linear){
-                    if(missing(groups)){abline(h=0, lty=2, lwd=2)} else {
+                    if(missing(groups)){abline(h=0, lty=2, lwd=1)} else {
                         for (g in 1:length(levels(groups)))
                             try(abline(lm(theResiduals ~ horiz, 
-                                          subset=groups==levels(groups)[g]), lty=2, lwd=2,
+                                          subset=groups==levels(groups)[g]), lty=2, lwd=1,
                                        col=colors[g]), silent=TRUE)
                     }}
                 if(quadratic){
@@ -226,13 +237,14 @@ residualPlot.default <- function(model, variable = "fitted", type = "pearson",
                     if(missing(groups)){
                         if(length(unique(horiz)) > 2){
                             lm2 <- lm(theResiduals ~ poly(horiz, 2))
-                            lines(new, predict(lm2, list(horiz=new)), lty=1, lwd=2, col=col.quad)
+                            lines(new, predict(lm2, list(horiz=new)), lty=1, lwd=lwd, col=col.quad)
                         }} else {
                             for (g in 1:length(levels(groups))){
                                 if(length(unique(horiz)) > 2){
                                     lm2 <- lm(theResiduals~poly(horiz, 2),
                                               subset=groups==levels(groups)[g])
-                                    lines(new, predict(lm2, list(horiz=new)), lty=1, lwd=1.5, col=colors[g])
+                                    lines(new, predict(lm2, list(horiz=new)), 
+                                          lty=1, lwd=lwd, col=colors[g])
                                 }}}}
                 if(is.function(smoother))
                     if(missing(groups)){
@@ -240,8 +252,10 @@ residualPlot.default <- function(model, variable = "fitted", type = "pearson",
                                  spread=smoother.args$spread, smoother.args=smoother.args)} else
                                      for (g in 1:length(levels(groups))){
                                          sel <- groups == levels(groups)[g]
-                                         smoother(horiz[sel], theResiduals[sel], colors[g], log.x=FALSE, log.y=FALSE,
-                                                  spread=smoother.args$spread, smoother.args=smoother.args)}
+                                         smoother(horiz[sel], theResiduals[sel], colors[g], 
+                                                  log.x=FALSE, log.y=FALSE,
+                                                  spread=smoother.args$spread, 
+                                                  smoother.args=smoother.args)}
                 if(key & !missing(groups)){
                     items <- paste(groups.name, levels(groups), sep= " = ")
                     plotArrayLegend("top", items=items, col.items=colors, pch=pchs)

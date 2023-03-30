@@ -49,17 +49,15 @@ hccm(model, ...)
   The function \code{hccm.default} simply catches non-\code{lm} objects.
   
   See Freedman (2006) and Fox and Weisberg (2019, Sec. 5.1.2) for discussion of the use of these methods in generalized linear models or models with nonconstant variance.
-  
-  The heteroscedasticity-corrected covariance matrix will be singular if one or more observations have hatvalues (leverages) equal to 1, and hence is not a consistent estimate of the population covariance matrix.  This will occur most often in outlier testing: if there are m suspected outliers then m dummy variables are added to the regression model corresponding to the m cases (See Section 2.2.2 of Cook and Weisberg (1982)).  The function returns an error if the heteroscedasticity-corrected covariance matrix is singular.
+
 }
 \value{
   The heteroscedasticity-corrected covariance matrix for the model.
+  
+The function will return an error, rather than a matrix, under two circumstances.  First, if any of the cases have hatvalue (leverage) equal to one, then the corresponding fitted value will always equal the observed value.  For types hc2, hc3 and hc4 the hccm matrix is undefined.  For hc0 and hc1 it is defined but it can be shown to be singular, and therefore not a consistent estimate of the covariance matrix of the coefficient estimates.  A singular estimate of the covariance matrix may also be obstained if the matrix \eqn{X} is ill-conditioned.  In this latter case rescaling the model matrix may give a full-rank estimate. 
 }
 
 \references{
-  Cook, R. D. and Weisberg, S. (1982).
-  Residuals and Influence in Regression, Chapman and Hall, 
-  \url{https://hdl.handle.net/11299/37076}.
 
   Cribari-Neto, F. (2004)
   Asymptotic inference under heteroskedasticity of unknown form.

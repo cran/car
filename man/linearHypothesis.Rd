@@ -21,6 +21,7 @@
 %   2020-05-27 added documentation for survreg method. J. Fox
 %   2020-12-21 added linearHypothesis.lmList(), and small edits. J. Fox
 %   2022-04-24: added error.df argument to linearHypothesis.default(). J. Fox
+%   2022-12-11: add info and example for multinom models. J. Fox
 %------------------------------------------------------------------------------------
 
 \name{linearHypothesis}
@@ -223,8 +224,10 @@ matchCoefs(model, pattern, ...)
   changes the default test to \code{"F"}, supports the convenience argument
   \code{white.adjust} (for backwards compatibility), and enhances the output
   by the residual sums of squares. For \code{"glm"} objects just the default
-  method is called (bypassing the \code{"lm"} method). The \code{svyglm} method
+  method is called (bypassing the \code{"lm"} method). The \code{"svyglm"} method
   also calls the default method.
+  
+  Multinomial logit models fit by the \code{\link[nnet]{multinom}} function in the \pkg{nnet} package invoke the default method, and the coefficient names are composed from the response-level names and conventional coefficient names, separated by a period (\code{"."}): see one of the examples below.
 
   The function \code{lht} also dispatches to \code{linearHypothesis}.
 
@@ -410,6 +413,14 @@ linearHypothesis(mod.ok, c("treatment1:gender1", "treatment2:gender1"),
 	library(lme4)
 	example(glmer)
 	linearHypothesis(gm1, matchCoefs(gm1, "period"))
+}
+
+if (require(nnet)){
+  print(m <- multinom(partic ~ hincome + children, data=Womenlf))
+  print(coefs <- as.vector(outer(c("not.work.", "parttime."), 
+                            c("hincome", "childrenpresent"),
+                            paste0)))
+  linearHypothesis(m, coefs) # ominbus Wald test
 }
 
 }

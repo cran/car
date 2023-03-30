@@ -19,6 +19,7 @@
 # 2022-05-30: add "robust" as a fit option.
 # 2022-08-20: introduce reg.function and reg.function.col arguments. J. Fox
 # 2022-08-29: introduce mouseMode argument. J. Fox
+# 2023-01-01: use rgl::*3d() function. Duncan Murdoch
 
 scatter3d <- function(x, ...){
     if (!requireNamespace("rgl")) stop("rgl package missing")
@@ -123,8 +124,8 @@ scatter3d.default <- function(x, y, z,
     ylab
     zlab
     rgl::next3d()
-    rgl::rgl.viewpoint(fov=fov)
-    rgl::rgl.bg(color=bg.col, fogtype=fogtype)
+    rgl::view3d(fov=fov)
+    rgl::bg3d(color=bg.col, fogtype=fogtype)
     if (id.method == "identify"){
         xg <- x
         yg <- y
@@ -168,26 +169,26 @@ scatter3d.default <- function(x, y, z,
                 x.labels <-  seq(lab.min.x, lab.max.x, 
                     by=diff(range(lab.min.x, lab.max.x))/4)
                 x.at <- seq(min.x, max.x, by=nice(diff(range(min.x, max.x))/4))
-                rgl::rgl.texts(x.at, -0.05, 0, x.labels, col = axis.col[1])
+                rgl::text3d(x.at, -0.05, 0, x.labels, col = axis.col[1])
                 
                 z.labels <-  seq(lab.min.z, lab.max.z, 
                     by=diff(range(lab.min.z, lab.max.z))/4)
                 z.at <- seq(min.z, max.z, by=diff(range(min.z, max.z))/4)
-                rgl::rgl.texts(0, -0.1, z.at, z.labels, col = axis.col[3])
+                rgl::text3d(0, -0.1, z.at, z.labels, col = axis.col[3])
                 
                 y.labels <-  seq(lab.min.y, lab.max.y, 
                     by=diff(range(lab.min.y, lab.max.y))/4)
                 y.at <- seq(min.y, max.y, by=diff(range(min.y, max.y))/4)
-                rgl::rgl.texts(-0.05, y.at, -0.05, y.labels, col = axis.col[2])
+                rgl::text3d(-0.05, y.at, -0.05, y.labels, col = axis.col[2])
             }
         }
         else {
-            rgl::rgl.texts(min.x, -0.05, 0, lab.min.x, col=axis.col[1])
-            rgl::rgl.texts(max.x, -0.05, 0, lab.max.x, col=axis.col[1])
-            rgl::rgl.texts(0, -0.1, min.z, lab.min.z, col=axis.col[3])
-            rgl::rgl.texts(0, -0.1, max.z, lab.max.z, col=axis.col[3])
-            rgl::rgl.texts(-0.05, min.y, -0.05, lab.min.y, col=axis.col[2])
-            rgl::rgl.texts(-0.05, max.y, -0.05, lab.max.y, col=axis.col[2])
+            rgl::text3d(min.x, -0.05, 0, lab.min.x, col=axis.col[1])
+            rgl::text3d(max.x, -0.05, 0, lab.max.x, col=axis.col[1])
+            rgl::text3d(0, -0.1, min.z, lab.min.z, col=axis.col[3])
+            rgl::text3d(0, -0.1, max.z, lab.max.z, col=axis.col[3])
+            rgl::text3d(-0.05, min.y, -0.05, lab.min.y, col=axis.col[2])
+            rgl::text3d(-0.05, max.y, -0.05, lab.max.y, col=axis.col[2])
         }
     }
     if (!is.null(groups)) groups <- groups[valid]
@@ -197,27 +198,27 @@ scatter3d.default <- function(x, y, z,
     size <- sphere.size*((100/length(x))^(1/3))*0.015
     radius <- radius/median(radius)
     if (is.null(groups)){
-        if (size > threshold) rgl::rgl.spheres(x, y, z, color=point.col, radius=size*radius)
-        else rgl::rgl.points(x, y, z, color=point.col)
+        if (size > threshold) rgl::spheres3d(x, y, z, color=point.col, radius=size*radius)
+        else rgl::points3d(x, y, z, color=point.col)
     }
     else {
-        if (size > threshold) rgl::rgl.spheres(x, y, z, color=surface.col[as.numeric(groups)], radius=size*radius)
-        else rgl::rgl.points(x, y, z, color=surface.col[as.numeric(groups)])
+        if (size > threshold) rgl::spheres3d(x, y, z, color=surface.col[as.numeric(groups)], radius=size*radius)
+        else rgl::points3d(x, y, z, color=surface.col[as.numeric(groups)])
     }
     if (!axis.scales) axis.col[1] <- axis.col[3] <- axis.col[2]
-    rgl::rgl.lines(c(0,1), c(0,0), c(0,0), color=axis.col[1])
-    rgl::rgl.lines(c(0,0), c(0,1), c(0,0), color=axis.col[2])
-    rgl::rgl.lines(c(0,0), c(0,0), c(0,1), color=axis.col[3])
-    rgl::rgl.texts(1, 0, 0, xlab, adj=1, color=axis.col[1])
-    rgl::rgl.texts(0, 1.05, 0, ylab, adj=1, color=axis.col[2])
-    rgl::rgl.texts(0, 0, 1, zlab, adj=1, color=axis.col[3])
+    rgl::segments3d(c(0,1), c(0,0), c(0,0), color=axis.col[1])
+    rgl::segments3d(c(0,0), c(0,1), c(0,0), color=axis.col[2])
+    rgl::segments3d(c(0,0), c(0,0), c(0,1), color=axis.col[3])
+    rgl::text3d(1, 0, 0, xlab, adj=1, color=axis.col[1])
+    rgl::text3d(0, 1.05, 0, ylab, adj=1, color=axis.col[2])
+    rgl::text3d(0, 0, 1, zlab, adj=1, color=axis.col[3])
     # if (axis.scales){
-    #     rgl::rgl.texts(min.x, -0.05, 0, lab.min.x, col=axis.col[1])
-    #     rgl::rgl.texts(max.x, -0.05, 0, lab.max.x, col=axis.col[1])
-    #     rgl::rgl.texts(0, -0.1, min.z, lab.min.z, col=axis.col[3])
-    #     rgl::rgl.texts(0, -0.1, max.z, lab.max.z, col=axis.col[3])
-    #     rgl::rgl.texts(-0.05, min.y, -0.05, lab.min.y, col=axis.col[2])
-    #     rgl::rgl.texts(-0.05, max.y, -0.05, lab.max.y, col=axis.col[2])
+    #     rgl::text3d(min.x, -0.05, 0, lab.min.x, col=axis.col[1])
+    #     rgl::text3d(max.x, -0.05, 0, lab.max.x, col=axis.col[1])
+    #     rgl::text3d(0, -0.1, min.z, lab.min.z, col=axis.col[3])
+    #     rgl::text3d(0, -0.1, max.z, lab.max.z, col=axis.col[3])
+    #     rgl::text3d(-0.05, min.y, -0.05, lab.min.y, col=axis.col[2])
+    #     rgl::text3d(-0.05, max.y, -0.05, lab.max.y, col=axis.col[2])
     # }
     if (ellipsoid) {
         dfn <- 3
@@ -244,7 +245,7 @@ scatter3d.default <- function(x, y, z,
                 if (fill) rgl::shade3d(ellips, col=surface.col[j], alpha=ellipsoid.alpha, lit=FALSE)
                 if (grid) rgl::wire3d(ellips, col=surface.col[j], lit=FALSE)
                 coords <- ellips$vb[, which.max(ellips$vb[1,])]
-                if (!surface) rgl::rgl.texts(coords[1] + 0.05, coords[2], coords[3], group,
+                if (!surface) rgl::text3d(coords[1] + 0.05, coords[2], coords[3], group,
                     col=surface.col[j])
             }
         }
@@ -269,22 +270,22 @@ scatter3d.default <- function(x, y, z,
                 )
                 if (model.summary) summaries[[f]] <- summary(mod)
                 yhat <- matrix(predict(mod, newdata=dat), grid.lines, grid.lines)
-                if (fill) rgl::rgl.surface(vals, vals, yhat, color=surface.col[i], alpha=surface.alpha, lit=FALSE)
-                if(grid) rgl::rgl.surface(vals, vals, yhat, color=if (fill) grid.col
+                if (fill) rgl::surface3d(x = vals, z = vals, y = yhat, color=surface.col[i], alpha=surface.alpha, lit=FALSE)
+                if(grid) rgl::surface3d(x = vals, z = vals, y = yhat, color=if (fill) grid.col
                     else surface.col[i], alpha=surface.alpha, lit=FALSE, front="lines", back="lines")
                 if (residuals){
                     n <- length(y)
                     fitted <- fitted(mod)
                     colors <- ifelse(residuals(mod) > 0, pos.res.col, neg.res.col)
-                    rgl::rgl.lines(as.vector(rbind(x,x)), as.vector(rbind(y,fitted)), as.vector(rbind(z,z)),
+                    rgl::segments3d(as.vector(rbind(x,x)), as.vector(rbind(y,fitted)), as.vector(rbind(z,z)),
                         color=as.vector(rbind(colors,colors)))
                     if (squares){
                         res <- y - fitted
                         xx <- as.vector(rbind(x, x, x + res, x + res))
                         yy <- as.vector(rbind(y, fitted, fitted, y))
                         zz <- as.vector(rbind(z, z, z, z))
-                        rgl::rgl.quads(xx, yy, zz, color=square.col, alpha=surface.alpha, lit=FALSE)
-                        rgl::rgl.lines(xx, yy, zz, color=square.col)
+                        rgl::quads3d(xx, yy, zz, color=square.col, alpha=surface.alpha, lit=FALSE)
+                        rgl::segments3d(xx, yy, zz, color=square.col)
                     }
                 }
             }
@@ -306,10 +307,10 @@ scatter3d.default <- function(x, y, z,
                         group <- levs[j]
                         select.obs <- groups == group
                         yhat <- matrix(predict(mod, newdata=cbind(dat, groups=group)), grid.lines, grid.lines)
-                        if (fill) rgl::rgl.surface(vals, vals, yhat, color=surface.col[j], alpha=surface.alpha, lit=FALSE)
-                        if (grid) rgl::rgl.surface(vals, vals, yhat, color=if (fill) grid.col
+                        if (fill) rgl::surface3d(x = vals, z = vals, y = yhat, color=surface.col[j], alpha=surface.alpha, lit=FALSE)
+                        if (grid) rgl::surface3d(x = vals, z = vals, y = yhat, color=if (fill) grid.col
                             else surface.col[j], alpha=surface.alpha, lit=FALSE, front="lines", back="lines")
-                        rgl::rgl.texts(1, predict(mod, newdata=data.frame(x=1, z=1, groups=group)), 1,
+                        rgl::text3d(1, predict(mod, newdata=data.frame(x=1, z=1, groups=group)), 1,
                             paste(group, " "), adj=1, color=surface.col[j])
                         if (residuals){
                             yy <- y[select.obs]
@@ -317,14 +318,14 @@ scatter3d.default <- function(x, y, z,
                             zz <- z[select.obs]
                             fitted <- fitted(mod)[select.obs]
                             res <- yy - fitted
-                            rgl::rgl.lines(as.vector(rbind(xx,xx)), as.vector(rbind(yy,fitted)), as.vector(rbind(zz,zz)),
+                            rgl::segments3d(as.vector(rbind(xx,xx)), as.vector(rbind(yy,fitted)), as.vector(rbind(zz,zz)),
                                 col=surface.col[j])
                             if (squares) {
                                 xxx <- as.vector(rbind(xx, xx, xx + res, xx + res))
                                 yyy <- as.vector(rbind(yy, fitted, fitted, yy))
                                 zzz <- as.vector(rbind(zz, zz, zz, zz))
-                                rgl::rgl.quads(xxx, yyy, zzz, color=surface.col[j], alpha=surface.alpha, lit=FALSE)
-                                rgl::rgl.lines(xxx, yyy, zzz, color=surface.col[j])
+                                rgl::quads3d(xxx, yyy, zzz, color=surface.col[j], alpha=surface.alpha, lit=FALSE)
+                                rgl::segments3d(xxx, yyy, zzz, color=surface.col[j])
                             }
                         }
                     }
@@ -345,10 +346,10 @@ scatter3d.default <- function(x, y, z,
                         )
                         if (model.summary) summaries[[paste(f, ".", group, sep="")]] <- summary(mod)
                         yhat <- matrix(predict(mod, newdata=dat), grid.lines, grid.lines)
-                        if (fill) rgl::rgl.surface(vals, vals, yhat, color=surface.col[j], alpha=surface.alpha, lit=FALSE)
-                        if (grid) rgl::rgl.surface(vals, vals, yhat, color=if (fill) grid.col
+                        if (fill) rgl::surface3d(x = vals, z = vals, y = yhat, color=surface.col[j], alpha=surface.alpha, lit=FALSE)
+                        if (grid) rgl::surface3d(x = vals, z = vals, y = yhat, color=if (fill) grid.col
                             else surface.col[j], alpha=surface.alpha, lit=FALSE, front="lines", back="lines")
-                        rgl::rgl.texts(1, predict(mod, newdata=data.frame(x=1, z=1, groups=group)), 1,
+                        rgl::text3d(1, predict(mod, newdata=data.frame(x=1, z=1, groups=group)), 1,
                             paste(group, " "), adj=1, color=surface.col[j])
                         if (residuals){
                             yy <- y[select.obs]
@@ -356,14 +357,14 @@ scatter3d.default <- function(x, y, z,
                             zz <- z[select.obs]
                             fitted <- fitted(mod)
                             res <- yy - fitted
-                            rgl::rgl.lines(as.vector(rbind(xx,xx)), as.vector(rbind(yy,fitted)), as.vector(rbind(zz,zz)),
+                            rgl::segments3d(as.vector(rbind(xx,xx)), as.vector(rbind(yy,fitted)), as.vector(rbind(zz,zz)),
                                 col=surface.col[j])
                             if (squares) {
                                 xxx <- as.vector(rbind(xx, xx, xx + res, xx + res))
                                 yyy <- as.vector(rbind(yy, fitted, fitted, yy))
                                 zzz <- as.vector(rbind(zz, zz, zz, zz))
-                                rgl::rgl.quads(xxx, yyy, zzz, color=surface.col[j], alpha=surface.alpha, lit=FALSE)
-                                rgl::rgl.lines(xxx, yyy, zzz, color=surface.col[j])
+                                rgl::quads3d(xxx, yyy, zzz, color=surface.col[j], alpha=surface.alpha, lit=FALSE)
+                                rgl::segments3d(xxx, yyy, zzz, color=surface.col[j])
                             }
                         }
                     }
@@ -384,8 +385,8 @@ scatter3d.default <- function(x, y, z,
       ys <- (ys - miny)/(maxy - miny)
       ys <- matrix(ys, grid.lines, grid.lines)
       
-      if (fill) rgl::rgl.surface(vals, vals, ys, color=reg.function.col, alpha=surface.alpha, lit=FALSE)
-      if(grid) rgl::rgl.surface(vals, vals, ys, color=if (fill) grid.col
+      if (fill) rgl::surface3d(x = vals, z = vals, y = ys, color=reg.function.col, alpha=surface.alpha, lit=FALSE)
+      if(grid) rgl::surface3d(x = vals, z = vals, y = ys, color=if (fill) grid.col
                                 else reg.function.col, alpha=surface.alpha, lit=FALSE, front="lines", back="lines")
     }
     
@@ -407,13 +408,13 @@ scatter3d.default <- function(x, y, z,
     }
     if (revolutions > 0) {
         for (i in 1:revolutions){
-            for (angle in seq(1, 360, length.out=360/speed)) rgl::rgl.viewpoint(-angle, fov=fov)
+            for (angle in seq(1, 360, length.out=360/speed)) rgl::view3d(-angle, fov=fov)
         }
     }
     if (model.summary) return(summaries) else return(invisible(NULL))
 }
 
-# the following function is a slight modification of rgl.select3d() in the rgl package,
+# the following function is a slight modification of select3d() in the rgl package,
 #   altered to pass through arguments (via ...) to rgl.select()
 
 car.select3d <- function (...) {
@@ -502,7 +503,7 @@ Identify3d  <- function (x, y, z, axis.scales=TRUE, groups = NULL, labels = 1:le
         which <- f(x, y, z)
         if (!any(which))
             break
-        rgl::rgl.texts(x[which], y[which] + offset, z[which], labels[which],
+        rgl::text3d(x[which], y[which] + offset, z[which], labels[which],
             color = col[groups][which])
         identified <- c(identified, labels[which])
     }
@@ -530,7 +531,7 @@ showLabels3d <- function(x, y, z, labels,
             xyz = union(getPoints(abs(x - mean(x))), union(abs(z - mean(z)),
                 getPoints(abs(res)))),
             mahal= getPoints(rowSums(qr.Q(qr(cbind(1, x, y, z))) ^ 2)))
-        rgl::rgl.texts(x[ind], y[ind] + offset, z[ind], labels[ind],
+        rgl::text3d(x[ind], y[ind] + offset, z[ind], labels[ind],
             color = col)
         return(labels[ind])
     } 

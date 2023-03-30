@@ -1,3 +1,19 @@
+Changes to Version 3.1-2
+ 
+  o Fixed bugs in interface for residualPlots() and residualPlot()
+  
+  o Fixed hccm() to return a correct error message when regressors are ill-conditioned.
+  
+  o Use t-distribution for score tests in boxTidwell() and add omnibus score test (suggestions of Peter Dalgaard).
+  
+  o residualPlots() is no longer confused by a one-column matrix regressor, produced, e.g., by scale() (issue reported by Tom Wenseleers).
+  
+  o Make the printed formating of hypotheses in linearHypothesis() more tolerant of coefficients with certain non-standard names (after issue reported by Matthieu Stigler).
+  
+  o Tweak linearHypothesis() for multinom models and add example.
+  
+  o Update scatter3d() and crPlot3d() to use rgl::*3d() functions; requires rgl (>= 0.111.3) (patch courtesy of Duncan Murdoch).
+
 Changes to Version 3.1-1
 
   o Fixed bug in hccm(): when some cases are fit exactly all versions of the hccm estimate are singular and inconsistent.  A error message is now returned.

@@ -40,7 +40,9 @@
 #   2020-12-21: regularize handling of vcov. arg. Sandy and John
 #   2020-12-21: new matchCoefs.lmList() method, which covers nlsList objects. John
 #   2020-12-21: added linearHypothesis.lmList(). John
-#   2922-04-24: introduce new error.df argument for linearHypothesis.default(). John
+#   2022-04-24: introduce new error.df argument for linearHypothesis.default(). John
+#   2022-11-14: make printHypothesis() more tolerant of coefficient names. John
+#   2022-12-11: unexported coef.multinom() now uses . rather than : as coef-name separator. John
 #----------------------------------------------------------------------------------------------------
 
 # vcov.default <- function(object, ...){
@@ -139,12 +141,28 @@ makeHypothesis <- function(cnames, hypothesis, rhs = NULL){
 }
 
 printHypothesis <- function(L, rhs, cnames){
+  hyps <- rownames(L)
 	hyp <- rep("", nrow(L))
+	warning.flag <- FALSE
 	for (i in 1:nrow(L)){
 		sel <- L[i,] != 0
 		h <- L[i, sel]
 		h <- ifelse(h < 0, as.character(h), paste("+", h, sep=""))
 		nms <- cnames[sel]
+		if (any(which.bad <- grepl("[-+*/]", nms))) {
+		  if (!is.null(hyps)) {
+		    h <- hyps[i]
+		    hyp[i] <- if (grepl("=[^ ]", h)) sub("=", " = ", h) else h
+		  } else {
+		    if (!warning.flag){
+		      warning.flag <- TRUE
+		      warning("one or more coefficients in the hypothesis include\n",
+		              "     arithmetic operators in their names;\n",
+		              "  the printed representation of the hypothesis will be omitted")
+		    }
+		  }
+		  next
+		}
 		h <- paste(h, nms)
 		h <- gsub("-", " - ", h)
 		h <- gsub("+", "  + ", h, fixed=TRUE)
@@ -165,14 +183,17 @@ printHypothesis <- function(L, rhs, cnames){
 		h <- sub("^ *", "", h)
 		hyp[i] <- h
 	}
+	if (any(hyp == "")) hyp <- ""
 	hyp
 }
 
-linearHypothesis <- function (model, ...)
-	UseMethod("linearHypothesis")
+linearHypothesis <- function (model, ...){
+  UseMethod("linearHypothesis")
+}
+
 
 lht <- function (model, ...)
-	UseMethod("linearHypothesis")
+	linearHypothesis(model, ...)
 	
 linearHypothesis.lmList <- function(model,  ..., vcov.=vcov, coef.=coef){
    vcov.List <- function(object, ...) {
@@ -584,7 +605,7 @@ coef.multinom <- function(object, ...){
 	cn <- colnames(b)
 	rn <- rownames(b)
 	b <- as.vector(t(b))
-	names(b) <- as.vector(outer(cn, rn, function(c, r) paste(r, c, sep=":")))
+	names(b) <- as.vector(outer(cn, rn, function(c, r) paste(r, c, sep=".")))
 	b
 }
 

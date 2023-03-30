@@ -1,6 +1,6 @@
-4de43bc0e9c3d451047844db99ae4492 *DESCRIPTION
+4cce36a1a6008fcf977d3c6e16b55beb *DESCRIPTION
 ab79e532a13c66fda227a7e88d86b2cc *NAMESPACE
-1d34236aa24dfa06a171060a3b61e831 *NEWS
+6586405c05ed19b45645957a210739a3 *NEWS
 33fc2a976152118c303875d20dc97dc7 *R/Anova.R
 3effd70a639a7336269f94a285d12807 *R/Boot.R
 923a00fbf64c35abc42805ed43f4e974 *R/Boxplot.R
@@ -18,7 +18,7 @@ fa16056c5661a65fee6bdde242203df1 *R/avPlots.R
 2da153aefab121e4b8c7f060187b49b0 *R/bcnPower.R
 02ca2cad443a9b66dd49da2754e11d27 *R/boxCox.R
 e999330432693c1369b1fb5e2ed7b116 *R/boxCoxVariable.R
-7fb89c48255162874ea89411299a9955 *R/boxTidwell.R
+9e7e873b105e6a817d913c7646263fa8 *R/boxTidwell.R
 6f22e1a5ed891f0503b7207aa7cd66cb *R/brief.R
 b420d3bdc47fb62ea2f33c1829533467 *R/car-defunct.R
 ebcac6f262a26c74e59229ee1e30e7bc *R/car-deprecated.R
@@ -26,13 +26,13 @@ c6347c4eeef0dadeeb5c88ad9608dcf9 *R/carHexsticker.R
 46a7d8f865abcfc4b78145e87d40ea25 *R/carWeb.R
 3ed6b97ba60b4749edf08d428b022c71 *R/ceresPlots.R
 320f846a1788e0b8ce19294a3d7238c1 *R/compareCoefs.R
-2b6a9163fa192866fd2caa71b841228e *R/crPlot3d.R
+bc4ff0d4ae34c7c0e5975d2672ef61c2 *R/crPlot3d.R
 7550dc327b2fd42741f8b021599a6670 *R/crPlots.R
 76ceb735f9775bcbaa0c218cf5fe0c31 *R/deltaMethod.R
 5d4c4d78b963e1f598648246498f0d49 *R/densityPlot.R
 cb88c6ed6b7df0507502578ba8faa887 *R/dfbetaPlots.R
 a89ec78a4487110c5315c4d204517067 *R/durbinWatsonTest.R
-1120fe3ce8db9681a01f1b771e11681d *R/hccm.R
+e6efd6b31111d221ac5bfb388abf82ec *R/hccm.R
 de1c06572c573c84d37a9e77b14b5ff2 *R/infIndexPlot.R
 b2e49aeed279384dce3552ca8e73d7ea *R/influence-mixed-models.R
 7754412cdc643bba6abb4618201c809d *R/influencePlot.R
@@ -40,7 +40,7 @@ b2e49aeed279384dce3552ca8e73d7ea *R/influence-mixed-models.R
 3cba0d8358049f1ecb54e7486ca8a889 *R/invTranPlot.R
 07425429472a206c91e9a5f04553387a *R/leveneTest.R
 82b62b0c7a152340d6ba2c042bc0ae0e *R/leveragePlots.R
-8ba8ff9b4acb2ccf39b0b6037470a2cd *R/linearHypothesis.R
+006d04a41a92488f990fe670527e357b *R/linearHypothesis.R
 19223950b37d451f884a90c17812acc9 *R/logit.R
 afdf9ac6fc5284816b8e686cc7339fc5 *R/marginalModelPlot.R
 73d8f74a5019b754e13958b09b5fcd9f *R/mcPlots.R
@@ -54,8 +54,8 @@ edd2795ac4e2c188985a05adc0013e55 *R/powerTransformlmer.R
 5cff5736345ed39803538314884e98cf *R/qqPlot.R
 2b83ebb69b3fce0f752c4a6f80b5f23c *R/recode.R
 2ffa28985dcab22f222c5687fed744a6 *R/regLine.R
-754f41a48da5b5bcf5f5557acc34f2de *R/residualPlots.R
-ac62f851567d6dfebd9a8e8b779bc6e7 *R/scatter3d.R
+1fc031603f12a650ab5193631d4cbc81 *R/residualPlots.R
+61b6f14b61374001fac9270dfaf62b6e *R/scatter3d.R
 c7a3bb289e877e0449b84aa6b779c40f *R/scatterplot.R
 57e68c519e455f66477253f6cf64f955 *R/scatterplotMatrix.R
 2a39ba86fd900c0cc33a89f079f3bf91 *R/scatterplotSmoothers.R
@@ -70,11 +70,11 @@ e4ef1e9b4f2a34bcf71b7b72ecf6f01c *R/symbox.R
 510fb482d599708b15d24f2389fc5f10 *R/vif.R
 317b9f576ec59708c8945d1f8126c5fa *R/wcrossprod.R
 d90296231464288e04124e8f1d864302 *R/which.names.R
-f44f9d17f3bb733d89bbf63f82127643 *build/vignette.rds
-e2082206594825292948475ea3960d0a *inst/CITATION
+6562ecd41c431bc2058c32d122dcd205 *build/vignette.rds
+edcd1ae9b4c637cf3fa19c394718fe5a *inst/CITATION
 7621f84dece1418b1687ca3516d1bdf8 *inst/doc/embedding.R
 984ec51291df672146d63264a1d3b428 *inst/doc/embedding.Rnw
-7c849a22b546ec2c434128b19f4bb99a *inst/doc/embedding.pdf
+29066ee521e727c67d4f2dca9c2f6097 *inst/doc/embedding.pdf
 b6b5c8008a809152b9308aba25757693 *inst/misc/car-hex.pdf
 37c2d8ee74207a549851e70344a4821e *man/Anova.Rd
 379318432c40f0f6ae63bfa5d4827146 *man/Boot.Rd
@@ -107,7 +107,7 @@ b61ed466a568592d71fcbc43114ea5e5 *man/crPlots.Rd
 a96436d9a0ec006374d431e9aa294b52 *man/densityPlot.Rd
 3e5c68e5f118aa2a0abae358afd1bca5 *man/dfbetaPlots.Rd
 90958fada247ed72d05247db2a5f7a24 *man/durbinWatsonTest.Rd
-47fd0867ef19239e81e9fb3aaa7a4328 *man/hccm.Rd
+a350c13d5e2e4ac206a9dbdeb9959369 *man/hccm.Rd
 37ea5af56353b7db504b4327b347daf3 *man/hist.boot.Rd
 9c03608405b5c26070c02c4cc1842a96 *man/infIndexPlot.Rd
 bf8ee5ab1199f6fbb1de71e7b0e979c2 *man/influence-mixed-models.Rd
@@ -116,7 +116,7 @@ eca15590f3162495bef3432ffb08e631 *man/invResPlot.Rd
 3f76990cbc8e9035c1cefd424cd1598a *man/invTranPlot.Rd
 0b5bf989bf429ac840eeda6941b3eb30 *man/leveneTest.Rd
 ccc93db837fab1926b25f3f9aca649e1 *man/leveragePlots.Rd
-2e2392b15c254dc0d060a3b39e7f7f61 *man/linearHypothesis.Rd
+a323297a0abd6ba7aa53c9b1e1be3772 *man/linearHypothesis.Rd
 395cb504354ffb14de629bd7c9f5a49a *man/logit.Rd
 20a6a2d1f94c5f734f0214f4b0f1ca46 *man/marginalModelPlot.Rd
 c9c73b6960298f894e22d287445d6913 *man/mcPlots.Rd
@@ -129,8 +129,8 @@ c6eee7952bc60c84165353880dedb140 *man/powerTransform.Rd
 e280dd002ab6d30f3d899bc352cdddcd *man/qqPlot.Rd
 c44b1f80b6da4dc7a0405adbc9b95447 *man/recode.Rd
 4a473fa630d2c75e4f2e84af1a6a7083 *man/regLine.Rd
-72ce0e0d91029df6d790a4e6ea9fb0c8 *man/residualPlots.Rd
-5461820747f444633ce8c18faaa1466c *man/scatter3d.Rd
+579bf57ba115497e6ca5a4ea12d5366d *man/residualPlots.Rd
+1101a151967d9d367bb869df756229b3 *man/scatter3d.Rd
 ced81e87472eec1626d7f4bfb95c3157 *man/scatterplot.Rd
 e178488836197c6142558fc7b1e47801 *man/scatterplotMatrix.Rd
 39bd10269ecfd9b30c3f84a66b259e60 *man/showLabels.Rd

@@ -1,4 +1,5 @@
 # added 2022-05-24 by J. Fox
+# 2023-01-01: use rgl::*3d() function. Duncan Murdoch
 
 crPlot3d <- function(model, var1, var2, ...) {
   UseMethod("crPlot3d")
@@ -98,8 +99,8 @@ crPlot3d.lm <- function (model,
   fogtype <- match.arg(fogtype)
   
   rgl::next3d()
-  rgl::rgl.viewpoint(fov = fov)
-  rgl::rgl.bg(color = bg.col, fogtype = fogtype)
+  rgl::view3d(fov = fov)
+  rgl::bg3d(color = bg.col, fogtype = fogtype)
   
   x.grid <- eff$variables[[var1]]$levels
   z.grid <- eff$variables[[var2]]$levels
@@ -149,22 +150,22 @@ crPlot3d.lm <- function (model,
       if (axis.scales) {
         x.labels <- seq(lab.min.x, lab.max.x, by = diff(range(lab.min.x, lab.max.x))/4)
         x.at <- seq(min.x, max.x, by = nice(diff(range(min.x, max.x))/4))
-        rgl::rgl.texts(x.at,-0.05, 0, x.labels, col = axis.col[1])
+        rgl::text3d(x.at,-0.05, 0, x.labels, col = axis.col[1])
         z.labels <-seq(lab.min.z, lab.max.z, by = diff(range(lab.min.z, lab.max.z))/4)
         z.at <- seq(min.z, max.z, by = diff(range(min.z, max.z))/4)
-        rgl::rgl.texts(0,-0.1, z.at, z.labels, col = axis.col[3])
+        rgl::text3d(0,-0.1, z.at, z.labels, col = axis.col[3])
         y.labels <- seq(lab.min.y, lab.max.y, by = diff(range(lab.min.y, lab.max.y))/4)
         y.at <- seq(min.y, max.y, by = diff(range(min.y, max.y))/4)
-        rgl::rgl.texts(-0.05, y.at,-0.05, y.labels, col = axis.col[2])
+        rgl::text3d(-0.05, y.at,-0.05, y.labels, col = axis.col[2])
       }
     }
     else {
-      rgl::rgl.texts(min.x,-0.05, 0, lab.min.x, col = axis.col[1])
-      rgl::rgl.texts(max.x,-0.05, 0, lab.max.x, col = axis.col[1])
-      rgl::rgl.texts(0,-0.1, min.z, lab.min.z, col = axis.col[3])
-      rgl::rgl.texts(0,-0.1, max.z, lab.max.z, col = axis.col[3])
-      rgl::rgl.texts(-0.05, min.y,-0.05, lab.min.y, col = axis.col[2])
-      rgl::rgl.texts(-0.05, max.y,-0.05, lab.max.y, col = axis.col[2])
+      rgl::text3d(min.x,-0.05, 0, lab.min.x, col = axis.col[1])
+      rgl::text3d(max.x,-0.05, 0, lab.max.x, col = axis.col[1])
+      rgl::text3d(0,-0.1, min.z, lab.min.z, col = axis.col[3])
+      rgl::text3d(0,-0.1, max.z, lab.max.z, col = axis.col[3])
+      rgl::text3d(-0.05, min.y,-0.05, lab.min.y, col = axis.col[2])
+      rgl::text3d(-0.05, max.y,-0.05, lab.max.y, col = axis.col[2])
     }
   }
   
@@ -175,17 +176,17 @@ crPlot3d.lm <- function (model,
   size <- sphere.size * ((100 / length(x)) ^ (1 / 3)) * 0.015
   radius <- radius / median(radius)
   if (size > threshold)
-    rgl::rgl.spheres(x, y, z, color = point.col, radius = size*radius)
+    rgl::spheres3d(x, y, z, color = point.col, radius = size*radius)
   else
-    rgl::rgl.points(x, y, z, color = point.col)
+    rgl::points3d(x, y, z, color = point.col)
   
   if (!axis.scales) axis.col[1] <- axis.col[3] <- axis.col[2]
-  rgl::rgl.lines(c(0, 1), c(0, 0), c(0, 0), color = axis.col[1])
-  rgl::rgl.lines(c(0, 0), c(0, 1), c(0, 0), color = axis.col[2])
-  rgl::rgl.lines(c(0, 0), c(0, 0), c(0, 1), color = axis.col[3])
-  rgl::rgl.texts(1, 0, 0, xlab, adj = 1, color = axis.col[1])
-  rgl::rgl.texts(0, 1.05, 0, ylab, adj = 1, color = axis.col[2])
-  rgl::rgl.texts(0, 0, 1, zlab, adj = 1, color = axis.col[3])
+  rgl::segments3d(c(0, 1), c(0, 0), c(0, 0), color = axis.col[1])
+  rgl::segments3d(c(0, 0), c(0, 1), c(0, 0), color = axis.col[2])
+  rgl::segments3d(c(0, 0), c(0, 0), c(0, 1), color = axis.col[3])
+  rgl::text3d(1, 0, 0, xlab, adj = 1, color = axis.col[1])
+  rgl::text3d(0, 1.05, 0, ylab, adj = 1, color = axis.col[2])
+  rgl::text3d(0, 0, 1, zlab, adj = 1, color = axis.col[3])
   if (ellipsoid) {
     dfn <- 3
     dfd <- length(x) - 1
@@ -203,17 +204,17 @@ crPlot3d.lm <- function (model,
   yhat <- (yhat - miny) / (maxy - miny)
   yhat <- matrix(yhat, grid.lines, grid.lines)
   
-  rgl::rgl.surface(x.grid,
-                   z.grid,
-                   yhat,
-                   color = surface.col[1],
-                   alpha = surface.alpha,
-                   lit = FALSE)
+  rgl::surface3d(x = x.grid,
+                 z = z.grid,
+                 y = yhat,
+                 color = surface.col[1],
+                 alpha = surface.alpha,
+                 lit = FALSE)
   if (grid)
-    rgl::rgl.surface(
-      x.grid,
-      z.grid,
-      yhat,
+    rgl::surface3d(
+      x = x.grid,
+      z = z.grid,
+      y = yhat,
       color = if (fill) grid.col else surface.col[1],
       alpha = surface.alpha,
       lit = FALSE,
@@ -231,17 +232,17 @@ crPlot3d.lm <- function (model,
     yhat <- predict(smooth, newdata=data.frame(expand.grid(x=x.grid, z=z.grid)))
     yhat <- matrix(yhat, grid.lines, grid.lines)
     
-    rgl::rgl.surface(x.grid,
-                     z.grid,
-                     yhat,
-                     color = surface.col[2],
-                     alpha = surface.alpha,
-                     lit = FALSE)
+    rgl::surface3d(x = x.grid,
+                   z = z.grid,
+                   y = yhat,
+                   color = surface.col[2],
+                   alpha = surface.alpha,
+                   lit = FALSE)
     if (grid)
-      rgl::rgl.surface(
-        x.grid,
-        z.grid,
-        yhat,
+      rgl::surface3d(
+        x = x.grid,
+        z = z.grid,
+        y = yhat,
         color = if (fill) grid.col else surface.col[2],
         alpha = surface.alpha,
         lit = FALSE,
@@ -270,7 +271,7 @@ crPlot3d.lm <- function (model,
   if (revolutions > 0) {
     for (i in 1:revolutions) {
       for (angle in seq(1, 360, length.out = 360 / speed))
-        rgl::rgl.viewpoint(-angle, fov = fov)
+        rgl::view3d(-angle, fov = fov)
     }
   }
   return(invisible(NULL))
