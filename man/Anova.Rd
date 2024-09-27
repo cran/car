@@ -20,6 +20,8 @@
 %   2021-06-14: updates for vcov. arg. J. Fox
 %   2022-04-24: added error.df argument to Anova.default(). J. Fox
 %   2022-06-07: added Anova.svycoxph(). J. Fox
+%   2023-10-03: added qualification about tt arg for Cox models. J. Fox
+%   2024-05-08: added Anova.clm() and Anova.clmm(). J. Fox
 %-------------------------------------------------------------------------------------
 
 \name{Anova}
@@ -46,6 +48,8 @@
 \alias{Anova.svycoxph}
 \alias{Anova.rlm}
 \alias{Anova.coxme}
+\alias{Anova.clm}
+\alias{Anova.clmm}
 \alias{Anova.default}
 \title{Anova Tables for Various Statistical Models}
 \description{
@@ -55,8 +59,9 @@
   package), \code{coxph} (in the \pkg{survival} package),
   \code{coxme} (in the \pkg{coxme} pckage),
   \code{svyglm} and \code{svycoxph} (in the \pkg{survey} package), \code{rlm} (in the \pkg{MASS} package),
-  \code{lmer} in the \pkg{lme4} package,
-  \code{lme} in the \pkg{nlme} package, and (by the default method) for most
+  \code{lmer} (in the \pkg{lme4} package),
+  \code{lme} (in the \pkg{nlme} package), 
+  \code{clm} and \code{clmm} (in the \pkg{ordinal} package), and (by the default method) for most
   models with a linear predictor and asymptotically normal coefficients (see details below). For linear
   models, F-tests are calculated; for generalized linear models,
   likelihood-ratio chisquare, Wald chisquare, or F-tests are calculated;
@@ -132,6 +137,10 @@ Manova(mod, ...)
 
 \method{Anova}{rlm}(mod, ...)
 
+\method{Anova}{clm}(mod, ...)
+
+\method{Anova}{clmm}(mod, ...)
+
 \method{Anova}{default}(mod, type=c("II", "III", 2, 3),
 	test.statistic=c("Chisq", "F"), vcov.=vcov(mod, complete=FALSE),
 	singular.ok, error.df, ...)
@@ -140,7 +149,7 @@ Manova(mod, ...)
 \arguments{
   \item{mod}{\code{lm}, \code{aov}, \code{glm}, \code{multinom}, \code{polr}
     \code{mlm}, \code{coxph}, \code{coxme}, \code{lme}, \code{mer}, \code{merMod}, \code{svyglm}, \code{svycoxph},
-    \code{rlm}, or other suitable model object.}
+    \code{rlm}, \code{clm}, \code{clmm}, or other suitable model object.}
   \item{error}{for a linear model, an \code{lm} model object from which the
     error sum of squares and degrees of freedom are to be calculated. For
     F-tests for a generalized linear model, a \code{glm} object from which the
@@ -154,7 +163,7 @@ Manova(mod, ...)
   \item{test.statistic}{for a generalized linear model, whether to calculate
     \code{"LR"} (likelihood-ratio), \code{"Wald"}, or \code{"F"} tests; for a Cox
     or Cox mixed-effects model, whether to calculate \code{"LR"} (partial-likelihood ratio) or
-    \code{"Wald"} tests; in the default case or for linear mixed models fit by
+    \code{"Wald"} tests (with \code{"LR"} tests unavailable for Cox models using the \code{tt} argument); in the default case or for linear mixed models fit by
     \code{lmer}, whether to calculate Wald \code{"Chisq"} or Kenward-Roger
     \code{"F"} tests with Satterthwaite degrees of freedom (\emph{warning:} the KR F-tests
     can be very time-consuming).
@@ -217,8 +226,11 @@ For the \code{default} \code{Anova} method, if an F-test is requested and if \co
   \item{vcov.}{in the \code{default} method, an optional coefficient-covariance matrix or function
     to compute a covariance matrix, computed by default by applying the generic \code{vcov} function to the model object.
     A similar argument may be supplied to the \code{lm} method, and the default (\code{NULL}) is to ignore the argument;
-    if both \code{vcov.} and \code{white.adjust} are supplied to the \code{lm} method, the latter is used.}
+    if both \code{vcov.} and \code{white.adjust} are supplied to the \code{lm} method, the latter is used.
     In the \code{glm} method, \code{vcov.} is ignored unless \code{test="Wald"}; in the \code{mer} and \code{merMod} methods, \code{vcov.} is ignored if \code{test="F"}.
+    
+    Note that arguments supplied to \code{...} are \emph{not} passed to \code{vcov.} when it's a function; in this case either use an anonymous function in which the 
+    additional arguments are set, or supply the coefficient covariance matrix directly (see the examples).}
   \item{\dots}{do not use.}
 }
 \details{
@@ -308,7 +320,7 @@ type-II tests are invariant with respect to (full-rank) contrast coding. If you 
 
 \seealso{ \code{\link{linearHypothesis}}, \code{\link{anova}}
 \code{\link{anova.lm}}, \code{\link{anova.glm}},
-\code{\link{anova.mlm}}, \code{\link{anova.coxph}}, \code{\link[survey]{svyglm}}.}
+\code{\link{anova.mlm}}, \code{\link[survival]{anova.coxph}}, \code{\link[survey]{svyglm}}.}
 
 \examples{
 
@@ -318,6 +330,13 @@ mod <- lm(conformity ~ fcategory*partner.status, data=Moore,
   contrasts=list(fcategory=contr.sum, partner.status=contr.sum))
 Anova(mod)
 Anova(mod, type=3)  # note use of contr.sum in call to lm()
+
+## use of vcov.; the following are equivalent:
+
+Anova(mod, white.adjust = TRUE)
+Anova(mod, vcov. = hccm) # vcov. is a function, type = "hc3" is the default
+Anova(mod, vcov. = hccm(mod, type = "hc3")) # vcov. is a matrix
+Anova(mod, vcov. = function(m) hccm(m, type = "hc3")) # passing type as an argument
 
 ## One-Way MANOVA
 ## See ?Pottery for a description of the data set used in this example.

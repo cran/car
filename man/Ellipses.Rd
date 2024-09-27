@@ -1,6 +1,8 @@
 \name{Ellipses}
 \alias{ellipse}
 \alias{dataEllipse}
+\alias{dataEllipse.formula}
+\alias{dataEllipse.default}
 \alias{confidenceEllipse}
 \alias{confidenceEllipse.default}
 \alias{confidenceEllipse.lm}
@@ -20,13 +22,21 @@ ellipse(center, shape, radius, log="", center.pch=19, center.cex=1.5,
   segments=51, draw=TRUE, add=draw, xlab="", ylab="", 
   col=carPalette()[2], lwd=2, fill=FALSE, fill.alpha=0.3, grid=TRUE, ...)
 
-dataEllipse(x, y, groups, group.labels=group.levels, ellipse.label,
+dataEllipse(x, ...)
+
+\method{dataEllipse}{formula}(formula, data, subset, weights, xlab, ylab, id=FALSE, ...)
+
+\method{dataEllipse}{default}(x, y, groups, 
+  group.labels=group.levels, ellipse.label, 
   weights, log="", levels=c(0.5, 0.95), center.pch=19, 
   center.cex=1.5, draw=TRUE, plot.points=draw, add=!plot.points, segments=51, 
-  robust=FALSE, xlab=deparse(substitute(x)), ylab=deparse(substitute(y)), 
+  robust=FALSE, 
+  xlab=deparse(substitute(x)), 
+  ylab=deparse(substitute(y)), 
   col=if (missing(groups)) carPalette()[1:2] else carPalette()[1:length(group.levels)],
   pch=if (missing(groups)) 1 else seq(group.levels),
-  lwd=2, fill=FALSE, fill.alpha=0.3, grid=TRUE, id=FALSE, ...) 
+  lwd=2, fill=FALSE, fill.alpha=0.3, grid=TRUE, id=FALSE, 
+  label.pos=NULL, label.cex=1.25, label.xpd=FALSE, ...)
 
 confidenceEllipse(model, ...)
 
@@ -72,11 +82,19 @@ confidenceEllipses(model, ...)
   \item{x}{a numeric vector, or (if \code{y} is missing) a 2-column numeric matrix.}
   \item{y}{a numeric vector, of the same length as \code{x}.}
   \item{groups}{optional: a factor to divide the data into groups; a separate ellipse will be plotted for each group (level of the factor).}
+  \item{formula}{for the formula method, a model formula, of the form \code{y ~ x} or, if plotting by
+    groups, \code{y ~ x | z}, where \code{z} evaluates to a factor
+    or other variable dividing the data into groups.}
+  \item{data}{for the formula method, a data frame within which to evaluate the formula.}
+  \item{subset}{for the formula method, expression defining a subset of observations.}
   \item{group.labels}{labels to be plotted for the groups; by default, the levels of the \code{groups} factor.}
   \item{ellipse.label}{a label for the ellipse(s) or a vector of labels; if several ellipses are drawn and just one label is given,
     then that label will be repeated. The default is not to label the ellipses.}
+  \item{label.pos}{position(s) of labels for the ellipses, a vector of integers (in 0:4) or character strings (in c("center", "bottom", "left", "top", "right"), or in c("C", "S", "W", "N", "E") used in labeling ellipses, recycled as necessary. Values of 1, 2, 3 and 4, respectively indicate positions below, to the left of, above and to the right of the max/min coordinates of the ellipse; the value 0 specifies the centroid of the ellipse object. The default, \code{label.pos=NULL} uses the correlation of the ellipse to determine "top" (r>=0) or "bottom" (r<0)}.
+  \item{label.cex}{character size for ellipse labels.}
+  \item{label.xpd}{allow labels to be drawn outside of plotting region (default \code{FALSE}).}
   \item{weights}{a numeric vector of weights, of the same length as \code{x} and \code{y} to be used  by \code{\link{cov.wt}}
-    or \code{\link{cov.trob}} in computing a weighted covariance matrix; if absent, weights of \code{1} are used.}
+    or \code{\link[MASS]{cov.trob}} in computing a weighted covariance matrix; if absent, weights of \code{1} are used.}
   \item{plot.points}{if \code{FALSE} data ellipses are drawn,
     but points are not plotted.}
   \item{levels}{draw elliptical contours at these (normal) probability or confidence levels.}
@@ -88,7 +106,11 @@ confidenceEllipses(model, ...)
     will be selected.}
   \item{vcov.}{a coefficient-covariance matrix or a function (such as \code{\link{hccm}}) to 
     compute the coefficent-covariance
-    matrix from \code{model}; the default is the \code{vcov} function.}
+    matrix from \code{model}; the default is the \code{vcov} function.
+    
+    Note that arguments supplied to \code{...} are \emph{not} passed to \code{vcov.} when it's a function; in this case either use an anonymous function in which the 
+    additional arguments are set, or supply the coefficient covariance matrix directly.
+    }
   \item{L}{As an alternative to selecting coefficients to plot, a transformation matrix can be specified to compute two
     linear combinations of the coefficients; if the \code{L} matrix is given, it takes precedence over the \code{which.coef}
     argument. \code{L} should have two rows and as many columns as there are coefficients. It can be given directly as a
@@ -158,11 +180,27 @@ graph}
  
 \author{Georges Monette, John Fox \email{jfox@mcmaster.ca}, and Michael Friendly.}
 
-\seealso{\code{\link{cov.trob}}, \code{\link{cov.wt}}, \code{\link{linearHypothesis}}.}
+\seealso{\code{\link[MASS]{cov.trob}}, \code{\link{cov.wt}}, \code{\link{linearHypothesis}}.}
   
 \examples{
 dataEllipse(Duncan$income, Duncan$education, levels=0.1*1:9, 
     ellipse.label=0.1*1:9, lty=2, fill=TRUE, fill.alpha=0.1)
+
+# formula method
+dataEllipse(education ~ income | type, data=Duncan,
+            levels = 0.68)
+
+dataEllipse(education ~ income | type, data=Duncan, 
+            levels=0.68, label.xpd=TRUE)
+
+# vary label positions
+dataEllipse(education ~ income | type, data=Duncan,
+            levels = 0.68,
+            fill = TRUE, fill.alpha = 0.1,
+            label.pos = c(3, 2, 4),
+            xlim = c(0, 100),
+            ylim = c(2, 120))
+
     
 confidenceEllipse(lm(prestige ~ income + education, data=Duncan), Scheffe=TRUE)
 

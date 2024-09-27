@@ -10,7 +10,7 @@ Influence Diagnostics for Mixed-Effects Models
 }
 
 \description{
-These functions compute deletion influence diagnostics for linear mixed-effects models fit by \code{\link{lme}} in the \pkg{nlme} package.
+These functions compute deletion influence diagnostics for linear mixed-effects models fit by \code{\link[nlme]{lme}} in the \pkg{nlme} package.
 The main function is a method for the \code{\link{influence}} generic function. Other functions are provided for
 computing \code{\link{dfbeta}}, \code{\link{dfbetas}}, \code{\link{cooks.distance}}, and influence on variance-covariance components based
 on the object computed by \code{influence.lme}.
@@ -78,7 +78,7 @@ J. Fox \email{jfox@mcmaster.ca}
 }
 
 \seealso{
-\code{\link{lme}}, \code{\link{infIndexPlot}}.
+\code{\link[nlme]{lme}}, \code{\link{infIndexPlot}}.
 }
 
 \examples{

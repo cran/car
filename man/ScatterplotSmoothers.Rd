@@ -14,9 +14,9 @@ the \code{\link{scatterplot}}, \code{\link{scatterplotMatrix}}, and several othe
 The functions are not meant to
 be called directly by the user, although the user can supply options via the \code{smoother.args} argument,
 the contents of which vary by the smoother (see \emph{Details} below). The \code{gamLine} smoother uses the
-\code{\link{gam}} function in the \pkg{mgcv} package, the \code{loessLine} smoother uses the
+\code{\link[mgcv]{gam}} function in the \pkg{mgcv} package, the \code{loessLine} smoother uses the
 \code{\link{loess}} function in the \pkg{stats} package, and the \code{quantregLine} smoother uses the
-\code{\link{rqss}} function in the \pkg{quantreg} package.
+\code{\link[quantreg]{rqss}} function in the \pkg{quantreg} package.
 }
 
 \usage{
@@ -76,7 +76,7 @@ For \code{gamLine}, the default is
 \code{smoother.args=list(lty.smooth=1, lwd.smooth=2, lty.spread=4, lwd.spread=2, style="filled", alpha=0.15,
 k=-1, bs="tp", family="gaussian", link=NULL, weights=NULL)}.
 The first six elements are as for \code{loessLine}.  The next two
-elements are passed to the \code{\link{gam}} function to control smoothing:
+elements are passed to the \code{\link[mgcv]{gam}} function to control smoothing:
 \code{k=-1} allows \code{gam} to choose the number of splines in the basis
 function; \code{bs="tp"} provides the type of spline basis to be used, with \code{"tp"}
 for the default thin-plate splines.  The last three arguments specify
@@ -87,15 +87,15 @@ For \code{quantregLine}, the default is
 \code{smoother.args=list(lty.smooth=1, lwd.smooth=2, lty.spread=4, lwd.spread=2, style="filled", alpha=0.15,
 lambda=IQR(x))}.  The first six
 elements are as for \code{loessLine}.  The last element is passed to the
-\code{\link{qss}} function in \pkg{quantreg}.  It is a smoothing
+\code{\link[quantreg]{qss}} function in \pkg{quantreg}.  It is a smoothing
 parameter, by default a robust estimate of the scale of the horizontal axis variable.
 This is an arbitrary choice, and may not work well in all circumstances.
 }
 
 \author{John Fox \email{jfox@mcmaster.ca} and Sanford Weisberg \email{sandy@umn.edu}.}
 
-\seealso{\code{\link{scatterplot}}, \code{\link{scatterplotMatrix}}, \code{\link{gam}},
-    \code{\link{loess}}, and \code{\link{rqss}}.}
+\seealso{\code{\link{scatterplot}}, \code{\link{scatterplotMatrix}}, \code{\link[mgcv]{gam}},
+    \code{\link{loess}}, and \code{\link[quantreg]{rqss}}.}
 
 \examples{
 scatterplot(prestige ~ income, data=Prestige)

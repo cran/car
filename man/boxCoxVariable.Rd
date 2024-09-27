@@ -49,7 +49,7 @@ boxCoxVariable(y)
 
 \author{John Fox \email{jfox@mcmaster.ca}}
 
-\seealso{\code{\link{boxcox}}, \code{\link{powerTransform}}, \code{\link{bcPower}}} % , \code{\link{avPlots}}
+\seealso{\code{\link[MASS]{boxcox}}, \code{\link{powerTransform}}, \code{\link{bcPower}}} % , \code{\link{avPlots}}
 
 \examples{
 mod <- lm(interlocks + 1 ~ assets, data=Ornstein)

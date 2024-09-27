@@ -8,8 +8,8 @@
 # 2012-04-08 added exists.method
 # 2012-06-23: added call to globalVariables(). John
 # 2012-12-10: added .carEnv to avoid warnings in R > 2.16.0
-# 2013-06020: added .merMod methods to df.residual() and has.intercept(). John
-# 2014-05-16: added .multinom method for has.intercept(). John
+# 2013-06020: added .merMod methods to df.residual() and has_intercept(). John
+# 2014-05-16: added .multinom method for has_intercept(). John
 # 2014-08-19: added package.installed() function, unexported. John
 # 2014-11-02: termsToMf fixed, Sandy
 # 2015-01-13: fixed model.matrix.lme() to work with model with formula as object. John
@@ -32,6 +32,8 @@
 # 2020-12-03: added getVcov to interpret vcov. argument as matrix or function and return an error otherwise
 # 2020-12-18: getVcov() also able to return objects coercible to a matrix such as Matrix objects. JF
 # 2021-04-08: added getModelData(), not explorted. JF
+# 2024-05-14: format.perc() -> format_perc(), has.intercept -> has_intercept(). J. Fox
+# 2024-09-20: added model.matrix.lme()
 
 #if (getRversion() >= "2.15.1") globalVariables(c(".boot.sample", ".boot.indices"))
 
@@ -52,13 +54,13 @@ nice <- function(x, direction=c("round", "down", "up"), lead.digits=1){
 	sign(x)*lead.digit*10^power.10
 }
 
-has.intercept <- function (model, ...) {
-	UseMethod("has.intercept")
+has_intercept <- function (model, ...) {
+	UseMethod("has_intercept")
 }
 
-has.intercept.default <- function(model, ...) any(names(coefficients(model))=="(Intercept)")
+has_intercept.default <- function(model, ...) any(names(coefficients(model))=="(Intercept)")
 
-has.intercept.multinom <- function(model, ...) {
+has_intercept.multinom <- function(model, ...) {
   nms <- names(coef(model))
   any(grepl("\\(Intercept\\)", nms))
 }
@@ -69,7 +71,7 @@ term.names <- function (model, ...) {
 
 term.names.default <- function (model, ...) {
 	term.names <- labels(terms(model))
-	if (has.intercept(model)) c("(Intercept)", term.names)
+	if (has_intercept(model)) c("(Intercept)", term.names)
 	else term.names
 }
 
@@ -294,21 +296,25 @@ df.residual.mer <- function(object, ...) NULL
 
 df.residual.lme <- function(object, ...) Inf
 
-has.intercept.mer <- function(model){
+has_intercept.mer <- function(model, ...){
 	any(names(fixef(model))=="(Intercept)")
 }
 
-has.intercept.merMod <- function(model){
+has_intercept.merMod <- function(model, ...){
     any(names(fixef(model))=="(Intercept)")
 }
 
 model.matrix.lme <- function(object, ...){
-    data <- object$data
-    if (is.null(data)){
-	    model.matrix(formula(object), eval(object$call$data))
-    }
-    else model.matrix(formula(object), data)
-}
+  data <- object$data
+  if (is.null(data)){
+    NextMethod(formula(object),  data=eval(object$call$data),
+               contrasts.arg=object$contrasts)
+  } else {
+    NextMethod(formula(object), data=data, 
+               contrasts.arg=object$contrasts)
+  }
+} 
+
 
 # added by J. Fox 2019-01-02:
 
@@ -412,8 +418,8 @@ model.matrix.coxme <- function(object, ...){
     model.matrix(object)
 }
 
-alias.coxme <- function(model){
-    if(any(which <- is.na(coef(model)))) return(list(Complete=which))
+alias.coxme <- function(object, ...){
+    if(any(which <- is.na(coef(object)))) return(list(Complete=which))
     else list()
 }
 
@@ -425,7 +431,7 @@ alias.coxme <- function(model){
 
 # coef.vglm <- function(object, ...) coefvlm(object, ...)
 
-has.intercept.vlm <- function(model, ...) any(grepl("^\\(Intercept\\)", names(coef(model))))
+has_intercept.vlm <- function(model, ...) any(grepl("^\\(Intercept\\)", names(coef(model))))
 
 # formula.vglm <- function(x, ...) formulavlm(x = x, ...)
 
@@ -487,7 +493,7 @@ carPal <- function(){
 carPalette <- carPal()
 
 # the following function borrowed from stats:::format.perc(), not exported
-format.perc <- function (probs, digits){
+format_perc <- function (probs, digits){
   paste(format(100 * probs, trim = TRUE, scientific = FALSE, digits = digits), "%")
 }
 

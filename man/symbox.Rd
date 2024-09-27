@@ -54,7 +54,7 @@ symbox(x, ...)
 	
 }
     
-\seealso{\code{\link{boxplot}}, \code{\link{boxcox}}, \code{\link{bcPower}}, \code{\link{yjPower}}}
+\seealso{\code{\link{boxplot}}, \code{\link[MASS]{boxcox}}, \code{\link{bcPower}}, \code{\link{yjPower}}}
 
 \examples{
 symbox(~ income, data=Prestige)

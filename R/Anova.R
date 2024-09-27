@@ -1,12 +1,12 @@
 #-------------------------------------------------------------------------------
 # Revision history:
-# 2009-01-05: bug fix in Anova.II.lm(). J. Fox
+# 2009-01-05: bug fix in Anova_II_lm(). J. Fox
 # 2009-01-16: Cox models with clusters now handled. J. Fox
 # 2009-09-16: reworked glm and lm methods to handle aliased parameters. J. Fox
 # 2009-09-30: renamed "Anova" to "Analysis of Deviance" in output for some methods. J. Fox
 # 2009-12-22: modified Anova.mlm() to handle a user-supplied within-subject model matrix. J. Fox
-# 2009-12-28: named the components of P in Anova.III.mlm(). John
-# 2010-01-01: Anova.II.mlm() now hands off (again) to Anova.III.mlm() when there
+# 2009-12-28: named the components of P in Anova_III_mlm(). John
+# 2010-01-01: Anova_II_mlm() now hands off (again) to Anova_III_mlm() when there
 #             is only an intercept in the between-subjects model
 # 2010-02-17: Fixed bug that caused some models with aliased coefficients to fail. J. Fox
 # 2010-06-14: added wcrossprod and allow use of observation weights in Anova.mlm()
@@ -73,8 +73,11 @@
 # 2022-06-07: Added Anova.svycoxph(). JF
 # 2022-07-22: Fix bug in Anova.survreg() for Wald tests (reported by Megan Taylor Jones). JF
 # 2022-07-22: Make Anova.lm() more robust when there are aliased coefficients (following report by Taiwo Fagbohungbe). JF
-# 2022-07-27:  Tweaked the last fix so the tolerance for deciding rank is the same for the lm model and the temporary glm model. SW
-
+# 2022-07-27: Tweaked the last fix so the tolerance for deciding rank is the same for the lm model and the temporary glm model. SW
+# 2023-10-03: Suppress LR tests for "coxph" models using the tt argument (following bug report by Ken Beath). JF
+# 2024-05-08: Added Anova.clm() and Anova.clmm() methods (and supporting functions) (following report by Karl Ove Hufthammer). JF
+# 2024-05-14: Rename internal functions to replace .s with _s. JF
+# 2024-09-19: model.matrix.lme() now handles contrasts and xlev correctly, fixing a bug in Anova.lme() (reported by Ben Bolker). JF
 #-------------------------------------------------------------------------------
 
 # Type II and III tests for linear, generalized linear, and other models (J. Fox)
@@ -101,15 +104,6 @@ relatives <- function(term, names, factors){
 }
 
 lm2glm <- function(mod){
-  # class(mod) <- c("glm", "lm")
-  # wts <- mod$weights
-  # mod$prior.weights <- if (is.null(wts)) rep(1, length(mod$residuals)) else wts
-  # mod$y <- model.response(model.frame(mod))
-  # mod$linear.predictors <- mod$fitted.values
-  # mod$control <- list(epsilon=1e-8, maxit=25, trace=FALSE)
-  # mod$family <- gaussian()
-  # mod$deviance <- sum(residuals(mod)^2, na.rm=TRUE)
-  # mod
   Data <- getModelData(mod)
   wts <- weights(mod)
   Data$..wts.. <- if (is.null(wts)) rep(1, nrow(Data)) else wts
@@ -131,7 +125,6 @@ Anova.lm <- function(mod, error, type=c("II","III", 2, 3),
                      vcov.=NULL, singular.ok, ...){
   if (!is.null(vcov.)) message("Coefficient covariances computed by ", deparse(substitute(vcov.)))
   if (!missing(white.adjust)) message("Coefficient covariances computed by hccm()")
-#  vcov. <- getVcov(vcov., mod)
   if (df.residual(mod) == 0) stop("residual df = 0")
   if (deviance(mod) < sqrt(.Machine$double.eps)) stop("residual sum of squares is 0 (within rounding error)")
   type <- as.character(type)
@@ -141,7 +134,7 @@ Anova.lm <- function(mod, error, type=c("II","III", 2, 3),
   if (missing(singular.ok)){
     singular.ok <- type == "2" || type == "II"
   }
-  if (has.intercept(mod) && length(coef(mod)) == 1 
+  if (has_intercept(mod) && length(coef(mod)) == 1 
       && (type == "2" || type == "II")) {
     type <- "III"
     warning("the model contains only an intercept: Type III test substituted")
@@ -165,10 +158,10 @@ Anova.lm <- function(mod, error, type=c("II","III", 2, 3),
   else if (!is.null(vcov.)) return(Anova.default(mod, type=type, vcov.=vcov., test.statistic="F", 
                                                  singular.ok=singular.ok, ...))
   switch(type,
-         II=Anova.II.lm(mod, error, singular.ok=singular.ok, ...),
-         III=Anova.III.lm(mod, error, singular.ok=singular.ok, ...),
-         "2"=Anova.II.lm(mod, error, singular.ok=singular.ok, ...),
-         "3"=Anova.III.lm(mod, error, singular.ok=singular.ok,...))
+         II=Anova_II_lm(mod, error, singular.ok=singular.ok, ...),
+         III=Anova_III_lm(mod, error, singular.ok=singular.ok, ...),
+         "2"=Anova_II_lm(mod, error, singular.ok=singular.ok, ...),
+         "3"=Anova_III_lm(mod, error, singular.ok=singular.ok,...))
 }
 
 Anova.aov <- function(mod, ...){
@@ -176,7 +169,7 @@ Anova.aov <- function(mod, ...){
   Anova.lm(mod, ...)
 }
 
-Anova.II.lm <- function(mod, error, singular.ok=TRUE, ...){
+Anova_II_lm <- function(mod, error, singular.ok=TRUE, ...){
   if (!missing(error)){
     sumry <- summary(error, corr=FALSE)
     s2 <- sumry$sigma^2
@@ -208,7 +201,7 @@ Anova.II.lm <- function(mod, error, singular.ok=TRUE, ...){
   if (!singular.ok && !all(not.aliased))
     stop("there are aliased coefficients in the model")
   fac <- attr(terms(mod), "factors")
-  intercept <- has.intercept(mod)
+  intercept <- has_intercept(mod)
   I.p <- diag(length(coefficients(mod)))
   assign <- mod$assign
   assign[!not.aliased] <- NA
@@ -239,7 +232,7 @@ Anova.II.lm <- function(mod, error, singular.ok=TRUE, ...){
 
 # type III
 
-Anova.III.lm <- function(mod, error, singular.ok=FALSE, ...){
+Anova_III_lm <- function(mod, error, singular.ok=FALSE, ...){
   if (!missing(error)){
     error.df <- df.residual(error)
     error.SS <- deviance(error)
@@ -248,7 +241,7 @@ Anova.III.lm <- function(mod, error, singular.ok=FALSE, ...){
     error.df <- df.residual(mod)
     error.SS <- deviance(mod)
   }
-  intercept <- has.intercept(mod)
+  intercept <- has_intercept(mod)
   I.p <- diag(length(coefficients(mod)))
   Source <- term.names(mod)
   n.terms <- length(Source)
@@ -308,7 +301,7 @@ Anova.glm <- function(mod, type=c("II","III", 2, 3), test.statistic=c("LR", "Wal
     }
   }
   vcov. <- getVcov(vcov., mod)
-  if (has.intercept(mod) && length(coef(mod)) == 1 
+  if (has_intercept(mod) && length(coef(mod)) == 1 
       && (type == "2" || type == "II")) {
     type <- "III"
     warning("the model contains only an intercept: Type III test substituted")
@@ -318,21 +311,21 @@ Anova.glm <- function(mod, type=c("II","III", 2, 3), test.statistic=c("LR", "Wal
   }
   switch(type,
          II=switch(test.statistic,
-                   LR=Anova.II.LR.glm(mod, singular.ok=singular.ok),
+                   LR=Anova_II_LR_glm(mod, singular.ok=singular.ok),
                    Wald=Anova.default(mod, type="II", singular.ok=singular.ok, vcov.=vcov.),
-                   F=Anova.II.F.glm(mod, error, error.estimate, singular.ok=singular.ok)),
+                   F=Anova_II_F_glm(mod, error, error.estimate, singular.ok=singular.ok)),
          III=switch(test.statistic,
-                    LR=Anova.III.LR.glm(mod, singular.ok=singular.ok),
+                    LR=Anova_III_LR_glm(mod, singular.ok=singular.ok),
                     Wald=Anova.default(mod, type="III", singular.ok=singular.ok, vcov.=vcov.),
-                    F=Anova.III.F.glm(mod, error, error.estimate, singular.ok=singular.ok)),
+                    F=Anova_III_F_glm(mod, error, error.estimate, singular.ok=singular.ok)),
          "2"=switch(test.statistic,
-                    LR=Anova.II.LR.glm(mod, singular.ok=singular.ok),
+                    LR=Anova_II_LR_glm(mod, singular.ok=singular.ok),
                     Wald=Anova.default(mod, type="II", singular.ok=singular.ok, vcov.=vcov.),
-                    F=Anova.II.F.glm(mod, error, error.estimate, singular.ok=singular.ok)),
+                    F=Anova_II_F_glm(mod, error, error.estimate, singular.ok=singular.ok)),
          "3"=switch(test.statistic,
-                    LR=Anova.III.LR.glm(mod, singular.ok=singular.ok),
+                    LR=Anova_III_LR_glm(mod, singular.ok=singular.ok),
                     Wald=Anova.default(mod, type="III", singular.ok=singular.ok, vcov.=vcov.),
-                    F=Anova.III.F.glm(mod, error, error.estimate, singular.ok=singular.ok)))
+                    F=Anova_III_F_glm(mod, error, error.estimate, singular.ok=singular.ok)))
 }
 
 
@@ -340,10 +333,10 @@ Anova.glm <- function(mod, type=c("II","III", 2, 3), test.statistic=c("LR", "Wal
 
 # LR test
 
-Anova.III.LR.glm <- function(mod, singular.ok=FALSE, ...){
+Anova_III_LR_glm <- function(mod, singular.ok=FALSE, ...){
   if (!singular.ok && any(is.na(coef(mod))))
     stop("there are aliased coefficients in the model")
-  Source <- if (has.intercept(mod)) term.names(mod)[-1]
+  Source <- if (has_intercept(mod)) term.names(mod)[-1]
   else term.names(mod)
   n.terms <- length(Source)
   p <- df <- LR <- rep(0, n.terms)
@@ -365,7 +358,7 @@ Anova.III.LR.glm <- function(mod, singular.ok=FALSE, ...){
 
 # F test
 
-Anova.III.F.glm <- function(mod, error, error.estimate, singular.ok=FALSE, ...){
+Anova_III_F_glm <- function(mod, error, error.estimate, singular.ok=FALSE, ...){
   if (!singular.ok && any(is.na(coef(mod))))
     stop("there are aliased coefficients in the model")
   fam <- family(mod)$family
@@ -379,7 +372,7 @@ Anova.III.F.glm <- function(mod, error, error.estimate, singular.ok=FALSE, ...){
                      pearson=sum(residuals(error, "pearson")^2, na.rm=TRUE),
                      dispersion=df.res*summary(error, corr = FALSE)$dispersion,
                      deviance=deviance(error))
-  Source <- if (has.intercept(mod)) term.names(mod)[-1]
+  Source <- if (has_intercept(mod)) term.names(mod)[-1]
   else term.names(mod)
   n.terms <- length(Source)
   p <- df <- f <- SS <-rep(0, n.terms+1)
@@ -412,13 +405,13 @@ Anova.III.F.glm <- function(mod, error, error.estimate, singular.ok=FALSE, ...){
 
 # LR test
 
-Anova.II.LR.glm <- function(mod, singular.ok=TRUE, ...){
+Anova_II_LR_glm <- function(mod, singular.ok=TRUE, ...){
   if (!singular.ok && any(is.na(coef(mod))))
     stop("there are aliased coefficients in the model")
   # (some code adapted from drop1.glm)
   which.nms <- function(name) which(asgn == which(names == name))
   fac <- attr(terms(mod), "factors")
-  names <- if (has.intercept(mod)) term.names(mod)[-1]
+  names <- if (has_intercept(mod)) term.names(mod)[-1]
   else term.names(mod)
   n.terms <- length(names)
   X <- model.matrix(mod)
@@ -461,7 +454,7 @@ Anova.II.LR.glm <- function(mod, singular.ok=TRUE, ...){
 
 # F test
 
-Anova.II.F.glm <- function(mod, error, error.estimate, singular.ok=TRUE, ...){
+Anova_II_F_glm <- function(mod, error, error.estimate, singular.ok=TRUE, ...){
   # (some code adapted from drop1.glm)
   if (!singular.ok && any(is.na(coef(mod))))
     stop("there are aliased coefficients in the model")
@@ -478,7 +471,7 @@ Anova.II.F.glm <- function(mod, error, error.estimate, singular.ok=TRUE, ...){
                      dispersion = df.res*summary(error, corr = FALSE)$dispersion,
                      deviance = deviance(error))
   fac <- attr(terms(mod), "factors")
-  names <- if (has.intercept(mod)) term.names(mod)[-1]
+  names <- if (has_intercept(mod)) term.names(mod)[-1]
   else term.names(mod)
   n.terms <- length(names)
   X <- model.matrix(mod)
@@ -534,24 +527,24 @@ Anova.multinom <-
   {
     type <- as.character(type)
     type <- match.arg(type)
-    if (has.intercept(mod) && length(coef(mod)) == 1 
+    if (has_intercept(mod) && length(coef(mod)) == 1 
         && (type == "2" || type == "II")) {
       type <- "III"
       warning("the model contains only an intercept: Type III test substituted")
     }
     switch(type,
-           II = Anova.II.multinom(mod, ...),
-           III = Anova.III.multinom(mod, ...),
-           "2" = Anova.II.multinom(mod, ...),
-           "3" = Anova.III.multinom(mod, ...))
+           II = Anova_II_multinom(mod, ...),
+           III = Anova_III_multinom(mod, ...),
+           "2" = Anova_II_multinom(mod, ...),
+           "3" = Anova_III_multinom(mod, ...))
   }
 
-Anova.II.multinom <- function (mod, ...)
+Anova_II_multinom <- function (mod, ...)
 {
   which.nms <- function(name) which(asgn == which(names ==
                                                     name))
   fac <- attr(terms(mod), "factors")
-  names <- if (has.intercept(mod)) term.names(mod)[-1]
+  names <- if (has_intercept(mod)) term.names(mod)[-1]
   else term.names(mod)
   n.terms <- length(names)
   X <- model.matrix(mod)
@@ -586,9 +579,9 @@ Anova.II.multinom <- function (mod, ...)
   result
 }
 
-Anova.III.multinom <- function (mod, ...)
+Anova_III_multinom <- function (mod, ...)
 {
-  names <- if (has.intercept(mod)) term.names(mod)[-1]
+  names <- if (has_intercept(mod)) term.names(mod)[-1]
   else term.names(mod)
   n.terms <- length(names)
   X <- model.matrix(mod)
@@ -620,19 +613,19 @@ Anova.polr <- function (mod, type = c("II", "III", 2, 3), ...)
 {
   type <- as.character(type)
   type <- match.arg(type)
-  if (has.intercept(mod) && length(coef(mod)) == 1 
+  if (has_intercept(mod) && length(coef(mod)) == 1 
       && (type == "2" || type == "II")) {
     type <- "III"
     warning("the model contains only an intercept: Type III test substituted")
   }
   switch(type,
-         II = Anova.II.polr(mod, ...),
-         III = Anova.III.polr(mod, ...),
-         "2" = Anova.II.polr(mod, ...),
-         "3" = Anova.III.polr(mod, ...))
+         II = Anova_II_polr(mod, ...),
+         III = Anova_III_polr(mod, ...),
+         "2" = Anova_II_polr(mod, ...),
+         "3" = Anova_III_polr(mod, ...))
 }
 
-Anova.II.polr <- function (mod, ...)
+Anova_II_polr <- function (mod, ...)
 {
   if (!requireNamespace("MASS")) stop("MASS package is missing")
   which.nms <- function(name) which(asgn == which(names ==
@@ -672,7 +665,7 @@ Anova.II.polr <- function (mod, ...)
   result
 }
 
-Anova.III.polr <- function (mod, ...)
+Anova_III_polr <- function (mod, ...)
 {
   if (!requireNamespace("MASS")) stop("MASS package is missing")
   names <- term.names(mod)
@@ -746,7 +739,7 @@ Roy <- function (eig, q, df.res) {
   c(test, (tmp2 * test)/tmp1, tmp1, tmp2)
 }
 
-has.intercept.mlm <- function (model, ...) 
+has_intercept.mlm <- function (model, ...) 
   any(row.names(coefficients(model)) == "(Intercept)")
 
 
@@ -768,16 +761,14 @@ Anova.mlm <- function(mod, type=c("II","III", 2, 3), SSPE, error.df, idata,
   error.df <- if (missing(error.df)) df.residual(mod)
   else error.df
   switch(type,
-         II=Anova.II.mlm(mod, SSPE, error.df, idata, idesign, icontrasts, imatrix, test.statistic, ...),
-         III=Anova.III.mlm(mod, SSPE, error.df, idata, idesign, icontrasts, imatrix, test.statistic, ...),
-         "2"=Anova.II.mlm(mod, SSPE, error.df, idata, idesign, icontrasts, imatrix, test.statistic, ...),
-         "3"=Anova.III.mlm(mod, SSPE, error.df, idata, idesign, icontrasts, imatrix, test.statistic, ...))
+         II=Anova_II_mlm(mod, SSPE, error.df, idata, idesign, icontrasts, imatrix, test.statistic, ...),
+         III=Anova_III_mlm(mod, SSPE, error.df, idata, idesign, icontrasts, imatrix, test.statistic, ...),
+         "2"=Anova_II_mlm(mod, SSPE, error.df, idata, idesign, icontrasts, imatrix, test.statistic, ...),
+         "3"=Anova_III_mlm(mod, SSPE, error.df, idata, idesign, icontrasts, imatrix, test.statistic, ...))
 }
 
-Anova.III.mlm <- function(mod, SSPE, error.df, idata, idesign, icontrasts, imatrix, test, ...){
-  intercept <- has.intercept(mod)
-  # wts <- if (!is.null(mod$weights)) mod$weights else rep(1, nrow(model.matrix(mod)))
-  # V <- solve(wcrossprod(model.matrix(mod), w=wts))
+Anova_III_mlm <- function(mod, SSPE, error.df, idata, idesign, icontrasts, imatrix, test, ...){
+  intercept <- has_intercept(mod)
   p <- nrow(coefficients(mod))
   I.p <- diag(p)
   terms <- term.names(mod)
@@ -825,7 +816,7 @@ Anova.III.mlm <- function(mod, SSPE, error.df, idata, idesign, icontrasts, imatr
         }
       }
       X.design <- model.matrix(idesign, data=idata)
-      i.intercept <- has.intercept(X.design)
+      i.intercept <- has_intercept(X.design)
       iterms <- term.names(idesign)
       if (i.intercept) iterms <- c("(Intercept)", iterms)
       check.imatrix(X.design)
@@ -864,7 +855,7 @@ Anova.III.mlm <- function(mod, SSPE, error.df, idata, idesign, icontrasts, imatr
   result
 }
 
-Anova.II.mlm <- function(mod, SSPE, error.df, idata, idesign, icontrasts, imatrix, test, ...){
+Anova_II_mlm <- function(mod, SSPE, error.df, idata, idesign, icontrasts, imatrix, test, ...){
   wts <- if (!is.null(mod$weights)) mod$weights else rep(1, nrow(model.matrix(mod)))
   V <- solve(wcrossprod(model.matrix(mod), w=wts))
   SSP.term <- function(term, iterm){
@@ -891,7 +882,7 @@ Anova.II.mlm <- function(mod, SSPE, error.df, idata, idesign, icontrasts, imatri
     }
   }
   fac <- attr(terms(mod), "factors")
-  intercept <- has.intercept(mod)
+  intercept <- has_intercept(mod)
   p <- nrow(coefficients(mod))
   I.p <- diag(p)
   assign <- mod$assign
@@ -900,7 +891,7 @@ Anova.II.mlm <- function(mod, SSPE, error.df, idata, idesign, icontrasts, imatri
   n.terms <- length(terms)
   if (n.terms == 0){
     message("Note: model has only an intercept; equivalent type-III tests substituted.")
-    return(Anova.III.mlm(mod, SSPE, error.df, idata, idesign, icontrasts, imatrix, test, ...))
+    return(Anova_III_mlm(mod, SSPE, error.df, idata, idesign, icontrasts, imatrix, test, ...))
   }
   if (is.null(idata) && is.null(imatrix)){
     SSP <- as.list(rep(0, n.terms))
@@ -934,7 +925,7 @@ Anova.II.mlm <- function(mod, SSPE, error.df, idata, idesign, icontrasts, imatri
         }
       }
       X.design <- model.matrix(idesign, data=idata)
-      iintercept <- has.intercept(X.design)
+      iintercept <- has_intercept(X.design)
       iterms <- term.names(idesign)
       if (iintercept) iterms <- c("(Intercept)", iterms)
       check.imatrix(X.design)
@@ -1273,8 +1264,8 @@ df.residual.coxph <- function(object, ...){
   object$n - sum(!is.na(coef(object)))
 }
 
-alias.coxph <- function(model){
-  if(any(which <- is.na(coef(model)))) return(list(Complete=which))
+alias.coxph <- function(object, ...){
+  if(any(which <- is.na(coef(object)))) return(list(Complete=which))
   else list()
 }
 
@@ -1288,6 +1279,11 @@ Anova.coxph <- function(mod, type=c("II","III", 2, 3), test.statistic=c("LR", "W
     warning("LR tests unavailable with robust variances\n  Wald tests substituted")
     test.statistic <- "Wald"
   }
+  rhs <- as.character(formula(mod))[[3]]
+  if (test.statistic == "LR" && grepl("tt\\(", rhs)){
+    warning("LR tests unavailable for models using the tt argument\n  Wald tests substituted")
+    test.statistic <- "Wald"
+  }
   names <- term.names(mod)
   clusters <- grepl("cluster\\(", names)
   strata <- grepl("strata\\(", names)
@@ -1297,20 +1293,20 @@ Anova.coxph <- function(mod, type=c("II","III", 2, 3), test.statistic=c("LR", "W
   }
   switch(type,
          II=switch(test.statistic,
-                   LR=Anova.II.LR.coxph(mod),
+                   LR=Anova_II_LR_coxph(mod),
                    Wald=Anova.default(mod, type="II", test.statistic="Chisq", vcov.=vcov(mod, complete=FALSE))),
          III=switch(test.statistic,
-                    LR=Anova.III.LR.coxph(mod),
+                    LR=Anova_III_LR_coxph(mod),
                     Wald=Anova.default(mod, type="III", test.statistic="Chisq", vcov.=vcov(mod, complete=FALSE))),
          "2"=switch(test.statistic,
-                    LR=Anova.II.LR.coxph(mod),
+                    LR=Anova_II_LR_coxph(mod),
                     Wald=Anova.default(mod, type="II", test.statistic="Chisq", vcov.=vcov(mod, complete=FALSE))),
          "3"=switch(test.statistic,
-                    LR=Anova.III.LR.coxph(mod),
+                    LR=Anova_III_LR_coxph(mod),
                     Wald=Anova.default(mod, type="III", test.statistic="Chisq", vcov.=vcov(mod, complete=FALSE))))
 }
 
-Anova.II.LR.coxph <- function(mod, ...){
+Anova_II_LR_coxph <- function(mod, ...){
   if (!requireNamespace("survival")) stop("survival package is missing")
   which.nms <- function(name) which(asgn == which(names == name))
   fac <-attr(terms(mod), "factors")
@@ -1353,7 +1349,7 @@ Anova.II.LR.coxph <- function(mod, ...){
   result
 }
 
-Anova.III.LR.coxph <- function(mod, ...){
+Anova_III_LR_coxph <- function(mod, ...){
   if (!requireNamespace("survival")) stop("survival package is missing")
   which.nms <- function(name) which(asgn == which(names == name))
   fac <-attr(terms(mod), "factors")
@@ -1389,8 +1385,8 @@ Anova.III.LR.coxph <- function(mod, ...){
 
 # parametric survival regression models
 
-alias.survreg <- function(model){
-  if(any(which <- diag(vcov(model, complete=FALSE)) < 1e-10)) return(list(Complete=which))
+alias.survreg <- function(object, ...){
+  if(any(which <- diag(vcov(object, complete=FALSE)) < 1e-10)) return(list(Complete=which))
   else list()
 }
 
@@ -1413,24 +1409,20 @@ Anova.survreg <- function(mod, type=c("II","III", 2, 3), test.statistic=c("LR", 
   }
   switch(type,
          II=switch(test.statistic,
-                   LR=Anova.II.LR.survreg(mod),
-               #    Wald=Anova.II.Wald.survreg(mod)
-                   Wald=Anova.Wald.survreg(mod, type="2")),
+                   LR=Anova_II_LR_survreg(mod),
+                   Wald=Anova_Wald_survreg(mod, type="2")),
          III=switch(test.statistic,
-                    LR=Anova.III.LR.survreg(mod),
-               #     Wald=Anova.III.Wald.survreg(mod)
-                    Wald=Anova.Wald.survreg(mod, type="3")),
+                    LR=Anova_III_LR_survreg(mod),
+                    Wald=Anova_Wald_survreg(mod, type="3")),
          "2"=switch(test.statistic,
-                    LR=Anova.II.LR.survreg(mod),
-                    #    Wald=Anova.II.Wald.survreg(mod)
-                    Wald=Anova.Wald.survreg(mod, type="2")),
+                    LR=Anova_II_LR_survreg(mod),
+                    Wald=Anova_Wald_survreg(mod, type="2")),
          "3"=switch(test.statistic,
-                    LR=Anova.III.LR.survreg(mod),
-                    #     Wald=Anova.III.Wald.survreg(mod)
-                    Wald=Anova.Wald.survreg(mod, type="3")))
+                    LR=Anova_III_LR_survreg(mod),
+                    Wald=Anova_Wald_survreg(mod, type="3")))
 }
 
-Anova.II.LR.survreg <- function(mod, ...){
+Anova_II_LR_survreg <- function(mod, ...){
   if (!requireNamespace("survival")) stop("survival package is missing")
   dist <- mod$dist
   scale <- mod$call$scale
@@ -1444,7 +1436,7 @@ Anova.II.LR.survreg <- function(mod, ...){
   X <- model.matrix(mod)
   asgn <- attr(X, 'assign')
   asgn <- asgn[asgn != 0]
-  if (has.intercept(mod)){
+  if (has_intercept(mod)){
     int <- which(names == "(Intercept)")
     X <- X[, -int]
     names <- names[-int]
@@ -1463,14 +1455,12 @@ Anova.II.LR.survreg <- function(mod, ...){
     exclude.1 <- as.vector(unlist(sapply(c(names[term], rels), which.nms)))
     arg.list$formula <- y ~ X[, -exclude.1, drop = FALSE]
     mod.1 <- do.call(survival::survreg, arg.list)
-    #    mod.1 <- survival::survreg(y ~ X[, -exclude.1, drop = FALSE])
     loglik.1 <- logLik(mod.1)
     mod.2 <- if (length(rels) == 0) mod
     else {
       arg.list$formula <- y ~ X[, -exclude.2, drop = FALSE]
       exclude.2 <- as.vector(unlist(sapply(rels, which.nms)))
       do.call(survival::survreg, arg.list)     
-      #     survival::survreg(y ~ X[, -exclude.2, drop = FALSE])
     }
     loglik.2 <- logLik(mod.2)
     LR[term] <- -2*(loglik.1 - loglik.2)
@@ -1484,7 +1474,7 @@ Anova.II.LR.survreg <- function(mod, ...){
   result
 }
 
-Anova.III.LR.survreg <- function(mod, ...){
+Anova_III_LR_survreg <- function(mod, ...){
   if (!requireNamespace("survival")) stop("survival package is missing")
   dist <- mod$dist
   scale <- mod$call$scale
@@ -1498,7 +1488,7 @@ Anova.III.LR.survreg <- function(mod, ...){
   X <- model.matrix(mod)
   asgn <- attr(X, 'assign')
   asgn <- asgn[asgn != 0]
-  if (has.intercept(mod)){
+  if (has_intercept(mod)){
     int <- which(names == "(Intercept)")
     X <- X[, -int]
     names <- names[-int]
@@ -1516,7 +1506,6 @@ Anova.III.LR.survreg <- function(mod, ...){
   for (term in 1:n.terms){
     arg.list$formula <- y ~ X[, -which.nms(names[term])]
     mod.0 <- do.call(survival::survreg, arg.list)
-    #    mod.0 <- survival::survreg(y ~ X[, -which.nms(names[term])])
     LR[term] <- -2*(logLik(mod.0) - loglik1)
     p[term] <- pchisq(LR[term], df[term], lower.tail=FALSE)
   }
@@ -1528,33 +1517,10 @@ Anova.III.LR.survreg <- function(mod, ...){
   result
 }
 
-# Anova.II.Wald.survreg <- function(mod){
-#   V <- vcov(mod, complete=FALSE)
-#   b <- coef(mod)
-#   if (length(b) != nrow(V)){
-#     # p <- which(rownames(V) == "Log(scale)")
-#     p <- which(grepl("^Log\\(scale", rownames(V)))
-#     if (length(p) > 0) V <- V[-p, -p]
-#   }
-#   Anova.II.default(mod, V, test="Chisq")
-# }
-# 
-# Anova.III.Wald.survreg <- function(mod){
-#   V <- vcov(mod, complete=FALSE)
-#   b <- coef(mod)
-#   if (length(b) != nrow(V)){
-#     # p <- which(rownames(V) == "Log(scale)")
-#     p <- which(grepl("^Log\\(scale", rownames(V)))
-#     if (length(p) > 0) V <- V[-p, -p]
-#   }
-#   Anova.III.default(mod, V, test="Chisq")
-# }
-
-Anova.Wald.survreg <- function(mod, type){
+Anova_Wald_survreg <- function(mod, type){
   V <- vcov(mod, complete=FALSE)
   b <- coef(mod)
   if (length(b) != nrow(V)){
-    # p <- which(rownames(V) == "Log(scale)")
     p <- which(grepl("^Log\\(scale", rownames(V)))
     if (length(p) > 0) V <- V[-p, -p]
   }
@@ -1574,18 +1540,35 @@ Anova.default <- function(mod, type=c("II","III", 2, 3), test.statistic=c("Chisq
     }
   }
   vcov. <- getVcov(vcov., mod)
+  X <- model.matrix(mod)
+  if (!is.matrix(X)) {
+    warning("result of model.matrix(mod) is not a matrix",
+            "\ntests may be incorrect\n")
+  } else {
+    coef.names <- colnames(X)
+    if (any(bad <- !(names(coef(mod)) %in% coef.names)))
+      warning("there are coefficients in coef(mod)",
+              "\nthat are not in the model matrix:\n",
+              paste(names(coef(mod))[bad], collapse=", "),
+              "\ntests may be incorrect\n\n")
+    if (any(bad <- !(colnames(vcov.) %in% coef.names))) 
+      warning("there are rows/columns in vcov.",
+              "\nthat are not in the model matrix:\n",
+              paste(colnames(vcov.)[bad], collapse=", "),
+              "\ntests may be incorrect")
+  }
   type <- as.character(type)
   type <- match.arg(type)
   if (missing(singular.ok))
     singular.ok <- type == "2" || type == "II"
   switch(type,
-         II=Anova.II.default(mod, vcov., test.statistic, singular.ok=singular.ok, 
+         II=Anova_II_default(mod, vcov., test.statistic, singular.ok=singular.ok, 
                              error.df=error.df),
-         III=Anova.III.default(mod, vcov., test.statistic, singular.ok=singular.ok,
+         III=Anova_III_default(mod, vcov., test.statistic, singular.ok=singular.ok,
                                error.df=error.df),
-         "2"=Anova.II.default(mod, vcov., test.statistic, singular.ok=singular.ok,
+         "2"=Anova_II_default(mod, vcov., test.statistic, singular.ok=singular.ok,
                               error.df=error.df),
-         "3"=Anova.III.default(mod, vcov., test.statistic, singular.ok=singular.ok,
+         "3"=Anova_III_default(mod, vcov., test.statistic, singular.ok=singular.ok,
                                error.df=error.df))
 }
 
@@ -1594,14 +1577,17 @@ assignVector <- function(model, ...) UseMethod("assignVector")
 assignVector.default <- function(model, ...){
   m <- model.matrix(model)
   assign <- attr(m, "assign")
-  if (!is.null(assign)) return (assign)
+  if (!is.null(assign)) {
+    if (!has_intercept(model)) assign <- assign[assign != 0]
+    return (assign)
+  }
   m <- model.matrix(formula(model), data=model.frame(model))
   assign <- attr(m, "assign")
-  if (!has.intercept(model)) assign <- assign[assign != 0]
+  if (!has_intercept(model)) assign <- assign[assign != 0]
   assign
 }
 
-Anova.II.default <- function(mod, vcov., test, singular.ok=TRUE, error.df,...){
+Anova_II_default <- function(mod, vcov., test, singular.ok=TRUE, error.df,...){
   hyp.term <- function(term){
     which.term <- which(term==names)
     subs.term <- if (is.list(assign)) assign[[which.term]] else which(assign == which.term)
@@ -1631,10 +1617,10 @@ Anova.II.default <- function(mod, vcov., test, singular.ok=TRUE, error.df,...){
   if (!singular.ok && !all(not.aliased))
     stop("there are aliased coefficients in the model")
   fac <- attr(terms(mod), "factors")
-  intercept <- has.intercept(mod)
+  intercept <- has_intercept(mod)
   p <- length(coefficients(mod))
   I.p <- diag(p)
-  assign <- assignVector(mod) # attr(model.matrix(mod), "assign")
+  assign <- assignVector(mod) 
   if (!is.list(assign)) assign[!not.aliased] <- NA
   else if (intercept) assign <- assign[-1]
   names <- term.names(mod)
@@ -1654,7 +1640,6 @@ Anova.II.default <- function(mod, vcov., test, singular.ok=TRUE, error.df,...){
       n.terms <- n.terms - length(clusters) - length(strata)
     }
   }
-  #	if (inherits(mod, "plm")) assign <- assign[assign != 0]
   p <- teststat <- rep(0, n.terms + 1)
   teststat[n.terms + 1] <- p[n.terms + 1] <- NA
   for (i in 1:n.terms){
@@ -1680,13 +1665,13 @@ Anova.II.default <- function(mod, vcov., test, singular.ok=TRUE, error.df,...){
   result
 }
 
-Anova.III.default <- function(mod, vcov., test, singular.ok=FALSE, error.df, ...){
-  intercept <- has.intercept(mod)
+Anova_III_default <- function(mod, vcov., test, singular.ok=FALSE, error.df, ...){
+  intercept <- has_intercept(mod)
   p <- length(coefficients(mod))
   I.p <- diag(p)
   names <- term.names(mod)
   n.terms <- length(names)
-  assign <- assignVector(mod) # attr(model.matrix(mod), "assign")
+  assign <- assignVector(mod) 
   df <- c(rep(0, n.terms), error.df)
   if (inherits(mod, "coxph")){
     if (intercept) names <- names[-1]
@@ -1702,7 +1687,6 @@ Anova.III.default <- function(mod, vcov., test, singular.ok=FALSE, error.df, ...
       n.terms <- n.terms - length(clusters) - length(strata)
     }
   }
-  #	if (inherits(mod, "plm")) assign <- assign[assign != 0]
   if (intercept) df[1] <- sum(grepl("^\\(Intercept\\)", names(coef(mod))))
   teststat <- rep(0, n.terms + 1)
   p <- rep(0, n.terms + 1)
@@ -1787,13 +1771,13 @@ Anova.mer <- function(mod, type=c("II","III", 2, 3), test.statistic=c("Chisq", "
   if (missing(singular.ok))
     singular.ok <- type == "2" || type == "II"
   switch(type,
-         II=Anova.II.mer(mod, test=test.statistic, vcov., singular.ok=singular.ok),
-         III=Anova.III.mer(mod, test=test.statistic,  vcov., singular.ok=singular.ok),
-         "2"=Anova.II.mer(mod, test=test.statistic, vcov., singular.ok=singular.ok),
-         "3"=Anova.III.mer(mod, test=test.statistic, vcov., singular.ok=singular.ok))
+         II=Anova_II_mer(mod, test=test.statistic, vcov., singular.ok=singular.ok),
+         III=Anova_III_mer(mod, test=test.statistic,  vcov., singular.ok=singular.ok),
+         "2"=Anova_II_mer(mod, test=test.statistic, vcov., singular.ok=singular.ok),
+         "3"=Anova_III_mer(mod, test=test.statistic, vcov., singular.ok=singular.ok))
 }
 
-Anova.II.mer <- function(mod, vcov., singular.ok=TRUE, test=c("Chisq", "F"), ...){
+Anova_II_mer <- function(mod, vcov., singular.ok=TRUE, test=c("Chisq", "F"), ...){
   hyp.term <- function(term){ 
     which.term <- which(term==names)
     subs.term <- which(assign==which.term)
@@ -1821,7 +1805,7 @@ Anova.II.mer <- function(mod, vcov., singular.ok=TRUE, test=c("Chisq", "F"), ...
   if (!singular.ok && !all(not.aliased))
     stop("there are aliased coefficients in the model")
   fac <- attr(terms(mod), "factors")
-  intercept <- has.intercept(mod)
+  intercept <- has_intercept(mod)
   p <- length(fixef(mod))
   I.p <- diag(p)
   if (test == "F"){
@@ -1860,8 +1844,8 @@ Anova.II.mer <- function(mod, vcov., singular.ok=TRUE, test=c("Chisq", "F"), ...
   result
 }
 
-Anova.III.mer <- function(mod, vcov., singular.ok=FALSE, test=c("Chisq", "F"), ...){
-  intercept <- has.intercept(mod)
+Anova_III_mer <- function(mod, vcov., singular.ok=FALSE, test=c("Chisq", "F"), ...){
+  intercept <- has_intercept(mod)
   p <- length(fixef(mod))
   I.p <- diag(p)
   names <- term.names(mod)
@@ -1920,7 +1904,7 @@ Anova.III.mer <- function(mod, vcov., singular.ok=FALSE, test=c("Chisq", "F"), .
   result
 }
 
-has.intercept.lme <- function(model, ...){
+has_intercept.lme <- function(model, ...){
   any(names(fixef(model)) == "(Intercept)")
 }
 
@@ -1933,13 +1917,13 @@ Anova.lme <- function(mod, type=c("II","III", 2, 3),
   if (missing(singular.ok))
     singular.ok <- type == "2" || type == "II"
   switch(type,
-         II=Anova.II.lme(mod, vcov., singular.ok=singular.ok),
-         III=Anova.III.lme(mod, vcov., singular.ok=singular.ok),
-         "2"=Anova.II.lme(mod, vcov., singular.ok=singular.ok),
-         "3"=Anova.III.lme(mod, vcov., singular.ok=singular.ok))
+         II=Anova_II_lme(mod, vcov., singular.ok=singular.ok),
+         III=Anova_III_lme(mod, vcov., singular.ok=singular.ok),
+         "2"=Anova_II_lme(mod, vcov., singular.ok=singular.ok),
+         "3"=Anova_III_lme(mod, vcov., singular.ok=singular.ok))
 }
 
-Anova.II.lme <- function(mod, vcov., singular.ok=TRUE, ...){
+Anova_II_lme <- function(mod, vcov., singular.ok=TRUE, ...){
   hyp.term <- function(term){
     which.term <- which(term==names)
     subs.term <- which(assign==which.term)
@@ -1965,10 +1949,9 @@ Anova.II.lme <- function(mod, vcov., singular.ok=TRUE, ...){
   if (!singular.ok && !all(not.aliased))
     stop("there are aliased coefficients in the model")
   fac <- attr(terms(mod), "factors")
-  intercept <- has.intercept(mod)
+  intercept <- has_intercept(mod)
   p <- length(fixef(mod))
   I.p <- diag(p)
-#  assign <- attr(model.matrix(mod), "assign")
   attribs.mm <- attributes(model.matrix(mod))
   assign <- attribs.mm$assign
   nms.coef <- names(coef(mod))
@@ -1980,7 +1963,6 @@ Anova.II.lme <- function(mod, vcov., singular.ok=TRUE, ...){
             paste(nms.mm[!valid.coefs], collapse=", "))
   }
   assign <- assign[valid.coefs]
-#  assign[!not.aliased] <- NA
   names <- term.names(mod)
   if (intercept) names <- names[-1]
   n.terms <- length(names)
@@ -2000,13 +1982,12 @@ Anova.II.lme <- function(mod, vcov., singular.ok=TRUE, ...){
   result
 }
 
-Anova.III.lme <- function(mod, vcov., singular.ok=FALSE, ...){
-  intercept <- has.intercept(mod)
+Anova_III_lme <- function(mod, vcov., singular.ok=FALSE, ...){
+  intercept <- has_intercept(mod)
   p <- length(fixef(mod))
   I.p <- diag(p)
   names <- term.names(mod)
   n.terms <- length(names)
-  #  assign <- attr(model.matrix(mod), "assign")
   attribs.mm <- attributes(model.matrix(mod))
   assign <- attribs.mm$assign
   nms.coef <- names(coef(mod))
@@ -2024,9 +2005,6 @@ Anova.III.lme <- function(mod, vcov., singular.ok=FALSE, ...){
   df <- rep(0, n.terms)
   if (intercept) df[1] <- 1
   p <- teststat <-rep(0, n.terms)
-  # not.aliased <- !is.na(fixef(mod))
-  # if (!singular.ok && !all(not.aliased))
-  #   stop("there are aliased coefficients in the model")
   for (term in 1:n.terms){
     subs <- which(assign == term - intercept)        
     hyp.matrix <- I.p[subs,,drop=FALSE]
@@ -2064,20 +2042,20 @@ Anova.coxme <- function(mod, type=c("II","III", 2, 3), test.statistic=c("Wald", 
   test.statistic <- match.arg(test.statistic)
   switch(type,
          II=switch(test.statistic,
-                   LR=Anova.II.LR.coxme(mod, ...),
+                   LR=Anova_II_LR_coxme(mod, ...),
                    Wald=Anova.default(mod, type="II", test.statistic="Chisq", ...)),
          III=switch(test.statistic,
                     LR=stop("type-III LR tests not available for coxme models"),
                     Wald=Anova.default(mod, type="III", test.statistic="Chisq", ...)),
          "2"=switch(test.statistic,
-                    LR=Anova.II.LR.coxme(mod, ...),
+                    LR=Anova_II_LR_coxme(mod, ...),
                     Wald=Anova.default(mod, type="II", test.statistic="Chisq", ...)),
          "3"=switch(test.statistic,
                     LR=stop("type-III LR tests not available for coxme models"),
                     Wald=Anova.default(mod, type="III", test.statistic="Chisq")))
 }
 
-Anova.II.LR.coxme <- function(mod, ...){
+Anova_II_LR_coxme <- function(mod, ...){
   if (!requireNamespace("coxme")) stop("coxme package is missing")
   which.nms <- function(name) which(asgn == which(names == name))
   fac <-attr(terms(mod), "factors")
@@ -2139,4 +2117,45 @@ Anova.svycoxph <- function(mod, type=c("II", "III", 2, 3),
   type <- as.character(type)
   type <- match.arg(type)
   NextMethod(test.statistic=test.statistic, type=type, ...)
+}
+
+# Anova() methods for "clm" and "clmm" objects (ordinal package)
+#   coef(), vcov(), and model.matrix() methods not exported
+
+Anova.clm <- function(mod, ...){
+  class(mod) <- c("clmAnova", class(mod))
+  Anova.default(mod, ...)
+}
+
+coef.clmAnova <- function(object, ...) object$beta
+
+vcov.clmAnova <- function(object, ...){
+  coef.names <- names(coef(object))
+  V <- NextMethod()
+  V[coef.names, coef.names]
+}
+
+model.matrix.clmAnova <- function(object, ...){
+  X <- NextMethod()
+  X$X
+}
+
+Anova.clmm <- function(mod, ...){
+  class(mod) <- c("clmmAnova", class(mod))
+  Anova.default(mod, ...)
+}
+
+
+coef.clmmAnova <- function(object, ...) {
+  names.thresholds <- colnames(object$Theta)
+  coefs <- NextMethod()
+  names.all <- names(coefs)
+  names.fixed <- names.all[!names.all %in% names.thresholds]
+  coefs[names.fixed]
+}
+
+vcov.clmmAnova <- function(object, ...){
+  coef.names <- names(coef(object))
+  V <- NextMethod() 
+  V[coef.names, coef.names]
 }

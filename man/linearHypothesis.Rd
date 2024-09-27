@@ -22,6 +22,7 @@
 %   2020-12-21 added linearHypothesis.lmList(), and small edits. J. Fox
 %   2022-04-24: added error.df argument to linearHypothesis.default(). J. Fox
 %   2022-12-11: add info and example for multinom models. J. Fox
+%   2023-06-30: explain that ... not passed to vcov. (suggestion of Joe Ritter). J. Fox
 %------------------------------------------------------------------------------------
 
 \name{linearHypothesis}
@@ -185,7 +186,10 @@ matchCoefs(model, pattern, ...)
     coefficients, e.g., \code{\link{hccm}}, or an estimated covariance matrix
     for \code{model}. See also \code{white.adjust}. 
     For the \code{"lmList"} and \code{"nlsList"} methods, \code{vcov.}
-    must be a function (defaulting to \code{vcov}) to be applied to each model in the list.}
+    must be a function (defaulting to \code{vcov}) to be applied to each model in the list. 
+    
+    Note that arguments supplied to \code{...} are \emph{not} passed to \code{vcov.} when it's a function; in this case either use an anonymous function in which the 
+    additional arguments are set, or supply the coefficient covariance matrix directly (see the examples).}
   \item{coef.}{a vector of coefficient estimates.  The default is to get the
     coefficient estimates from the \code{model} argument, but the user can input
     any vector of the correct length. 
@@ -346,11 +350,14 @@ linearHypothesis(mod.davis, c("(Intercept) = 0", "repwt = 1"), test = "Chisq")
   ## use HC3 standard errors via white.adjust option
 linearHypothesis(mod.davis, c("(Intercept) = 0", "repwt = 1"), 
     white.adjust = TRUE)
-  ## covariance matrix *function*
-linearHypothesis(mod.davis, c("(Intercept) = 0", "repwt = 1"), vcov = hccm)
-  ## covariance matrix *estimate*
+  ## covariance matrix *function* (where type = "hc3" is the default)
+linearHypothesis(mod.davis, c("(Intercept) = 0", "repwt = 1"), vcov. = hccm)
+  ## covariance matrix *estimate*, specifying type explicitly
 linearHypothesis(mod.davis, c("(Intercept) = 0", "repwt = 1"), 
     vcov = hccm(mod.davis, type = "hc3"))
+  ## specifying additional type argument to covariance matrix function
+linearHypothesis(mod.davis, c("(Intercept) = 0", "repwt = 1"), 
+    vcov = function(m) hccm(m, type = "hc3"))
 
 mod.duncan <- lm(prestige ~ income + education, data=Duncan)
 

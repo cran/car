@@ -1,6 +1,5 @@
 # Leverage plots (J. Fox)
 
-# last modified 9 October 2009 by J. Fox
 # modified 25 November for layout and marking points only
 # changed 'vars' to 'terms' 16 March 2010 SW
 # 14 April 2010: set id.n = 0. J. Fox
@@ -13,6 +12,7 @@
 # 2017-11-09: made consistent with vcov() in R 2.5.0. J Fox
 # 2017-11-30: substitute carPalette() for palette(). J. Fox
 # 2019-11-14: change class(x) == "y" to inherits(x, "y")
+# 2024-05-14: has.intercept() -> has_intercept(). J. Fox
 
 # these functions to be rewritten; simply renamed for now
 
@@ -77,7 +77,7 @@ leveragePlot.lm <- function(model, term.name,
 	term <- which(term.name==term.names)
 	if (0==length(term)) stop(paste(term.name,"is not a term in the model."))
 	responseName <- responseName(model)
-	intercept <- has.intercept(model)
+	intercept <- has_intercept(model)
 	assign <- model$assign
 	X <- model.matrix(model)
 	V <- vcov(model, complete=FALSE)

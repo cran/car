@@ -33,7 +33,8 @@ deltaMethod <- function (object, ...) {
 	UseMethod("deltaMethod")
 }
 
-deltaMethod.default <- function (object, g., vcov., func = g., constants, level=0.95, rhs=NULL, ..., envir=parent.frame()) {
+deltaMethod.default <- function (object, g., vcov., func = g., constants, level=0.95, rhs=NULL, 
+                                 singular.ok=FALSE, ..., envir=parent.frame()) {
   if (!is.character(g.)) 
     stop("The argument 'g.' must be a character string")
   if ((exists.method("coef", object, default=FALSE) ||
@@ -41,6 +42,13 @@ deltaMethod.default <- function (object, g., vcov., func = g., constants, level=
       && exists.method("vcov", object, default=FALSE)){
     if (missing(vcov.)) vcov. <- vcov(object, complete=FALSE)
     object <- coef(object)
+  }
+  if (any(is.na(object))){
+    if (singular.ok){
+      object <- na.omit(object)
+    } else {
+      stop("there are aliased coefficients in the model")
+    }
   }
 	para <- object         
 	para.names <- names(para)

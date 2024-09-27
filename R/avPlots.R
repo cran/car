@@ -17,6 +17,7 @@
 # 2017-11-30: substitute carPalette() for palette(). J. Fox
 # 2018-07-13: made avPlots() generic. J. Fox
 # 2021-04-24: added pt.wts and cex args. J. Fox
+# 2024-04-11: return data frame(s) rather than matri(x, ces). J. Fox
 
 avPlots <- function(model, ...){
     UseMethod("avPlots")
@@ -196,6 +197,6 @@ avPlot.glm <- function(model, variable,
     }
     colnames(res) <- c(var.names[var], responseName)
     rownames(res) <- rownames(mod.mat)
-    invisible(res)
+    invisible(as.data.frame(res))
 }
 

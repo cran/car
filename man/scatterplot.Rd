@@ -73,7 +73,7 @@ sp(x, ...)
       (the default), no ellipses are plotted.  Can be a list of named values giving
       \code{levels}, a vector of one or more bivariate-normal probability-contour levels at
       which to plot the ellipses; \code{robust}, a logical value determing whether to use
-      the \code{\link{cov.trob}} function in the \pkg{MASS} package to calculate the center
+      the \code{\link[MASS]{cov.trob}} function in the \pkg{MASS} package to calculate the center
       and covariance matrix for the data ellipses; and \code{fill} and \code{fill.alpha},
       which control whether the ellipse is filled and the transparency of the fill.
       \code{TRUE} is equivalent to
@@ -109,7 +109,7 @@ sp(x, ...)
     value returned by \code{\link{carPalette}[-1]}.}
   \item{pch}{plotting characters for points; default is the plotting characters in
     order (see \code{\link{par}}).}
-  \item{cex}{sets the size of plotting characters, with \code{cex=1} the standard size.  You can also
+  \item{cex}{sets the size of plotting characters, with \code{cex=1} the standard size. You can use \code{cex = 0} to suppress the plotting of points if all you want to show are other graphical features, such as data ellipses, regression lines, smooths, etc.  You can also
     set the sizes of other elements with the arguments \code{cex.axis}, \code{cex.lab}, \code{cex.main},
     and \code{cex.sub}.  See \code{\link{par}}.}
   \item{reset.par}{if \code{TRUE} (the default) then plotting parameters are reset to their previous values
@@ -134,7 +134,7 @@ For \code{loessLine} and \code{gamLine} the variance smooth is estimated by sepa
 
 The default depection of the variance functions is via a shaded envelope between the upper and lower estimate of variability.  setting the subarguement \code{style="lines"} will display only the boundaries of this region, and \code{style="none"} suppresses variance smoothing.
   
-For  \code{style="filled"} several subarguments modify the appearance of the region:  code{alpha} is a number between 0 and 1 that specifies opacity with defualt 0.15, \code{border}, \code{TRUE} or \code{FALSE} specifies a border for the envelope, and \code{vertical} either \code{TRUE} or \code{FALSE}, modifies the behavior of the envelope at the edges of the graph.
+For  \code{style="filled"} several subarguments modify the appearance of the region: \code{alpha} is a number between 0 and 1 that specifies opacity with defualt 0.15, \code{border}, \code{TRUE} or \code{FALSE} specifies a border for the envelope, and \code{vertical} either \code{TRUE} or \code{FALSE}, modifies the behavior of the envelope at the edges of the graph.
 
 The sub-arguments \code{spread}, \code{lty.spread} and \code{col.spread} of the \code{smooth} argument are equivalent to the newer \code{var}, \code{col.var} and \code{lty.var}, respectively, recognizing that the spread is a measuure of conditional variability.
 }
@@ -153,7 +153,7 @@ The sub-arguments \code{spread}, \code{lty.spread} and \code{col.spread} of the 
 \seealso{\code{\link{boxplot}},
   \code{\link{jitter}}, \code{\link{legend}},
   \code{\link{scatterplotMatrix}}, \code{\link{dataEllipse}}, \code{\link{Boxplot}},
-  \code{\link{cov.trob}},
+  \code{\link[MASS]{cov.trob}},
   \code{\link{showLabels}}, \code{\link{ScatterplotSmoothers}}.}
 
 \examples{

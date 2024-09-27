@@ -1,3 +1,27 @@
+Changes to Version 3.1-3
+
+  o Clarify docs to explain that ... argument is not passed to .vcov when it's a function in calls to Anova(), confidence Elliipse(), Confint(), deltaMethod(), linearHypothesis(), and S() (suggestion of Joe Ritter).
+  
+  o make dataEllipse() generic and add default and formula methods (with help of Michael Friendly).
+  
+  o linearHypothesis() no longer issues a warning when a hypothesis matrix is supplied for coefficients whose names include arithmetic operators (following report by Robert Baer about unnecessary warnings printed by Anova(), which calls linearHypothesis()).
+  
+  o deltaMethod() now allows models with aliased coefficients when argument singular.ok=TRUE.
+  
+  o Anova() method for "coxph" objects no longer computes incorrect LR tests for models using the tt argument; in this case, Wald tests are substituted (following bug report by Ken Beath).
+  
+  o crPlot(), crPlots(), crPlot3d(), and avPlot3d() now invisibly return coordinates rather than NULL, as avPlot() and avPlots() already did (following query by Jeff Reichman).
+  
+  o poTest() supports "polr" models with weights (suggestion of Ken Beath).
+  
+  o Anova() now supports "clm" and "clmm" objects created by functions in the ordinal package (after report by Karl Ove Hufthammer that the default method doesn't work).
+  
+  o Anova.default() does more checking for potential problems (after report by Karl Ove Hufthammer).
+  
+  o Anova.lme() correctly handles models with contrasts different from the default contr.treatment (fixing a bug reported by Ben Bolker).
+  
+  o Small changes to docs.
+
 Changes to Version 3.1-2
  
   o Fixed bugs in interface for residualPlots() and residualPlot()
@@ -495,7 +519,7 @@ constants of the form 1.* or -1.* were printed incorrectly (reported by Johannes
 
   o Boxplot() now properly handles at argument passed through via ... to boxplot() (contribution of Steve Ellison).
 
-  o Small fixes.
+  o Small fixes and changes to unexported functions (to replace .s with _s in function names).
 
 Changes to Version 2.0-15
 

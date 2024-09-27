@@ -131,8 +131,8 @@ crPlot3d(model, var1, var2, ...)
   and a smooth of the partial residuals by a magenta surface.
 }
 \value{
-  \code{NULL}. These functions are used for their side effect of producing
-  plots.
+  These functions are used for their side effect of producing
+  plots, but also invisibly return the coordinates of the plotted points.
 }
 \references{ 
   Cook, R. D. and Weisberg, S. (1999)

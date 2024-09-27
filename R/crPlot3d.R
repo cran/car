@@ -1,5 +1,6 @@
 # added 2022-05-24 by J. Fox
 # 2023-01-01: use rgl::*3d() function. Duncan Murdoch
+# 2024-04-11: invisibly return coordinates. J. Fox
 
 crPlot3d <- function(model, var1, var2, ...) {
   UseMethod("crPlot3d")
@@ -274,5 +275,11 @@ crPlot3d.lm <- function (model,
         rgl::view3d(-angle, fov = fov)
     }
   }
-  return(invisible(NULL))
+  
+  D <- data.frame(
+    x = minx + (maxx - minx)*x,
+    y = miny + (maxy - miny)*y,
+    z = minz + (maxz - minz)*z
+  )
+  return(invisible(D))
 }

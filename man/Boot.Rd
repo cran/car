@@ -51,7 +51,7 @@ Boot(object, f=coef, labels=names(f(object)), R=999,
    below. The residual bootstrap is available only for \code{lm} and \code{nls}
    objects and will return an error for \code{glm} objects.}
 \item{\dots}{Arguments passed to the \code{boot} function, see 
-   \code{\link{boot}}.}
+   \code{\link[boot]{boot}}.}
 \item{start}{Should the estimates returned by \code{f} be passed as starting
     values for each bootstrap iteration? Alternatively, \code{start} can be a
     numeric vector of starting values.  The default is to use
@@ -89,7 +89,7 @@ The summary methods handle the \code{NA}s appropriately.
 Fox and Weisberg (2017) cited below discusses this function and provides more examples.
 }
 \value{
-See \code{\link{boot}} for the returned value of the structure returned by this function. 
+See \code{\link[boot]{boot}} for the returned value of the structure returned by this function. 
 }
 
 \section{Warning}{
@@ -103,7 +103,7 @@ Applications}.  Oxford:  Oxford University Press.
 Fox, J. and Weisberg, S. (2019) \emph{Companion to Applied Regression}, Third Edition. Thousand Oaks:  Sage.
 
 Fox, J. and Weisberg, S. (2019) \emph{Bootstrapping Regression Models in R},
-\url{https://socialsciences.mcmaster.ca/jfox/Books/Companion/appendices/Appendix-Bootstrapping.pdf}.
+\url{https://www.john-fox.ca/Companion/appendices/Appendix-Bootstrapping.pdf}.
 
 Weisberg, S. (2014) \emph{Applied Linear Regression}, Fourth Edition, Wiley
 Wiley, Chapters 4 and 11.}
@@ -112,10 +112,10 @@ Wiley, Chapters 4 and 11.}
 
 \seealso{Functions that work with
 \code{boot} objects from the \pkg{boot} package are
-\code{\link{boot.array}},
-\code{\link{boot.ci}},
-\code{\link{plot.boot}} and
-\code{\link{empinf}}.  Additional
+\code{\link[boot]{boot.array}},
+\code{\link[boot]{boot.ci}},
+\code{\link[boot]{plot.boot}} and
+\code{\link[boot]{empinf}}.  Additional
 functions in the \pkg{car} package are
 \code{\link{summary.boot}},
 \code{\link{confint.boot}}, and

@@ -46,6 +46,7 @@
 #             in the case of multinom models, 2 response levels(reported by Thamron Keowmani).
 # 2020-05-17: J. Fox added S.data.frame()
 # 2020-12-15:  In Confint.glm, fixed but go vcov. works correctly.
+# 2024-05-14: format.perc() -> format_perc(), has.intercept() -> has_intercept(). J. Fox
 
 formatCall <- function(call){
   call <- if (is.character(call)){
@@ -783,7 +784,7 @@ Confint.default <- function(object, estimate=TRUE, level=0.95, vcov., ...) {
         p <- 1 - (1 - level)/2
         z <- qnorm(p)
         result <- cbind(b - z*se, b + z*se)
-        colnames(result) <- format.perc(c(1 - p, p), 3)
+        colnames(result) <- format_perc(c(1 - p, p), 3)
     }
     if (estimate){
         result <- cbind(coef(object), result)
@@ -803,7 +804,7 @@ Confint.lm <- function(object, estimate=TRUE, parm, level = 0.95, vcov.= vcov(ob
     a <- (1 - level)/2
     a <- c(a, 1 - a)
     fac <- qt(a, object$df.residual)
-    pct <- format.perc(a, 3)
+    pct <- format_perc(a, 3)
     ci <- array(NA, dim = c(length(parm), 2L), dimnames = list(parm,  pct))
     V <- getVcov(vcov., object, complete=FALSE)
     ses <- sqrt(diag(V))[parm]
@@ -905,7 +906,7 @@ Confint.lme <- function(object, estimate=TRUE, level = 0.95, ...) {
   a <- (1 - level)/2
   a <- c(a, 1 - a)
   fac <- qnorm(a)
-  pct <- format.perc(a, 3)
+  pct <- format_perc(a, 3)
   ci <- array(NA, dim = c(length(cf), 2L), dimnames = list(names(cf),  pct))
   ses <- sqrt(diag(vcov(object, complete=FALSE)))
   ci[] <- cf + ses %o% fac
@@ -921,7 +922,7 @@ Confint.lmerMod <- function(object, estimate=TRUE, level = 0.95, ...) {
   a <- (1 - level)/2
   a <- c(a, 1 - a)
   fac <- qnorm(a)
-  pct <- format.perc(a, 3)
+  pct <- format_perc(a, 3)
   ci <- array(NA, dim = c(length(cf), 2L), dimnames = list(names(cf),  pct))
   ses <- sqrt(diag(as.matrix(vcov(object, complete=FALSE))))
   ci[] <- cf + ses %o% fac
@@ -938,7 +939,7 @@ Confint.glmerMod <- function(object, estimate=TRUE, level = 0.95, exponentiate=F
   a <- (1 - level)/2
   a <- c(a, 1 - a)
   fac <- qnorm(a)
-  pct <- format.perc(a, 3)
+  pct <- format_perc(a, 3)
   ci <- array(NA, dim = c(length(cf), 2L), dimnames = list(names(cf),  pct))
   ses <- sqrt(diag(as.matrix(vcov(object, complete=FALSE))))
   ci[] <- cf + ses %o% fac
@@ -968,123 +969,5 @@ coefs2use <- function(model, terms, intercept){
     model.names <- attributes(mm)$dimnames[[2]]
     model.assign <- attributes(mm)$assign
     use <- model.names[!is.na(match(model.assign, terms.used))]
-    if (intercept && has.intercept(model)) c("(Intercept)", use) else use
+    if (intercept && has_intercept(model)) c("(Intercept)", use) else use
 }
-
-# S <- function(model, terms, intercept, pvalues, digits, horizontal, ...){
-#     UseMethod("S")
-# }
-#
-#
-# S.default <- function(model, terms = ~ ., intercept=missing(terms), pvalues=FALSE, digits=3, horizontal=TRUE, ...){
-#     use <- coefs2use(model, terms, intercept)
-#     sumry <- summary(model)
-#     cols <- if (pvalues) c(1, 2, 4) else 1:2
-#     coefs <- sumry$coefficients[use, cols, drop=FALSE]
-#     colnames(coefs) <- if (pvalues) c("Estimate", "Std. Error", "Pr(>|z|)") else c("Estimate", "Std. Error")
-#     print(if (horizontal) t(coefs) else coefs, digits=digits)
-#     invisible(sumry)
-# }
-#
-# S.lm <- function(model, terms = ~ ., intercept=missing(terms), pvalues=FALSE, digits=3, horizontal=TRUE, vcov.=vcov, ...){
-#     use <- coefs2use(model, terms, intercept)
-#     sumry <- S(model, vcov.=vcov., ...)
-#     cols <- if (pvalues) c(1, 2, 4) else 1:2
-#     coefs <- sumry$coefficients[use, cols, drop=FALSE]
-#     colnames(coefs) <- if (pvalues) c("Estimate", "Std. Error", "Pr(>|t|)") else c("Estimate", "Std. Error")
-#     print(if (horizontal) t(coefs) else coefs, digits=digits)
-#     if (missing(terms)) cat("\n Residual SD =", format(sumry$sigma, digits=digits),
-#                             "on", model$df.residual, "df, R-squared =", format(sumry$r.squared, digits=digits))
-#     invisible(sumry)
-# }
-#
-# S.glm <- function(model, terms = ~ ., intercept=missing(terms), pvalues=FALSE, digits=3, horizontal=TRUE, vcov., dispersion, exponentiate, ...){
-#     if (!missing(vcov.) && !missing(dispersion))
-#         stop("cannot specify both the dispersion and vcov. arguments")
-#     if (missing(exponentiate)) exponentiate <- model$family$link %in% c("log", "logit")
-#     use <- coefs2use(model, terms, intercept)
-#     sumry <- if (!missing(vcov.)) S(model, digits, vcov.=vcov., ...)
-#     else if (!missing(dispersion)) S(model, digits, dispersion=dispersion, ...)
-#     else summary(model, ...)
-#     cols <- if (pvalues) c(1, 2, 4) else 1:2
-#     coefs <- sumry$coefficients[use, cols, drop=FALSE]
-#     colnames(coefs) <- if (pvalues) c("Estimate", "Std. Error", "Pr(>|z|)") else c("Estimate", "Std. Error")
-#     if (exponentiate){
-#         coefs <- cbind(coefs, exp(coefs[, 1]))
-#         colnames(coefs)[if (pvalues) 4 else 3] <- "exp(Estimate)"
-#     }
-#     print(if (horizontal) t(coefs) else coefs, digits=digits)
-#     if (missing(terms)) cat("\n Residual deviance =", format(model$deviance, digits=digits),
-#                             "on", model$df.residual, "df",
-#                             if (family(model)$family %in% c("binomial", "poisson")) ""
-#                             else (paste(", Est. dispersion =", format(sumry$dispersion, digits=digits))))
-#     invisible(sumry)
-# }
-#
-# S.polr <- function(model, terms = ~ ., intercept, pvalues=FALSE, digits=3, horizontal=TRUE, exponentiate=TRUE, ...){
-#     sumry <- summary(model)
-#     coefs <- sumry$coefficients[ , 1:2]
-#     if (pvalues) {
-#         coefs <- cbind(coefs, 2*pnorm(abs(coefs[ , 1]/coefs[, 2]), lower.tail=FALSE))
-#     }
-#     use <- if (missing(terms)) 1:nrow(coefs) else coefs2use(model, terms, FALSE)
-#     coefs <- coefs[use, , drop=FALSE]
-#     colnames(coefs) <- if (pvalues) c("Estimate", "Std. Error", "Pr(>|z|)") else c("Estimate", "Std. Error")
-#     if (exponentiate){
-#         coefs <- cbind(coefs, exp(coefs[, 1]))
-#         colnames(coefs)[if (pvalues) 4 else 3] <- "exp(Estimate)"
-#         if (missing(terms)){
-#             n.thresholds <- length(model$zeta)
-#             n.pars <- nrow(coefs)
-#             coefs[(n.pars - n.thresholds + 1):n.pars , if (pvalues) 4 else 3] <- NA
-#         }
-#     }
-#     print(if (horizontal) t(coefs) else coefs, digits=digits, na.print="")
-#     if (missing(terms)) cat("\n Residual deviance =", format(model$deviance, digits=digits),
-#         "on", model$df.residual, "df")
-#     invisible(sumry)
-# }
-#
-# S.multinom <- function(model, terms = ~ ., intercept=missing(terms), pvalues=FALSE, digits=3, horizontal=TRUE, exponentiate=TRUE, ...){
-#     use <- coefs2use(model, terms, intercept)
-#     sumry <- summary(model, ...)
-#     b <- sumry$coefficients
-#     se <- sumry$standard.errors
-#     p <- 2*pnorm(abs(b/se), lower.tail=FALSE)
-#     levels <- sumry$lev
-#     labels <- if (pvalues) c("Estimate", "Std. Error", "Pr(>|z|)") else c("Estimate", "Std. Error")
-#     if (exponentiate) labels <- c(labels, "exp(Estimate)")
-#     if (length(levels) == 2){
-#         b <- b[use]
-#         se <- se[use]
-#         p <- p[use]
-#         table <- if (pvalues) rbind(b, se, p) else rbind(b, se)
-#         if (exponentiate) table <- rbind(table, exp(b))
-#         rownames(table) <- labels
-#         cat("\n ", levels[2], "\n")
-#         print(if (horizontal) table else t(table), digits=digits)
-#     }
-#     else{
-#         b <- b[, use, drop=FALSE]
-#         se <- se[, use, drop=FALSE]
-#         p <- p[, use, drop=FALSE]
-#         table <- if (pvalues) abind(t(b), t(se), t(p), along=1.5) else abind(t(b), t(se), along=1.5)
-#         if (exponentiate) table <- abind(table, t(exp(b)), along=2)
-#         dimnames(table)[[2]] <- labels
-#         for (level in levels[-1]){
-#             cat("\n ", level, "\n")
-#             result <- if (horizontal) t(table[, , level]) else table[, , level]
-#             if (dim(table)[1] == 1){
-#                 if (horizontal) rownames(result) <- dimnames(table)[1] else {
-#                     result <- matrix(result, ncol=1)
-#                     colnames(result) <- dimnames(table)[1]
-#                 }
-#             }
-#             print(result, digits=digits)
-#         }
-#     }
-#     if (missing(terms)) cat("\n Residual deviance =", format(model$deviance, digits=digits),
-#         "fitting", length(b), "parameters")
-#     invisible(sumry)
-# }
-

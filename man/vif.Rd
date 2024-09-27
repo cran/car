@@ -49,7 +49,7 @@ vif(mod, ...)
   associated with the term.
   
   Through a further generalization, the implementation here is applicable as well to other sorts of models,
-  in particular weighted linear models,  generalized linear models, and mixed-effects models.
+  in particular weighted linear models,  generalized linear models, and mixed-effects models: Rather than computing the GVIFs from the correlation matrix of the columns of the model matrix (disregarding the regression constant), \code{vif()} uses the correlation matrix of the coefficients. Using either correlation matrix produces the same result for a linear model fit by least-squares (as pointed out by Henric Nilsson; see Fox, 2016, Exercise 13.5), but using the correlation matrix of the coefficients works with other regression models, such as GLMs, while using the correlations among the columns of the model matrix does not.
   
   Two methods of computing GVIFs are provided for unweighted linear models: 
   \itemize{

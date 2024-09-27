@@ -63,7 +63,7 @@ spm(x, ...)
     ellipses are plotted.  Can be a list of named values giving \code{levels}, a vector of one or more
     bivariate-normal probability-contour levels at which to
     plot the ellipses;  \code{robust}, a logical value determing whether to use
-    the \code{\link{cov.trob}} function in the \pkg{MASS} package
+    the \code{\link[MASS]{cov.trob}} function in the \pkg{MASS} package
     to calculate the center and covariance matrix for the data ellipses; and \code{fill} and \code{fill.alpha},
     which control whether the ellipse is filled and the transparency of the fill. \code{TRUE} is equivalent
     to \code{list(levels=c(.5, .95), robust=TRUE, fill=TRUE, fill.alpha=0.2)}.}
@@ -83,7 +83,7 @@ spm(x, ...)
   \item{col}{colors for points; the default is \code{\link{carPalette}} starting at the second color. The color of
     the \code{regLine} and \code{smooth} are the same as for points but can be changed using the the
     \code{regLine} and \code{smooth} arguments.}
-  \item{cex}{relative size of plotted points}
+  \item{cex}{relative size of plotted points. You can use \code{cex = 0.001} to suppress the plotting of points if all you want to show are other graphical features, such as data ellipses, regression lines, smooths, etc. }
   \item{cex.axis}{relative size of axis labels}
   \item{cex.labels}{relative size of labels on the diagonal}
   \item{cex.main}{relative size of the main title, if any}
@@ -100,8 +100,8 @@ spm(x, ...)
    the smoother.  Alternatively \code{smooth} can be set to a list of arguments.  The default behavior of
    \code{smooth=TRUE} is equivalent to \code{smooth=list(smoother=loessLine, spread=TRUE, lty.smooth=1, lwd.smooth=1.5, lty.spread=3, lwd.spread=1)}, specifying the smoother to be used, including the spread or variance smooth,
    and the line widths and types for the curves.  You can also specify the colors you want to use for the mean and variance smooths with the arguments \code{col.smooth} and \code{col.spread}. Alternative smoothers are \code{gamline} which uses the
-   \code{\link{gam}} function from the \pkg{mgcv} package, and \code{quantregLine} which uses quantile regression to
-   estimate the median and quartile functions using \code{\link{rqss}} from the \pkg{quantreg} package.  All of these
+   \code{\link[mgcv]{gam}} function from the \pkg{mgcv} package, and \code{quantregLine} which uses quantile regression to
+   estimate the median and quartile functions using \code{\link[quantreg]{rqss}} from the \pkg{quantreg} package.  All of these
    smoothers have one or more arguments described on their help pages, and these arguments can be added to the
    \code{smooth} argument; for example, \code{smooth = list(span=1/2)} would use the default
    \code{loessLine} smoother,
@@ -149,7 +149,7 @@ spm(x, ...)
 
 \seealso{\code{\link{pairs}}, \code{\link{scatterplot}},
   \code{\link{dataEllipse}}, \code{\link{powerTransform}},
-  \code{\link{bcPower}}, \code{\link{yjPower}}, \code{\link{cov.trob}},
+  \code{\link{bcPower}}, \code{\link{yjPower}}, \code{\link[MASS]{cov.trob}},
   \code{\link{showLabels}}, \code{\link{ScatterplotSmoothers}}.}
 
 \examples{

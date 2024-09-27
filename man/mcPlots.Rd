@@ -35,7 +35,7 @@ except for \code{X3}. If this argument is a quoted name of one of the regressors
 added-variable plot is drawn for that regressor or factor only.  Unlike other car functions, the formula should include the names of regressors, not predictors.  That is, if \code{log(X4)} is used to represent a predictor \code{X4}, the formula should specify \code{terms = ~ log(X4)}.
 }
 \item{variable}{A quoted string giving the name of a numeric predictor in the model matrix for the horizontal
-  axis.  To plot against a factor, you need to specify the full name of one of the indicator variables that define the factor.  For example, for a factor called \code{type} with levels \code{A}, \code{B} and {C}, using the usual drop-first level parameterization of the factor, the regressors for \code{type} would be \code{typeB} or \code{typeC}.  Similarly, to plot against the regressor \code{log(X4)}, you must specify \code{"log((X4)"}, not \code{"X4"}.
+  axis.  To plot against a factor, you need to specify the full name of one of the indicator variables that define the factor.  For example, for a factor called \code{type} with levels \code{A}, \code{B} and \code{C}, using the usual drop-first level parameterization of the factor, the regressors for \code{type} would be \code{typeB} or \code{typeC}.  Similarly, to plot against the regressor \code{log(X4)}, you must specify \code{"log((X4)"}, not \code{"X4"}.
 }
   \item{layout}{
 If set to a value like \code{c(1, 2)} or \code{c(6, 2)}, the layout

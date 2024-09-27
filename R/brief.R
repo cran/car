@@ -8,6 +8,7 @@
 # 2018-12-26: Changed the argument for brief.lm from vcov.=vcov to just vcov. If arg is
 #             missing set vcov. = vcov(object, complete=FALSE) to match brief.glm
 # 2020-10-07: added brief.tbl() to cope with changes to tibbles.
+# 2024-05-14: brief.vector(0) -> brief_vector(). 
 
 brief <- function(object, ...){
     g <- options("max.print"=.Machine$integer.max)
@@ -188,7 +189,7 @@ brief.list <- function(object, rows=c(2, 1), elided=TRUE, ...){
     invisible(xx)
 }
 
-brief.vector <- function(object, rows=c(2, 1), elided=TRUE, ...){
+brief_vector <- function(object, rows=c(2, 1), elided=TRUE, ...){
     first <- rows[1]
     last <- rows[2]
     result <- capture.output(object)
@@ -203,9 +204,7 @@ brief.vector <- function(object, rows=c(2, 1), elided=TRUE, ...){
     invisible(object)
 }
 
-# brief.vector() isn't a method and isn't exported
-
-brief.integer <- brief.numeric <- brief.character <- brief.vector
+brief.integer <- brief.numeric <- brief.character <- brief_vector
 
 brief.factor<- function(object, rows=c(2, 1), elided=TRUE, ...){
   first <- rows[1]
@@ -230,7 +229,7 @@ brief.factor<- function(object, rows=c(2, 1), elided=TRUE, ...){
 brief.default <- function(object, terms = ~ ., intercept=missing(terms), pvalues=FALSE, digits=3, horizontal=TRUE, ...){
   sumry <- summary(object)
   if (is.atomic(object) || is.atomic(sumry) || is.null(sumry$coefficients) || !is.matrix(sumry$coefficients)){
-    if (is.vector(object)) brief.vector(object, ...)
+    if (is.vector(object)) brief_vector(object, ...)
     else if (is.list(object)) brief.list(object, ...)
     else stop("no appropriate method for object of class '", class(object), "'")
     return(invisible(object))

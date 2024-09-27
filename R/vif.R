@@ -6,7 +6,8 @@
 # 2015-01-13: fixed model.matrix.gls to work with models with formulas as object. J. Fox
 # 2020-12-19: new polr and svyolr methods for ordinal regression models. J. Fox
 # 2022-03-11: added new vif.lm() methods that handles interactions. J. Fox
-# 20220-6-07: rework vif.lm() for interations. J. Fox
+# 2022-06-07: rework vif.lm() for interations. J. Fox
+# 2024-05-14: has.intercept() -> has_intercept(). J. Fox
 #-------------------------------------------------------------------------------
 
 # Generalized Variance-Inflation Factors (John Fox and Henric Nilsson)
@@ -154,7 +155,7 @@ vif.lm <- function(mod, type=c("terms", "predictor"), ...){
   factors <- attr(terms(mod), "factors")
   names <- term.names(mod)
   X <- model.matrix(mod)
-  intercept <- has.intercept(mod)
+  intercept <- has_intercept(mod)
   if (intercept) {
     names <- names[-1]
     assign.X <- attr(X, "assign")[-1]

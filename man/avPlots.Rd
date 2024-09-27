@@ -97,7 +97,7 @@ avPlot3d(model, coef1, coef2, id=TRUE, ...)
   \item{grid}{If \code{TRUE}, the default, a light-gray background grid is put on the graph.}
   \item{ellipse}{controls plotting data-concentration ellipses. If \code{FALSE} (the default), no ellipses are plotted.
     Can be a list of named values giving \code{levels}, a vector of one or more bivariate-normal probability-contour levels at which to
-    plot the ellipses; and \code{robust}, a logical value determing whether to use the \code{\link{cov.trob}} function in the \pkg{MASS} package
+    plot the ellipses; and \code{robust}, a logical value determing whether to use the \code{\link[MASS]{cov.trob}} function in the \pkg{MASS} package
     to calculate the center and covariance matrix for the data ellipses. \code{TRUE} is equivalent to \code{list(levels=c(.5, .95), robust=TRUE)}.}  
   \item{marginal.scale}{Consider an added-variable plot of Y versus X given Z.  If this argument is \code{FALSE} then the limits on the horizontal axis are determined by the range of the residuals from the regression of X on Z and the limits on the vertical axis are determined by the range of the residuals from the regressnio of Y on Z.  If the argument is \code{TRUE}, then the limits on the horizontal axis are determined by the range of X minus it mean, and on the vertical axis by the range of Y minus its means; adjustment is made if necessary to include outliers.  This scaling allows visualization of the correlations between Y and Z and between X and Z.  For example, if the X and Z are highly correlated, then the points will be concentrated on the middle of the plot.} 
     \item{fit}{one or both of \code{"linear"} (linear least-squares, the default) and \code{"robust"} (robust regression) surfaces to be fit to the 3D added-variable plot; see \code{\link{scatter3d}} for details.}
@@ -111,7 +111,7 @@ avPlot3d(model, coef1, coef2, id=TRUE, ...)
 }
 
 \value{
-  These functions are used for their side effect id producing
+  These functions are used for their side effect of producing
   plots, but also invisibly return the coordinates of the plotted points.
 }
 

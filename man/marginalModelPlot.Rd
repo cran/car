@@ -138,7 +138,7 @@ model. SD smooths are not computed for for generalized linear models.
 For generalized linear models the default number of elements in the spline basis is
 \code{k=3}; this is done to allow fitting for predictors with just a few support
 points.  If you have many support points you may wish to set \code{k} to a higher
-number, or \code{k=-1} for the default used by \code{\link{gam}}.
+number, or \code{k=-1} for the default used by \code{\link[mgcv]{gam}}.
 }
 
 \value{

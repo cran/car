@@ -43,14 +43,13 @@
 #   2022-04-24: introduce new error.df argument for linearHypothesis.default(). John
 #   2022-11-14: make printHypothesis() more tolerant of coefficient names. John
 #   2022-12-11: unexported coef.multinom() now uses . rather than : as coef-name separator. John
+#   2023-09-18: eliminate warning about arithmetic operators in coef
+#               names.
+# 2024-05-14: has.intercept() -> has_intercept(). John
 #----------------------------------------------------------------------------------------------------
 
-# vcov.default <- function(object, ...){
-# 	stop(paste("there is no vcov() method for models of class",
-# 					paste(class(object), collapse=", ")))
-# }
 
-has.intercept.matrix <- function (model, ...) {
+has_intercept.matrix <- function (model, ...) {
 	"(Intercept)" %in% colnames(model)
 }
 
@@ -143,24 +142,16 @@ makeHypothesis <- function(cnames, hypothesis, rhs = NULL){
 printHypothesis <- function(L, rhs, cnames){
   hyps <- rownames(L)
 	hyp <- rep("", nrow(L))
-	warning.flag <- FALSE
 	for (i in 1:nrow(L)){
 		sel <- L[i,] != 0
 		h <- L[i, sel]
 		h <- ifelse(h < 0, as.character(h), paste("+", h, sep=""))
 		nms <- cnames[sel]
-		if (any(which.bad <- grepl("[-+*/]", nms))) {
+		if (any(grepl("[-+*/]", nms))) {
 		  if (!is.null(hyps)) {
 		    h <- hyps[i]
 		    hyp[i] <- if (grepl("=[^ ]", h)) sub("=", " = ", h) else h
-		  } else {
-		    if (!warning.flag){
-		      warning.flag <- TRUE
-		      warning("one or more coefficients in the hypothesis include\n",
-		              "     arithmetic operators in their names;\n",
-		              "  the printed representation of the hypothesis will be omitted")
-		    }
-		  }
+		  } 
 		  next
 		}
 		h <- paste(h, nms)
@@ -274,7 +265,7 @@ linearHypothesis.default <- function(model, hypothesis.matrix, rhs=NULL,
 	if (!(is.finite(df) && df > 0)) test <- "Chisq"
 	name <- try(formula(model), silent = TRUE)
 	if (inherits(name, "try-error")) name <- substitute(model)
-	title <- "Linear hypothesis test\n\nHypothesis:"
+	title <- "\nLinear hypothesis test:"  
 	topnote <- paste("Model 1: restricted model","\n", "Model 2: ", 
 			paste(deparse(name), collapse = "\n"), sep = "")
 	note <- if (is.null(vcov.) || suppress.vcov.msg) ""
@@ -388,7 +379,7 @@ linearHypothesis.mlm <- function(model, hypothesis.matrix, rhs=NULL, SSPE, V,
 		if (is.null(idesign)) stop("idesign (intra-subject design) missing.")
 		X.design <- model.matrix(idesign, data=idata)
 		if (check.imatrix) check.imatrix(X.design)
-		intercept <- has.intercept(X.design)
+		intercept <- has_intercept(X.design)
 		term.names <- term.names(idesign)
 		if (intercept) term.names <- c("(Intercept)", term.names)
 		which.terms <- match(iterms, term.names)
@@ -432,81 +423,6 @@ linearHypothesis.mlm <- function(model, hypothesis.matrix, rhs=NULL, SSPE, V,
 	rval
 }
 
-#linearHypothesis.mlm <- function(model, hypothesis.matrix, rhs=NULL, SSPE, V,
-#   test, idata, icontrasts=c("contr.sum", "contr.poly"), idesign, iterms,
-#   check.imatrix=TRUE, P=NULL, title="", verbose=FALSE, ...){
-#   if (missing(test)) test <- c("Pillai", "Wilks", "Hotelling-Lawley", "Roy")
-#   test <- match.arg(test, c("Pillai", "Wilks", "Hotelling-Lawley", "Roy"),
-#       several.ok=TRUE)
-#   df.residual <- df.residual(model)
-#   if (missing (V)) V <- solve(crossprod(model.matrix(model)))
-#   B <- coef(model)
-#   if (is.character(hypothesis.matrix)) {
-#       L <- makeHypothesis(rownames(B), hypothesis.matrix, rhs)
-#       if (is.null(dim(L))) L <- t(L)
-#       L <- L[, -NCOL(L), drop = FALSE]
-#       rownames(L) <- hypothesis.matrix
-#   }
-#   else {
-#       L <- if (is.null(dim(hypothesis.matrix))) t(hypothesis.matrix)
-#           else hypothesis.matrix
-#   }
-#   if (missing(SSPE)) SSPE <- crossprod(residuals(model))
-#   if (missing(idata)) idata <- NULL
-#   if (missing(idesign)) idesign <- NULL
-#   if (!is.null(idata)){
-#       for (i in 1:length(idata)){
-#           if (is.null(attr(idata[,i], "contrasts"))){
-#               contrasts(idata[,i]) <- if (is.ordered(idata[,i])) icontrasts[2]
-#                   else icontrasts[1]
-#           }
-#       }
-#       if (is.null(idesign)) stop("idesign (intra-subject design) missing.")
-#       X.design <- model.matrix(idesign, data=idata)
-#       if (check.imatrix) check.imatrix(X.design)
-#       intercept <- has.intercept(X.design)
-#       term.names <- term.names(idesign)
-#       if (intercept) term.names <- c("(Intercept)", term.names)
-#       which.terms <- match(iterms, term.names)
-#       if (any(nas <- is.na(which.terms))){
-#           if (sum(nas) == 1)
-#               stop('The term "', iterms[nas],'" is not in the intrasubject design.')
-#           else stop("The following terms are not in the intrasubject design: ",
-#                   paste(iterms[nas], collapse=", "), ".")
-#       }
-#       select <- apply(outer(which.terms, attr(X.design, "assign") + intercept, "=="),
-#           2, any)
-#       P <- X.design[, select, drop=FALSE]
-#   }
-#   if (!is.null(P)){
-#       rownames(P) <- colnames(B)
-#       SSPE <- t(P) %*% SSPE %*% P
-#       B <- B %*% P
-#   }
-#   rank <- sum(eigen(SSPE, only.values=TRUE)$values >= sqrt(.Machine$double.eps))
-#   if (rank < ncol(SSPE))
-#       stop("The error SSP matrix is apparently of deficient rank = ",
-#           rank, " < ", ncol(SSPE))
-#   r <- ncol(B)
-#   if (is.null(rhs)) rhs <- matrix(0, nrow(L), r)
-#   rownames(rhs) <- rownames(L)
-#   colnames(rhs) <- colnames(B)
-#   q <- NROW(L)
-#   if (verbose){
-#       cat("\nHypothesis matrix:\n")
-#       print(L)
-#       cat("\nRight-hand-side matrix:\n")
-#       print(rhs)
-#       cat("\nEstimated linear function (hypothesis.matrix %*% coef - rhs):\n")
-#       print(drop(L %*% B - rhs))
-#       cat("\n")
-#   }
-#   SSPH <- t(L %*% B - rhs) %*% solve(L %*% V %*% t(L)) %*% (L %*% B - rhs)
-#   rval <- list(SSPH=SSPH, SSPE=SSPE, df=q, r=r, df.residual=df.residual, P=P,
-#       title=title, test=test)
-#   class(rval) <- "linearHypothesis.mlm"
-#   rval
-#}
 
 print.linearHypothesis.mlm <- function(x, SSP=TRUE, SSPE=SSP,
 		digits=getOption("digits"), ...){
@@ -575,7 +491,6 @@ linearHypothesis.survreg <- function(model, hypothesis.matrix, rhs=NULL,
 linearHypothesis.polr <- function (model, hypothesis.matrix, rhs=NULL, vcov., verbose=FALSE, ...){
   suppress.vcov.msg <- missing(vcov.)
 	k <- length(coef(model))
-#	V <- vcov(model, complete=FALSE)[1:k, 1:k]
 	V <- getVcov(vcov., model, complete=FALSE)[1:k, 1:k]
 	linearHypothesis.default(model, hypothesis.matrix, rhs, vcov.=V, verbose=verbose, 
 	                         suppress.vcov.msg = suppress.vcov.msg, ...)
@@ -666,7 +581,7 @@ linearHypothesis.mer <- function(model, hypothesis.matrix, rhs=NULL,
     }
     name <- try(formula(model), silent = TRUE)
     if (inherits(name, "try-error")) name <- substitute(model)
-    title <- "Linear hypothesis test\n\nHypothesis:"
+    title <- "\nLinear hypothesis test:"
     topnote <- paste("Model 1: restricted model","\n", "Model 2: ", 
                      paste(deparse(name), collapse = "\n"), sep = "")
     note <- if (is.null(vcov.)) ""
@@ -725,7 +640,7 @@ linearHypothesis.lme <- function(model, hypothesis.matrix, rhs=NULL,
 	SSH <- as.vector(t(L %*% b - rhs) %*% solve(L %*% V %*% t(L)) %*% (L %*% b - rhs))
 	name <- try(formula(model), silent = TRUE)
 	if (inherits(name, "try-error")) name <- substitute(model)
-	title <- "Linear hypothesis test\n\nHypothesis:"
+	title <- "\nLinear hypothesis test:"
 	topnote <- paste("Model 1: restricted model","\n", "Model 2: ", 
 			paste(deparse(name), collapse = "\n"), sep = "")
 	note <- if (is.null(vcov.)) ""

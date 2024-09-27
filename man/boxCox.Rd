@@ -94,7 +94,7 @@ Title for the contour plot or the profile log-likelihood plot
 }
 
 \details{
-The \code{boxCox} function is an elaboration of the \code{\link{boxcox}} function in the
+The \code{boxCox} function is an elaboration of the \code{\link[MASS]{boxcox}} function in the
   \pkg{MASS} package.  The first 7 arguments are the same as in \code{boxcox}, and if the argument \code{family="bcPower"} is used, the result is essentially identical to the function in \pkg{MASS}.  Two additional families are the \code{yjPower} and \code{bcnPower} families that allow a few values of the response to be non-positive.
 The bcnPower family has two parameters: a power \eqn{\lambda}{lambda} and a start or location parameter \eqn{\gamma}{gamma}, and the \code{boxCox} function can be used to obtain a profile log-likelihood for either parameter with \eqn{\lambda}{lambda} as the default. Alternatively, the \code{boxCox2d} function can be used to get a contour plot of the profile log-likelihood.
 }
@@ -135,7 +135,7 @@ Combining the Box-Cox Power and Generalized Log Transformations to Accomodate No
 \author{ Sanford Weisberg, <sandy@umn.edu> }
 
 \seealso{
-  \code{\link{boxcox}}, \code{\link{yjPower}}, \code{\link{bcPower}}, \code{\link{bcnPower}},
+  \code{\link[MASS]{boxcox}}, \code{\link{yjPower}}, \code{\link{bcPower}}, \code{\link{bcnPower}},
   \code{\link{powerTransform}}, \code{\link{contour}}
 }
 \examples{

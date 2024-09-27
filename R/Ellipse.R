@@ -25,23 +25,17 @@
 # 2016-02-16: replace cov.trob() call with MASS::cov.trob(). J. Fox
 # 2017-11-30: substitute carPalette() for palette(). J. Fox
 # 2022-09-22: add grid argument. J. Fox
+# 2023-08-28: trans.color -> grDevices::adjustcolor. Michael Friendly
+# 2023-08-28: replace label.ellipse with heplots::label.ellipse, add label.pos argument Michael Friendly
+# 2023-08-31: make dataEllipse generic; add formula method. MF
+# 2023-09-03: fix formula method using Formula::as.Formula. JF
+# 2023-09-03: test formula method & label.pos. MF
+# 2023-09-16: tweak code, add label.xpd arg. JF
+# 2024-05-14: has.intercept() -> has_intercept(). JF
 
 ellipse <- function(center, shape, radius, log="", center.pch=19, center.cex=1.5, segments=51, draw=TRUE, add=draw, 
 		xlab="", ylab="", col=carPalette()[2], lwd=2, fill=FALSE, fill.alpha=0.3,
 		grid=TRUE, ...) {
-	trans.colors <- function(col, alpha=0.5, names=NULL) {
-		# this function by Michael Friendly
-		nc <- length(col)
-		na <- length(alpha)
-		# make lengths conform, filling out to the longest
-		if (nc != na) {
-			col <- rep(col, length.out=max(nc,na))
-			alpha <- rep(alpha, length.out=max(nc,na))
-		}
-		clr <-rbind(col2rgb(col)/255, alpha=alpha)
-		col <- rgb(clr[1,], clr[2,], clr[3,], clr[4,], names=names)
-		col
-	}
 	logged <- function(axis=c("x", "y")){
 		axis <- match.arg(axis)
 		0 != length(grep(axis, log))
@@ -58,7 +52,8 @@ ellipse <- function(center, shape, radius, log="", center.pch=19, center.cex=1.5
 	colnames(ellipse) <- c("x", "y")
 	if (logged("x")) ellipse[, "x"] <- exp(ellipse[, "x"])
 	if (logged("y")) ellipse[, "y"] <- exp(ellipse[, "y"])
-	fill.col <- trans.colors(col, fill.alpha)
+#	fill.col <- trans.colors(col, fill.alpha)
+	fill.col <- grDevices::adjustcolor(col, alpha = fill.alpha)
 	if (draw) {
 		if (add) {
 			lines(ellipse, col=col, lwd=lwd, ...) 
@@ -77,32 +72,89 @@ ellipse <- function(center, shape, radius, log="", center.pch=19, center.cex=1.5
 	invisible(ellipse)
 }
 
+dataEllipse <- function(x, ...){
+  UseMethod("dataEllipse")
+}
 
-dataEllipse <- function(x, y, groups,
-    group.labels=group.levels, ellipse.label,
+dataEllipse.default <- function(x, y, groups,
+    group.labels=group.levels, ellipse.label, 
     weights, log="", levels=c(0.5, 0.95), center.pch=19, 
     center.cex=1.5, draw=TRUE,
-    plot.points=draw, add=!plot.points, segments=51, robust=FALSE, 
-    xlab=deparse(substitute(x)), ylab=deparse(substitute(y)), 
+    plot.points=draw, add=!plot.points, 
+    segments=51, robust=FALSE, 
+    xlab=deparse(substitute(x)), 
+    ylab=deparse(substitute(y)), 
     col=if (missing(groups)) carPalette()[1:2] else carPalette()[1:length(group.levels)],
     pch=if (missing(groups)) 1 else seq(group.levels),
-    lwd=2, fill=FALSE, fill.alpha=0.3, grid=TRUE, id=FALSE, ...) {
-    label.ellipse <- function(ellipse, label, col, ...){
-        # This sub-function from Michael Friendly
-        if (cor(ellipse)[1,2] >= 0){         # position label above top right
-            index <- which.max(ellipse[,2])
-            x <- ellipse[index, 1] + 0.5 * strwidth(label)
-            y <- ellipse[index, 2] + 0.5 * strheight("A")
-            adj <- c(1, 0) 
-        }
-        else {                               # position label below bot left
-            index <- which.min(ellipse[,2])
-            x <- ellipse[index, 1] - 0.5 * strwidth(label)
-            y <- ellipse[index, 2] - 0.5 * strheight("A")
-            adj <- c(0, 1) 
-        }
-        text(x, y, label, adj=adj, col=col, ...)
+    lwd=2, fill=FALSE, fill.alpha=0.3, grid=TRUE, id=FALSE,
+    label.pos=NULL, label.cex = 1.25, label.xpd=FALSE,
+    ...) {
+ 
+#   copied from heplots::label.ellipse
+    label.ellipse <- function(ellipse, label, col="black", 
+                            label.pos=NULL, xpd=FALSE, 
+                            tweak=0.5*c(strwidth("M"), strheight("M")), ...){
+    
+    ellipse <- as.matrix(ellipse)
+    if (ncol(ellipse) < 2) stop("ellipse must be a 2-column matrix")
+    
+    if (is.null(label.pos)) {
+      r = cor(ellipse, use="complete.obs")[1,2]
+      label.pos <- if (r>0) 3 else 1
     }
+    else if(length(label.pos) > 1) {
+      warning("label.pos = ", paste(label.pos, collapse=", "), " has length ", length(label.pos), " only 1st used." )
+      label.pos <- label.pos[1]    # only use 1st if > 1
+    }
+    
+    #		index <- if (1:4 %% 2) ... 
+    
+    posn <- c("center", "bottom", "left", "top", "right")
+    poss <- c("C",      "S",      "W",    "N",   "E")
+    if (is.character(label.pos)) {
+      if (label.pos %in% posn) label.pos <- pmatch(label.pos, posn, nomatch=3) - 1
+      if (label.pos %in% poss) label.pos <- pmatch(label.pos, poss, nomatch=3) - 1
+    }
+    pos <- label.pos
+    
+    if (label.pos==1) {   # bottom
+      index <- which.min(ellipse[,2])
+      x <- ellipse[index, 1]
+      y <- ellipse[index, 2] + tweak[2]
+    }
+    else if (label.pos==2) {   # left
+      index <- which.min(ellipse[,1])
+      x <- ellipse[index, 1] + tweak[1]
+      y <- ellipse[index, 2]
+    }
+    else if (label.pos==3) {   # top
+      index <- which.max(ellipse[,2])
+      x <- ellipse[index, 1] 
+      y <- ellipse[index, 2] - tweak[2]
+    }
+    else if (label.pos==4) {   # right
+      index <- which.max(ellipse[,1])
+      x <- ellipse[index, 1] - tweak[1]
+      y <- ellipse[index, 2]
+    }
+    else if (label.pos==0) {   # center
+      x <- mean(ellipse[, 1])
+      y <- mean(ellipse[, 2]) - tweak[2]
+      pos <-3
+    }
+    else  {  # use as index into ellipse coords
+      if (0 < label.pos & label.pos < 1) 
+        label.pos <- floor(label.pos * nrow(ellipse))
+      index <- max(1, min(label.pos, nrow(ellipse)))
+      x <- ellipse[index, 1]
+      y <- ellipse[index, 2]
+      pos <- 4 - floor(4*(index-1)/nrow(ellipse))
+    }
+    
+    text(x, y, label, pos=pos, xpd=xpd, col=col, ...)
+  }
+  
+  
     default.col <- if (missing(groups)) carPalette()[1] else carPalette()[1:length(groups)]
     id <- applyDefaults(id, defaults=list(method="mahal", n=2, cex=1, col=default.col, location="lr"), type="id")
     if (isFALSE(id)){
@@ -136,6 +188,7 @@ dataEllipse <- function(x, y, groups,
         xlab
         ylab
         if (!is.factor(groups)) stop ("groups must be a factor")
+        groups <- droplevels(groups)
         if (!(length(groups) == length(x))) stop ("groups, x, and y must all be of the same length")
         if(missing(labels)) labels <- seq(length(x))
         valid <- complete.cases(x, y, groups)
@@ -158,13 +211,18 @@ dataEllipse <- function(x, y, groups,
                 }
             }
         }
+
         id.lev <- list(method=id.method, n=id.n, cex=id.cex, col=NULL, labels=NULL, location=id.location)
+        if(!is.null(label.pos)) label.pos <- rep(label.pos, length.out = length(group.levels))
         for (lev in 1:length(group.levels)){
             level <- group.levels[lev]
             sel <- groups == level
             id.lev$labels <- labels[sel]
             id.lev$col <- rep(id.col[lev], 2)
+            lpos <- if(!is.null(label.pos) & length(label.pos)==1) label.pos else label.pos[lev]                                                      # MF
+            #cat("Level: ", level, " label.pos: ", lpos, "\n")
             result[[lev]] <- dataEllipse(x[sel], y[sel],
+                label.pos = lpos, label.cex = label.cex, label.xpd = label.xpd,                               # MF
                 weights=weights[sel], log=log, levels=levels, center.pch=center.pch,
                 center.cex=center.cex, draw=draw, plot.points=plot.points, add=TRUE, segments=segments,
                 robust=robust, col=rep(col[lev], 2), pch=pch[lev], lwd=lwd, fill=fill, fill.alpha=fill.alpha,
@@ -206,9 +264,11 @@ dataEllipse <- function(x, y, groups,
         result[[i]] <- ellipse(center, shape, radius, log=log,
             center.pch=center.pch, center.cex=center.cex, segments=segments, 
             col=col[2], lwd=lwd, fill=fill, fill.alpha=fill.alpha, draw=draw, ...)
+
         if (!missing(ellipse.label)) {
             lab <- if (length(ellipse.label) < i) ellipse.label[1] else ellipse.label[i]
-            label.ellipse(result[[i]], lab, col[2], ...)
+            label.ellipse(result[[i]], lab, col[2], label.pos = label.pos, cex = label.cex, 
+                          xpd=label.xpd, ...)      # MF
         }
     }
     if (missing(labels)) labels <- seq(length(x))
@@ -216,6 +276,86 @@ dataEllipse <- function(x, y, groups,
         method=id.method, n=id.n, cex=id.cex,
         col=id.col, location = id.location)
     invisible(if (length(levels) == 1) result[[1]] else result)
+}
+
+dataEllipse.formula <- function (formula, data, subset, weights, 
+                                 xlab, ylab, id=FALSE, ...) {
+  
+  id <- if (is.logical(id)){
+    if (isTRUE(id)) list() else FALSE
+  } else {
+    as.list(id)
+  }
+  
+  if (missing(data)) data <- environment(formula)
+  mf <- match.call(expand.dots = FALSE)
+  m <- match(c("formula", "data", "subset", "weights"), 
+             names(mf), 
+             0L)
+  mf <- mf[c(1L, m)]
+  mf$drop.unused.levels <- TRUE
+  mf$na.action <- na.pass
+  formula <- Formula::as.Formula(formula)
+  
+  if (length(formula)[1L] != 1L) {
+    stop("LHS of formula should have one element")
+  }
+  if (!(length(formula)[2L] %in% 1L:2L)){
+    stop("RHS of formula should have 1 or 2 elements")
+  }
+  
+  mf$formula <- formula
+  mf[[1L]] <- as.name("model.frame")
+  
+  subs <- as.expression(mf$subset)
+  
+  mf <- eval(mf, parent.frame())
+  
+  subs <- eval(subs, envir=data)
+  if (is.null(subs)) subs <- TRUE
+  
+  variables <- all.vars(formula)
+  if (length(variables) > 3L) stop("too many variables ( > 3)")
+  
+  mt <- terms(formula, data = data)
+  mtX <- terms(formula, data = data, rhs = 1L)
+  X <- model.matrix(mtX, mf)
+  X[, 1L] <- model.response(mf, "numeric")
+  X <- as.data.frame(X)
+  
+  if (length(formula)[2L] == 2L){
+    X <- cbind(X, 
+               if (is.data.frame(data)){
+                 data[subs, variables[3L]]
+               } else {
+                 eval(parse(text=variables[3L]), envir=data)[subs]
+               }
+    )
+  }
+  if (ncol(X) > 3L) stop("incorrect formula")
+  colnames(X) <- variables
+  
+  weights <- model.weights(mf)
+  if (is.null(weights)) weights <- rep(1, nrow(X))
+  X <- na.omit(cbind(weights, X))
+  weights <- X[, 1L]
+  X <- X[, -1L]
+  
+  if (!isFALSE(id) && is.null(id$labels)) id$labels <- row.names(X)
+  if (is.factor(X[, 2L]) && !is.list(id))  id <- list(labels=row.names(X))
+  
+  names <- colnames(X)
+  if (missing(xlab)) xlab <- names[2L]
+  if (missing(ylab)) ylab <- names[1L]
+  
+  if (ncol(X) == 2L) {
+    dataEllipse(X[, 2L], X[, 1L], xlab=xlab, ylab=ylab,
+                id=id, weights=weights, ...)
+  } else {
+    dataEllipse(X[, 2L], X[, 1L], groups=X[, 3L], xlab=xlab, ylab=ylab,
+                id=id, weights=weights, ...)
+  }
+  
 }
     
 confidenceEllipse <- function (model, ...) {
@@ -232,7 +372,7 @@ confidenceEllipse.lm <- function(model, which.coef, vcov.=vcov, L, levels=0.95, 
 		which.coef <- if(length(coefficients(model)) == 2) c(1, 2)
 				else{
 					if (missing(which.coef)){
-						if (has.intercept(model)) c(2,3) else c(1, 2)
+						if (has_intercept(model)) c(2,3) else c(1, 2)
 					} else which.coef
 				}
 		coef <- coefficients(model)[which.coef]
@@ -271,7 +411,7 @@ confidenceEllipse.default <- function(model, which.coef, vcov.=vcov, L, levels=0
 		which.coef <- if(length(coefficients(model)) == 2) c(1, 2)
 				else{
 					if (missing(which.coef)){
-						if (has.intercept(model)) c(2, 3) else c(1, 2)
+						if (has_intercept(model)) c(2, 3) else c(1, 2)
 					} else which.coef
 				}
 		coef <- coefficients(model)[which.coef]

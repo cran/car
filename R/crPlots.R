@@ -19,6 +19,7 @@
 # 2017-11-30: substitute carPalette() for palette(). J. Fox
 # 2018-07-13: made crPlots() generic. J. Fox
 # 2018-08-06: enabled spread and var for smoothers. J. Fox
+# 2024-04-11: crPlot() and crPlots() invisibly return coordinates. J. Fox
 
 # these functions to be rewritten; simply renamed for now
 
@@ -53,10 +54,13 @@ crPlots.default <- function(model, terms= ~ ., layout=NULL, ask, main, ...){
     }
     if(!is.null(class(model$na.action)) && 
        inherits(model$na.action, 'exclude')) class(model$na.action) <- 'omit'
-    for(term in vterms) 
-        crPlot(model, term, ...)
+    result <- vector(length(vterms), mode="list")
+    names(result) <- vterms
+    for(term in vterms) {
+        result[[term]] <- crPlot(model, term, ...)
+    }
     mtext(side=3, outer=TRUE, main, cex=1.2)
-    invisible(0)
+    invisible(result)
 }
 
 
@@ -149,5 +153,8 @@ crPlot.lm<-function(model, variable, id=FALSE,
         showLabels(.x, partial.res[,last], labels=labels, 
                    method=id.method, n=id.n, cex=id.cex,
                    col=id.col, location=id.location)
-    }          
+    }
+    result <- cbind(.x, partial.res[, if (order==1) var else last])
+    colnames(result) <- c(var, responseName(model))
+    invisible(as.data.frame(result))
 }

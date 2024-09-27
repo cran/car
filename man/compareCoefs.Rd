@@ -27,7 +27,7 @@ If \code{TRUE}, the default, show standard errors as well as estimates.
 }
 \item{zvals}{If \code{TRUE} (the default is \code{FALSE}), print Wald statistics, the
 ratio of each coefficient to its standard error.}
-\item{pvals}{If code{TRUE} (the default is \code{FALSE}), print two-sided p-values
+\item{pvals}{If \code{TRUE} (the default is \code{FALSE}), print two-sided p-values
 from the standard normal distribution corresponding to the Wald statistics.}
 \item{vcov.}{an optional argument, specifying a function to be applied to all of the models, returning a coefficient covariance matrix
 for each, or a list with one element for each model, with each element either containing a function to
