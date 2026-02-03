@@ -198,6 +198,20 @@ deltaMethod(m1, "1/(Intercept)")
 # The next example invokes the default method by extracting the
 # vector of estimates and covariance matrix explicitly
 deltaMethod(coef(m1), "t1/t2", vcov.=vcov(m1))
+# Mroz example, in carData, logistic regression using 2 predictors
+mroz.mod1 <- glm(lfp ~ k5 + age, family=binomial, data=Mroz)
+# The S() method in car returns exponentiated logistic regression coefficients by default
+S(mroz.mod1)
+# Exponentiated coefficient estimates can also be computed one at a time by deltaMethod
+deltaMethod(mroz.mod1, "exp(k5)")
+# The point estimate is the same as in the S() output but the confidence interval is 
+# different because S() simply exponentiated the ends of the confidence interval before 
+# exponentiation.
+# A more complex case is to get the estimate and standard error for the inverse logit
+# of the coefficient estimate.
+deltaMethod(mroz.mod1, "exp(b1)/(1 + exp(b1))", parameterNames= paste("b", 0:2, sep=""))
+# the parameterNames argument was used to change the name of the coefficient from
+# k5 to b1.
 }
 \keyword{ models }
 \keyword{ regression }

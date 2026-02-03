@@ -86,7 +86,12 @@ J. Fox \email{jfox@mcmaster.ca}
 if (require(nlme)){
     print(fm1 <- lme(distance ~ age, data = Orthodont))
     infIndexPlot(influence(fm1, "Subject"))
+    
+  # a little slow:
+    \dontrun{
     infIndexPlot(influence(fm1))
+    }
+    
     }
 }
 

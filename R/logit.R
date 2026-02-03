@@ -2,15 +2,19 @@
 
 # 2022-02-04: Fix range tests (bug reported by Collin Erickson)
 #             Print message if percents converted to proportions
+# 2024-10-28: Fix bug that incorrectly sets percents <- FALSE 
+#             when percents arg is set (reported by Iain Proctor)
 
 logit <- function(p, percents, adjust){
 	range.p <- range(p, na.rm=TRUE)
-	if (missing(percents) && range.p[2] > 1){
-	  percents <- TRUE
-	  message("Note: largest value of p > 1 so values of p interpreted as percents")
-	} else {
-	  percents <- FALSE
-	}
+	if (missing(percents)){
+	  if (range.p[2] > 1){
+	    percents <- TRUE
+	    message("Note: largest value of p > 1 so values of p interpreted as percents")
+	  } else {
+	    percents <- FALSE
+	  }
+  }
 	if (percents){
 		if (range.p[1] < 0 || range.p[2] > 100) stop("p must be in the range 0 to 100")
 		p <- p/100

@@ -5,7 +5,8 @@
 #             multivariate extenstion.  Works for lm and lmer
 # 2017-12-25: bug fix with multivariace bcnPower
 # 2019-03-07: bug fix in estimateTransform.bcnPowerlmer, thanks to wouter@zoology.ubc.ca
-# 2019-11-14,15: change class(x) == "y" to inherits(x, "y") and likewise for !=
+# 2025-05-15: The argument gamma.min was not used, not it is
+# 2025-05-18: change class() == to inherits()
 
 bcnPower <- function(U, lambda, jacobian.adjusted=FALSE, gamma) {
   if(is.matrix(U)){
@@ -65,7 +66,8 @@ bcn.sv <- function(X, Y, weights, itmax=100, conv=.0001, verbose=FALSE,
   gamma.1d <- function(Y, weights, lambda, gamma, xqr){
     fn1 <- function(gam) bcnPowerllik(NULL, Y, weights, lambda=lambda,
                                      gamma=gam, xqr=xqr)$llik
-    f <- optimize(f=fn1, interval=c(0.01, max(Y)), maximum=TRUE)
+#    f <- optimize(f=fn1, interval=c(0.01, max(Y)), maximum=TRUE) bug, ignores gamma.min
+    f <- optimize(f=fn1, interval=c(gamma.min, max(Y)), maximum=TRUE)
     list(lambda=lambda, gamma=f$maximum, llik=f$objective)
   }
   # get qr decomposition
@@ -84,14 +86,15 @@ bcn.sv <- function(X, Y, weights, itmax=100, conv=.0001, verbose=FALSE,
     last.value <- res
     res <- lambda.1d(Y, weights, res$lambda, res$gamma, xqr)
     res <- gamma.1d(Y, weights, res$lambda, res$gamma, xqr)
-    if(res$gamma < 1.5 * gamma.min){
+    if(res$gamma < 1.01 * gamma.min){
+# if(res$gamma < 1.5 * gamma.min){
       gamma.ok <- FALSE
       res <- lambda.1d(Y, weights, res$lambda, gamma.min, xqr)
     }
     crit <- (res$llik - last.value$llik)/abs(res$llik)
     if(verbose)
       print(data.frame(Iter=i, gamma=res$gamma,
-            lambda=res$gamma, llik=res$llik, crit=crit))
+            lambda=res$lambda, llik=res$llik, crit=crit))
   }
   if(i==itmax & conv > crit)
     warning(paste("No convergence in", itmax, "iterations, criterion =", crit, collapse=" "))
@@ -163,10 +166,15 @@ estimateTransform.bcnPower <- function(X, Y, weights,
   w <- if(is.null(weights)) 1 else sqrt(weights)
   xqr <- qr(w * as.matrix(X))
 # if d = 1 call bcn.sv and return, else call bcn.sv to get starting values.
-  if(d == 1) bcn.sv(X, Y, weights, start=FALSE) else{
+  if(d == 1) bcn.sv(X, Y, weights=weights,
+                    itmax=itmax, conv=conv, verbose=verbose,
+                    start=FALSE, gamma.min=gamma.min) else{
 # The rest of this code is for the multivariate case
 # get starting values for gamma
-  sv <- apply(Y, 2, function(y) unlist(bcn.sv(X, y, weights, start=TRUE)))
+  sv <- apply(Y, 2, function(y) unlist(
+    bcn.sv(X, y, weights=weights,
+           itmax=itmax, conv=conv, verbose=verbose,
+           start=TRUE, gamma.min=gamma.min)))
   res <- as.list(as.data.frame(t(sv))) # output to a list
 # gamma.estimated converted to numeric, so fixup
   res$gamma.estimated <- ifelse(res$gamma.estimated==1, TRUE, FALSE)
@@ -197,7 +205,7 @@ estimateTransform.bcnPower <- function(X, Y, weights,
   res$gamma[!gamma.ok] <- gamma.min
   if(all(gamma.ok)){
      hess <- try(optimHess(c(res$lambda, res$gamma), fn4))
-     res$invHess <- if(inherits(hess, "try-error")) NA else solve(-hess)
+     res$invHess <- if (inherits(hess, "try-error")) NA else solve(-hess)
   } else {
     fn4a <- function(lam) fn4(c(lam, res$gamma))
     hess <- try(optimHess(res$lambda, fn4a)) # hessian for lambda only

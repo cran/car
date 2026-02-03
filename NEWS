@@ -1,3 +1,18 @@
+Changes to Version 3.1-5
+
+  o New maintainer and updated information
+
+Changes to Version 3.1-5
+
+  o New maintainer and updated information
+  
+
+Changes to Version 3.1-4
+
+  o Fixed bugs in powerTransformation using the bcnPower family.  New results may differ slightly from former results.
+  
+  o Fix bug in logit() (reported and fixed by Iain Proctor)
+
 Changes to Version 3.1-3
 
   o Clarify docs to explain that ... argument is not passed to .vcov when it's a function in calls to Anova(), confidence Elliipse(), Confint(), deltaMethod(), linearHypothesis(), and S() (suggestion of Joe Ritter).

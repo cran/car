@@ -34,7 +34,7 @@ deltaMethod <- function (object, ...) {
 }
 
 deltaMethod.default <- function (object, g., vcov., func = g., constants, level=0.95, rhs=NULL, 
-                                 singular.ok=FALSE, ..., envir=parent.frame()) {
+                                 singular.ok=FALSE, ..., envir=parent.frame()) { 
   if (!is.character(g.)) 
     stop("The argument 'g.' must be a character string")
   if ((exists.method("coef", object, default=FALSE) ||
@@ -63,9 +63,10 @@ deltaMethod.default <- function (object, g., vcov., func = g., constants, level=
      for (i in seq_along(constants)) assign(names(constants[i]), constants[[i]], envir)}
 	est <- eval(g., envir)
 	names(est) <- NULL
-	gd <- rep(0, q)
-	for (i in 1:q) {
-		gd[i] <- eval(D(g., para.names[i]), envir)
+	gd <- gd2 <- rep(0, q)
+	for (i in 1:q) { 
+ 		gd[i] <- eval(D(g., para.names[i]), envir) 
+#		gd[i] <- eval(Deriv::Deriv(f=g., x=para.names[i]), env=envir) # unused alt. using Deriv
 	}
 	se.est <- as.vector(sqrt(t(gd) %*% vcov. %*% gd))
 	result <- data.frame(Estimate = est, SE = se.est, row.names = c(func))

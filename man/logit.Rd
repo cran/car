@@ -34,7 +34,7 @@ logit(p, percents, adjust)
   \emph{An R Companion to Applied Regression}, Third Edition, Sage.
 }
 
-\author{John Fox \email{jfox@mcmaster.ca}}
+\author{John Fox \email{jfox@mcmaster.ca} and Iain Proctor}
 
 \seealso{\code{\link{probabilityAxis}}}
 
@@ -42,6 +42,7 @@ logit(p, percents, adjust)
 save.opt <- options(digits=4)
 logit(.1*0:10)
 logit(.1*0:10, adjust=0)
+logit(10*1:9, percents=TRUE)
 options(save.opt)
 }
 

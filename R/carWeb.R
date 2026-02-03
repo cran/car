@@ -10,8 +10,8 @@
 # 2018-04-28: J. Fox. Check whether file exists before overwriting
 # 2024-09-19: J. Fox. Update URLs.
 # 2024-09-23 Deprecated most of the carWeb features; updated .Rd page
+# 2026-01-06 B. Price update URLs to S. Weisberg URLS
 
-carWeb <- function (...){ 
-  browseURL(webpage <- "https://www.john-fox.ca/Companion/index.html")
-  }
-
+carWeb <- function (...){
+  browseURL(webpage <- "https://z.umn.edu/carbook")
+}
